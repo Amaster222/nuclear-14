@@ -38,6 +38,31 @@
         understands:
         - English
         - N14BrotherBeep
+      - type: Warcry
+        action: ActionBrotherhoodWarcry
+        targetDepartment: BrotherhoodOfSteel
+        range: 8
+        speedBonus: 0.30
+        duration: 15 # Elders are pretty insparational
+        overlayColor: "#3B72BF"
+        speechVerb: MisfitsBrotherhoodWarcry
+        warcryMessage: warcry-message-brotherhood
+        warcryMessageCount: 6
+        buffPopup: warcry-popup-buffed-brotherhood
+        cautionPopup: true
+        activatorJobs:
+        - BoSWestElderCommander
+        - BoSHeadKnight
+        - BoSMidPaladinCommander
+        - BoSWestScribe
+        - BoSInitiate
+        - BoSKnight
+        - BoSPaladin
+        - BoSScribe
+        - BoSMidKnight
+        - BoSMidPaladin
+        - BoSMidScribe
+        - BoSMidSquire
 
 - type: startingGear
   id: BoSWestElderCommanderGear

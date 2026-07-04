@@ -100,6 +100,7 @@ public sealed class FactionWarSystem : EntitySystem
         "NCRCitizen",
         "NCRTrader",
         "Townsperson",
+        "BoSOffDuty",
     };
 
     /// <summary>Major factions — each can only be in ONE war at a time.</summary>

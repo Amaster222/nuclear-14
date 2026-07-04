@@ -40,3 +40,18 @@ warcry-popup-nearby = {$user} lets out a warcry!
 warcry-popup-buffed-legion = {$user}'s warcry drives you forward.
 warcry-popup-buffed-tribal = {$user}'s warcry quickens your step.
 warcry-popup-buffed-mars = {$user}'s invocation of Mars quickens your step.
+
+action-name-brotherhood-warcry = Brotherhood Warcry
+action-desc-brotherhood-warcry = Let out an inspirational cry for your brothers.
+
+chat-speech-verb-name-brotherhood-warcry = Shout of Loyalty
+chat-speech-verb-brotherhood-warcry = warcries
+
+warcry-message-brotherhood-1 = STEEL PROTECTS!
+warcry-message-brotherhood-2 = WE BASK IN THE FOUNDERS LIGHT!
+warcry-message-brotherhood-3 = STEEL BE WITH YOU!
+warcry-message-brotherhood-4 = FLESH IS WEAK! BUT STEEL ENDURES!
+warcry-message-brotherhood-5 = BY THE WILL OF THE FOUNDERS!
+warcry-message-brotherhood-6 = REMEMBER HELIOS ONE!
+
+warcry-popup-buffed-brotherhood = {$user}'s warcry steels your resolve.

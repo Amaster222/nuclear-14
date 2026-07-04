@@ -34,15 +34,20 @@
   graph: LeverGraph
   startNode: start
   targetNode: LeverNode
-  category: construction-category-machines
+  category: construction-category-intelligence
   description: A lever to control machines. It has 3 modes.
   objectType: Structure
+  placementMode: SnapgridCenter
   canBuildInImpassable: false
+  hide: false
   icon:
     sprite: Structures/conveyor.rsi
     state: switch-off
   conditions:
     - !type:TileNotBlocked
+    - !type:SpecialStatCondition
+      stat: Intelligence
+      minimum: 10
 
 - type: construction
   name: light switch
@@ -86,7 +91,7 @@
   graph: SignalButtonGraph
   startNode: start
   targetNode: SignalButtonNode
-  category: construction-category-machines
+  category: construction-category-intelligence
   description: It's a button for activating something.
   icon:
     sprite: Structures/Wallmounts/switch.rsi
@@ -95,8 +100,12 @@
   placementMode: SnapgridCenter
   canRotate: true
   canBuildInImpassable: true
+  hide: false
   conditions:
     - !type:WallmountCondition
+    - !type:SpecialStatCondition
+      stat: Intelligence
+      minimum: 10
 
 - type: construction
   name: directional light switch

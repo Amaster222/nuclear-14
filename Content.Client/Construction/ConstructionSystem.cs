@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Content.Client.Popups;
+using Content.Shared._Misfits.Crafting;
 using Content.Shared.Construction;
 using Content.Shared.Construction.Prototypes;
 using Content.Shared.Construction.Steps;
@@ -236,11 +237,14 @@ namespace Content.Client.Construction
                 {
                     if (showPopup)
                     {
-                        var message = condition.GenerateGuideEntry()?.Localization;
-                        if (message != null)
+                        var guideEntry = condition.GenerateGuideEntry();
+                        if (guideEntry?.Localization != null)
                         {
                             // Show the reason to the user:
-                            _popupSystem.PopupCoordinates(Loc.GetString(message), loc);
+                            var message = guideEntry.Arguments != null
+                                ? Loc.GetString(guideEntry.Localization, guideEntry.Arguments)
+                                : Loc.GetString(guideEntry.Localization);
+                            _popupSystem.PopupCoordinates(message, loc);
                         }
                     }
 
@@ -286,6 +290,11 @@ namespace Content.Client.Construction
         public void TryStartItemConstruction(string prototypeName)
         {
             RaiseNetworkEvent(new TryStartItemConstructionMessage(prototypeName));
+        }
+
+        public void TryHandCraftIntellRecipe(string recipeId)
+        {
+            RaiseNetworkEvent(new TryHandCraftIntellRecipeMessage(recipeId));
         }
 
         /// <summary>

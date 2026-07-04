@@ -215,6 +215,8 @@
     amount: -1
   - !type:PlantAdjustHealth
     amount: 0.1
+  - !type:PlantAffectGrowth
+    amount: 1
   - !type:PlantDiethylamine {}
   metabolisms:
     Poison:

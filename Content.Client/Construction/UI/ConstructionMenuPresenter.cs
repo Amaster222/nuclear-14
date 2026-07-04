@@ -1,7 +1,12 @@
 using System.Linq;
 using Content.Client._Misfits.Construction; // #Misfits Add
 using Content.Client.UserInterface.Systems.MenuBar.Widgets;
+using Content.Shared._Misfits.Crafting;
+using Content.Shared._Misfits.Special;
 using Content.Shared.Construction.Prototypes;
+using Content.Shared.Materials;
+using Content.Shared.Stacks;
+using Robust.Shared.Containers;
 using Content.Shared.Tag;
 using Content.Shared.Whitelist;
 using Robust.Client.GameObjects;
@@ -14,6 +19,7 @@ using Robust.Client.Utility;
 using Robust.Shared.Enums;
 using Robust.Shared.Graphics;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Utility;
 using static Robust.Client.UserInterface.Controls.BaseButton;
 
 namespace Content.Client.Construction.UI
@@ -35,9 +41,12 @@ namespace Content.Client.Construction.UI
         private readonly IConstructionMenuView _constructionView;
         private readonly EntityWhitelistSystem _whitelistSystem;
         private readonly MisfitsCraftableNowSystem _craftableNow; // #Misfits Add
+        private readonly SharedSpecialSystem _special;
+        private readonly SharedMaterialStorageSystem _materialStorage;
 
         private ConstructionSystem? _constructionSystem;
         private ConstructionPrototype? _selected;
+        private HandCraftIntellRecipePrototype? _selectedIntellRecipe;
 
         private bool CraftingAvailable
         {
@@ -65,7 +74,10 @@ namespace Content.Client.Construction.UI
                     if (_constructionView.IsOpen)
                         _constructionView.MoveToFront();
                     else
+                    {
                         _constructionView.OpenCentered();
+                        OnViewPopulateRecipes(_constructionView, (string.Empty, string.Empty));
+                    }
 
                     if (_selected != null)
                         PopulateInfo(_selected);
@@ -85,6 +97,8 @@ namespace Content.Client.Construction.UI
             _constructionView = new ConstructionMenu();
             _whitelistSystem = _entManager.System<EntityWhitelistSystem>();
             _craftableNow = _entManager.System<MisfitsCraftableNowSystem>(); // #Misfits Add
+            _special = _entManager.System<SharedSpecialSystem>();
+            _materialStorage = _entManager.System<SharedMaterialStorageSystem>();
 
             // This is required so that if we load after the system is initialized, we can bind to it immediately
             if (_systemManager.TryGetEntitySystem<ConstructionSystem>(out var constructionSystem))
@@ -140,10 +154,20 @@ namespace Content.Client.Construction.UI
             if (item is null)
             {
                 _selected = null;
+                _selectedIntellRecipe = null;
                 _constructionView.ClearRecipeInfo();
                 return;
             }
 
+            if (item.Metadata is HandCraftIntellRecipePrototype intellRecipe)
+            {
+                _selected = null;
+                _selectedIntellRecipe = intellRecipe;
+                PopulateIntellInfo(intellRecipe);
+                return;
+            }
+
+            _selectedIntellRecipe = null;
             _selected = (ConstructionPrototype) item.Metadata!;
             if (_placementManager.IsActive && !_placementManager.Eraser) UpdateGhostPlacement();
             PopulateInfo(_selected);
@@ -194,6 +218,8 @@ namespace Content.Client.Construction.UI
                 recipesList.Add(GetItem(recipe, recipesList));
             }
 
+            PopulateWorkbenchRecipes(search);
+
             // There is apparently no way to set which
 
             PopulateCraftableNow(); // #Misfits Add
@@ -227,6 +253,33 @@ namespace Content.Client.Construction.UI
                 craftableList.Add(GetItem(recipe, craftableList));
             }
 
+            var playerInt = _special.GetEffective(player.Value, SpecialStat.Intelligence);
+            var clientMaterials = CollectClientMaterials(player.Value);
+            var spriteSys = _systemManager.GetEntitySystem<SpriteSystem>();
+
+            foreach (var craftData in _prototypeManager.EnumeratePrototypes<HandCraftIntellRecipePrototype>())
+            {
+                if (playerInt < craftData.MinInt)
+                    continue;
+                if (!ClientHasMaterials(clientMaterials, craftData.Materials))
+                    continue;
+
+                var displayName = GetIntellRecipeName(craftData);
+                var icon = spriteSys.Frame0(new SpriteSpecifier.EntityPrototype(craftData.Result));
+                var desc = string.Empty;
+                if (_prototypeManager.TryIndex<EntityPrototype>(craftData.Result, out var resultProto))
+                    desc = resultProto.Description;
+
+                craftableList.Add(new ItemList.Item(craftableList)
+                {
+                    Metadata = craftData,
+                    Text = displayName,
+                    Icon = icon,
+                    TooltipEnabled = true,
+                    TooltipText = desc,
+                });
+            }
+
             // Alpha-sort to match the main list.
             // ItemList doesn't support sorting in-place, so rebuild it sorted.
             var sorted = new List<ItemList.Item>();
@@ -238,6 +291,46 @@ namespace Content.Client.Construction.UI
                 craftableList.Add(item);
 
             _constructionView.SetCraftableNowVisible(craftableList.Count > 0);
+        }
+
+        private Dictionary<string, int> CollectClientMaterials(EntityUid player)
+        {
+            var result = new Dictionary<string, int>();
+            var visited = new HashSet<EntityUid>();
+            ScanContainersForMaterials(player, result, visited);
+            return result;
+        }
+
+        private void ScanContainersForMaterials(EntityUid uid, Dictionary<string, int> materials, HashSet<EntityUid> visited)
+        {
+            if (!visited.Add(uid))
+                return;
+            if (!_entManager.TryGetComponent<ContainerManagerComponent>(uid, out var containers))
+                return;
+            foreach (var container in containers.Containers.Values)
+            {
+                foreach (var contained in container.ContainedEntities)
+                {
+                    if (_entManager.HasComponent<MaterialComponent>(contained) &&
+                        _entManager.TryGetComponent<PhysicalCompositionComponent>(contained, out var comp))
+                    {
+                        var count = _entManager.TryGetComponent<StackComponent>(contained, out var stack) ? stack.Count : 1;
+                        foreach (var (matId, volPerUnit) in comp.MaterialComposition)
+                            materials[matId] = materials.GetValueOrDefault(matId) + volPerUnit * count;
+                    }
+                    ScanContainersForMaterials(contained, materials, visited);
+                }
+            }
+        }
+
+        private static bool ClientHasMaterials(Dictionary<string, int> available, Dictionary<ProtoId<MaterialPrototype>, int> required)
+        {
+            foreach (var (mat, amount) in required)
+            {
+                if (!available.TryGetValue(mat, out var have) || have < amount)
+                    return false;
+            }
+            return true;
         }
 
         private void PopulateCategories()
@@ -330,10 +423,118 @@ namespace Content.Client.Construction.UI
             };
         }
 
+        private void PopulateWorkbenchRecipes(string search)
+        {
+            var recipesList = _constructionView.Recipes;
+
+            var player = _playerManager.LocalEntity;
+            if (player == null)
+                return;
+
+            var playerInt = _special.GetEffective(player.Value, SpecialStat.Intelligence);
+            var spriteSys = _systemManager.GetEntitySystem<SpriteSystem>();
+
+            var workbenchItems = new List<(string name, ItemList.Item item)>();
+
+            foreach (var craftData in _prototypeManager.EnumeratePrototypes<HandCraftIntellRecipePrototype>())
+            {
+                if (playerInt < craftData.MinInt)
+                    continue;
+
+                var displayName = GetIntellRecipeName(craftData);
+
+                if (!string.IsNullOrEmpty(search))
+                {
+                    var searchLower = search.Trim().ToLowerInvariant();
+                    if (!displayName.ToLowerInvariant().Contains(searchLower))
+                        continue;
+                }
+
+                var icon = spriteSys.Frame0(new SpriteSpecifier.EntityPrototype(craftData.Result));
+                var desc = string.Empty;
+                if (_prototypeManager.TryIndex<EntityPrototype>(craftData.Result, out var resultProto))
+                    desc = resultProto.Description;
+
+                workbenchItems.Add((displayName, new ItemList.Item(recipesList)
+                {
+                    Metadata = craftData,
+                    Text = displayName,
+                    Icon = icon,
+                    TooltipEnabled = true,
+                    TooltipText = desc,
+                }));
+            }
+
+            workbenchItems.Sort((a, b) => string.Compare(a.name, b.name, StringComparison.InvariantCulture));
+
+            if (workbenchItems.Count > 0)
+            {
+                recipesList.AddItem("─── Intelligence ───", null, false);
+                foreach (var (_, item) in workbenchItems)
+                    recipesList.Add(item);
+            }
+        }
+
+        private void PopulateIntellInfo(HandCraftIntellRecipePrototype craftData)
+        {
+            var spriteSys = _systemManager.GetEntitySystem<SpriteSystem>();
+            _constructionView.ClearRecipeInfo();
+
+            var name = GetIntellRecipeName(craftData);
+            var icon = spriteSys.Frame0(new SpriteSpecifier.EntityPrototype(craftData.Result));
+
+            var desc = string.Empty;
+            if (_prototypeManager.TryIndex<EntityPrototype>(craftData.Result, out var resultProto))
+                desc = resultProto.Description;
+
+            _constructionView.SetRecipeInfo(name, desc, icon, false);
+
+            var stepList = _constructionView.RecipeStepList;
+            stepList.AddItem($"Requires INT {craftData.MinInt}", Texture.Transparent, false);
+
+            foreach (var (mat, amount) in craftData.Materials)
+            {
+                string label;
+                Texture matIcon = Texture.Transparent;
+
+                if (_prototypeManager.TryIndex<MaterialPrototype>(mat, out var matProto))
+                {
+                    var sheetVolume = Math.Max(1, _materialStorage.GetSheetVolume(matProto));
+                    var quantity = (int)Math.Ceiling((double)amount / sheetVolume);
+                    var matName = Loc.GetString(matProto.Name);
+                    label = $"{quantity}x {matName}";
+                    matIcon = spriteSys.Frame0(matProto.Icon);
+                }
+                else
+                {
+                    label = $"{mat.Id}: {amount}";
+                }
+
+                stepList.AddItem(label, matIcon, false);
+            }
+        }
+
+        private string GetIntellRecipeName(HandCraftIntellRecipePrototype recipe)
+        {
+            if (Loc.TryGetString($"ent-{recipe.Result}", out var name))
+                return name;
+            if (_prototypeManager.TryIndex<EntityPrototype>(recipe.Result, out var entProto) && !string.IsNullOrEmpty(entProto.Name))
+                return entProto.Name;
+            return recipe.ID;
+        }
+
         private void BuildButtonToggled(bool pressed)
         {
             if (pressed)
             {
+                if (_selectedIntellRecipe != null)
+                {
+                    if (_constructionSystem is not null)
+                        _constructionSystem.TryHandCraftIntellRecipe(_selectedIntellRecipe.ID);
+                    _constructionView.BuildButtonPressed = false;
+                    return;
+                }
+
                 if (_selected == null) return;
 
                 // not bound to a construction system

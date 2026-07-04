@@ -30,3 +30,14 @@
     useDelay: 45
     icon: _Misfits/Interface/Actions/warcry.png
     event: !type:PerformWarcryActionEvent
+
+- type: entity
+  id: ActionBrotherhoodWarcry
+  name: action-name-brotherhood-warcry
+  description: action-desc-brotherhood-warcry
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: InstantAction
+    useDelay: 45
+    icon: _Misfits/Interface/Actions/warcry.png
+    event: !type:PerformWarcryActionEvent

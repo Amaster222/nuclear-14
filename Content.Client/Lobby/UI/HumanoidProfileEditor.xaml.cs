@@ -144,6 +144,7 @@ namespace Content.Client.Lobby.UI
                 ("C27", "humanoid-profile-editor-robot-model-c27-generic"),
                 ("C27NCR", "humanoid-profile-editor-robot-model-c27-ncr"),
                 ("C27BoS", "humanoid-profile-editor-robot-model-c27-bos"),
+                ("C27ZAX", "humanoid-profile-editor-robot-model-c27-zax"),
             },
         };
 
@@ -1840,6 +1841,7 @@ namespace Content.Client.Lobby.UI
                 || speciesId == "RobotRobobrainLaser"
                 || speciesId == "C27NCR" // #Misfits Add - C-27 NCR variant picked via Robot Model dropdown
                 || speciesId == "C27BoS" // #Misfits Add - C-27 Brotherhood variant picked via Robot Model dropdown
+                || speciesId == "C27ZAX" // #Misfits Add - C-27 Z.A.X variant picked via Robot Model dropdown
                 || speciesId == "RobotProtectronTribal"; // Misfits Add - Protectron Spirit-Tender
         }
 
@@ -2758,13 +2760,14 @@ namespace Content.Client.Lobby.UI
                 : $"hand crafting delay {FormatSignedPercent(GetIntelligenceConstructionDelayModifier(value))}";
             var lathe = value <= 3
                 ? "lathes locked"
-                : $"lathe production time {FormatSignedPercent(GetIntelligenceLatheTimeModifier(value, tuning))}, lathe material cost {FormatSignedPercent(GetIntelligenceLatheMaterialCostModifier(value, tuning))}";
+                : $"lathe production time {FormatSignedPercent(GetIntelligenceLatheTimeModifier(value, tuning))}";
             var medical = $"medical action speed {FormatSignedPercent(SharedSpecialSystem.GetIntelligenceMedicalActionSpeed(value) - 1f)} (CPR, healing, surgery, scans)";
             var extra = value switch
             {
                 <= 1 => ", low-intelligence accent",
                 >= 10 => ", detailed chemical scans, medical HUD",
                 >= 8 => ", detailed chemical scans",
+                >= 7 => ", hand caft workbench recipes",
                 _ => string.Empty,
             };
 

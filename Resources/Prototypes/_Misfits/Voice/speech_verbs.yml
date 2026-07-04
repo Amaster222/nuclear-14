@@ -30,6 +30,14 @@
   bold: true
   fontSize: 18
 
+- type: speechVerb
+  id: MisfitsBrotherhoodWarcry
+  name: chat-speech-verb-name-brotherhood-warcry
+  speechVerbStrings:
+  - chat-speech-verb-brotherhood-warcry
+  bold: true
+  fontSize: 18
+
 # #Misfits Add - vocal style preferences for character creation
 - type: speechVerb
   id: MisfitsRasp
