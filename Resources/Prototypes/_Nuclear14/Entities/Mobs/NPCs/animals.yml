@@ -441,7 +441,7 @@
     reagentId: N14MilkBrahmin
     quantityPerUpdate: 25
     growthDelay: 60
-    hungerUsage: 10
+    hungerUsage: 5
   - type: Damageable
     damageContainer: Biological
     damageModifierSet: WastelandAnimal

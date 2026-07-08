@@ -26,6 +26,9 @@ drug-ambience-radaway-2 = A taste like rust lingers while the ache in your bones
 drug-ambience-radaway-diluted-1 = A thin medicinal warmth takes the edge off the radiation sickness.
 drug-ambience-radaway-diluted-2 = The relief comes slow and watery, but it comes.
 
+drug-ambience-cleansing-powder-1 = A heavy, rolling wave of drowsiness begins to gnaw the rads away.
+drug-ambience-cleansing-powder-2 = Warmth seeps into your veins as the powder begins to scour the sickness clean.
+
 drug-ambience-radx-1 = A dry chemical coat settles over your mouth and throat.
 drug-ambience-radx-2 = Your skin prickles like something is bracing you from the inside.
 
