@@ -7,6 +7,8 @@
   - type: IntrinsicRadioReceiver
   - type: IntrinsicRadioTransmitter
     channels:
+    - WastelandGlobal
+    - ZAXBinary
     - Binary
     - Common
     - Command
@@ -346,6 +348,22 @@
   suffix: Empty
   components:
   - type: WarpPoint
+  - type: EncryptionKeyHolder
+    keySlots: 4
+  - type: IntrinsicRadioReceiver
+  - type: IntrinsicRadioTransmitter
+    channels:
+    - WastelandGlobal
+    - ZAXBinary
+  - type: ActiveRadio
+    channels:
+    - WastelandGlobal
+    - ZAXBinary
+  - type: ContainerFill
+    containers:
+      key_slots:
+      - EncryptionKeyWastelandGlobal
+      - EncryptionKeyZAX
   - type: ContainerComp
     proto: AiHeld
     container: station_ai_mind_slot
