@@ -38001,13 +38001,9 @@ entities:
         entity_storage: !type:Container
           showEnts: False
           occludes: True
-          ents:
-          - invalid
-          - invalid
         paper_label: !type:ContainerSlot
           showEnts: False
           occludes: True
-          ent: null
 - proto: CrateWoodenGrave
   entities:
   - uid: 6384
@@ -42719,13 +42715,7 @@ entities:
       pos: -19.5,0.5
       parent: 2
     - type: UserInterface
-      actors:
-        enum.DisposalUnitUiKey.Key:
-        - invalid
     - type: DisposalUnit
-      recentlyEjected:
-      - invalid
-      - invalid
     - type: ActiveUserInterface
   - uid: 6873
     components:
@@ -64771,13 +64761,13 @@ entities:
           - 6055
           - 6058
           - 6057
-          - invalid
+          
           - 6054
           - 6053
           - 6059
           - 6060
           - 6056
-          - invalid
+          
         paper_label: !type:ContainerSlot
           showEnts: False
           occludes: True
@@ -71506,17 +71496,17 @@ entities:
           occludes: True
           ents:
           - 6124
-          - invalid
+          
           - 6123
-          - invalid
+          
           - 6122
           - 6121
           - 6120
           - 6119
           - 6118
           - 6117
-          - invalid
-          - invalid
+          
+          
         paper_label: !type:ContainerSlot
           showEnts: False
           occludes: True
@@ -72140,8 +72130,8 @@ entities:
           showEnts: False
           occludes: True
           ents:
-          - invalid
-          - invalid
+          
+          
           - 11270
         paper_label: !type:ContainerSlot
           showEnts: False
@@ -72321,13 +72311,9 @@ entities:
         entity_storage: !type:Container
           showEnts: False
           occludes: True
-          ents:
-          - invalid
-          - invalid
         paper_label: !type:ContainerSlot
           showEnts: False
           occludes: True
-          ent: null
 - proto: N14ClosetGunCabinet
   entities:
   - uid: 3
@@ -75813,9 +75799,6 @@ entities:
         11343:
           position: 1,1
           _rotation: North
-        invalid:
-          position: 4,1
-          _rotation: North
         11345:
           position: 3,0
           _rotation: East
@@ -75850,7 +75833,7 @@ entities:
           occludes: True
           ents:
           - 11343
-          - invalid
+          
           - 11344
           - 11345
           - 11341
@@ -76300,9 +76283,6 @@ entities:
           position: 6,2
           _rotation: South
     - type: UserInterface
-      actors:
-        enum.StorageUiKey.Key:
-        - invalid
     - type: ContainerContainer
       containers:
         storagebase: !type:Container
@@ -76821,8 +76801,8 @@ entities:
           showEnts: False
           occludes: True
           ents:
-          - invalid
-          - invalid
+          
+          
           - 11681
         paper_label: !type:ContainerSlot
           showEnts: False
@@ -76847,7 +76827,7 @@ entities:
           - 11686
           - 11685
           - 11684
-          - invalid
+          
         paper_label: !type:ContainerSlot
           showEnts: False
           occludes: True
@@ -106412,9 +106392,6 @@ entities:
           position: 3,0
           _rotation: South
     - type: UserInterface
-      actors:
-        enum.StorageUiKey.Key:
-        - invalid
     - type: ContainerContainer
       containers:
         storagebase: !type:Container
