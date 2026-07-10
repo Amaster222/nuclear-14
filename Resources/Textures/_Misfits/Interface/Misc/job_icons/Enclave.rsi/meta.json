@@ -1,38 +1,38 @@
 {
-  "version": 1,
-  "license": "CC-BY-SA-3.0",
-  "copyright": "Enclave Icons made by colonelnothing on discord. God Bless America",
-  "size": {
-    "x": 8,
-    "y": 8
-  },
-  "states": [
-    {
-      "name": "EnclaveCommander"
+    "version": 1,
+    "license": "CC-BY-SA-3.0",
+    "copyright": "Enclave Icons made by colonelnothing on discord. God Bless America",
+    "size": {
+        "x": 8,
+        "y": 8
     },
-    {
-      "name": "EnclaveEnlisted"
-    },
-    {
-      "name": "EnclaveHeadScientist"
-    },
-    {
-      "name": "EnclaveJuniorOfficer"
-    },
-    {
-      "name": "EnclaveJuniorScientist"
-    },
-    {
-      "name": "EnclaveNCO"
-    },
-    {
-      "name": "EnclaveReformer"
-    },
-    {
-      "name": "EnclaveScientist"
-    },
-    {
-      "name": "EnclaveSeniorOfficer"
-    }
-  ]
+    "states": [
+        {
+            "name": "EnclaveCommander"
+        },
+        {
+            "name": "EnclaveEnlisted"
+        },
+        {
+            "name": "EnclaveHeadScientist"
+        },
+        {
+            "name": "EnclaveJuniorOfficer"
+        },
+        {
+            "name": "EnclaveJuniorScientist"
+        },
+        {
+            "name": "EnclaveNCO"
+        },
+        {
+            "name": "EnclaveReformer"
+        },
+        {
+            "name": "EnclaveScientist"
+        },
+        {
+            "name": "EnclaveSeniorOfficer"
+        }
+    ]
 }
