@@ -8691,3 +8691,206 @@ Entries:
   id: 6201
   time: '2026-07-09T17:38:43.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/993
+- author: Dpellowski
+  changes:
+    - type: Tweak
+      message: Supporter GUI auto refreshes on open
+  id: 6202
+  time: '2026-07-09T19:28:58.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/996
+- author: Dpellowski
+  changes:
+    - type: Add
+      message: Chonk Super
+  id: 6203
+  time: '2026-07-10T03:37:26.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/999
+- author: sssaaagggeee
+  changes:
+    - type: Add
+      message: >-
+        Added NCR Command Sergeant Major & Warrant Officer pins for admin use,
+        for Senior Enlisted Advisor and Vertibird Pilot respectively among other
+        things
+    - type: Add
+      message: >-
+        We seemed to have forgotten the RO's commission paperwork, they should
+        now properly get promotions going from O1->O2->O3
+    - type: Tweak
+      message: >-
+        We've deemed C-27s problematic enough to reduce their rank, starting at
+        Private First Class and ending at Sergeant
+    - type: Tweak
+      message: >-
+        After months of complaints from regular Heavy Troopers, we're increasing
+        their pay grade cap to Corporal
+    - type: Tweak
+      message: >-
+        The Republic has deemed that Squad Leaders have an increased cap in pay
+        grade, alongside intermediary ranks being adjusted
+    - type: Tweak
+      message: >-
+        There was a mistake with Military Police Sergeant's paperwork, they
+        shouldn't cap out at SEA ranks anymore but instead 1st Sergeant
+  id: 6204
+  time: '2026-07-10T21:01:12.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/982
+- author: Billius clintus
+  changes:
+    - type: Add
+      message: Added berserker mix, a tribal combat cocktail.
+    - type: Tweak
+      message: increased some loadout prices for things like PA
+    - type: Tweak
+      message: 'gutted the loadout prices for literally everything else '
+    - type: Tweak
+      message: every major is blacklisted from loadout weapons and armor
+    - type: Fix
+      message: Fixed Principes pattern armor, it is now in its intended form
+  id: 6205
+  time: '2026-07-10T21:10:45.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/994
+- author: Oli
+  changes:
+    - type: Tweak
+      message: >-
+        Cleans up NCR loadout roles + adjusts the price of the armors in loadout
+        menu
+  id: 6206
+  time: '2026-07-10T22:18:07.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1001
+- author: JohnKieser
+  changes:
+    - type: Add
+      message: Updated to RTB 279.0.1
+  id: 6207
+  time: '2026-07-10T22:40:28.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/997
+- author: Lucky
+  changes:
+    - type: Add
+      message: '[Legion] A Priestess of Mars house has been added.'
+    - type: Tweak
+      message: >-
+        [Legion] The entire area above the Tree of Mars has been restricted from
+        slave access.
+    - type: Add
+      message: >-
+        [Legion] A second, access locked slave area above the medical area has
+        been added.
+    - type: Tweak
+      message: '[Legion] Medbay has been slightly expanded.'
+    - type: Tweak
+      message: '[NCR] Prison has been reworked.'
+    - type: Add
+      message: '[NCR] The MPs have now access to a court.'
+    - type: Add
+      message: '[NCR] Troopers can finally shower.'
+    - type: Tweak
+      message: >-
+        [Brotherhood] Scribes can now see into the medbay. Paladins, please stop
+        chugging down antidote.
+    - type: Fix
+      message: '[Brotherhood] The brig is FINALLY access locked.'
+    - type: Add
+      message: '[Tribal] The tribe has moved above cazador valley.'
+    - type: Tweak
+      message: '[80s] Front area has been reworked.'
+    - type: Tweak
+      message: '[Dungeon] The quarry has been expanded upon.'
+    - type: Tweak
+      message: >-
+        [Dungeon] The sewer network near Town has been expanded upon, with two
+        large POIs inside it.
+    - type: Fix
+      message: The correct rocks will spawn now in the new mines.
+  id: 6208
+  time: '2026-07-10T22:43:10.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1002
+- author: Bradysgaming
+  changes:
+    - type: Add
+      message: Added the Plasma Cutter, New anti PA weapon to HP kit
+    - type: Remove
+      message: 'Removed Slippery mutation '
+    - type: Tweak
+      message: Made the Ripper sword 80's only
+    - type: Tweak
+      message: >-
+        Nerfed Aer-12 to 4 rof 25 dmg and added recoil to it so its not
+        pinpoint.
+  id: 6209
+  time: '2026-07-11T01:04:40.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1003
+- author: Jerryaqua
+  changes:
+    - type: Add
+      message: New kits for senior knights! Rejoice for Recon armor
+    - type: Remove
+      message: 'Mk3 armor is gone from senior knights '
+    - type: Remove
+      message: 'Caustic resistance from brotherhood armors '
+    - type: Tweak
+      message: >-
+        Fixed armor values for a lot of brotherhood sets, head knight armor is
+        better
+  id: 6210
+  time: '2026-07-11T23:12:44.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1005
+- author: Bradysgaming
+  changes:
+    - type: Remove
+      message: Removed All guns besides the 9mm from loadouts. Same for ammo.
+    - type: Tweak
+      message: >-
+        Anything that you can buy in the shop now cannot be gotten from
+        loadouts.
+  id: 6211
+  time: '2026-07-12T00:15:01.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1006
+- author: Vixting
+  changes:
+    - type: Add
+      message: >-
+        Added a control panel to outside of vault, can be accessed if you have a
+        pip boy & are in a active raid with the vault. Play minigame to hack
+        open vault door, bolting it open for 20m. 
+    - type: Fix
+      message: 'Fixed case of dissapearing chemvend & the box of unopenning '
+    - type: Fix
+      message: Fixed disposal unit
+  id: 6212
+  time: '2026-07-12T01:14:51.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/976
+- author: Dpellowski
+  changes:
+    - type: Add
+      message: >-
+        Colored phrases and bolded for specific words (Must go to options and
+        auto assigned)
+  id: 6213
+  time: '2026-07-12T01:15:43.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1007
+- author: RedBookcase
+  changes:
+    - type: Tweak
+      message: (Hopefully) fixed issues with Brahmin Milk generation
+    - type: Tweak
+      message: >-
+        Cleansing powder now causes less drowsiness. Drowsiness can be reduced
+        as well by drinking Nuka Cola, Coffee, and other caffeinated beverages.
+    - type: Tweak
+      message: >-
+        Made tacmaps, indestructible at admin request, buff to the HP of Legion
+        & Yuma trees, and the Codex Altar to make accidental/grief destruction
+        less likely.
+  id: 6214
+  time: '2026-07-12T01:42:31.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/990
+- author: Bradysgaming
+  changes:
+    - type: Add
+      message: Added back spray paint to loadouts.
+  id: 6215
+  time: '2026-07-12T05:40:57.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1008
