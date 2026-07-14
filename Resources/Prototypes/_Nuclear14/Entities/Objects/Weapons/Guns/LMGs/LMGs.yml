@@ -266,7 +266,7 @@
   name: bren machine gun
   parent: BaseWeaponRifle
   id: N14WeaponLMGBren
-  description: A high-caliber, high-damage, heavy machine gun mass-produced by the RCMP, chambered in the powerful .308 ammunition.
+  description: A high-caliber, high-damage, heavy machine gun mass-produced by the Canadians pre-war, chambered in the powerful .308 ammunition.
   components:
   - type: Clothing
     sprite: _Nuclear14/Objects/Weapons/Guns/LMGs/bren.rsi
@@ -350,8 +350,8 @@
     wieldedSpeedModifier: 0.8
   - type: GunRequiresWield
   - type: GunWieldBonus
-    minAngle: -21 
-    maxAngle: -40 
+    minAngle: -21
+    maxAngle: -40
   - type: Gun
     minAngle: 22
     maxAngle: 50
