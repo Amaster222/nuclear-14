@@ -13,7 +13,7 @@ namespace Content.Shared.Weapons.Ranged.Systems;
 
 public abstract partial class SharedGunSystem
 {
-    [Dependency] private readonly SharedDoAfterSystem _doAfter = default!;
+    [Dependency] private SharedDoAfterSystem _doAfter = default!;
 
 
     protected virtual void InitializeBallistic()
@@ -30,7 +30,7 @@ public abstract partial class SharedGunSystem
         SubscribeLocalEvent<BallisticAmmoProviderComponent, AmmoFillDoAfterEvent>(OnBallisticAmmoFillDoAfter);
         SubscribeLocalEvent<BallisticAmmoProviderComponent, UseInHandEvent>(OnBallisticUse);
     }
-
+    // pressing z
     private void OnBallisticUse(EntityUid uid, BallisticAmmoProviderComponent component, UseInHandEvent args)
     {
         if (args.Handled)
@@ -39,7 +39,7 @@ public abstract partial class SharedGunSystem
         ManualCycle(uid, component, TransformSystem.GetMapCoordinates(uid), args.User);
         args.Handled = true;
     }
-
+    // inserting cart or speedloader that insert instantly, no do after
     private void OnBallisticInteractUsing(EntityUid uid, BallisticAmmoProviderComponent component, InteractUsingEvent args)
     {
         if (args.Handled)
@@ -54,7 +54,7 @@ public abstract partial class SharedGunSystem
             return;
         }
 
-        if (EntityManager.HasComponent<SpeedLoaderComponent>(args.Used))
+        if (HasComp<SpeedLoaderComponent>(args.Used))
         {
             var emptySlots = component.Capacity - component.UnspawnedCount - component.Entities.Count; // Number of empty slots in the shotgun
 
@@ -97,7 +97,7 @@ public abstract partial class SharedGunSystem
         UpdateBallisticAppearance(uid, component);
         Dirty(uid, component);
     }
-
+    // for stuff that is not instant and uses a do after
     private void OnBallisticAfterInteract(EntityUid uid, BallisticAmmoProviderComponent component, AfterInteractEvent args)
     {
         if (args.Handled ||
@@ -121,7 +121,7 @@ public abstract partial class SharedGunSystem
             NeedHand = true
         });
     }
-
+    // when the do after is done, we create and raise TakeAmmoEvent and pretend to add cart to container for client
     private void OnBallisticAmmoFillDoAfter(EntityUid uid, BallisticAmmoProviderComponent component, AmmoFillDoAfterEvent args)
     {
         if (Deleted(args.Target) ||
@@ -270,6 +270,7 @@ public abstract partial class SharedGunSystem
         return component.Entities.Count + component.UnspawnedCount;
     }
 
+    // When TakeAmmoEvent raised, we actually add cart to container
     private void OnBallisticTakeAmmo(EntityUid uid, BallisticAmmoProviderComponent component, TakeAmmoEvent args)
     {
         for (var i = 0; i < args.Shots; i++)
