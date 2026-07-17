@@ -901,7 +901,7 @@
 
     Thread: 170
 
-    Steel: 7000
+    Steel: 6000
 
 
 # --- NCR Tier 4 Armor ---
@@ -923,26 +923,6 @@
     Leather: 350
 
     Circuitry: 100
-
-
-- type: latheRecipe
-  id: N14BPNCRArmorPowerArmorT45Sierra
-  result: N14ClothingOuterPowerArmorT45Sierra
-  category: N14BlueprintNCRArmorT4
-  completetime: 30
-  requiresBlueprint: true
-  availableFaction:
-  - NCR
-  materials:
-    Steel: 12000
-
-    N14Iron: 450
-
-    Circuitry: 300
-
-    ScrapElectronic: 250
-
-    N14Brass: 150
 
 
 - type: latheRecipe
@@ -2100,9 +2080,9 @@
   availableFaction:
   - CaesarLegion
   materials:
-    Leather: 1500
+    Leather: 1000
 
-    Cloth: 1200
+    Cloth: 1000
 
     Thread: 700
 
@@ -2118,7 +2098,7 @@
   availableFaction:
   - CaesarLegion
   materials:
-    Leather: 1500
+    Leather: 1000
 
     Cloth: 1000
 
@@ -2139,7 +2119,7 @@
   materials:
     Leather: 700
 
-    Steel: 8500
+    Steel: 5500
 
     Cloth: 300
 
@@ -2165,6 +2145,8 @@
 
     N14Iron: 70
 
+    Steel: 1000
+
 
 # --- Legion Tier 4 Armor ---
 
@@ -2178,13 +2160,13 @@
   availableFaction:
   - CaesarLegion
   materials:
-    Steel: 10000
+    Steel: 7500
 
-    N14Iron: 700
+    N14Iron: 500
 
     Leather: 500
 
-    Cloth: 800
+    Cloth: 600
 
     Thread: 150
 

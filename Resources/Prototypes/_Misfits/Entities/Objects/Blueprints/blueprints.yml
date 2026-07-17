@@ -180,7 +180,6 @@
   - type: Blueprint
     recipes:
     - N14BPNCRArmorCombatArmorMK2
-    - N14BPNCRArmorPowerArmorT45Sierra
     # #Misfits Add - paired elite combat and ranger helmets
     - N14BPNCRArmorCombatHelmetMK2
     - N14BPNCRArmorRangerHelmetElite
@@ -488,7 +487,6 @@
     - N14BPBoSWeaponPlasmaRifleUrban
     - N14BPBoSWeaponPlasmaMultiplas
     - N14BPBoSWeaponLaserRCW # #Misfits Change - moved from T5 to T3; RCW is now red-beam mid-tier
-    - N14BPBoSWeaponRipperSword
 
 - type: entity
   parent: N14BlueprintBase
@@ -687,26 +685,30 @@
     recipes:
     - N14BPTownWeaponRevolver44Magnun
     - N14BPTownWeaponDesertEagle44
-    - N14BPTownWeaponRifle762Marksman
     - N14BPTownWeaponRifle308Battle
     - N14BPTownWeaponSMG10mm
     - N14BPTownWeaponSMG45
     - N14BPTownWeaponShotgunAuto
     - N14BPTownWeaponSledgeHammer
-
-- type: entity
-  parent: N14BlueprintBase
-  id: N14BlueprintTownWeaponsT4
-  name: Pre-War Arms Dealer Catalog
-  description: A rare pre-war weapons dealer's catalog with high-end civilian firearms. Tier 4 weapons.
-  components:
-  - type: Blueprint
-    recipes:
     - N14BPTownWeaponRifle556Carbine
     - N14BPTownWeaponSMG12mm
     - N14BPTownWeaponSniper45-70BrushGun
     - N14BPTownWeaponRevolver45-70Hunter
     - N14BPTownWeaponSniper308LeverRifle
+    - N14BPTownWeaponWeaponSMG9mmCanadian
+
+- type: entity
+  parent: N14BlueprintBase
+  id: N14BlueprintTownWeaponsT4
+  name: RCMP Catalog of Arms
+  description: A rare pre-war RCMP catalog of firearm blueprints. Tier 4 weapons.
+  components:
+  - type: Blueprint
+    recipes:
+    - N14BPTownWeaponRifle762Canadian
+    - N14BPTownWeaponSMG12mmAdvancedCanadian
+    - N14BPTownWeaponShotgunCanadian
+
 
 # --- Town Armor ---
 - type: entity
