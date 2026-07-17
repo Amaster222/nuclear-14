@@ -76,7 +76,7 @@
   - type: RandomHumanoidAppearance
     randomizeName: true
   - type: Loadout
-    prototypes: [EnclaveReformerGear]
+    prototypes: [EnclaveCommanderGear]
   - type: NpcFactionMember
     factions:
     - Enclave
