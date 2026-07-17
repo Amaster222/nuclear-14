@@ -21,3 +21,14 @@
     coefficient: 0.75
   - type: FireProtection
     reduction: 0.1
+
+- type: entity
+  parent: N14ClothingPowerSystemsBack
+  id: N14ClothingPowerSystemsBackX02
+  name: X-02 armor power systems
+  description: The refined power management system of X-02 Power Armor.
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: ClothingSpeedModifier
+    walkModifier: 4.75 # Don't be alarmed, it's this high to compensate for the suit's base slowdown.
+    sprintModifier: 4.75
