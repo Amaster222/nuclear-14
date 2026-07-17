@@ -229,7 +229,7 @@
     - ClothingSuperMutantYazovRangerArmor
 
 - type: loadout
-  id: MisfitsLoadoutSuperMutantYazovRangerArmor
+  id: MisfitsLoadoutSuperMutantYazovDuster
   category: Neck
   cost: 1
   exclusive: true
@@ -242,7 +242,20 @@
     - ClothingSuperMutantYazovDuster
 
 - type: loadout
-  id: MisfitsLoadoutSuperMutantYazovHatArmor
+  id: MisfitsLoadoutSuperMutantYazovMask
+  category: Neck
+  cost: 1
+  exclusive: true
+  requirements:
+    - !type:CharacterJobRequirement
+      jobs:
+        - SuperMutantRanger
+        - SuperMutantNCRRanger
+  items:
+    - ClothingSuperMutantYazovGasmask
+
+- type: loadout
+  id: MisfitsLoadoutSuperMutantYazovHat
   category: Head
   cost: 1
   exclusive: true
@@ -253,7 +266,6 @@
         - SuperMutantNCRRanger
   items:
     - ClothingSuperMutantYazovHat
-
 
 - type: loadout
   id: MisfitsLoadoutSuperMutantTrooperArmor
