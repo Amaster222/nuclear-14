@@ -121,3 +121,18 @@
   - type: NpcFactionMember
     factions:
     - Enclave
+
+# Super Mutant
+
+- type: entity
+  parent: N14MobSuperMutant
+  id: N14MobSupermutantEnclave
+  name: Enclave Supermutant
+  components:
+  - type: RandomHumanoidAppearance
+    randomizeName: true
+  - type: Loadout
+    prototypes: [SuperMutantEnclaveGear]
+  - type: NpcFactionMember
+    factions:
+    - Enclave

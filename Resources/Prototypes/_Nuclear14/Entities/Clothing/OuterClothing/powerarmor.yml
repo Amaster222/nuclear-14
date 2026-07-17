@@ -142,8 +142,8 @@
     sprite: _Misfits/Clothing/OuterClothing/PowerArmor/Mutant_PA.rsi
   - type: Clothing
     sprite: _Misfits/Clothing/OuterClothing/PowerArmor/Mutant_PA.rsi
-#    equipDelay: 14400 # The Experimental X-01 Power armor is a living Tomb for whichever poor supermutant they put in it, so it takes the entire round to unequip/equip.
-#    unequipDelay: 14400
+    equipDelay: 14400 # The Experimental X-01 Power armor is a living Tomb for whichever poor supermutant they put in it, so it takes the entire round to unequip/equip.
+    unequipDelay: 14400
   - type: Armor # #Misfits Tweak: Added Heat and Piercing coefficients — pre-reduces damage before integrity absorption so PA stays above Centurion/Vet.Ranger at all integrity levels.
     modifiers:
       coefficients:
@@ -153,7 +153,7 @@
         Heat: 0.70
         Caustic: 0.75
         Radiation: 0.6
-#  - type: Unremoveable # This is your casket. Service guarantees citizenship.
+  - type: Unremoveable # This is your casket. Service guarantees citizenship.
   - type: Tag
     tags:
     - SuperMutantWearable
@@ -281,7 +281,7 @@
       gloves: N14ClothingPAGauntletsDark
       shoes: N14ClothingPABootsDark
       back: N14ClothingPowerSystemsBack
-  - type: Reflect # #Misfits Change Tweak: Small-caliber rounds (sub-5.56mm) ricochet off power armor at 30% chance. Innate - always active regardless of movement.
+  - type: Reflect # #Misfits Change Tweak: Small-caliber rounds (sub-5.56mm) ricochet off power armor at 40% chance. Innate - always active regardless of movement.
     reflects:
     - SmallCaliber
     - MediumCaliber
@@ -382,6 +382,15 @@
       gloves: N14ClothingPAGauntletsDark
       shoes: N14ClothingPABootsDark
       back: N14ClothingPowerSystemsBack
+  - type: Reflect # #Misfits Change Tweak: Small-caliber rounds (sub-5.56mm) ricochet off power armor at 40% chance. Innate - always active regardless of movement.
+    reflects:
+    - SmallCaliber
+    - MediumCaliber
+    reflectProb: 0.4
+    reflectProbByType:
+      MediumCaliber: 0.20
+    innate: true
+    spread: 90
 
 - type: entity
   parent: N14ClothingOuterPowerArmorT45
