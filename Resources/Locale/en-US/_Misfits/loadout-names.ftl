@@ -498,7 +498,7 @@ loadout-name-N14ClothingHeadHatCombatHelmet = combat helmet
 loadout-name-N14ClothingHeadHatPressHelmet = press helmet
 loadout-name-N14ClothingHeadHatPrewarMilitaryHelmet = pre-war military helmet
 loadout-name-LoadoutN14ClothingHeadFourLeafRangerHelmet = Four Leaf ranger helmet
-loadout-name-LoadoutN14ClothingNeckHighlandRangerHelmet = Highland ranger helmet
+loadout-name-LoadoutN14ClothingHeadHighlandRangerHelmet = Highland ranger helmet
 
 # Misfits Add - Neckwear loadout names
 loadout-name-LoadoutN14ClothingNeckRangerDuster = ranger duster

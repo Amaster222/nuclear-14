@@ -854,7 +854,7 @@
       tracker: NCRVeteranRanger
       min: 72000 # 1200 minutes
   items:
-    - N14ClothingNeckHighlandRangerHelmet
+    - N14ClothingHeadHighlandRangerHelmet
 
 - type: loadout
   id: LoadoutN14ClothingHeadCanOpenerRangerHelmet
@@ -1025,23 +1025,6 @@
       min: 72000 # 1200 minutes
   items:
     - N14ClothingNeckFourLeafDuster
-
-- type: loadout
-  id: LoadoutN14ClothingNeckCaliforniaGirlDuster
-  category: Roles
-  cost: 0
-  exclusive: true
-  requirements:
-    - !type:CharacterJobRequirement
-      jobs:
-        - NCRVeteranRanger
-        - NCRFieldRanger
-        - NCRCitizen
-    - !type:CharacterPlaytimeRequirement
-      tracker: NCRVeteranRanger
-      min: 72000 # 1200 minutes
-  items:
-    - N14ClothingNeckCaliforniaGirlDuster
 
 - type: loadout
   id: LoadoutN14ClothingNeckCaliforniaGirlDuster
