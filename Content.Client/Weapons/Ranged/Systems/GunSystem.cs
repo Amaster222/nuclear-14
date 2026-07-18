@@ -397,7 +397,7 @@ public sealed partial class GunSystem : SharedGunSystem
         if (uid == null || user == null || !Timing.IsFirstTimePredicted)
             return;
 
-        PopupSystem.PopupEntity(message, uid.Value, user.Value);
+        _popup.PopupEntity(message, uid.Value, user.Value);
     }
 
     protected override void CreateEffect(EntityUid gunUid, MuzzleFlashEvent message, EntityUid? tracked = null, EntityUid? player = null)

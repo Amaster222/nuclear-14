@@ -404,7 +404,7 @@ public partial class SharedGunSystem
         Audio.PlayPredicted(component.SoundSpin, revolverUid, user);
         Popup(Loc.GetString("gun-revolver-spun"), revolverUid, user);
     }
-
+    // called for speedloaders
     private void OnRevolverTakeAmmo(EntityUid uid, RevolverAmmoProviderComponent component, TakeAmmoEvent args)
     {
         var currentIndex = component.CurrentIndex;
@@ -430,7 +430,7 @@ public partial class SharedGunSystem
                 {
                     // Pretend it's always been there.
                     ent = Spawn(component.FillPrototype, args.Coordinates);
-
+                    // looks like we put the bullet here as server
                     if (!_netManager.IsClient)
                     {
                         component.AmmoSlots[index] = ent;

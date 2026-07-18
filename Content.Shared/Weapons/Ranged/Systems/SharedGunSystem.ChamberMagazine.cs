@@ -42,7 +42,7 @@ public abstract partial class SharedGunSystem
         // Appearance data doesn't get serialized and want to make sure this is correct on spawn (regardless of MapInit) so.
         if (component.BoltClosed != null)
         {
-           Appearance.SetData(uid, AmmoVisuals.BoltClosed, component.BoltClosed.Value);
+            Appearance.SetData(uid, AmmoVisuals.BoltClosed, component.BoltClosed.Value);
         }
     }
 
@@ -161,7 +161,7 @@ public abstract partial class SharedGunSystem
             CycleCartridge(uid, component, user, appearance);
 
             if (user != null)
-                PopupSystem.PopupClient(Loc.GetString("gun-chamber-bolt-closed"), uid, user.Value);
+                _popup.PopupClient(Loc.GetString("gun-chamber-bolt-closed"), uid, user.Value);
 
             if (slots != null)
             {
@@ -191,7 +191,7 @@ public abstract partial class SharedGunSystem
             }
 
             if (user != null)
-                PopupSystem.PopupClient(Loc.GetString("gun-chamber-bolt-opened"), uid, user.Value);
+                _popup.PopupClient(Loc.GetString("gun-chamber-bolt-opened"), uid, user.Value);
 
             if (slots != null)
             {

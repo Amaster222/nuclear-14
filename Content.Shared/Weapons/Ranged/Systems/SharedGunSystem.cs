@@ -74,7 +74,7 @@ public abstract partial class SharedGunSystem : EntitySystem
     [Dependency] protected readonly SharedContainerSystem Containers = default!;
     [Dependency] private readonly SharedGravitySystem _gravity = default!;
     [Dependency] protected readonly SharedPointLightSystem Lights = default!;
-    [Dependency] protected readonly SharedPopupSystem PopupSystem = default!;
+    [Dependency] protected readonly SharedPopupSystem _popup = default!;
     [Dependency] protected readonly SharedPhysicsSystem Physics = default!;
     [Dependency] protected readonly SharedProjectileSystem Projectiles = default!;
     [Dependency] protected readonly SharedTransformSystem TransformSystem = default!;
@@ -361,7 +361,7 @@ public abstract partial class SharedGunSystem : EntitySystem
         if (attemptEv.Cancelled)
         {
             if (attemptEv.Message != null)
-                PopupSystem.PopupClient(attemptEv.Message, gunUid, user);
+                _popup.PopupClient(attemptEv.Message, gunUid, user);
 
             gun.BurstActivated = false;
             gun.BurstShotsCount = 0;
@@ -409,7 +409,7 @@ public abstract partial class SharedGunSystem : EntitySystem
             {
                 if (ev.Reason != null && Timing.IsFirstTimePredicted)
                 {
-                    PopupSystem.PopupCursor(ev.Reason);
+                    _popup.PopupCursor(ev.Reason);
                 }
 
                 // Don't spam safety sounds at gun fire rate, play it at a reduced rate.
