@@ -825,3 +825,23 @@ undecided-loadout-category-misfits-eighties-road-rash-lookout-description =
     A simple mans loot stash. Barely worth more than a couple caps.
     Includes a 9mm pistol, a box of 9mm ammo, a tribal knife,
     a smoke grenade, 2 flares, a stimpak, and gauze. Good for looting.
+
+undecided-loadout-category-misfits-ncr-ht-veteran-name = Heavy Trooper Veteran Kit
+undecided-loadout-category-misfits-ncr-ht-veteran-description =
+    A Veteran HT's issued equipment. A 5.56 assault carbine, 4 mags for it,
+    2 smoke grenades, a stick of dynamite, a stim and super stim, an MRE,
+    a RadAway bag, and two rolls of gauze.
+
+undecided-loadout-category-misfits-ncr-ht-linebreaker-name = Heavy Trooper Linebreaker Kit
+undecided-loadout-category-misfits-ncr-ht-linebreaker-description =
+    The issued equipment of an HT who brawls with enemy heavy infantry.
+    Comes with a .308 BAR, 2 spare mags for it, 2 smoke grenades,
+    2 sticks of dynamite, a stim and super stim, an MRE,
+    a RadAway bag, and two rolls of gauze.
+
+undecided-loadout-category-misfits-ncr-ht-defender-name = Heavy Trooper Defender Kit
+undecided-loadout-category-misfits-ncr-ht-defender-description =
+    The issued equipment of an HT who holds against all odds.
+    Comes with a 5.56 LMG, a spare mag for it,
+    3 sticks of dynamite, a stim and super stim, an MRE,
+    a RadAway bag, and two rolls of gauze.

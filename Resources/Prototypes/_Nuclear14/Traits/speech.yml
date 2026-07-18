@@ -69,11 +69,10 @@
     - BoSScribe
     - BoSMidScribe
     - BoSWestScribe
-    - BoSMidPaladinCommander
-    - BoSHeadKnight
   functions:
   - !type:TraitModifyLanguages
     languagesSpoken:
+    - N14BrotherBeep
     languagesUnderstood:
     - N14BrotherBeep
 

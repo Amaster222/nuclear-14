@@ -17,10 +17,10 @@
     size: Huge
     sprite: _Nuclear14/Objects/Weapons/Guns/LMGs/autorifle.rsi
   - type: Wieldable
-    wieldedSpeedModifier: 0.8
+    wieldedSpeedModifier: 0.9
   - type: GunRequiresWield
   - type: GunWieldBonus
-    minAngle: -18 # Corvax-Change
+    minAngle: -19 # Corvax-Change
     maxAngle: -50 # Corvax-Change
   - type: Gun
     minAngle: 24
