@@ -9159,3 +9159,10 @@ Entries:
   id: 6242
   time: '2026-07-19T19:30:38.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1054
+- author: Dpellowski
+  changes:
+    - type: Tweak
+      message: Enclave stuff
+  id: 6243
+  time: '2026-07-19T20:28:54.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1055
