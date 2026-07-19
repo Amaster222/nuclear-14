@@ -9132,3 +9132,18 @@ Entries:
   id: 6239
   time: '2026-07-19T01:54:32.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1049
+- author: Bradysgaming
+  changes:
+    - type: Add
+      message: >-
+        Added Recipe to make weldingfuel (Grind plastic, heat the result 374,
+        then combine result with clean water and heat to 500.)
+    - type: Tweak
+      message: Motorbikes no longer spawn with gas
+    - type: Tweak
+      message: >-
+        Disabled Napalm recipe as it interacts with the fuel recipes weird + the
+        fire system 
+  id: 6240
+  time: '2026-07-19T04:11:54.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1051
