@@ -3,6 +3,7 @@ using Robust.Shared.Audio;
 using Robust.Shared.Containers;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Serialization;
 
 namespace Content.Shared.Weapons.Ranged.Components;
 
@@ -20,7 +21,6 @@ public sealed partial class BallisticAmmoProviderComponent : Component
 
     [ViewVariables(VVAccess.ReadWrite), DataField]
     public int Capacity = 30;
-
     public int Count => UnspawnedCount + Container.ContainedEntities.Count;
 
     [ViewVariables(VVAccess.ReadWrite), DataField, AutoNetworkedField]
@@ -29,11 +29,19 @@ public sealed partial class BallisticAmmoProviderComponent : Component
     [ViewVariables(VVAccess.ReadWrite), DataField]
     public EntityWhitelist? Whitelist;
 
+    [ViewVariables(VVAccess.ReadOnly)]
     public Container Container = default!;
 
-    // TODO: Make this use stacks when the typeserializer is done.
-    [DataField, AutoNetworkedField]
-    public List<EntityUid> Entities = new();
+    /// <summary>
+    /// Used as a middle-man ???
+    /// </summary>
+    /// <remarks>
+    /// Set to false for entities like turrets to avoid users being able to cycle them.
+    /// </remarks>
+
+    // #Misfit change: Killed this field with my bare hands
+    // [DataField, AutoNetworkedField]
+    // public List<EntityUid> Entities = new();
 
     /// <summary>
     /// Is the magazine allowed to be manually cycled to eject a cartridge.

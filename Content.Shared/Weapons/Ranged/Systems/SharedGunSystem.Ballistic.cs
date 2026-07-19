@@ -1,10 +1,12 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Content.Shared.Containers;
 using Content.Shared.DoAfter;
 using Content.Shared.Examine;
 using Content.Shared.Interaction;
 using Content.Shared.Interaction.Events;
+using Content.Shared.Mobs;
 using Content.Shared.Tag;
 using Content.Shared.Verbs;
 using Content.Shared.Weapons.Ranged.Components;
@@ -22,7 +24,6 @@ namespace Content.Shared.Weapons.Ranged.Systems;
 public abstract partial class SharedGunSystem
 {
     [Dependency] private SharedDoAfterSystem _doAfter = default!;
-
 
     protected virtual void InitializeBallistic()
     {
@@ -49,24 +50,25 @@ public abstract partial class SharedGunSystem
     }
     private void ManualCycle(EntityUid uid, BallisticAmmoProviderComponent component, MapCoordinates coordinates, EntityUid user, GunComponent? gunComp = null)
     {
+        // TODO MISFIT: make firerate thing tied to cycling event when i feel like it
         // Reset shotting for cycling
+
         if (Resolve(uid, ref gunComp, false) &&
-            gunComp is { FireRateModified: > 0f } &&
-            !Paused(uid))
+            gunComp is { FireRateModified: > 0f })
         {
             gunComp.NextFire = Timing.CurTime + TimeSpan.FromSeconds(1 / gunComp.FireRateModified);
         }
 
         Audio.PlayPredicted(component.SoundRack, uid, user);
 
-        _popup.PopupEntity(
+        _popup.PopupPredicted(
         Loc.GetString(GetBallisticShots(component) == 0 ?
         "gun-ballistic-cycled-empty" : "gun-ballistic-cycled")
         , uid, user);
 
-        Cycle(uid, component, coordinates);
-        Dirty(uid, component);
+        Cycle(uid, component, coordinates, user);
 
+        Dirty(uid, component);
         UpdateBallisticAppearance(uid, component);
         UpdateAmmoCount(uid);
     }
@@ -86,7 +88,7 @@ public abstract partial class SharedGunSystem
         // TODO this should be part of the prototype, not set on map init.
         // Alternatively, just track spawned count, instead of unspawned count.
 
-        //# Misfit: I agree ^^^ refactor soon
+        //# Misfit: I agree ^^^ refactor soon. Not the spawned count thing tho
         if (component.Proto != null)
         {
             component.UnspawnedCount = Math.Max(0, component.Capacity - component.Container.ContainedEntities.Count);
@@ -95,7 +97,7 @@ public abstract partial class SharedGunSystem
         }
     }
 
-    protected static int GetBallisticShots(BallisticAmmoProviderComponent component) => component.Entities.Count + component.UnspawnedCount;
+    protected static int GetBallisticShots(BallisticAmmoProviderComponent component) => component.Container.Count + component.UnspawnedCount;
     private bool CanInstantFill(EntityUid giver) => HasComp<SpeedLoaderComponent>(giver);
     private bool PopupCancels(BallisticAmmoProviderComponent targetComp, EntityUid targetUid, List<ProtoId<TagPrototype>> targetTags,
                                 BallisticAmmoProviderComponent giverComp, EntityUid giverUid, List<ProtoId<TagPrototype>> giverTags,
@@ -104,7 +106,7 @@ public abstract partial class SharedGunSystem
 
         if (GetBallisticShots(targetComp) == targetComp.Capacity)
         {
-            _popup.PopupEntity(
+            _popup.PopupPredicted(
                 Loc.GetString("gun-ballistic-transfer-target-full",
                     ("entity", targetComp)),
                 targetUid,
@@ -114,7 +116,7 @@ public abstract partial class SharedGunSystem
 
         if (GetBallisticShots(giverComp) == 0)
         {
-            _popup.PopupEntity(
+            _popup.PopupPredicted(
                 Loc.GetString("gun-ballistic-transfer-empty",
                     ("entity", giverUid)),
                 giverUid,
@@ -124,7 +126,7 @@ public abstract partial class SharedGunSystem
 
         if (!targetTags.Any(giverTags.Contains))
         {
-            _popup.PopupEntity(
+            _popup.PopupPredicted(
                         Loc.GetString("gun-ballistic-transfer-invalid",
                             ("ammoEntity", giverUid),
                             ("targetEntity", targetUid)),
@@ -142,9 +144,10 @@ public abstract partial class SharedGunSystem
         if (!(reciverComp.Capacity - GetBallisticShots(reciverComp) is int emptySlots and > 0))
         {
             args.Handled = true;
-            _popup.PopupEntity(Loc.GetString("gun-ballistic-transfer-target-full", ("entity", reciverUID)), reciverUID, args.User);
+            _popup.PopupPredicted(Loc.GetString("gun-ballistic-transfer-target-full", ("entity", reciverUID)), reciverUID, args.User);
             return;
         }
+
         if (!CanInstantFill(args.User)) emptySlots = 1;
         StartAmmoSwap(emptySlots, args.Used, reciverComp, args.Target, args.User);
 
@@ -157,16 +160,16 @@ public abstract partial class SharedGunSystem
     }
     // for stuff that is not instant and so uses a do after
     // so just does checks and calls do after which does the work
-    private void OnBallisticAfterInteract(EntityUid uid, BallisticAmmoProviderComponent component, AfterInteractEvent args)
+    private void OnBallisticAfterInteract(EntityUid uid, BallisticAmmoProviderComponent giverComp, AfterInteractEvent args)
     {
-        if (args.Handled || !component.MayTransfer ||
-            !TryComp<BallisticAmmoProviderComponent>(args.Used, out var giverComp) ||
+        if (args.Handled || !giverComp.MayTransfer ||
+            !HasComp<BallisticAmmoProviderComponent>(args.Target) ||
             !giverComp.MayTransfer)
         {
             return;
         }
         args.Handled = true;
-        _doAfter.TryStartDoAfter(new DoAfterArgs(EntityManager, args.User, component.FillDelay, new AmmoFillDoAfterEvent(), used: uid, target: args.Target, eventTarget: uid)
+        _doAfter.TryStartDoAfter(new DoAfterArgs(EntityManager, args.User, giverComp.FillDelay, new AmmoFillDoAfterEvent(), used: uid, target: args.Target, eventTarget: uid)
         {
             BreakOnMove = true,
             BreakOnDamage = false,
@@ -178,11 +181,6 @@ public abstract partial class SharedGunSystem
     // raise InteractUsingEvent to give bullet to BallisticAmmoProviderComponent of recieving/feeding container
     private void OnBallisticAmmoFillDoAfter(EntityUid giverUID, BallisticAmmoProviderComponent giverComp, AmmoFillDoAfterEvent args)
     {
-#if !RELEASE
-        bool shouldHaveComp = HasComp<BallisticAmmoProviderComponent>(args.Target);
-        if (!shouldHaveComp)
-            Log.Warning($"UID:{args.Target} had BallisticAmmoProviderComponent mistakingly removed. DoAfter wont run");
-#endif
         if (args.Target is not EntityUid targetUid || Deleted(targetUid) ||
             !TryComp<BallisticAmmoProviderComponent>(args.Target, out var targetComp) ||
             targetComp.Whitelist?.Tags is null || giverComp.Whitelist?.Tags is null)
@@ -202,11 +200,8 @@ public abstract partial class SharedGunSystem
                             EntityUid user)
     {
 
-        List<(EntityUid? Entity, IShootable Shootable)> ammo = new(ammoAmount);
-        var evTakeAmmo = new TakeAmmoEvent(ammoAmount, ammo, Transform(giverUID).Coordinates, user);
-
-        RaiseLocalEvent(giverUID, evTakeAmmo);
-        if (ammo.Count == 0) _popup.PopupEntity(Loc.GetString("gun-general-empty"), user);
+        var ammo = DoTakeAmmoEvent(ammoAmount, giverUID, user);
+        if (ammo.Count == 0) _popup.PopupPredicted(Loc.GetString("gun-general-empty"), giverUID, user);
         DoAmmoSwap(ammo, targetComp);
 
         Audio.PlayPredicted(targetComp.SoundInsert, giverUID, user);
@@ -218,24 +213,24 @@ public abstract partial class SharedGunSystem
     private void OnBallisticTakeAmmo(EntityUid giverUID, BallisticAmmoProviderComponent giverComp, TakeAmmoEvent args)
     {
 
-        int ammoToSpawn = Math.Max(0, args.Shots - giverComp.Entities.Count);
+        int ammoToSpawn = Math.Max(0, args.Shots - giverComp.Container.Count);
         ammoToSpawn = Math.Min(GetBallisticShots(giverComp), ammoToSpawn);
-        int ammoToRemove = Math.Min(giverComp.Entities.Count, args.Shots - ammoToSpawn);
+        int ammoToRemove = Math.Min(giverComp.Container.Count, args.Shots - ammoToSpawn);
 
-        List<EntityUid> ammo = giverComp.Entities[..ammoToRemove];
-        giverComp.Entities.RemoveRange(0, ammoToRemove);
+        var ammo = giverComp.Container.ContainedEntities.Take(ammoToRemove);
         giverComp.UnspawnedCount -= ammoToSpawn;
-        for (var i = 0; i < ammoToSpawn; i++)
-        {
-            ammo.Add(PredictedSpawnAtPosition(giverComp.Proto, args.Coordinates));
-        }
-        // Ideally we shouldnt need to use EnsureShootable(shot)
-        // the cartridges/bullets protos should already have comps
-        // thoooo just in case whatever reason i dunno
+
         foreach (var shot in ammo)
         {
             args.Ammo.Add((shot, EnsureShootable(shot)));
         }
+
+        for (int i = 0; i < ammoToSpawn; i++)
+        {
+            var spawnedAmmo = PredictedSpawnAtPosition(giverComp.Proto, args.Coordinates);
+            args.Ammo.Add((spawnedAmmo, EnsureShootable(spawnedAmmo)));
+        }
+
         Dirty(giverUID, giverComp);
         UpdateBallisticAppearance(giverUID, giverComp);
         UpdateAmmoCount(giverUID);
@@ -243,20 +238,16 @@ public abstract partial class SharedGunSystem
 
     private void DoAmmoSwap(List<(EntityUid? Entity, IShootable Shootable)> ammo, BallisticAmmoProviderComponent reciever)
     {
-        // reciever.UnspawnedCount -= ammo.Count;
         foreach (var (shotUID, _) in ammo)
         {
             Containers.Insert(shotUID!.Value, reciever.Container);
         }
-        reciever.Entities.AddRange(reciever.Container.ContainedEntities);
     }
 
     private void OnBallisticVerb(EntityUid uid, BallisticAmmoProviderComponent component, GetVerbsEvent<Verb> args)
     {
         if (!args.CanAccess || !args.CanInteract || args.Hands == null || !component.Cycleable)
             return;
-
-
         args.Verbs.Add(new Verb()
         {
             Text = Loc.GetString("gun-ballistic-cycle"),
@@ -272,9 +263,21 @@ public abstract partial class SharedGunSystem
 
         args.PushMarkup(Loc.GetString("gun-magazine-examine", ("color", AmmoExamineColor), ("count", GetBallisticShots(component))));
     }
-    // user cant be null at this point
 
-    protected abstract void Cycle(EntityUid uid, BallisticAmmoProviderComponent component, MapCoordinates coordinates);
+    protected void Cycle(EntityUid uid, BallisticAmmoProviderComponent comp, MapCoordinates coordinates, EntityUid user)
+    {
+        bool needToRemove = comp.Container.Count > 0;
+        var ammo = DoTakeAmmoEvent(1, uid, user);
+
+        bool empty = ammo.Count == 0;
+
+        // IT'S NOT FUCKING NULL IT'S NOT FUCKING NULL
+        EntityUid cycledAmmo = !empty ? ammo[0].Item1!.Value : default;
+        if (needToRemove) Containers.Remove(cycledAmmo, comp.Container);
+
+        var cycledEvent = new GunCycledEvent();
+        RaiseLocalEvent(uid, ref cycledEvent);
+    }
 
     private void OnBallisticAmmoCount(EntityUid uid, BallisticAmmoProviderComponent component, ref GetAmmoCountEvent args)
     {
@@ -292,6 +295,22 @@ public abstract partial class SharedGunSystem
         Appearance.SetData(uid, AmmoVisuals.AmmoCount, GetBallisticShots(component), appearance);
         Appearance.SetData(uid, AmmoVisuals.AmmoMax, component.Capacity, appearance);
     }
+
+    /// <summary>
+    /// Gets rid of THREE WHOLE LINES OF BOILER PLATE!!!!
+    /// </summary>
+    /// <param name="ammoAmount"></param>
+    /// <param name="giverUID"></param>
+    /// <param name="user"></param>
+    /// <returns></returns>
+    public List<(EntityUid?, IShootable)> DoTakeAmmoEvent(int ammoAmount, EntityUid giverUID, EntityUid? user)
+    {
+        List<(EntityUid? Entity, IShootable Shootable)> ammo = new(ammoAmount);
+        var evTakeAmmo = new TakeAmmoEvent(ammoAmount, ammo, Transform(giverUID).Coordinates, user);
+        RaiseLocalEvent(giverUID, evTakeAmmo);
+        return ammo;
+    }
+
 }
 
 /// <summary>
