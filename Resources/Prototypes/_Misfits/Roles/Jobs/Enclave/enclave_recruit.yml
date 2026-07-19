@@ -12,6 +12,12 @@
   description: job-description-enclave-recruit
   playTimeTracker: EnclaveRecruit
   supervisors: job-supervisors-none
+  special:
+  - !type:AddComponentSpecial
+    components:
+      - type: NpcFactionMember
+        factions:
+          - Enclave
 
 - type: playTimeTracker
   id: EnclaveRecruit
