@@ -32,6 +32,7 @@
       - type: NpcFactionMember
         factions:
           - Enclave
+      - type: PowerArmorProficiency
 
 - type: startingGear
   id: EnclaveEnlistedGear
@@ -39,7 +40,7 @@
     head: N14ClothingHeadHatEnclavePeacekeeperCap
     back: N14ClothingBackpackMilitary
     jumpsuit: N14ClothingUniformJumpsuitEnclave
-    outerClothing: N14ClothingOuterEnclavePeacekeeper
+    outerClothing: N14ClothingOuterPowerArmorAdvanced1
     shoes: N14ClothingBootsCombatFilled
     gloves: N14ClothingHandsGlovesCombat
     neck: ClothingNeckPinEnclavePrivate

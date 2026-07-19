@@ -9147,3 +9147,29 @@ Entries:
   id: 6240
   time: '2026-07-19T04:11:54.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1051
+- author: Bradysgaming
+  changes:
+    - type: Fix
+      message: Fixed Duping welding fuel
+  id: 6241
+  time: '2026-07-19T19:04:49.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1053
+- author: Dpellowski
+  changes: []
+  id: 6242
+  time: '2026-07-19T19:30:38.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1054
+- author: Dpellowski
+  changes:
+    - type: Tweak
+      message: Enclave stuff
+  id: 6243
+  time: '2026-07-19T20:28:54.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1055
+- author: Bradysgaming
+  changes:
+    - type: Tweak
+      message: Road rash have been taught how to ride bikes and given a key
+  id: 6244
+  time: '2026-07-19T22:07:36.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1056
