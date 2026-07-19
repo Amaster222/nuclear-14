@@ -9114,3 +9114,12 @@ Entries:
   id: 6237
   time: '2026-07-19T01:21:52.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1041
+- author: Bradysgaming
+  changes:
+    - type: Tweak
+      message: Jimmy and Timmy are no longer ghost roles.
+    - type: Tweak
+      message: 'NCR Vet ranger has an age req of 36. '
+  id: 6238
+  time: '2026-07-19T01:48:49.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1050
