@@ -1,0 +1,10 @@
+- type: reaction
+  id: WeldingFuel
+  minTemp: 500
+  reactants:
+    Oil:
+      amount: 1
+    Water:
+      amount: 5
+  products:
+    WeldingFuel: 2

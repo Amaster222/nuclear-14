@@ -160,10 +160,8 @@
     solutions:
       plastic:
         reagents:
-        - ReagentId: Oil
-          Quantity: 5
-        - ReagentId: Phosphorus
-          Quantity: 5
+        - ReagentId: ExtractPlastic
+          Quantity: 10
         canReact: false
 
 - type: entity

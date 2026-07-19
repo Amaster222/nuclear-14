@@ -1,0 +1,8 @@
+- type: reaction
+  id: Oil
+  minTemp: 374
+  reactants:
+    ExtractPlastic:
+      amount: 1
+  products:
+    Oil: 2
