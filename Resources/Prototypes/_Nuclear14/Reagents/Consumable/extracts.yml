@@ -51,26 +51,6 @@
 
 - type: reagent
   parent: BaseDrink
-  id: ExtractPlastic
-  name: reagent-name-extract-plastic
-  group: Extracts
-  desc: reagent-desc-extract-plastic
-  physicalDesc: reagent-physical-desc-odorless
-  flavor: bitter
-  color: "#c3c9ca"
-  metabolisms:
-    Medicine:
-      effects:
-      - !type:HealthChange
-        damage:
-          groups:
-            Burn: -0.1
-            Brute: -0.1
-      - !type:ChemVomit
-        probability: 1
-
-- type: reagent
-  parent: BaseDrink
   id: ExtractBuffaloGourd
   name: reagent-name-extract-buffalo-gourd
   group: Extracts
