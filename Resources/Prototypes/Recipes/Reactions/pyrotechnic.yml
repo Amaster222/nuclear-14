@@ -68,7 +68,7 @@
   - Centrifuge
   reactants:
     WeldingFuel:
-      amount: 1
+      amount: 2
   products:
     Oil: 1
-    Water: 5
+    Phosphorus: 1 # Loosing elements during the breakdown.

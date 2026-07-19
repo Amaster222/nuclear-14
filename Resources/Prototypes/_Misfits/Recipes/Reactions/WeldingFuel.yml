@@ -4,7 +4,7 @@
   reactants:
     Oil:
       amount: 1
-    Water:
-      amount: 5
+    Phosphorus:
+      amount: 1
   products:
     WeldingFuel: 2
