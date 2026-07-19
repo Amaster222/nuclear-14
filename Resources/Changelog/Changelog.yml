@@ -9107,3 +9107,10 @@ Entries:
   id: 6236
   time: '2026-07-18T21:56:46.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1047
+- author: Jerryaqua
+  changes:
+    - type: Tweak
+      message: 10mm handgun and revolver now hold slightly more rounds!
+  id: 6237
+  time: '2026-07-19T01:21:52.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1041
