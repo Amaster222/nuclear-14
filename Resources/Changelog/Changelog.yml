@@ -9173,3 +9173,18 @@ Entries:
   id: 6244
   time: '2026-07-19T22:07:36.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1056
+- author: Bradysgaming
+  changes:
+    - type: Remove
+      message: Removed plastic extract
+    - type: Remove
+      message: >-
+        Removed Centrifuge breakdown for oil to avoid loseing oil when you
+        breakdown welding fuel
+    - type: Tweak
+      message: >-
+        made the welding fuel recipe be 5 phos and 5 oil heated up, gotten from
+        grinding plastic.
+  id: 6245
+  time: '2026-07-19T22:44:00.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1058
