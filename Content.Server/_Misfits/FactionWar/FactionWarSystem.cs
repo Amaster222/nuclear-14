@@ -63,7 +63,7 @@ public sealed class FactionWarSystem : EntitySystem
 
     /// <summary>Minimum elapsed round time before war can be declared.</summary>
     /// <summary>Minimum elapsed round time before war can be declared.</summary>
-    private static readonly TimeSpan WarCooldownAfterRoundStart = TimeSpan.FromMinutes(60);
+    private static readonly TimeSpan WarCooldownAfterRoundStart = TimeSpan.FromMinutes(0);
 
     /// <summary>How long a war stays in Pending before becoming Active.</summary>
     /// <summary>How long a war stays in Pending before becoming Active.</summary>
@@ -1903,6 +1903,17 @@ public sealed class FactionWarSystem : EntitySystem
     public bool HasWar(string warKey)
     {
         return _activeWars.ContainsKey(warKey);
+    }
+
+    /// <summary>
+    /// Returns whether the character is currently enlisted in a war whose prep phase has ended.
+    /// Includes original participants, manual joiners, and faction members added by auto-enlistment.
+    /// </summary>
+    public bool IsParticipantInActiveWar(NetEntity entity)
+    {
+        return _warParticipants.TryGetValue(entity, out var participant)
+            && _activeWars.TryGetValue(participant.WarKey, out var war)
+            && war.Phase == WarPhase.Active;
     }
 
     public bool TryGetActiveWarForOriginalParticipant(NetEntity entity, out PlayerWarEntry war)

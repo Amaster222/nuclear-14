@@ -66,9 +66,6 @@ public sealed class RaidRequestSystem : EntitySystem
     // #Misfits Add - Reused scratch buffer for prep → active transition sweep.
     private readonly List<RaidRequestEntry> _activatedRaidsScratch = new();
 
-    // #Misfits Add - Reused scratch buffer for war-end cascade checks.
-    private readonly List<RaidRequestEntry> _warCascadeScratch = new();
-
     // #Misfits Add - Keep raid overlay exemptions aligned with expected spy behavior.
     private static readonly HashSet<string> OverlayExemptJobs = new()
     {
@@ -166,24 +163,6 @@ public sealed class RaidRequestSystem : EntitySystem
                 ConcludeRaid(entry, "Auto-Expiry");
         }
 
-        // End any linked raid whose associated war no longer exists.
-        var cascaded = _warCascadeScratch;
-        cascaded.Clear();
-        foreach (var entry in _requests.Values)
-        {
-            if (entry.Status != RaidRequestStatus.Approved && entry.Status != RaidRequestStatus.Active)
-                continue;
-            if (string.IsNullOrWhiteSpace(entry.AssociatedWarId))
-                continue;
-            if (_factionWar.HasWar(entry.AssociatedWarId))
-                continue;
-
-            cascaded.Add(entry);
-        }
-
-        foreach (var entry in cascaded)
-            ConcludeRaid(entry, "War Cascade");
-
         if (!HasAnyApprovedFactionTierRaid())
         {
             _participantResyncAccumulator = 0f;
@@ -255,8 +234,12 @@ public sealed class RaidRequestSystem : EntitySystem
             data.MyFactionDisplay          = RaidRequestConfig.FactionDisplayName(canonicalFaction);
             data.MyFactionIsIndividualTier = RaidRequestConfig.IsIndividualTier(canonicalFaction);
 
+            if (!_factionWar.IsParticipantInActiveWar(GetNetEntity(playerEntity)))
+            {
+                data.IneligibleReason = "You must be participating in an active war to submit a raid request.";
+            }
             // Eligibility: individual-tier always allowed; faction-tier requires top rank.
-            if (data.MyFactionIsIndividualTier)
+            else if (data.MyFactionIsIndividualTier)
             {
                 data.CanSubmit = true;
             }
@@ -265,13 +248,6 @@ public sealed class RaidRequestSystem : EntitySystem
                 var myWeight  = GetJobWeight(mindId);
                 var topWeight = GetFactionTopWeight(canonicalFaction);
                 if (myWeight > 0 && myWeight >= topWeight)
-                {
-                    data.CanSubmit = true;
-                }
-                // #Misfits Fix - Original war participants bypass rank check.
-                // A higher-ranking late-joiner outranks the original declarer but can't submit
-                // (not being an original participant), bricking raid capability for the war.
-                else if (_factionWar.TryGetActiveWarForOriginalParticipant(GetNetEntity(playerEntity), out _))
                 {
                     data.CanSubmit = true;
                 }
@@ -333,11 +309,10 @@ public sealed class RaidRequestSystem : EntitySystem
             return;
         }
 
-        // Raids are war-linked: only the original two character entities may submit.
-        if (!_factionWar.TryGetActiveWarForOriginalParticipant(GetNetEntity(playerEntity), out var linkedWar))
+        if (!_factionWar.IsParticipantInActiveWar(GetNetEntity(playerEntity)))
         {
             SendSubmitResult(session, false,
-                "You must be one of the two original participants in an active war to request a raid.");
+                "You must be participating in an active war to request a raid.");
             return;
         }
 
@@ -371,9 +346,6 @@ public sealed class RaidRequestSystem : EntitySystem
         var isIndividual = RaidRequestConfig.IsIndividualTier(canonicalFaction);
 
         // Top-rank check for faction-tier submitters.
-        // #Misfits Fix - Original war participants bypass rank check.
-        // A higher-ranking late-joiner outranks the original declarer but can't submit
-        // (not an original participant), bricking raid capability for the war.
         if (!isIndividual)
         {
             if (!_minds.TryGetMind(playerEntity, out var mindId, out _))
@@ -385,18 +357,10 @@ public sealed class RaidRequestSystem : EntitySystem
             var topWeight = GetFactionTopWeight(canonicalFaction);
             if (myWeight <= 0 || myWeight < topWeight)
             {
-                // Original war participant — authority stands regardless of later joiners.
-                if (_factionWar.TryGetActiveWarForOriginalParticipant(GetNetEntity(playerEntity), out _))
-                {
-                    // allow through
-                }
-                else
-                {
-                    var topHolder = GetFactionTopJobHolder(canonicalFaction);
-                    SendSubmitResult(session, false,
-                        $"Only the highest-ranking online member may submit. Outranked by: {topHolder}.");
-                    return;
-                }
+                var topHolder = GetFactionTopJobHolder(canonicalFaction);
+                SendSubmitResult(session, false,
+                    $"Only the highest-ranking online member may submit. Outranked by: {topHolder}.");
+                return;
             }
         }
 
@@ -441,7 +405,6 @@ public sealed class RaidRequestSystem : EntitySystem
             Reason                 = reason,
             CreatedAtUtc           = DateTime.UtcNow,
             Status                 = RaidRequestStatus.Pending,
-            AssociatedWarId        = linkedWar.WarKey,
         };
 
         _requests[entry.Id] = entry;

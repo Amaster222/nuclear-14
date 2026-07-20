@@ -2,7 +2,6 @@
 // Players submit raid requests; admins approve or deny with comments via the bwoink panel's
 // new "Raid Requests" tab. Decisions are broadcast to the requester (and faction) plus the
 // target faction so everyone knows whether the raid is sanctioned.
-using Content.Shared._Misfits.FactionWar;
 using Robust.Shared.Network;
 using Robust.Shared.Serialization;
 
@@ -138,8 +137,6 @@ public sealed class RaidRequestEntry
     /// <summary>Admin who ended the raid, or "Auto-Expiry" when the 15-minute timer ran out.</summary>
     public string? ConcludedByAdmin;
 
-    /// <summary>Associated war key (Player1_Uid_Player2_Uid) if raid was initiated during a war; null if raid exists outside of war context.</summary>
-    public string? AssociatedWarId;
 }
 
 // ── Network messages: requester ↔ server ──────────────────────────────────
