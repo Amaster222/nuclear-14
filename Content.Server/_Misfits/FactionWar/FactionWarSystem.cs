@@ -63,7 +63,7 @@ public sealed class FactionWarSystem : EntitySystem
 
     /// <summary>Minimum elapsed round time before war can be declared.</summary>
     /// <summary>Minimum elapsed round time before war can be declared.</summary>
-    private static readonly TimeSpan WarCooldownAfterRoundStart = TimeSpan.FromMinutes(0);
+    private static readonly TimeSpan WarCooldownAfterRoundStart = TimeSpan.FromMinutes(60);
 
     /// <summary>How long a war stays in Pending before becoming Active.</summary>
     /// <summary>How long a war stays in Pending before becoming Active.</summary>
@@ -87,6 +87,7 @@ public sealed class FactionWarSystem : EntitySystem
         "Tribal",
         "Vault",
         "Enclave",
+        "Eighties",
     };
 
     /// <summary>Jobs that should never be auto-enlisted even if their faction is at war.</summary>
@@ -399,11 +400,16 @@ public sealed class FactionWarSystem : EntitySystem
             if (session.AttachedEntity is not { } entity)
                 continue;
 
+            var jobName = string.Empty;
+            if (_minds.TryGetMind(entity, out var mindId, out _))
+                jobName = _jobs.MindTryGetJobName(mindId);
+
             data.OnlinePlayers.Add(new OnlinePlayerInfo
             {
                 UserId = session.UserId,
                 UserName = session.Name,
                 CharacterName = Name(entity),
+                JobName = jobName,
             });
         }
         data.OnlinePlayers.Sort((a, b) => string.Compare(a.CharacterName, b.CharacterName, StringComparison.Ordinal));
@@ -996,29 +1002,45 @@ public sealed class FactionWarSystem : EntitySystem
             return;
         }
 
-        // #Misfits Add - Major faction join restriction: no 3rd major stacking
+        // #Misfits Add - Major faction join restriction: no 3rd major stacking.
+        // Count distinct factions, not individual members, so additional members of a
+        // major faction may join the same side their faction already chose.
         if (TryGetAutoEnlistFaction(joinerEntity, out var joinerFaction)
             && MajorFactions.Contains(joinerFaction))
         {
-            var majorsOnSide1 = 0;
-            var majorsOnSide2 = 0;
-            foreach (var (pe, _) in war.Participants)
+            var majorsOnSide1 = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var majorsOnSide2 = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var (participant, side) in war.Participants)
             {
-                var puid = GetEntity(pe);
-                if (!Exists(puid))
+                var participantEntity = GetEntity(participant);
+                if (!Exists(participantEntity))
                     continue;
-                if (!TryGetAutoEnlistFaction(puid, out var pf))
+                if (!TryGetAutoEnlistFaction(participantEntity, out var participantFaction))
                     continue;
-                if (!MajorFactions.Contains(pf))
+                if (!MajorFactions.Contains(participantFaction))
                     continue;
 
-                if (war.Participants[pe] == 1)
-                    majorsOnSide1++;
+                if (side == 1)
+                    majorsOnSide1.Add(participantFaction);
                 else
-                    majorsOnSide2++;
+                    majorsOnSide2.Add(participantFaction);
             }
 
-            if (majorsOnSide1 > 0 && majorsOnSide2 > 0)
+            var joinerFactionSide = majorsOnSide1.Contains(joinerFaction)
+                ? (byte) 1
+                : majorsOnSide2.Contains(joinerFaction)
+                    ? (byte) 2
+                    : (byte) 0;
+
+            if (joinerFactionSide != 0 && joinerFactionSide != msg.ChosenSide)
+            {
+                _chat.DispatchServerMessage(player, $"{joinerFaction} has already joined the other side of this war.");
+                SendJoinResult(player, false, "Your faction has already joined the other side of this war.");
+                return;
+            }
+
+            // The faction is already committed to this side. Further members may join it.
+            if (joinerFactionSide == 0 && majorsOnSide1.Count > 0 && majorsOnSide2.Count > 0)
             {
                 _chat.DispatchServerMessage(player, "This war already involves two major factions. You cannot join as a third.");
                 SendJoinResult(player, false, "This war already involves two major factions.");
@@ -1026,7 +1048,9 @@ public sealed class FactionWarSystem : EntitySystem
             }
 
             var joiningSide = msg.ChosenSide;
-            if ((joiningSide == 1 && majorsOnSide1 > 0) || (joiningSide == 2 && majorsOnSide2 > 0))
+            if (joinerFactionSide == 0 &&
+                ((joiningSide == 1 && majorsOnSide1.Count > 0) ||
+                 (joiningSide == 2 && majorsOnSide2.Count > 0)))
             {
                 _chat.DispatchServerMessage(player, "Another major faction is already on that side of the war.");
                 SendJoinResult(player, false, "Another major faction is already on that side.");

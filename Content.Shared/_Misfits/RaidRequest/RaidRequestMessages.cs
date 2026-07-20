@@ -294,6 +294,16 @@ public sealed class RaidRequestDecisionAnnouncementMsg : EntityEventArgs
     public bool IsTargetSide;
 }
 
+/// <summary>
+/// Server to every online player involved in a raid when it concludes. The client displays
+/// a blocking acknowledgement window so the end of raid combat authorization is unmissable.
+/// </summary>
+[Serializable, NetSerializable]
+public sealed class RaidRequestConcludedAnnouncementMsg : EntityEventArgs
+{
+    public RaidRequestEntry Entry = new();
+}
+
 // ── Network messages: server → all clients (overlay participants) ─────────
 
 /// <summary>

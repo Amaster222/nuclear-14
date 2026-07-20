@@ -736,6 +736,7 @@ public sealed class RaidRequestSystem : EntitySystem
 
         BroadcastEntryToAdmins(entry);
         BroadcastParticipants();
+        BroadcastConclusionAnnouncement(entry);
 
         _chat.SendAdminAnnouncement(
             $"[RaidRequest #{entry.Id}] CONCLUDED ({concludedBy}): " +
@@ -817,6 +818,44 @@ public sealed class RaidRequestSystem : EntitySystem
                $"Admin remarks ({admin}): {remarks}";
     }
 
+    /// <summary>
+    /// Sends the mandatory raid-over acknowledgement to every online member of both involved
+    /// factions. Individual-tier raids notify only their requester, matching their participation
+    /// and decision-notification scope.
+    /// </summary>
+    private void BroadcastConclusionAnnouncement(RaidRequestEntry entry)
+    {
+        var notified = new HashSet<NetUserId>();
+
+        if (entry.IsIndividual)
+        {
+            if (TryGetSession(entry.RequesterUserId, out var requesterSession))
+                NotifyRaidConcluded(requesterSession, entry, notified);
+            return;
+        }
+
+        foreach (var session in EnumerateFactionMembers(entry.RequesterFaction))
+            NotifyRaidConcluded(session, entry, notified);
+
+        foreach (var session in EnumerateFactionMembers(entry.TargetFaction))
+            NotifyRaidConcluded(session, entry, notified);
+    }
+
+    private void NotifyRaidConcluded(
+        ICommonSession session,
+        RaidRequestEntry entry,
+        HashSet<NetUserId> notified)
+    {
+        if (!notified.Add(session.UserId))
+            return;
+
+        RaiseNetworkEvent(new RaidRequestConcludedAnnouncementMsg { Entry = entry }, session);
+        _chat.DispatchServerMessage(session,
+            $"Raid #{entry.Id} is over. Combat authorization between " +
+            $"{RaidRequestConfig.FactionDisplayName(entry.RequesterFaction)} and " +
+            $"{RaidRequestConfig.FactionDisplayName(entry.TargetFaction)} has ended.");
+    }
+
     // ── Admin sync helpers ─────────────────────────────────────────────────
 
     private void BroadcastListToAdmins()
@@ -860,6 +899,15 @@ public sealed class RaidRequestSystem : EntitySystem
     /// </summary>
     private bool TryGetEligibleFaction(EntityUid entity, out string canonicalFaction)
     {
+        // Eighties members also carry the generic PlayerRaider and Wastelander factions.
+        // Resolve their gang marker first so raids are attributed to the Eighties instead
+        // of the broader raider faction.
+        if (_npcFaction.IsMember(entity, "Eighties"))
+        {
+            canonicalFaction = "Eighties";
+            return true;
+        }
+
         // First check faction-tier (prefer those over Wastelander when a player is in both).
         foreach (var f in RaidRequestConfig.AllEligibleFactionIds)
         {
