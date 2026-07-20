@@ -9210,3 +9210,10 @@ Entries:
   id: 6247
   time: '2026-07-20T00:45:23.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1061
+- author: Squagg
+  changes:
+    - type: Fix
+      message: Fixed the Southern Drawl trait incorrectly applying a Chinese accent.
+  id: 6248
+  time: '2026-07-20T20:58:39.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1060
