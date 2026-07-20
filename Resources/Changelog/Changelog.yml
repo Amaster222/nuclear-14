@@ -9226,3 +9226,10 @@ Entries:
   id: 6249
   time: '2026-07-20T21:00:03.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1042
+- author: Dpellowski
+  changes:
+    - type: Tweak
+      message: Total didn't forget to change wartimer back to 30
+  id: 6250
+  time: '2026-07-20T23:46:51.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1068
