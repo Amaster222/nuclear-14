@@ -406,30 +406,30 @@ undecided-loadout-category-corvax-auxilia-medic-description =
     hydra, 2 healing powder, a tribal machete,
     2 K rations, and a ceramic flask.
 
-undecided-loadout-category-corvax-veteran-decanus-command-name = Veteran Decanus Command
-undecided-loadout-category-corvax-veteran-decanus-command-description =
+undecided-loadout-category-corvax-recruit-decanus-command-name = Recruit Decanus Command
+undecided-loadout-category-corvax-recruit-decanus-command-description =
     Includes a Legion shield, a blowback shotgun,
     3 boxes of 12 gauge, a rope belt, a .45 Colt pistol,
     2 .45 magazines, a handcuff box, a bola,
     2 healing poultice, 2 K rations, and a ceramic flask.
 
-undecided-loadout-category-corvax-veteran-decanus-hunter-name = Veteran Decanus Hunter
-undecided-loadout-category-corvax-veteran-decanus-hunter-description =
+undecided-loadout-category-corvax-recruit-decanus-hunter-name = Recruit Decanus Hunter
+undecided-loadout-category-corvax-recruit-decanus-hunter-description =
     Includes a Legion buckler, a .50 pipe rifle with 2 spare boxes,
     a .45 M3A1, 2 .45 SMG magazines, a rope belt,
     2 healing poultices, 2 K rations, and a ceramic flask.
 
-undecided-loadout-category-corvax-veteran-decanus-crusher-name = Veteran Decanus Crusher
-undecided-loadout-category-corvax-veteran-decanus-crusher-description =
-    Includes a decorated tribal club, a Legion SKS with 4 clips,
-    a .45 Colt pistol, 2 .45 magazines, a smoke grenade,
+undecided-loadout-category-corvax-recruit-decanus-crusher-name = Recruit Decanus Crusher
+undecided-loadout-category-corvax-recruit-decanus-crusher-description =
+    Includes a decorated tribal club, a 40mm grenade launcher,
+    4 40mm grenades, a .45 Colt pistol, 2 .45 magazines, a smoke grenade,
     2 healing poultice, 2 K rations, and a ceramic flask.
 
 undecided-loadout-category-corvax-decanus-gladiator-name = Decanus Gladiator
 undecided-loadout-category-corvax-decanus-gladiator-description =
-    Includes a Legion SKS with 4 clips, a .45 Colt pistol,
+    Includes a M240B with a spare belt, a .45 Colt pistol,
     2 .45 magazines, a Legion shield, a rope belt,
-    a trench club, 2 bolas, a handcuff box,
+    a singular smoke grenade and a box of handcuffs,
     2 healing poultice, 2 K rations,
     a ceramic flask, and mustard.
 
@@ -442,10 +442,10 @@ undecided-loadout-category-corvax-decanus-sagitaria-description =
 
 undecided-loadout-category-corvax-decanus-berserker-name = Decanus Berserker
 undecided-loadout-category-corvax-decanus-berserker-description =
-    Includes a 12mm SMG with 4 magazines,
-    a .45 Colt pistol, 2 .45 magazines, a pair of power fists,
-    a rope belt, 3 throwing knives, 2 healing poultice,
-    2 K rations, a ceramic flask, and mustard.
+    Includes a Bren with an extra magazine, a smoke grenade,
+    a .45 Colt pistol, 2 .45 magazines, a power fist,
+    a rope belt, 2 healing poultice, 2 K rations,
+    a ceramic flask, and sweet sweet mustard.
 
 undecided-loadout-category-corvax-veteran-rifleman-name = Veteran Rifleman
 undecided-loadout-category-corvax-veteran-rifleman-description =
@@ -825,3 +825,23 @@ undecided-loadout-category-misfits-eighties-road-rash-lookout-description =
     A simple mans loot stash. Barely worth more than a couple caps.
     Includes a 9mm pistol, a box of 9mm ammo, a tribal knife,
     a smoke grenade, 2 flares, a stimpak, and gauze. Good for looting.
+
+undecided-loadout-category-misfits-ncr-ht-veteran-name = Heavy Trooper Veteran Kit
+undecided-loadout-category-misfits-ncr-ht-veteran-description =
+    A Veteran HT's issued equipment. A 5.56 assault carbine, 4 mags for it,
+    2 smoke grenades, a stick of dynamite, a stim and super stim, an MRE,
+    a RadAway bag, and two rolls of gauze.
+
+undecided-loadout-category-misfits-ncr-ht-linebreaker-name = Heavy Trooper Linebreaker Kit
+undecided-loadout-category-misfits-ncr-ht-linebreaker-description =
+    The issued equipment of an HT who brawls with enemy heavy infantry.
+    Comes with a .308 BAR, 2 spare mags for it, 2 smoke grenades,
+    2 sticks of dynamite, a stim and super stim, an MRE,
+    a RadAway bag, and two rolls of gauze.
+
+undecided-loadout-category-misfits-ncr-ht-defender-name = Heavy Trooper Defender Kit
+undecided-loadout-category-misfits-ncr-ht-defender-description =
+    The issued equipment of an HT who holds against all odds.
+    Comes with a 5.56 LMG, a spare mag for it,
+    3 sticks of dynamite, a stim and super stim, an MRE,
+    a RadAway bag, and two rolls of gauze.

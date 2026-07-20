@@ -75,7 +75,7 @@
     outerClothing: N14ClothingOuterDeanLegionnairePrimeArmor
     gloves: N14ClothingHandsGlovesTribal
     belt: N14Gladius
-    pocket1: LegionDeanloadoutkits
+    pocket1: LegionRecruitDecanusloadoutkits
     id: N14IDLegionaryMedalSilver3
   innerClothingSkirt: N14ClothingUniformJumpsuitLegionnaireOther
   storage:
