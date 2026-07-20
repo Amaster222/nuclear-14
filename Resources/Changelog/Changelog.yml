@@ -9195,3 +9195,18 @@ Entries:
   id: 6246
   time: '2026-07-19T23:26:57.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1059
+- author: Dpellowski
+  changes:
+    - type: Add
+      message: Added the Eighties to the war and raid systems.
+    - type: Add
+      message: Added a mandatory acknowledgement window when a raid ends.
+    - type: Tweak
+      message: The /war menu now displays each character's job beside their name.
+    - type: Fix
+      message: >-
+        Fixed additional members of a major faction being unable to join the
+        same side of a minor-faction war.
+  id: 6247
+  time: '2026-07-20T00:45:23.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1061
