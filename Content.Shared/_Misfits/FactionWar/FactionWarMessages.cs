@@ -154,6 +154,7 @@ public sealed class OnlinePlayerInfo
     public NetUserId UserId;
     public string UserName = string.Empty;
     public string CharacterName = string.Empty;
+    public string JobName = string.Empty;
 }
 
 /// <summary>
