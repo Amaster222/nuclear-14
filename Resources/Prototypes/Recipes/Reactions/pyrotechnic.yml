@@ -1,14 +1,14 @@
-﻿#- type: reaction
-#  id: Napalm
-#  reactants:
-#    Oil:
-#      amount: 20
-#    WeldingFuel:
-#      amount: 20
-#    Ethanol:
-#      amount: 20
-#  products:
-#    Napalm: 5
+﻿- type: reaction
+  id: Napalm
+  reactants:
+    Oil:
+      amount: 20
+    WeldingFuel:
+      amount: 20
+    Ethanol:
+      amount: 20
+  products:
+    Napalm: 5
 
 #- type: reaction # Corvax-Change
 #  id: Phlogiston
@@ -68,7 +68,8 @@
   - Centrifuge
   reactants:
     WeldingFuel:
-      amount: 2
+      amount: 1
   products:
-    Oil: 1
-    Phosphorus: 1 # Loosing elements during the breakdown.
+    Ethanol: 5
+    Hydrogen: 3
+    Sulfur: 2
