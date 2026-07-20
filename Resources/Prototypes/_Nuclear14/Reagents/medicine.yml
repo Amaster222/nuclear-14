@@ -25,15 +25,10 @@
               Airloss: -3
         - !type:ModifyBleedAmount
           amount: -2
-        - !type:GenericStatusEffect
+        - !type:ChemVomit
           conditions:
           - !type:ReagentThreshold
-            reagent: HealingMixture
-            min: 35
-          key: ForcedSleep
-          component: ForcedSleeping
-          refresh: false
-          type: Add
+            min: 30
 
 - type: reagent
   id: DirtyStimpak
