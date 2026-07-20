@@ -2081,7 +2081,7 @@
   availableFaction:
   - CaesarLegion
   materials:
-    Leather: 1000
+    Leather: 1500
 
     Cloth: 1000
 
@@ -2102,7 +2102,7 @@
   materials:
     Leather: 700
 
-    Steel: 5500
+    Steel: 7000
 
     Cloth: 300
 
@@ -2143,13 +2143,13 @@
   availableFaction:
   - CaesarLegion
   materials:
-    Steel: 7500
+    Steel: 9500
 
-    N14Iron: 500
+    N14Iron: 700
 
     Leather: 500
 
-    Cloth: 600
+    Cloth: 800
 
     Thread: 150
 
