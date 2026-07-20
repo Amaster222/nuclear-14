@@ -95,11 +95,11 @@
   - /Audio/_Misfits/Mobs/Centaur/lash.ogg
   - /Audio/_Misfits/Mobs/Centaur/spit.ogg
   - /Audio/_Misfits/Mobs/Centaur/taunt.ogg
-  - /Audio/_Misfits/Mobs/Deathlaw/aggro1.ogg
-  - /Audio/_Misfits/Mobs/Deathlaw/aggro2.ogg
-  - /Audio/_Misfits/Mobs/Deathlaw/death.ogg
-  - /Audio/_Misfits/Mobs/Deathlaw/idle.ogg
-  - /Audio/_Misfits/Mobs/Deathlaw/taunt.ogg
+  - /Audio/_Misfits/Mobs/Deathclaw/aggro1.ogg
+  - /Audio/_Misfits/Mobs/Deathclaw/aggro2.ogg
+  - /Audio/_Misfits/Mobs/Deathclaw/death.ogg
+  - /Audio/_Misfits/Mobs/Deathclaw/idle.ogg
+  - /Audio/_Misfits/Mobs/Deathclaw/taunt.ogg
   - /Audio/_Misfits/Mobs/Dog/dog_alert1.ogg
   - /Audio/_Misfits/Mobs/Dog/dog_alert2.ogg
   - /Audio/_Misfits/Mobs/Dog/dog_alert3.ogg
@@ -184,7 +184,7 @@
   - /Audio/_Misfits/Mobs/Roach/idle3.ogg
   - /Audio/_Misfits/Mobs/Roach/radroach_attack.ogg
   - /Audio/_Misfits/Mobs/Roach/radroach_chitter.ogg
-  - /Audio/_Misfits/Mobs/Roach/radroach_death.ogg
+  - /Audio/_Misfits/Mobs/Roach/roach_death.ogg
   - /Audio/_Misfits/Mobs/Sentry/aggro1.ogg
   - /Audio/_Misfits/Mobs/Sentry/aggro2.ogg
   - /Audio/_Misfits/Mobs/Sentry/aggro3.ogg
@@ -247,7 +247,7 @@
   - /Audio/_Misfits/N14/Machines/doorstore_close.ogg
   - /Audio/_Misfits/N14/Machines/generator_off.ogg
   - /Audio/_Misfits/N14/Machines/generator_on.ogg
-  - /Audio/_Misfits/N14/Machines/terminalkeytape01.ogg
+  - /Audio/_Misfits/N14/Machines/terminalkeytap01.ogg
   - /Audio/_Misfits/N14/Machines/terminalmenucancel.ogg
   - /Audio/_Misfits/N14/Machines/terminalmenuenter.ogg
   - /Audio/_Misfits/N14/Vehicles/bike_loop.ogg
@@ -515,12 +515,12 @@
   - /Audio/_Nuclear14/Weapons/Effects/Casing/Rifle/casing_fall_4.ogg
   - /Audio/_Nuclear14/Weapons/Effects/Casing/Rifle/casing_fall_5.ogg
   - /Audio/_Nuclear14/Weapons/Effects/Casing/Rifle/casing_fall_6.ogg
-  - /Audio/_Nuclear14/Weapons/Effects/Casing/Shotgun/casing_fall_1.ogg
-  - /Audio/_Nuclear14/Weapons/Effects/Casing/Shotgun/casing_fall_2.ogg
-  - /Audio/_Nuclear14/Weapons/Effects/Casing/Shotgun/casing_fall_3.ogg
-  - /Audio/_Nuclear14/Weapons/Effects/Casing/Shotgun/casing_fall_4.ogg
-  - /Audio/_Nuclear14/Weapons/Effects/Casing/Shotgun/casing_fall_5.ogg
-  - /Audio/_Nuclear14/Weapons/Effects/Casing/Shotgun/casing_fall_6.ogg
+  - /Audio/_Nuclear14/Weapons/Effects/Casing/Shotgun/shotgun_fall_1.ogg
+  - /Audio/_Nuclear14/Weapons/Effects/Casing/Shotgun/shotgun_fall_2.ogg
+  - /Audio/_Nuclear14/Weapons/Effects/Casing/Shotgun/shotgun_fall_3.ogg
+  - /Audio/_Nuclear14/Weapons/Effects/Casing/Shotgun/shotgun_fall_4.ogg
+  - /Audio/_Nuclear14/Weapons/Effects/Casing/Shotgun/shotgun_fall_5.ogg
+  - /Audio/_Nuclear14/Weapons/Effects/Casing/Shotgun/shotgun_fall_6.ogg
   - /Audio/_Shitmed/Medical/Surgery/cautery1.ogg
   - /Audio/_Shitmed/Medical/Surgery/cautery2.ogg
   - /Audio/_Shitmed/Medical/Surgery/hemostat1.ogg
@@ -533,8 +533,6 @@
   - /Audio/_Shitmed/Medical/Surgery/scalpel2.ogg
   - /Audio/Corvax/Effects/whip.ogg
   - /Audio/Corvax/Effects/whipgrab.ogg
-  - /Audio/SimpleStation14/Weapons/Melee/banjoohit.ogg
-  - /Audio/SimpleStation14/Weapons/Melee/rapierohit.ogg
   - /Audio/SimpleStation14/Items/Equip/toolbelt_equip.ogg
   - /Audio/SimpleStation14/Items/Handling/ammobox_drop.ogg
   - /Audio/SimpleStation14/Items/Handling/ammobox_pickup.ogg
