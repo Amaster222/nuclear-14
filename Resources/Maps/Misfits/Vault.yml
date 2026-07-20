@@ -10764,6 +10764,9 @@ entities:
       pos: 46.5,24.5
       parent: 2
     - type: UserInterface
+      actors:
+        enum.StorageUiKey.Key:
+        - invalid
     - type: ActiveUserInterface
   - uid: 1292
     components:
@@ -38041,6 +38044,8 @@ entities:
         entity_storage: !type:Container
           showEnts: False
           occludes: True
+<<<<<<< HEAD
+=======
           ents:
           - 4317
           - 4318
@@ -38048,6 +38053,7 @@ entities:
           - 4448
           - 4450
           - 4470
+>>>>>>> a59b60ff2d4c5b5fff5028f3c6d2715c06fc7fb6
         paper_label: !type:ContainerSlot
           showEnts: False
           occludes: True
@@ -65721,13 +65727,13 @@ entities:
           - 6055
           - 6058
           - 6057
-
+          
           - 6054
           - 6053
           - 6059
           - 6060
           - 6056
-
+          
         paper_label: !type:ContainerSlot
           showEnts: False
           occludes: True
@@ -72463,17 +72469,17 @@ entities:
           occludes: True
           ents:
           - 6124
-
+          
           - 6123
-
+          
           - 6122
           - 6121
           - 6120
           - 6119
           - 6118
           - 6117
-
-
+          
+          
         paper_label: !type:ContainerSlot
           showEnts: False
           occludes: True
@@ -73097,8 +73103,8 @@ entities:
           showEnts: False
           occludes: True
           ents:
-
-
+          
+          
           - 11270
         paper_label: !type:ContainerSlot
           showEnts: False
@@ -76800,7 +76806,7 @@ entities:
           occludes: True
           ents:
           - 11343
-
+          
           - 11344
           - 11345
           - 11341
@@ -76845,6 +76851,9 @@ entities:
       pos: 31.477648,-13.691618
       parent: 2
     - type: UserInterface
+      actors:
+        enum.StorageUiKey.Key:
+        - invalid
     - type: Physics
       angularDamping: 0
       linearDamping: 0
@@ -77774,8 +77783,8 @@ entities:
           showEnts: False
           occludes: True
           ents:
-
-
+          
+          
           - 11681
         paper_label: !type:ContainerSlot
           showEnts: False
@@ -77800,7 +77809,7 @@ entities:
           - 11686
           - 11685
           - 11684
-
+          
         paper_label: !type:ContainerSlot
           showEnts: False
           occludes: True
@@ -107472,6 +107481,9 @@ entities:
           position: 4,0
           _rotation: South
     - type: UserInterface
+      actors:
+        enum.StorageUiKey.Key:
+        - invalid
     - type: ContainerContainer
       containers:
         storagebase: !type:Container
