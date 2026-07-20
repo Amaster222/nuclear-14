@@ -160,9 +160,9 @@
     solutions:
       plastic:
         reagents:
-        - ReagentId: Phosphorus
-          Quantity: 5
         - ReagentId: Oil
+          Quantity: 5
+        - ReagentId: Phosphorus
           Quantity: 5
         canReact: false
 
