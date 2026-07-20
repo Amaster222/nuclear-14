@@ -302,7 +302,7 @@
   - /Audio/_Nuclear14/Weapons/Effects/Reload/SMGs/smg_magin.ogg
   - /Audio/_Nuclear14/Weapons/Effects/Reload/SMGs/smg_magout.ogg
   - /Audio/_Nuclear14/Weapons/Effects/Reload/Shotguns/shotgun_insert.ogg
-  - /Audio/_Nuclear14/Weapons/Effects/wpn_dynam_fuse.ogg
+  - /Audio/_Nuclear14/Weapons/Effects/Wpn_dynam_fuse.ogg
   - /Audio/_Nuclear14/Weapons/Guns/Shotguns/N14WeaponAutoShotgun/shot1.ogg
   - /Audio/_Nuclear14/Weapons/Guns/Shotguns/N14WeaponAutoShotgun/shot2.ogg
   - /Audio/_Nuclear14/Weapons/Guns/Shotguns/N14WeaponAutoShotgun/shot3.ogg
@@ -688,3 +688,4 @@
   - /Audio/Items/Medical/ointment_begin.ogg
   - /Audio/Items/Medical/ointment_end.ogg
   - /Audio/Items/Culinary/chop.ogg
+  - /Audio/_Nuclear14/war_never_changes.ogg
