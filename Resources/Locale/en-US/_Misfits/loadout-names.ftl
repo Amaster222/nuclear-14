@@ -783,7 +783,6 @@ loadout-name-MisfitsLoadoutUniformMasondudsUniform = vagabond's gang attire
 loadout-name-MisfitsLoadoutUniformSchlimmUniform = foreign gentleman's attire
 loadout-name-MisfitsLoadoutUniformKhansUniform = great khans uniform
 loadout-name-MisfitsLoadoutUniformKhansUniformShorts = great khan jorts
-loadout-name-MisfitsLoadoutUniformKhansUniformShortShorts = great khan short shorts
 
 
 # Ammo and magazines
