@@ -5,6 +5,8 @@
         <BoxContainer>
             <Label Text="{Loc 'spray-painter-selected-decals'}" />
             <Label Name="SelectedDecalName" StyleClasses="Italic" Margin="4 0" />
+            <Label Text="{Loc 'spray-painter-mode'}" Margin="12 0 4 0" />
+            <OptionButton Name="ModeSelector" />
         </BoxContainer>
         <ScrollContainer VerticalExpand="True">
             <GridContainer Columns="7" Name="DecalsGrid" />

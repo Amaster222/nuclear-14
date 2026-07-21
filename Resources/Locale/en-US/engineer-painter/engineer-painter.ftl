@@ -14,6 +14,10 @@ spray-painter-use-custom-color = Use custom color
 spray-painter-use-snap-to-tile = Snap to tile
 spray-painter-color-palette = Palette
 spray-painter-color-picker = Pick a color from a floor decal
+spray-painter-mode = Mode:
+spray-painter-mode-off = Off
+spray-painter-mode-add = Add
+spray-painter-mode-remove = Remove
 
 spray-painter-angle-rotation = Rotation:
 spray-painter-angle-rotation-90-sub = -90°

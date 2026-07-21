@@ -54,6 +54,7 @@ public abstract class SharedSprayPainterSystem : EntitySystem
             subs.Event<SprayPainterSetDecalAngleMessage>(OnSetDecalAngle);
             subs.Event<SprayPainterSetDecalSnapMessage>(OnSetDecalSnap);
             subs.Event<SprayPainterSetDecalColorPickerMessage>(OnSetDecalColorPicker);
+            subs.Event<SprayPainterSetDecalModeMessage>(OnSetDecalMode);
         });
 
         SubscribeLocalEvent<PaintableAirlockComponent, InteractUsingEvent>(OnAirlockInteract);
@@ -177,6 +178,15 @@ public abstract class SharedSprayPainterSystem : EntitySystem
     private void OnSetDecalColorPicker(Entity<SprayPainterComponent> ent, ref SprayPainterSetDecalColorPickerMessage args)
     {
         ent.Comp.ColorPickerEnabled = args.Toggle;
+        Dirty(ent, ent.Comp);
+    }
+
+    private void OnSetDecalMode(Entity<SprayPainterComponent> ent, ref SprayPainterSetDecalModeMessage args)
+    {
+        if (!Enum.IsDefined(args.Mode))
+            return;
+
+        ent.Comp.DecalMode = args.Mode;
         Dirty(ent, ent.Comp);
     }
 

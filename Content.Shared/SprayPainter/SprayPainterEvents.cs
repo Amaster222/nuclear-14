@@ -1,5 +1,6 @@
 using Content.Shared.DoAfter;
 using Content.Shared.Decals;
+using Content.Shared.SprayPainter.Components;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
 
@@ -61,6 +62,12 @@ public sealed class SprayPainterSetDecalSnapMessage(bool snap) : BoundUserInterf
 public sealed class SprayPainterSetDecalColorPickerMessage(bool toggle) : BoundUserInterfaceMessage
 {
     public readonly bool Toggle = toggle;
+}
+
+[Serializable, NetSerializable]
+public sealed class SprayPainterSetDecalModeMessage(DecalPaintMode mode) : BoundUserInterfaceMessage
+{
+    public readonly DecalPaintMode Mode = mode;
 }
 
 [Serializable, NetSerializable]

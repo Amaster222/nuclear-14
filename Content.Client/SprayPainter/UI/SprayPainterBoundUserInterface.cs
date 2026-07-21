@@ -29,6 +29,7 @@ public sealed class SprayPainterBoundUserInterface : BoundUserInterface
         _window.OnDecalAngleChanged = OnDecalAngleChanged;
         _window.OnDecalSnapChanged = OnDecalSnapChanged;
         _window.OnDecalColorPickerToggled = OnDecalColorPickerToggled;
+        _window.OnDecalModeChanged = OnDecalModeChanged;
 
         Update();
     }
@@ -46,6 +47,7 @@ public sealed class SprayPainterBoundUserInterface : BoundUserInterface
         _window.SetDecalAngle(comp.SelectedDecalAngle);
         _window.SetDecalSnap(comp.SnapDecals);
         _window.SetDecalColorPicker(comp.ColorPickerEnabled);
+        _window.SetDecalMode(comp.DecalMode);
     }
 
     private void OnSpritePicked(ItemList.ItemListSelectedEventArgs args)
@@ -73,4 +75,7 @@ public sealed class SprayPainterBoundUserInterface : BoundUserInterface
 
     private void OnDecalColorPickerToggled(bool toggle) =>
         SendMessage(new SprayPainterSetDecalColorPickerMessage(toggle));
+
+    private void OnDecalModeChanged(DecalPaintMode mode) =>
+        SendMessage(new SprayPainterSetDecalModeMessage(mode));
 }

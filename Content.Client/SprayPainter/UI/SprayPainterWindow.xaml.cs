@@ -5,6 +5,7 @@ using Robust.Client.UserInterface.CustomControls;
 using Robust.Client.UserInterface.XAML;
 using Robust.Shared.Utility;
 using Content.Shared.Decals;
+using Content.Shared.SprayPainter.Components;
 using Robust.Shared.Prototypes;
 
 namespace Content.Client.SprayPainter.UI;
@@ -22,6 +23,7 @@ public sealed partial class SprayPainterWindow : DefaultWindow
     public Action<int>? OnDecalAngleChanged;
     public Action<bool>? OnDecalSnapChanged;
     public Action<bool>? OnDecalColorPickerToggled;
+    public Action<DecalPaintMode>? OnDecalModeChanged;
     public Dictionary<string, int> ItemColorIndex = new();
 
     private Dictionary<string, Color> currentPalette = new();
@@ -43,6 +45,7 @@ public sealed partial class SprayPainterWindow : DefaultWindow
         DecalControls.OnAngleChanged += angle => OnDecalAngleChanged?.Invoke(angle);
         DecalControls.OnSnapChanged += snap => OnDecalSnapChanged?.Invoke(snap);
         DecalControls.OnColorPickerToggled += toggle => OnDecalColorPickerToggled?.Invoke(toggle);
+        DecalControls.OnModeChanged += mode => OnDecalModeChanged?.Invoke(mode);
     }
 
     private static string GetColorLocString(string? colorKey)
@@ -115,4 +118,5 @@ public sealed partial class SprayPainterWindow : DefaultWindow
     public void SetDecalAngle(int angle) => DecalControls.SetAngle(angle);
     public void SetDecalSnap(bool snap) => DecalControls.SetSnap(snap);
     public void SetDecalColorPicker(bool enabled) => DecalControls.SetColorPicker(enabled);
+    public void SetDecalMode(DecalPaintMode mode) => DecalControls.SetMode(mode);
 }
