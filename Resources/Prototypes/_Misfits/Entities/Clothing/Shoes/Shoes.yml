@@ -20,10 +20,22 @@
   description: A pair of cowhide boots with spurs, traced over with tan paint. They have a Cuban heel, rounded to pointed toe, high shaft, and, traditionally, no lacing.
   components:
   - type: Sprite
-    sprite: _Misfits/Clothing/Shoes/militarycowboyboots.rsi
+    sprite: _Misfits/Clothing/Shoes/FalloutBoots/militarycowboyboots.rsi
   - type: Clothing
-    sprite: _Misfits/Clothing/Shoes/militarycowboyboots.rsi
+    sprite: _Misfits/Clothing/Shoes/FalloutBoots/militarycowboyboots.rsi
   - type: NoSlip
   - type: FootstepModifier
     footstepSoundCollection:
       collection: FootstepSpurs
+
+- type: entity
+  parent: ClothingShoesBase
+  id: MisfitsMilitarySteelTippedBoots
+  name: steel-tipped boots
+  description: A pair of leather boots reinforced with metal toe caps.
+  components:
+  - type: Sprite
+    sprite: _Misfits/Clothing/Shoes/FalloutBoots/steeltippedboots.rsi
+  - type: Clothing
+    sprite: _Misfits/Clothing/Shoes/FalloutBoots/steeltippedboots.rsi
+  - type: NoSlip
