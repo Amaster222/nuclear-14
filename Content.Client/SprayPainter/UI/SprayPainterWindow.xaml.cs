@@ -4,6 +4,8 @@ using Robust.Client.UserInterface.Controls;
 using Robust.Client.UserInterface.CustomControls;
 using Robust.Client.UserInterface.XAML;
 using Robust.Shared.Utility;
+using Content.Shared.Decals;
+using Robust.Shared.Prototypes;
 
 namespace Content.Client.SprayPainter.UI;
 
@@ -15,6 +17,11 @@ public sealed partial class SprayPainterWindow : DefaultWindow
 
     public Action<ItemList.ItemListSelectedEventArgs>? OnSpritePicked;
     public Action<ItemList.ItemListSelectedEventArgs>? OnColorPicked;
+    public Action<ProtoId<DecalPrototype>>? OnDecalPicked;
+    public Action<Color?>? OnDecalColorChanged;
+    public Action<int>? OnDecalAngleChanged;
+    public Action<bool>? OnDecalSnapChanged;
+    public Action<bool>? OnDecalColorPickerToggled;
     public Dictionary<string, int> ItemColorIndex = new();
 
     private Dictionary<string, Color> currentPalette = new();
@@ -30,6 +37,12 @@ public sealed partial class SprayPainterWindow : DefaultWindow
         RobustXamlLoader.Load(this);
         IoCManager.InjectDependencies(this);
         _spriteSystem = _sysMan.GetEntitySystem<SpriteSystem>();
+
+        DecalControls.OnDecalSelected += decal => OnDecalPicked?.Invoke(decal);
+        DecalControls.OnColorChanged += color => OnDecalColorChanged?.Invoke(color);
+        DecalControls.OnAngleChanged += angle => OnDecalAngleChanged?.Invoke(angle);
+        DecalControls.OnSnapChanged += snap => OnDecalSnapChanged?.Invoke(snap);
+        DecalControls.OnColorPickerToggled += toggle => OnDecalColorPickerToggled?.Invoke(toggle);
     }
 
     private static string GetColorLocString(string? colorKey)
@@ -93,4 +106,13 @@ public sealed partial class SprayPainterWindow : DefaultWindow
         SpriteList[selectedStyle].Selected = true;
         SpriteList.OnItemSelected += OnSpritePicked;
     }
+
+    public void PopulateDecals(List<SprayPainterDecalEntry> decals) =>
+        DecalControls.PopulateDecals(decals, _spriteSystem);
+
+    public void SetSelectedDecal(string decal) => DecalControls.SetSelectedDecal(decal);
+    public void SetDecalColor(Color? color) => DecalControls.SetColor(color);
+    public void SetDecalAngle(int angle) => DecalControls.SetAngle(angle);
+    public void SetDecalSnap(bool snap) => DecalControls.SetSnap(snap);
+    public void SetDecalColorPicker(bool enabled) => DecalControls.SetColorPicker(enabled);
 }
