@@ -9233,3 +9233,12 @@ Entries:
   id: 6250
   time: '2026-07-20T23:46:51.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1068
+- author: paige404
+  changes:
+    - type: Add
+      message: >-
+        Add a melee charge to most wieldable weapons. Be careful not to run
+        yourself out of stamina.
+  id: 6251
+  time: '2026-07-21T00:10:49.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1052
