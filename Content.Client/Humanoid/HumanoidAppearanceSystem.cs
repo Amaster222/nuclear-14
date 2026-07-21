@@ -143,7 +143,7 @@ public sealed class HumanoidAppearanceSystem : SharedHumanoidAppearanceSystem
         Color? color = null,
         bool overrideSkin = false) // Shitmed Change
     {
-        var layerIndex = sprite.LayerMapReserveBlank(key);
+        var layerIndex = ReserveBaseLayer(sprite, key);
         var layer = sprite[layerIndex];
         layer.Visible = !IsHidden(component, key);
 
@@ -164,6 +164,27 @@ public sealed class HumanoidAppearanceSystem : SharedHumanoidAppearanceSystem
 
         if (proto.BaseSprite != null)
             sprite.LayerSetSprite(layerIndex, proto.BaseSprite);
+    }
+
+    private static int ReserveBaseLayer(SpriteComponent sprite, HumanoidVisualLayers key)
+    {
+        if (sprite.LayerMapTryGet(key, out var existingIndex))
+            return existingIndex;
+
+        if (key is HumanoidVisualLayers.UndergarmentTop or HumanoidVisualLayers.UndergarmentBottom)
+        {
+            // Some NPC prototypes replace the inherited sprite layer list and do not include the
+            // undergarment bookmarks. Reserving normally would append them above clothing and armor.
+            if (sprite.LayerMapTryGet(HumanoidVisualLayers.StencilMask, out var clothingIndex) ||
+                sprite.LayerMapTryGet("jumpsuit", out clothingIndex))
+            {
+                sprite.AddBlankLayer(clothingIndex);
+                sprite.LayerMapSet(key, clothingIndex);
+                return clothingIndex;
+            }
+        }
+
+        return sprite.LayerMapReserveBlank(key);
     }
 
     /// <summary>
