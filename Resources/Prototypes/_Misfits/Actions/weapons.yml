@@ -5,7 +5,7 @@
   categories: [ HideSpawnMenu ]
   components:
   - type: ActionStaminaCost
-    stamina: 35
+    staminaPercent: 35
   - type: WorldTargetAction
     icon:
       sprite: _Misfits/Interface/Actions/melee_charge.rsi
