@@ -9291,3 +9291,14 @@ Entries:
   id: 6256
   time: '2026-07-21T21:57:45.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1065
+- author: Oli
+  changes:
+    - type: Add
+      message: >-
+        Western Poncho, Khan uniform + leather vest + boots + helmet, armor
+        kits.
+    - type: Tweak
+      message: 'went over previous PR mistakes and fixed over them somewhat: #1030 '
+  id: 6257
+  time: '2026-07-21T22:01:16.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1069
