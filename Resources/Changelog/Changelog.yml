@@ -9249,3 +9249,10 @@ Entries:
   id: 6252
   time: '2026-07-21T11:43:11.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1070
+- author: Dpellowski
+  changes:
+    - type: Fix
+      message: NPCs no longer wear undies on the outside
+  id: 6253
+  time: '2026-07-21T18:29:04.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1071
