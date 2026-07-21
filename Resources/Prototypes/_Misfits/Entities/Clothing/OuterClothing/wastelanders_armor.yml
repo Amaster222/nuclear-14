@@ -130,6 +130,7 @@
     sprite: _Misfits/Clothing/OuterClothing/Armor/armorkitpunk.rsi
   - type: Clothing
     sprite: _Misfits/Clothing/OuterClothing/Armor/armorkitpunk.rsi
+  - type: Armor
     modifiers:
      coefficients:
         Blunt: 0.9
