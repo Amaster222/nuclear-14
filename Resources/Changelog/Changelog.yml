@@ -9272,3 +9272,22 @@ Entries:
   id: 6255
   time: '2026-07-21T20:09:08.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1073
+- author: luckyshotpictures
+  changes:
+    - type: Add
+      message: Added over 600 sounds to the paracusia trait.
+    - type: Tweak
+      message: NCR ranger now needs 12 hours of Overall NCR time.
+    - type: Tweak
+      message: CPR trait now costs 6 points.
+    - type: Tweak
+      message: >-
+        Narcolepsy now gives 4 points due to the impact of randomly falling
+        asleep with no counterplay.
+    - type: Fix
+      message: 80s should have now all the access they need on their IDs.
+    - type: Fix
+      message: Vet Ranger no longer has a maximum age since ghouls do exist.
+  id: 6256
+  time: '2026-07-21T21:57:45.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1065
