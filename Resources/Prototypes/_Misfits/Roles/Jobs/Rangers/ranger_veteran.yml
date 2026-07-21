@@ -36,6 +36,7 @@
       - Ghoul
     - !type:CharacterAgeRequirement
       min: 36
+      max: 350
 
 - type: startingGear
   id: NCRVeteranRangerGear
