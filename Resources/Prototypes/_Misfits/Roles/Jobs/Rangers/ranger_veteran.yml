@@ -36,7 +36,7 @@
       - Ghoul
     - !type:CharacterAgeRequirement
       min: 36
-      max: 80 # One would assume the NCR gives you social security for your retirement too.
+      max: 350
 
 - type: startingGear
   id: NCRVeteranRangerGear

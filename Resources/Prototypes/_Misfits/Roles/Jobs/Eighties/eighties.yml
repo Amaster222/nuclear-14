@@ -81,6 +81,7 @@
   whitelisted: false
   access:
   - 80s
+  - 80sSlave
   requirements:
   - !type:CharacterSpeciesRequirement
     species:
@@ -142,6 +143,7 @@
   whitelisted: false
   access:
   - 80s
+  - 80sSlave
   requirements:
   - !type:CharacterSpeciesRequirement
     species:
@@ -203,6 +205,7 @@
   whitelisted: false
   access:
   - 80s
+  - 80sSlave
   requirements:
   - !type:CharacterSpeciesRequirement
     species:
