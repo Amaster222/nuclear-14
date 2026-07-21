@@ -95,3 +95,14 @@
     sprite: _Misfits/Clothing/Head/ahphelmet.rsi
   - type: Clothing
     sprite: _Misfits/Clothing/Head/ahphelmet.rsi
+
+- type: entity
+  parent: ClothingHeadBase
+  id: MisfitsClothingHeadKhanHelmet
+  name: great khan helmet
+  description: A piece of headwear commonly worn by the Great Khans that appears to resemble stereotypical traditional Mongolian helmets - likely adapted from a pre-War motorcycle helmet. It is black with two horns on either side and a small spike jutting from the top, much like a pickelhaube. A leather covering protects the wearer's neck and ears from sunburn.
+  components:
+  - type: Sprite
+    sprite: _Misfits/Clothing/Head/khanhorned.rsi
+  - type: Clothing
+    sprite: _Misfits/Clothing/Head/khanhorned.rsi

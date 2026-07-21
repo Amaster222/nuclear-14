@@ -160,14 +160,18 @@
     - type: loadout # Misfits 80s
       id: MisfitsLoadoutUniform80sPants
     - type: loadout # Misfits
-      id: M14ClothingUniformADPUniform
+      id: MisfitsLoadoutUniformADPUniform
     - type: loadout # Misfits
-      id: M14ClothingUniformMarlowdudsUniform
+      id: MisfitsLoadoutUniformMarlowdudsUniform
     - type: loadout # Misfits
-      id: M14ClothingUniformIkedudsUniform
+      id: MisfitsLoadoutUniformIkedudsUniform
     - type: loadout # Misfits
-      id: M14ClothingUniformHelendudsUniform
+      id: MisfitsLoadoutUniformHelendudsUniform
     - type: loadout # Misfits
-      id: M14ClothingUniformMasondudsUniform
+      id: MisfitsLoadoutUniformMasondudsUniform
     - type: loadout # Misfits
-      id: M14ClothingUniformSchlimmUniform
+      id: MisfitsLoadoutUniformSchlimmUniform
+    - type: loadout # Misfits
+      id: MisfitsLoadoutUniformKhansUniform
+    - type: loadout # Misfits
+      id: MisfitsLoadoutUniformKhansUniformShorts
