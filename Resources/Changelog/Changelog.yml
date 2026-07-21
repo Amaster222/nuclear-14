@@ -9242,3 +9242,10 @@ Entries:
   id: 6251
   time: '2026-07-21T00:10:49.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1052
+- author: Dpellowski
+  changes:
+    - type: Add
+      message: I don't wanna see naked humans (Optional check options)
+  id: 6252
+  time: '2026-07-21T11:43:11.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1070
