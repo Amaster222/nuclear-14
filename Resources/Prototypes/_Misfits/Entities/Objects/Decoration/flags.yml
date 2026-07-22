@@ -1,21 +1,21 @@
-- type: entity 
+- type: entity
   parent: N14DecorationFlagFlammable
   id: MisfitsDecorationFlagTribe
-  name: Willowers banner
-  description: A banner depicting the tree of life.
+  name: Banner of the Willowers Tribe
+  description: The banner of the Willowers Tribe, a local settlement who worship something called the 'tree of life' which is illustrated before your eyes now. Yet they are not weak pacifists, and are known for great hunts.
   components:
   - type: Sprite
     sprite: _Misfits/Structures/Decoration/tribal_banner.rsi
-    state: banner1 
-  - type: Construction 
+    state: banner1
+  - type: Construction
     graph: MisfitsFlagTribe
     node: FlagTribe
-      
+
 - type: entity
   parent: N14DecorationFlagFlammable
   id: MisfitsDecorationFlagTribeSkull
-  name: Willowers flag
-  description: A banner depicting the tree of life. A skull is planted on top.
+  name: Flag of the Willowers Tribe
+  description: The banner of the Willowers Tribe, a local settlement who worship something called the 'tree of life' which is illustrated before your eyes now. Yet they are not weak pacifists, and are known for great hunts. This one is decorated with a skull trophy.
   components:
   - type: Sprite
     sprite: _Misfits/Structures/Decoration/tribal_banner.rsi
