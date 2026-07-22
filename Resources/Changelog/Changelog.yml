@@ -9302,3 +9302,15 @@ Entries:
   id: 6257
   time: '2026-07-21T22:01:16.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1069
+- author: paige404
+  changes:
+    - type: Fix
+      message: >-
+        The Charge ability from two-handed weapons now costs 35% of the users'
+        stamina crit threshold rather than 35 stamina flat. Humans will not
+        notice a difference.
+    - type: Remove
+      message: Removed super mutants' kneecaps.
+  id: 6258
+  time: '2026-07-22T02:01:26.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1075
