@@ -955,7 +955,7 @@
 - type: storeContract
   id: caravan_contract_N14HolotapeQuestGECK
   name: "Grow Me A Paradise"
-  description: "OSI scientists in the City of Dayglow are interested in GECK holotape data, and are willing to pay a generous sum.They assure us the government can be trusted not to mishandle this information."
+  description: "OSI scientists in the City of Dayglow are interested in GECK holotape data, and are willing to pay a generous sum. They assure us the government can be trusted not to mishandle this information."
   difficulty: Bunker Buster
   targets:
   - id: N14HolotapeQuestGECK
