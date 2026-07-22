@@ -9356,3 +9356,10 @@ Entries:
   id: 6260
   time: '2026-07-22T19:04:43.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1079
+- author: Dpellowski
+  changes:
+    - type: Tweak
+      message: Enclave Slot final
+  id: 6261
+  time: '2026-07-22T23:37:54.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1082
