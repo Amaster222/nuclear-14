@@ -15,6 +15,8 @@ using Content.Shared.Administration;
 using Content.Shared.ActionBlocker;
 using Content.Shared.CCVar;
 using Content.Shared.Chat;
+using Content.Shared._Misfits.Common.Speech;
+using Content.Shared._Misfits.Genetics.Abilities;
 using Content.Shared.Database;
 using Content.Shared.Ghost;
 using Content.Shared.Language;
@@ -852,6 +854,10 @@ public sealed partial class ChatSystem : SharedChatSystem
                 continue;
             EntityUid listener = session.AttachedEntity.Value;
 
+            // Genetics: deaf entities cannot receive spoken local chat. Emotes and LOOC remain visible.
+            if (HasComp<DeafComponent>(listener) && channel != ChatChannel.Emotes && channel != ChatChannel.LOOC)
+                continue;
+
 
             // If the channel does not support languages, or the entity can understand the message, send the original message, otherwise send the obfuscated version
             if (channel == ChatChannel.LOOC || channel == ChatChannel.Emotes || _language.CanUnderstand(listener, language.ID))
@@ -1031,12 +1037,14 @@ public sealed partial class ChatSystem : SharedChatSystem
             ? Loc.GetString("chat-manager-language-prefix", ("language", language.ChatName))
             : "";
         var fontSize = _special.GetCharismaChatFontSize(source, language.SpeechOverride.FontSize ?? speech.FontSize);
+        var font = new SpeechFontOverrideEvent(source, language.SpeechOverride.FontId ?? speech.FontId);
+        RaiseLocalEvent(source, ref font);
 
         return Loc.GetString(wrapId,
             ("color", color),
             ("entityName", entityName),
             ("verb", Loc.GetString(verbId)),
-            ("fontType", language.SpeechOverride.FontId ?? speech.FontId),
+            ("fontType", font.Font),
             ("fontSize", fontSize),
             ("message", message),
             ("language", languageDisplay));

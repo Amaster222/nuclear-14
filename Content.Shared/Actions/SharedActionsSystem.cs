@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Content.Shared.ActionBlocker;
 using Content.Shared.Actions.Events;
+using Content.Shared._Misfits.Actions;
 using Content.Shared.Administration.Logs;
 using Content.Shared.Database;
 using Content.Shared.Hands;
@@ -656,6 +657,10 @@ public abstract class SharedActionsSystem : EntitySystem
 
             if (!action.RaiseOnUser && action.Container != null && !HasComp<MindComponent>(action.Container))
                 target = action.Container.Value;
+
+            // Misfits genetics compatibility: Trauma action prototypes keep their handlers on the action entity.
+            if (action.RaiseOnAction || HasComp<MutationActionRoutingComponent>(actionId))
+                target = actionId;
 
             RaiseLocalEvent(target, (object) actionEvent, broadcast: true);
             handled = actionEvent.Handled;
