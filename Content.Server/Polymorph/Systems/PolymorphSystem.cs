@@ -16,6 +16,7 @@ using Content.Shared.Mind;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.Polymorph;
+using Content.Shared._Misfits.Genetics.Mutations;
 using Content.Shared.Popups;
 using Content.Shared.Storage; // Corvax-Change
 using Robust.Server.Audio;
@@ -305,6 +306,8 @@ public sealed partial class PolymorphSystem : EntitySystem
         if (PausedMap != null)
             _transform.SetParent(uid, targetTransformComp, PausedMap.Value);
 
+        RaiseLocalEvent(uid, new PolymorphedEvent(uid, child));
+
         return child;
     }
 
@@ -378,6 +381,7 @@ public sealed partial class PolymorphSystem : EntitySystem
                 ("parent", Identity.Entity(uid, EntityManager)),
                 ("child", Identity.Entity(parent, EntityManager))),
             parent);
+        RaiseLocalEvent(uid, new PolymorphedEvent(uid, parent));
         QueueDel(uid);
 
         return parent;

@@ -271,6 +271,8 @@
   id: BaseMobSpeciesOrganic
   abstract: true
   components:
+  # Misfits: Trauma genetics integration.
+  - type: Mutatable
   - type: Flashable
   - type: Barotrauma
     damage:
@@ -293,6 +295,7 @@
     - SlowedDown
     - Stutter
     - SeeingRainbows
+    - DnaMelting
     - HealingPowderHaze
     - HydraTint
     - Electrocution

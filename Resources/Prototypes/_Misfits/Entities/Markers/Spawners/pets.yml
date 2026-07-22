@@ -69,7 +69,7 @@
     layers:
     - state: green
     - sprite: _Misfits/Mobs/NPCs/radtoad.rsi
-      state: wolf
+      state: radtoad
     - state: ai
   - type: ConditionalSpawner
     prototypes:

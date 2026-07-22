@@ -31,10 +31,10 @@
           SuperMutantEnclave : [ 0, 1 ] # #Misfits Add - Enclave-aligned supermutant latejoin slot.
           SuperMutantFollowerDoctor: [ 1, 1 ] # #Misfits Add: FOTA-aligned supermutant.
           Wastelander: [ -1, -1 ]
-          SuperMutant: [ 3, 3 ] # #Misfits Change /Fix/: make the FEV Mutant role available for mid-round joins.
-          SuperMutantGladiator: [ 2, 2 ] # #Misfits Add: Gladiator variant.
-          SuperMutantNCRRanger: [ 1, 1 ] # #Misfits Add: NCR Ranger variant.
-          SuperMutantNCRTrooper: [ 1, 1 ] # #Misfits Add: NCR Trooper variant.
+          SuperMutant: [ 7, 7 ] # #Misfits Change /Fix/: make the FEV Mutant role available for mid-round joins.
+          # SuperMutantGladiator: [ 0, 0 ] # #Misfits Add: Gladiator variant.
+          # SuperMutantNCRRanger: [ 0, 0 ] # #Misfits Add: NCR Ranger variant.
+          # SuperMutantNCRTrooper: [ 0, 0 ] # #Misfits Add: NCR Trooper variant.
           SuperMutantTribal: [ 1, 1 ] # #Misfits Add: Tribal variant.
           C27: [ 2, 2 ]    # #Misfits Add - C-27 Generic slot (whitelist gates actual access)/// Increased to 2 from 1.
           C27NCR: [ 1, 1 ] # #Misfits Add - C-27 NCR variant.
@@ -152,7 +152,7 @@
           EnclaveReformer: [ 1, 0 ]      # admin-only leader (The Reformer); 0 active latejoin slots
           EnclaveCommander: [ 1, 1 ]
           EnclaveSeniorOfficer: [ 1, 1 ]
-          EnclaveJuniorOfficer: [ 2, 2 ]
+          EnclaveJuniorOfficer: [ 1, 1 ]
           EnclaveNCO: [ 2, 2 ]
           EnclaveEnlisted: [ 4, 4 ]
           EnclaveHeadScientist: [ 1, 1 ]

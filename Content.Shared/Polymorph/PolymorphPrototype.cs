@@ -42,7 +42,7 @@ public sealed partial record PolymorphConfiguration
 
     // Corvax-Change-Start
     [DataField("random", serverOnly: true)]
-    public List<EntitySpawnEntry> RandomEnt;
+    public List<EntitySpawnEntry>? RandomEnt;
     // Corvax-Change-End
 
     /// <summary>
