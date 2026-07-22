@@ -221,7 +221,7 @@
   parent: N14DecorationFlagFlammable
   id: N14DecorationFlagYuma
   name: Flag of Yuma City
-  description: The banner of the city of Yuma, Arizona. It serves as both an important source of food for  tributes to Caesar's Legion, and an important waterway between Arizona and California's southern edge.
+  description: The banner of the city of Yuma, Arizona. It serves as both an important source of food for tributes to Caesar's Legion, and an important waterway between Arizona and California's southern edge.
   components:
   - type: Sprite
     sprite: _Nuclear14/Structures/Decoration/flags.rsi
