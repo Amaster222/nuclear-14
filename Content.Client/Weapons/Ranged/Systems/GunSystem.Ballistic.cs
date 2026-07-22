@@ -19,6 +19,7 @@ public sealed partial class GunSystem
             control.Update(GetBallisticShots(component), component.Capacity);
         }
     }
+    // Misfit Change: outdated.Client/Server Implementation in SharedGunSystem.Ballistics
     /*
         protected override void Cycle(EntityUid uid, BallisticAmmoProviderComponent component, MapCoordinates coordinates)
         {

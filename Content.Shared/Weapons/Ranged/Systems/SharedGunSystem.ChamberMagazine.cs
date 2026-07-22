@@ -9,7 +9,9 @@ using Content.Shared.Weapons.Ranged.Events;
 using Robust.Shared.Containers;
 
 namespace Content.Shared.Weapons.Ranged.Systems;
-
+/*
+Pending refactor
+*/
 public abstract partial class SharedGunSystem
 {
     protected const string ChamberSlot = "gun_chamber";

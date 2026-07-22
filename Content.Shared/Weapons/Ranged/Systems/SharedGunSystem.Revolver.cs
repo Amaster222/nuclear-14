@@ -11,7 +11,9 @@ using Content.Shared.Interaction.Events;
 using JetBrains.Annotations;
 
 namespace Content.Shared.Weapons.Ranged.Systems;
-
+/*
+Pending refactor
+*/
 public partial class SharedGunSystem
 {
     protected const string RevolverContainer = "revolver-ammo";

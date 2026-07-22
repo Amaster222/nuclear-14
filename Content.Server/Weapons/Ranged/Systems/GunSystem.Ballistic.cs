@@ -1,3 +1,6 @@
+
+// Misfit Change: outdated. Client/Server Implementation in SharedGunSystem.Ballistics
+
 /*
 using Content.Shared.Weapons.Ranged.Components;
 using Content.Shared.Weapons.Ranged.Events;

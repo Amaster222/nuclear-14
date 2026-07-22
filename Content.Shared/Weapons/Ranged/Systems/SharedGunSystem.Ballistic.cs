@@ -1,23 +1,18 @@
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Content.Shared.Containers;
 using Content.Shared.DoAfter;
 using Content.Shared.Examine;
 using Content.Shared.Interaction;
 using Content.Shared.Interaction.Events;
-using Content.Shared.Mobs;
 using Content.Shared.Tag;
 using Content.Shared.Verbs;
 using Content.Shared.Weapons.Ranged.Components;
 using Content.Shared.Weapons.Ranged.Events;
-using Content.Shared.Whitelist;
-using JetBrains.Annotations;
 using Robust.Shared.Containers;
 using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
-using Robust.Shared.Utility;
+
 
 namespace Content.Shared.Weapons.Ranged.Systems;
 
@@ -70,28 +65,51 @@ public abstract partial class SharedGunSystem
         UpdateBallisticAppearance(uid, component);
         UpdateAmmoCount(uid);
     }
-
+    /// <summary>
+    /// Sets appearance data on init
+    /// </summary>
+    /// <remarks>
+    /// visualizer handled by system described in <see cref="UpdateBallisticAppearance"/>
+    /// So shouldnt have something like genericvisualizer in yaml
+    /// </remarks>
     private void OnBallisticInit(EntityUid uid, BallisticAmmoProviderComponent component, ComponentInit args)
     {
-        component.Container = Containers.EnsureContainer<Container>(uid, "ballistic-ammo");
-
-        // TODO: This is called twice though we need to support loading appearance data (and we need to call it on MapInit
-        // to ensure it's correct).
-        //# Misfit: ^^^ I dunno what they mean yet it seems to already "support" this
+        // component.Container = Containers.EnsureContainer<Container>(uid, "ballistic-ammo");
         UpdateBallisticAppearance(uid, component);
     }
+    /// <summary>
+    /// Sets appearance data on init
+    /// </summary>
+    /// <remarks>
+    /// visualizer handled by system described in <see cref="UpdateBallisticAppearance"/>
+    /// So shouldnt have something like genericvisualizer in yaml
+    /// </remarks>
     private void OnBallisticMapInit(EntityUid uid, BallisticAmmoProviderComponent component, MapInitEvent args)
     {
+
         // TODO this should be part of the prototype, not set on map init.
         // Alternatively, just track spawned count, instead of unspawned count.
 
-        //# Misfit: I agree ^^^ refactor soon. Not the spawned count thing tho
-        if (component.Proto != null)
-        {
-            component.UnspawnedCount = Math.Max(0, component.Capacity - component.Container.ContainedEntities.Count);
-            UpdateBallisticAppearance(uid, component);
-            Dirty(uid, component);
-        }
+        //# Misfit: -1 is default value
+#if !RELEASE
+        if (component.UnspawnedCount > 0 && component.Proto is null)
+            Log.Error($"Ballistic Comp has ammo but no prototype uid:{uid} Proto:{Prototype(uid)} ");
+
+        if (component.UnspawnedCount > component.Capacity)
+            Log.Error($"Ballistic Comp of Proto: {Prototype(uid)} owner UID:{uid} has too high unspawnedCount: {component.UnspawnedCount} with cap:{component.Capacity}");
+#endif
+        if (component.UnspawnedCount == -1)
+            component.UnspawnedCount = Math.Min(component.Capacity, component.Capacity - component.Container.ContainedEntities.Count);
+#if !RELEASE
+        if (component.UnspawnedCount < 0)
+            Log.Error($"Ballistic Comp of Proto: {Prototype(uid)} owner UID:{uid} unspawnedCount is below 0: {component.UnspawnedCount}");
+#endif
+        //Compon
+        Math.Clamp(component.UnspawnedCount, 0, component.Capacity);
+
+        UpdateBallisticAppearance(uid, component);
+        Dirty(uid, component);
+
     }
 
     protected static int GetBallisticShots(BallisticAmmoProviderComponent component) => component.Container.Count + component.UnspawnedCount;
@@ -267,7 +285,6 @@ public abstract partial class SharedGunSystem
     /// </summary>
     private void OnBallisticVerb(EntityUid uid, BallisticAmmoProviderComponent component, GetVerbsEvent<Verb> args)
     {
-        // TODO MISFIT: check if most of these are needed
         if (!args.CanAccess || !args.CanInteract || args.Hands == null || !component.Cycleable)
             return;
         args.Verbs.Add(new Verb()
@@ -326,34 +343,23 @@ public abstract partial class SharedGunSystem
 
 
     /// <summary>
-    /// update visuals via uid's AppearanceComponent if it exists based on ammo amount
-    /// Should be called after ammo change
+    /// Updates and initializes appearence data on server side
     /// </summary>
+    /// <remarks>
+    /// alot of uids with BallisticComp also have MagazineVisualsComp(only exposed to client GunSystem)
+    /// Which uses custom logic to update appearence depending on ammo capacity and current ammo amount
+    /// basically as ammo gets lower/higher a level adjusts corresponding to a sprite.
+    /// So we dont need to or should define appearance data in yaml to let the system do its thing
+    /// <see cref="GunSystem.MagazineVisuals.cs"/>
+    ///</remarks>
     public void UpdateBallisticAppearance(EntityUid uid, BallisticAmmoProviderComponent component)
     {
-        // Misfit: Keeping this here in-case I missed something and visual flickering happens but
-        //         I think IsFirstTimePredicted is misused here still
-        // if (!Timing.IsFirstTimePredicted || !TryComp<AppearanceComponent>(uid, out var appearance))
-        //    return;
         if (!TryComp<AppearanceComponent>(uid, out var appearance))
             return;
 
         Appearance.SetData(uid, AmmoVisuals.AmmoCount, GetBallisticShots(component), appearance);
         Appearance.SetData(uid, AmmoVisuals.AmmoMax, component.Capacity, appearance);
-
-        // Appearance.SetData(uid, AmmoVisuals.Spent, 0, appearance);
-        // Appearance.SetData(uid, AmmoVisuals.AmmoMax, component.Capacity, appearance);
     }
-    /*
-        private void UpdateBall(EntityUid uid, BallisticAmmoProviderComponent component)
-        {
-            var a = Comp<AppearanceComponent>(uid);
-
-
-
-
-        }
-    */
 
     /// <summary>
     /// Take some or none amount of ammo from giverUID returning a list of that ammo
