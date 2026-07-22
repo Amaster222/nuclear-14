@@ -9363,3 +9363,22 @@ Entries:
   id: 6261
   time: '2026-07-22T23:37:54.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1082
+- author: luckyshotpictures
+  changes:
+    - type: Add
+      message: Yellow tiles show now the raid lines for each faction base.
+    - type: Tweak
+      message: Gave 80s the forge back.
+    - type: Tweak
+      message: Adjusted bike spawners for eligible members.
+    - type: Tweak
+      message: Vault various minor changes.
+    - type: Add
+      message: Provost blacksite
+    - type: Tweak
+      message: Enclave bunker has had it's chasm removed. Also loot it was guarding.
+    - type: Fix
+      message: NCR base fixes.
+  id: 6262
+  time: '2026-07-22T23:38:10.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1081
