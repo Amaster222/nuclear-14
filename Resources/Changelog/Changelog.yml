@@ -9314,3 +9314,20 @@ Entries:
   id: 6258
   time: '2026-07-22T02:01:26.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1075
+- author: Squagg
+  changes:
+    - type: Add
+      message: >-
+        Added Tree of Life faction announcements and Pendant tactical tracking
+        for the Willowers.
+    - type: Tweak
+      message: >-
+        Willower smoke signals now appear in private faction chat with the
+        sender's name.
+    - type: Tweak
+      message: >-
+        Campfire signals now have a 10-minute cooldown, while Tree of Life
+        announcements have no cooldown.
+  id: 6259
+  time: '2026-07-22T02:23:31.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1074
