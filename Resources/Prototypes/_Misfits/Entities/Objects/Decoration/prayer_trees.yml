@@ -78,7 +78,7 @@
       power: 4
     # #Misfits Add - Willower leadership-only Tree announcement.
     - type: SmokeSignal
-      cooldown: 300
+      cooldown: 0 # #Misfits Change - the Tree of Life can announce without a cooldown.
       maxMessageLength: 128
       targetDepartment: Tribe
       nearbyRange: 0

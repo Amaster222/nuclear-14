@@ -104,7 +104,7 @@
     - !type:Ignite
   # #Misfits Add - All bonfires (placed and crafted) double as tribal signal fires
   - type: SmokeSignal
-    cooldown: 300
+    cooldown: 600 # #Misfits Change - campfire signals have a 10-minute cooldown.
     maxMessageLength: 128
     targetDepartment: Tribe
   # #Misfits Fix - No ActivatableUI: left-click must stay as ExtinguishOnInteract.

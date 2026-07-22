@@ -1,16 +1,18 @@
 // #Misfits Add — Smoke Signal server system.
 // Allows any Tribe-department player to activate a signal fire, type a short message,
-// and broadcast it to all online Tribe-department players as a styled popup + chat notice.
+// and broadcast it to all online Tribe-department players in faction chat.
 //
 // Flow:
 //   1. Player right-clicks a SmokeSignalComponent entity → verb appears if they are in Tribe department.
 //   2. Server opens the BUI (text-input window) on the activator's session.
 //   3. Player types message and confirms → SmokeSignalSendMessage arrives.
 //   4. Server validates cooldown, clamps message, records cooldown end time.
-//   5. Message is broadcast as a styled announcement pop-up to every living Tribe-dept player.
+//   5. Message is broadcast in chat to every living Tribe-dept player.
 
+using Content.Server.Chat.Managers;
 using Content.Shared._Misfits.SmokeSignal;
 using Content.Server.Atmos.EntitySystems;
+using Content.Shared.Chat;
 using Content.Shared.Interaction;
 using Content.Shared.Mind;
 using Content.Shared.Mobs.Systems;
@@ -22,6 +24,7 @@ using Robust.Server.GameObjects;
 using Robust.Shared.Player; // #Misfits Fix - ActorComponent lives in Robust.Shared.Player
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
+using Robust.Shared.Utility;
 
 namespace Content.Server._Misfits.SmokeSignal;
 
@@ -36,6 +39,7 @@ public sealed class SmokeSignalSystem : EntitySystem
     [Dependency] private readonly SharedJobSystem _jobs = default!;
     [Dependency] private readonly SharedMindSystem _mind = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!;
+    [Dependency] private readonly IChatManager _chatManager = default!; // #Misfits Change - deliver signals through targeted faction chat.
     [Dependency] private readonly UserInterfaceSystem _ui = default!;
     [Dependency] private readonly IPrototypeManager _prototypes = default!; // #Misfits Add - resolve dual-department Willower jobs
 
@@ -121,11 +125,24 @@ public sealed class SmokeSignalSystem : EntitySystem
         component.CooldownEnd = _timing.CurTime + component.Cooldown;
 
         // Build the broadcast text
-        var broadcastText = Loc.GetString(component.BroadcastMessage, ("message", message)); // #Misfits Change - allow Tree-specific wording
+        var broadcastText = Loc.GetString(component.BroadcastMessage,
+            ("sender", MetaData(sender).EntityName),
+            ("message", message)); // #Misfits Change - identify the signal sender.
 
-        // #Misfits Change - preserve each signal's department compatibility mode for delivery.
+        var filter = Filter.Empty();
         foreach (var playerUid in GetRecipients(component))
-            _popup.PopupEntity(broadcastText, playerUid, playerUid, PopupType.Large);
+            filter.AddPlayer(Comp<ActorComponent>(playerUid).PlayerSession);
+
+        // #Misfits Change - preserve recipient rules while moving full messages to private faction chat.
+        _chatManager.ChatMessageToManyFiltered(
+            filter,
+            ChatChannel.Radio,
+            broadcastText,
+            FormattedMessage.EscapeText(broadcastText),
+            uid,
+            hideChat: false,
+            recordReplay: false,
+            component.AnnouncementColor);
 
         // Also send an atmospheric notice to nearby non-tribe bystanders
         // so the signal is observable in-world (and testable without a tribe job)

@@ -15,6 +15,7 @@ using Content.Shared.Roles.Jobs;
 using Content.Shared.Tag;
 using Robust.Shared.GameObjects;
 using Robust.Shared.GameStates;
+using Robust.Shared.Localization;
 using Robust.Shared.Map;
 using Robust.Shared.Maths;
 using Robust.Shared.Player;
@@ -142,6 +143,7 @@ public sealed class WillowerTreeCommunicationsTest
         var server = pair.Server;
         var map = await pair.CreateTestMap();
         var entities = server.ResolveDependency<IEntityManager>();
+        var locale = server.ResolveDependency<ILocalizationManager>();
 
         await server.WaitAssertion(() =>
         {
@@ -149,10 +151,12 @@ public sealed class WillowerTreeCommunicationsTest
             var treeSignal = entities.GetComponent<SmokeSignalComponent>(tree);
             var signalFire = entities.SpawnEntity("MisfitsTribalSignalFire", map.GridCoords);
             var defaultSignal = entities.GetComponent<SmokeSignalComponent>(signalFire);
+            var bonfire = entities.SpawnEntity("N14Bonfire", map.GridCoords);
+            var bonfireSignal = entities.GetComponent<SmokeSignalComponent>(bonfire);
 
             Assert.Multiple(() =>
             {
-                Assert.That(treeSignal.Cooldown, Is.EqualTo(TimeSpan.FromSeconds(300)));
+                Assert.That(treeSignal.Cooldown, Is.EqualTo(TimeSpan.Zero));
                 Assert.That(treeSignal.MaxMessageLength, Is.EqualTo(128));
                 Assert.That(treeSignal.TargetDepartment, Is.EqualTo("Tribe"));
                 Assert.That(treeSignal.NearbyRange, Is.Zero);
@@ -167,6 +171,16 @@ public sealed class WillowerTreeCommunicationsTest
                 Assert.That(defaultSignal.BroadcastMessage, Is.EqualTo("smoke-signal-broadcast"));
                 Assert.That(defaultSignal.CooldownMessage, Is.EqualTo("smoke-signal-cooldown"));
                 Assert.That(defaultSignal.NearbyRange, Is.EqualTo(18f));
+                Assert.That(defaultSignal.Cooldown, Is.EqualTo(TimeSpan.FromMinutes(10)));
+                Assert.That(bonfireSignal.Cooldown, Is.EqualTo(TimeSpan.FromMinutes(10)));
+                Assert.That(locale.GetString(treeSignal.BroadcastMessage,
+                        ("sender", "Willow"),
+                        ("message", "Return to the village.")),
+                    Is.EqualTo("Willow speaks through the Tree of Life: Return to the village."));
+                Assert.That(locale.GetString(defaultSignal.BroadcastMessage,
+                        ("sender", "Willow"),
+                        ("message", "Raiders approaching.")),
+                    Is.EqualTo("Willow sends a smoke signal: Raiders approaching."));
             });
         });
 
@@ -174,7 +188,7 @@ public sealed class WillowerTreeCommunicationsTest
     }
 
     [Test]
-    public async Task TreeAnnouncementDeliversToLivingWillowersAndSharesCooldown()
+    public async Task TreeAnnouncementDeliversToLivingWillowersWithoutCooldown()
     {
         await using var pair = await PoolManager.GetServerClient(new PoolSettings { Dirty = true });
         var server = pair.Server;
@@ -245,7 +259,7 @@ public sealed class WillowerTreeCommunicationsTest
             entities.EventBus.RaiseLocalEvent(tree, longMessage);
             var cooldownEnd = component.CooldownEnd;
 
-            Assert.That(cooldownEnd, Is.EqualTo(timing.CurTime + TimeSpan.FromSeconds(300)));
+            Assert.That(cooldownEnd, Is.EqualTo(timing.CurTime));
 
             entities.EventBus.RaiseLocalEvent(tree, new SmokeSignalSendMessage("second") { Actor = elder });
             Assert.That(component.CooldownEnd, Is.EqualTo(cooldownEnd));
