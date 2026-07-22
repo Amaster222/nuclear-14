@@ -16,12 +16,10 @@
   configuration:
     entity: MobMonkey
     transferName: true
-    stripNameModifier: false # keep it when going monkey -> human -> monkey
-    componentsToTransfer: [] # no language chud
+    copiedComponents: [] # no language chud
     forced: true
     revertOnCrit: false
     revertOnDeath: false
-    revertOnDelete: false
     inventory: Transfer
     polymorphSound: /Audio/Animals/monkey_scream.ogg
 
@@ -30,12 +28,10 @@
   configuration:
     entity: MobHuman
     transferName: true # human named monkey (MK-28) kino
-    stripNameModifier: false
     # yes language so monkey is still forced to speak monkey
     forced: true
     revertOnCrit: false
     revertOnDeath: false
-    revertOnDelete: false
     inventory: Transfer
     polymorphSound: /Audio/Voice/Human/malescream_1.ogg
 
@@ -44,12 +40,10 @@
   configuration:
     entity: MobKobold
     transferName: true
-    stripNameModifier: false # keep it when going monkey -> human -> monkey
-    componentsToTransfer: [] # no language chud
+    copiedComponents: [] # no language chud
     forced: true
     revertOnCrit: false
     revertOnDeath: false
-    revertOnDelete: false
     inventory: Transfer
     polymorphSound: /Audio/Animals/monkey_scream.ogg
 
@@ -58,12 +52,10 @@
   configuration:
     entity: MobReptilian
     transferName: true # human named monkey (MK-28) kino
-    stripNameModifier: false
     # yes language so monkey is still forced to speak monkey
     forced: true
     revertOnCrit: false
     revertOnDeath: false
-    revertOnDelete: false
     inventory: Transfer
     polymorphSound: /Audio/Voice/Reptilian/reptilian_scream.ogg
 
@@ -72,11 +64,10 @@
   configuration:
     entity: MobMouse
     transferName: true
-    componentsToTransfer: [] # no language chud
+    copiedComponents: [] # no language chud
     forced: true
     revertOnCrit: false
     revertOnDeath: false
-    revertOnDelete: false
     inventory: Drop
     polymorphSound: /Audio/Animals/mouse_squeak.ogg
 
@@ -107,10 +98,9 @@
     forced: false
     inventory: Drop
     transferName: true
-    componentsToTransfer: []
+    copiedComponents: []
     revertOnCrit: false
     revertOnDeath: false
-    revertOnDelete: false
 
 - type: polymorph
   id: Slime
@@ -119,10 +109,9 @@
     forced: false
     inventory: Drop
     transferName: true
-    componentsToTransfer: []
+    copiedComponents: []
     revertOnCrit: false
     revertOnDeath: false
-    revertOnDelete: false
 
 - type: polymorph
   id: Snail
@@ -131,10 +120,9 @@
     forced: false
     inventory: Drop
     transferName: true
-    componentsToTransfer: []
+    copiedComponents: []
     revertOnCrit: false
     revertOnDeath: false
-    revertOnDelete: false
     allowRepeatedMorphs: false
 
 - type: polymorph
@@ -144,10 +132,9 @@
     forced: false
     inventory: Drop
     transferName: true
-    componentsToTransfer: []
+    copiedComponents: []
     revertOnCrit: false
     revertOnDeath: false
-    revertOnDelete: false
     allowRepeatedMorphs: false
 
 - type: polymorph
@@ -159,7 +146,6 @@
     transferName: false # fibula time
     revertOnCrit: false
     revertOnDeath: false
-    revertOnDelete: false
 
 - type: polymorph
   id: VoidMagnet
@@ -173,7 +159,6 @@
     polymorphSound: /Audio/Magic/ethereal_enter.ogg
     exitPolymorphSound: /Audio/Magic/ethereal_exit.ogg
     duration: 10
-    effectProto: EffectDesynchronizer # TODO: make a more evil one
 
 - type: entity
   parent: MobMouse
@@ -187,10 +172,6 @@
     layers:
     - map: ["enum.DamageStateVisualLayers.Base"]
       state: void_pocket
-  - type: SpriteMovement
-    remove: true
-  - type: DamageStateVisuals
-    remove: true
   - type: MovementSpeedModifier
     baseSprintSpeed: 0
     baseWalkSpeed: 0

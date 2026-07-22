@@ -83,6 +83,7 @@ public sealed partial class GeneticsHealthChange : EntityEffect
     [DataField(required: true)] public DamageSpecifier Damage = default!;
     [DataField] public bool ScaleByQuantity;
     [DataField] public bool IgnoreResistances = true;
+    [DataField] public bool UseTargeting = true;
     [DataField] public TargetBodyPart TargetPart = TargetBodyPart.All;
 
     protected override string? ReagentEffectGuidebookText(IPrototypeManager prototype, IEntitySystemManager entSys) => null;
@@ -94,15 +95,18 @@ public sealed partial class GeneticsHealthChange : EntityEffect
             scale = ScaleByQuantity ? reagentArgs.Quantity * reagentArgs.Scale : reagentArgs.Scale;
 
         args.EntityManager.EventBus.RaiseLocalEvent(args.TargetEntity,
-            new GeneticsHealthChangeEffectEvent(Damage * scale, IgnoreResistances, TargetPart));
+            new GeneticsHealthChangeEffectEvent(
+                Damage * scale,
+                IgnoreResistances,
+                UseTargeting ? TargetPart : null));
     }
 }
 
-public sealed class GeneticsHealthChangeEffectEvent(DamageSpecifier damage, bool ignoreResistances, TargetBodyPart targetPart) : EntityEventArgs
+public sealed class GeneticsHealthChangeEffectEvent(DamageSpecifier damage, bool ignoreResistances, TargetBodyPart? targetPart) : EntityEventArgs
 {
     public readonly DamageSpecifier Damage = damage;
     public readonly bool IgnoreResistances = ignoreResistances;
-    public readonly TargetBodyPart TargetPart = targetPart;
+    public readonly TargetBodyPart? TargetPart = targetPart;
 }
 
 public sealed partial class GeneticsIgnite : EntityEffect

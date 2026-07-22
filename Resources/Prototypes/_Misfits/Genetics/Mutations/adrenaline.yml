@@ -24,6 +24,7 @@
       sprite: _Misfits/Actions/mutations.rsi
       state: adrenaline
     itemIconStyle: BigAction
+    event: !type:InjectChemicalsActionEvent
   - type: InjectChemicalsAction
     main:
       # no Pump Up and using adrenaline instead of determination
@@ -37,4 +38,3 @@
       quantity: 7
       popup: MutationAdrenalineRush-comedown-popup
     comedownDelay: 25
-    event: !type:InjectChemicalsActionEvent
