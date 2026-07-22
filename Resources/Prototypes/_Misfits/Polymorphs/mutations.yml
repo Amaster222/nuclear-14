@@ -156,8 +156,8 @@
     forced: true # have to wait it out chud
     revertOnDeath: true
     allowRepeatedMorphs: false
-    polymorphSound: /Audio/Magic/ethereal_enter.ogg
-    exitPolymorphSound: /Audio/Magic/ethereal_exit.ogg
+    polymorphSound: /Audio/Effects/teleport_departure.ogg
+    exitPolymorphSound: /Audio/Effects/teleport_arrival.ogg
     duration: 10
 
 - type: entity
