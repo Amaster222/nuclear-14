@@ -31,12 +31,15 @@ public sealed partial class SharedActionStaminaCostSystem : EntitySystem
         if (!TryComp<StaminaComponent>(args.User, out var staminaComp))
             return;
 
-        // if (!staminaComp.Critical)
-        //     return;
+        float staminaDamage;
+        if (ent.Comp.StaminaPercent > 0)
+            staminaDamage = ent.Comp.StaminaPercent * staminaComp.CritThreshold / 100;
+        else
+            staminaDamage = ent.Comp.Stamina;
 
-        if ((ent.Comp.Stamina + staminaComp.StaminaDamage) < staminaComp.CritThreshold)
+        if ((staminaDamage + staminaComp.StaminaDamage) < staminaComp.CritThreshold)
         {
-            _stamina.TakeStaminaDamage(args.User, ent.Comp.Stamina, visual: false);
+            _stamina.TakeStaminaDamage(args.User, staminaDamage, visual: false);
             return;
         }
         _popup.PopupClient(Loc.GetString("misfits-action-stamina-insufficient"), args.User, args.User);
