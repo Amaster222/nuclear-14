@@ -87,6 +87,6 @@
   availableFaction:
   - Enclave
   materials:
-    Circuitry: 2000
+    Circuitry: 1000
     Steel: 1500
     N14Copper: 1000
