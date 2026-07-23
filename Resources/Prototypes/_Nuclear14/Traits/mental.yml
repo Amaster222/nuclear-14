@@ -17,6 +17,12 @@
   id: N14Pickpocket
   category: Mental
   points: -6
+  requirements:
+  - !type:CharacterJobRequirement
+    inverted: true
+    jobs:
+    - CaesarLegionSlave # Restricted from Slaves & Prisoners - if they had these traits, they wouldn't be stuck in the first place!
+    - NCRPrisoner
   functions:
     - !type:TraitReplaceComponent
       components:
