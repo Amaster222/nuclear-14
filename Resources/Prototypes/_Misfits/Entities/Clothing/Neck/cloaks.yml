@@ -5,8 +5,8 @@
   description: Dark brown with white patterns, thick enough to provide some protection.
   components:
   - type: Sprite
-    sprite: _Misfits/Clothing/Neck/westernponcho.rsi
+    sprite: _Misfits/Clothing/Neck/WesternPoncho.rsi
   - type: Clothing
-    sprite: _Misfits/Clothing/Neck/westernponcho.rsi
+    sprite: _Misfits/Clothing/Neck/WesternPoncho.rsi
   - type: StaticPrice
     price: 50
