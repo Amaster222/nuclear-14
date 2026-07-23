@@ -9,14 +9,12 @@ public partial class SharedGunSystem
 
     protected virtual void Misfit_InitializeRevolver()
     {
-
         SubscribeLocalEvent<RevolverAmmoProviderComponent, BeforeUseInHandEvent>(BeforeOnRevolverUse);
     }
-    // TODO: before PR do this right
+
     private void BeforeOnRevolverUse(EntityUid gunUid, RevolverAmmoProviderComponent comp, BeforeUseInHandEvent args)
     {
-        if (comp.CurrentIndex != 0) return;
-
+        if (GetRevolverUnspentCount(comp) > 0) return;
         EmptyRevolver(gunUid, comp, args.User);
         args.Handled = true;
     }
