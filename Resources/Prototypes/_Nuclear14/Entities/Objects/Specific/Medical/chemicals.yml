@@ -36,8 +36,7 @@
     onlyAffectsMobs: false
     solutionName: pen
     transferAmount: 30
-    selfInjectionDelay: 1 # #Misfits Add - N14 chemical syringes take time to inject.
-    otherInjectionDelay: 2
+    otherInjectionDelay: 1 # #Misfits Add - N14 chemical syringes take time to inject others.
   - type: Appearance
   - type: WelderRefinable
     refineResult:

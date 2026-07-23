@@ -11,8 +11,8 @@ namespace Content.IntegrationTests.Tests._Misfits;
 [TestFixture]
 public sealed class N14SyringeInjectionDelayTests
 {
-    [TestCase(true, 1f)]
-    [TestCase(false, 2f)]
+    [TestCase(true, 0f)]
+    [TestCase(false, 1f)]
     public async Task InjectionWaitsForConfiguredDelay(bool selfInject, float delaySeconds)
     {
         await using var pair = await PoolManager.GetServerClient();
@@ -23,6 +23,9 @@ public sealed class N14SyringeInjectionDelayTests
         var solutions = entities.System<SharedSolutionContainerSystem>();
 
         EntityUid syringe = default;
+        var expectedInitialVolume = selfInject
+            ? FixedPoint2.Zero
+            : FixedPoint2.New(25);
 
         await server.WaitAssertion(() =>
         {
@@ -42,15 +45,15 @@ public sealed class N14SyringeInjectionDelayTests
             }
 
             Assert.That(solutions.TryGetSolution(syringe, "pen", out _, out var solution), Is.True);
-            Assert.That(solution.Volume, Is.EqualTo(FixedPoint2.New(25)));
+            Assert.That(solution.Volume, Is.EqualTo(expectedInitialVolume));
         });
 
-        await pair.RunSeconds(delaySeconds - 0.25f);
+        await pair.RunSeconds(Math.Max(delaySeconds - 0.25f, 0f));
 
         await server.WaitAssertion(() =>
         {
             Assert.That(solutions.TryGetSolution(syringe, "pen", out _, out var solution), Is.True);
-            Assert.That(solution.Volume, Is.EqualTo(FixedPoint2.New(25)));
+            Assert.That(solution.Volume, Is.EqualTo(expectedInitialVolume));
         });
 
         await pair.RunSeconds(0.5f);
