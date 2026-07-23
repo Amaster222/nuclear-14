@@ -29,6 +29,12 @@ public sealed class EnclaveMicroBombSystem : EntitySystem
     private const string EnclaveDepartmentId = "Enclave";
     private const string ImplantPrototypeId = "EnclaveMicroBombImplant";
 
+    private static readonly HashSet<string> ImplantExemptJobs =
+    [
+        "EnclaveCommander",
+        "EnclaveReformer",
+    ];
+
     [Dependency] private readonly IPrototypeManager _prototypes = default!;
     [Dependency] private readonly SharedJobSystem _jobs = default!;
     [Dependency] private readonly SharedSubdermalImplantSystem _implants = default!;
@@ -57,8 +63,12 @@ public sealed class EnclaveMicroBombSystem : EntitySystem
 
     private void OnPlayerSpawnComplete(PlayerSpawnCompleteEvent args)
     {
-        if (args.JobId == null || !_prototypes.TryIndex<DepartmentPrototype>(EnclaveDepartmentId, out var department))
+        if (args.JobId == null ||
+            ImplantExemptJobs.Contains(args.JobId) ||
+            !_prototypes.TryIndex<DepartmentPrototype>(EnclaveDepartmentId, out var department))
+        {
             return;
+        }
 
         if (!department.Roles.Any(role => role.Id == args.JobId))
             return;

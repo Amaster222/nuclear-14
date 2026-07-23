@@ -489,7 +489,7 @@
     outerClothing: MisfitsEnclavePowerArmor
     jumpsuit: ClothingSuperMutantLabcoat
     ears: N14ClothingHeadsetEnclave
-    id: N14IDEnclaveTrooper
+    id: N14EnclaveTrooperPipboy
     belt: ClothingBeltMilitary
     pocket1: EnclaveSoldierloadoutkits
 - type: playTimeTracker
