@@ -9382,3 +9382,10 @@ Entries:
   id: 6262
   time: '2026-07-22T23:38:10.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1081
+- author: Oli
+  changes:
+    - type: Fix
+      message: Capitalization on western poncho files
+  id: 6263
+  time: '2026-07-23T00:49:28.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1078
