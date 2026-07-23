@@ -29,7 +29,7 @@
     sprite: _Misfits/Objects/Weapons/Guns/Pistols/gausspistol.rsi
   - type: AmmoCounter
   - type: Gun
-    fireRate: 2
+    fireRate: 2.5
     selectedMode: FullAuto
     availableModes:
     - FullAuto
