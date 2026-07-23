@@ -9412,3 +9412,10 @@ Entries:
   id: 6266
   time: '2026-07-23T16:26:27.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1087
+- author: Dpellowski
+  changes:
+    - type: Fix
+      message: Genetic CD, Genetics Work while cuffed
+  id: 6267
+  time: '2026-07-23T19:47:31.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1089
