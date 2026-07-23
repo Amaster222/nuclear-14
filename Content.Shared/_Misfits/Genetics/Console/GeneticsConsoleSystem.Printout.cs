@@ -49,13 +49,13 @@ public sealed partial class GeneticsConsoleSystem
 
     private string GetScanText(EntityUid mob)
     {
-        _sequences.Clear();
-        _genome.AddSequenceStates(mob, _sequences);
+        var sequences = new List<SequenceState>();
+        _genome.AddSequenceStates(mob, sequences);
         _builder.Clear();
         _builder.AppendLine(Loc.GetString("genetics-printout-title"));
         _builder.AppendLine(Loc.GetString("genetics-printout-subject", ("name", Name(mob))));
-        _builder.AppendLine(Loc.GetString("genetics-printout-sequences", ("count", _sequences.Count)));
-        foreach (var s in _sequences)
+        _builder.AppendLine(Loc.GetString("genetics-printout-sequences", ("count", sequences.Count)));
+        foreach (var s in sequences)
         {
             var rarity = s.Rarity.RarityChar();
             _builder.AppendLine(Loc.GetString("genetics-printout-sequence", ("rarity", rarity), ("number", s.Number)));
