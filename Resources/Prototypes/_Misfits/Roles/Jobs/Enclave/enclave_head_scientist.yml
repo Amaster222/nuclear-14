@@ -50,7 +50,7 @@
     belt: ClothingBeltMilitary
     ears: N14ClothingHeadsetEnclave
     pocket2: EnclaveScientistloadoutkits
-    id: N14IDEnclaveNoncombat
+    id: N14EnclaveNoncombatPipboy
   satchel: N14ClothingBackpackSatchelMilitaryFilled
   storage:
     back:

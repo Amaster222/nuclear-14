@@ -53,7 +53,7 @@
     ears: N14ClothingHeadsetEnclave
     pocket1: EnclaveOfficerloadoutkits
     pocket2: RadioHandheld
-    id: N14IDEnclaveOfficer
+    id: N14EnclaveOfficerPipboy
   satchel: N14ClothingBackpackSatchelMilitaryFilled
   duffelbag: N14ClothingBackpackDuffelMilitaryFilled
   storage:
