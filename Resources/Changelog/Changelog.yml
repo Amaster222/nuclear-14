@@ -9398,3 +9398,10 @@ Entries:
   id: 6264
   time: '2026-07-23T00:54:32.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/995
+- author: Dpellowski
+  changes:
+    - type: Add
+      message: Enclave Behavior Reaffirming device (Keep your contract)
+  id: 6265
+  time: '2026-07-23T02:26:22.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1083
