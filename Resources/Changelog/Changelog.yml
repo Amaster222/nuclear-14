@@ -9419,3 +9419,10 @@ Entries:
   id: 6267
   time: '2026-07-23T19:47:31.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1089
+- author: Dpellowski
+  changes:
+    - type: Fix
+      message: Bug 1 and 1.5 in Discord
+  id: 6268
+  time: '2026-07-23T20:23:16.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1091
