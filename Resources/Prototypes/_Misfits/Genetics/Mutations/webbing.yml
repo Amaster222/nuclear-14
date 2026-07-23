@@ -17,6 +17,7 @@
     added:
     - type: Sericulture # taken from Arachnid
       action: ActionSericulture
+      checkCanInteract: false
       productionLength: 2
       entityProduced: MaterialWebSilk1
       hungerCost: 4
