@@ -9426,3 +9426,27 @@ Entries:
   id: 6268
   time: '2026-07-23T20:23:16.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1091
+- author: RedBookcase
+  changes:
+    - type: Add
+      message: Lots of new Jukebox songs.
+    - type: Add
+      message: >-
+        Standardized stats for BoS Midwest PA, restored them to parity with
+        standard armor (BoS Commander Midwest Armor was worse than the regular
+        T-51...)
+    - type: Add
+      message: >-
+        Updated Enclave PA models to reflect recent buffs to other standard PA,
+        added missing reflect values, etc. 
+    - type: Add
+      message: Enclave roles were missing spawn prototypes for admin use, added em in.
+    - type: Tweak
+      message: >-
+        Lowered Legion Slave slots to 2 to be in line with NCR and take
+        overworked Auxilia and Priestesses off suicide watch. Restricted
+        Pickpocket, Silent Takedown, and Handy Tools traits to not be available
+        to NCR Prisoners or Legion Slaves.
+  id: 6269
+  time: '2026-07-23T23:18:04.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1036
