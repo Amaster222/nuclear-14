@@ -1,5 +1,5 @@
 ent-NCFlagWallBazaar = Flag of the Town of Bazaar
-    .desc = The banner of the Town of Bazaar, based in the southern remains of Wendover, Utah. At first a camp of scavengers, the Vulture Tribe eventually civilized into a fully fledged trading outpost of towners.
+    .desc = The banner of the Town of Bazaar, based in the southern remains of Wendover, Utah. When the bombs first dropped, Wendover split into three survivor communities, the Locusts, Vultures and Willowers. At first a camp of scavengers, the Vulture Tribe eventually civilized into a fully fledged trading outpost of towners.
 ent-NCFlagWallTown = Flag of the Caravan Network
     .desc = The banner of the Caravan Network, an organization of contractors, suppliers, merchants and their bodyguards that stretch from the West Coast to the Midwest. They maintain neutrality and will gladly take anyone's money.
 ent-NCFlagMexico = Flag of Mexico

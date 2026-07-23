@@ -182,7 +182,7 @@
   parent: N14DecorationFlagFlammable
   id: N14DecorationFlagLocust
   name: Flag of the Locust Tribe
-  description: The banner of the Locusts, a tribe of raiders native to Wendover, Utah. The gang goes through decades of inactivity after members die off or return to normal life, before the next wave of violent bandits takes up the abandoned flags to continue the legacy of killing and looting the valley.
+  description: The banner of the Locusts, a tribe of raiders native to Wendover, Utah. When the bombs first dropped, Wendover split into three survivor communities, the Locusts, Vultures and Willowers. The gang goes through decades of inactivity after members die off or return to normal life, before the next wave of violent bandits takes up the abandoned flags to continue the legacy of killing and looting the valley.
   components:
   - type: Sprite
     sprite: _Nuclear14/Structures/Decoration/flags.rsi

@@ -203,7 +203,7 @@
   graph: DecorationFlagBazaar
   startNode: start
   targetNode: FlagBazaar
-  description: The banner of the Town of Bazaar, based in the southern remains of Wendover, Utah. At first a camp of scavengers, the Vulture Tribe eventually civilized into a fully fledged trading outpost of towners.
+  description: The banner of the Town of Bazaar, based in the southern remains of Wendover, Utah. When the bombs first dropped, Wendover split into three survivor communities, the Locusts, Vultures and Willowers. At first a camp of scavengers, the Vulture Tribe eventually civilized into a fully fledged trading outpost of towners.
 #  category: construction-category-furniture
   objectType: Structure
   placementMode: SnapgridCenter
@@ -374,7 +374,7 @@
   startNode: start
   targetNode: FlagTribe
   # category: construction-category-decorations
-  description: The banner of the Willowers Tribe, a local settlement who worship something called the 'tree of life' which is illustrated before your eyes now. Yet they are not weak pacifists, and are known for great hunts.
+  description: The banner of the Willowers Tribe, a local settlement who worship the 'tree of life' illustrated on this flag. When the bombs first dropped, Wendover split into three survivor communities, the Locusts, Vultures and Willowers. The Willowers harvests and hunts were responsible for keeping all three fed in the first few years.
   hide: false
   icon:
     sprite: _Misfits/Structures/Decoration/tribal_banner.rsi
