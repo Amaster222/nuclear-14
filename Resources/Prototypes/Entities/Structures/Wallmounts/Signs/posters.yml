@@ -108,7 +108,7 @@
   parent: PosterBase
   id: PosterContrabandSmoke
   name: "Smoke"
-  description: "A poster advertising a cigarette corporation that went under when the bombs dropped. The advert says their tobacco is toasted, though... maybe you can find an old pack?"
+  description: "A poster advertising a tobacco company that went under when the bombs dropped. The advert says their tobacco is toasted, though... maybe you can find an old pack?"
   components:
   - type: Sprite
     state: poster7_contraband
