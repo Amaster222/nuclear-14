@@ -9487,3 +9487,10 @@ Entries:
   id: 6273
   time: '2026-07-24T02:36:25.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1092
+- author: Bradysgaming
+  changes:
+    - type: Tweak
+      message: Benezine does poison damage now
+  id: 6274
+  time: '2026-07-24T03:36:11.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1093
