@@ -224,8 +224,8 @@
 - type: entity
   parent: PosterBase
   id: PosterContrabandBorgFancy
-  name: "Borg Fancy"
-  description: "An advertisement for customizing personal robots to be exceptionally fancy. Doing so will sadly void your RobCo warranty."
+  name: "Mister Fancy"
+  description: "An advertisement for customizing personal Mister Handies to be exceptionally fancy. Doing so will sadly void your RobCo warranty."
   components:
   - type: Sprite
     state: poster20_contraband
@@ -233,8 +233,8 @@
 - type: entity
   parent: PosterBase
   id: PosterContrabandBorgFancyv2
-  name: "Borg Fancy v2"
-  description: "An advertisement for customizing your home robots to be the fanciest in the neighborhood. While you don't have to worry about your RobCo warranty anymore, you doubt the service is still being offered."
+  name: "Mister Fancy v2"
+  description: "An advertisement for customizing your personal Mister Handy to be the fanciest in the neighborhood. While you don't have to worry about your RobCo warranty anymore, you doubt the service is still being offered."
   components:
   - type: Sprite
     state: poster21_contraband
