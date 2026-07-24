@@ -29,7 +29,11 @@ public sealed partial class SharedActionStaminaCostSystem : EntitySystem
     private void OnActionAttempt(Entity<ActionStaminaCostComponent> ent, ref ActionAttemptEvent args)
     {
         if (!TryComp<StaminaComponent>(args.User, out var staminaComp))
+        {
+            args.Cancelled = true;
+            _popup.PopupClient(Loc.GetString("misfits-action-stamina-nonexistent"), args.User, args.User);
             return;
+        }
 
         float staminaDamage;
         if (ent.Comp.StaminaPercent > 0)
