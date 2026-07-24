@@ -954,7 +954,7 @@
   parent: N14HealingPowder
   id: N14MourningPoultice
   name: mourning poultice
-  description: A bag of powder made from poisonous flowers for use within tribal ceremenoies.
+  description: A bag of powder made from poisonous flowers for use within tribal ceremonies.
   components:
   - type: Sprite
     sprite: _Nuclear14/Objects/Specific/Medical/drugs.rsi
