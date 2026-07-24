@@ -9450,3 +9450,13 @@ Entries:
   id: 6269
   time: '2026-07-23T23:18:04.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1036
+- author: paige404
+  changes:
+    - type: Fix
+      message: >-
+        Put robots in their place (by not allowing them to melee charge
+        anymore). C-27s evade this on a technicality, but you're on THIN ICE
+        MISTER.
+  id: 6270
+  time: '2026-07-24T01:01:11.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1084
