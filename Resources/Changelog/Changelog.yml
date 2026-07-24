@@ -9460,3 +9460,10 @@ Entries:
   id: 6270
   time: '2026-07-24T01:01:11.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1084
+- author: Squagg
+  changes:
+    - type: Tweak
+      message: N14 chemical syringes now take one second to inject someone else.
+  id: 6271
+  time: '2026-07-24T01:40:56.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1088
