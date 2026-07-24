@@ -147,8 +147,6 @@
     - type: loadout
       id: N14TrenchClub
     - type: loadout
-      id: N14LongSword
-    - type: loadout
       id: N14GladiusLegion
     - type: loadout
       id: N14LongSword

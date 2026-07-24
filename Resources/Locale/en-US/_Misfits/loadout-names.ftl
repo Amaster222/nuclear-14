@@ -798,7 +798,6 @@ loadout-name-N14Gladius = gladius
 loadout-name-N14GladiusLegion = gladius
 loadout-name-N14ChineseSword = chinese officer sword
 loadout-name-N14LongSword = longsword
-loadout-name-N14LongSwordBoS = longsword
 loadout-name-N14CeremonialSwordCent = ceremonial sword
 loadout-name-N14GoliathFistLeader = goliath power fist
 loadout-name-N14TrenchClub = trench club
