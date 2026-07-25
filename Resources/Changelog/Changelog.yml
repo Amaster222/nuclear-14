@@ -9501,3 +9501,10 @@ Entries:
   id: 6275
   time: '2026-07-25T23:20:21.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1097
+- author: aftemath434
+  changes:
+    - type: Add
+      message: Enclave Heavy Ordnance Plans with crafting costs :)
+  id: 6276
+  time: '2026-07-25T23:37:43.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1086
