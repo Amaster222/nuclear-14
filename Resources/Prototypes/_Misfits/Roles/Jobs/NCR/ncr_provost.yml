@@ -35,9 +35,7 @@
             - Wastelander
             - NCR
 
-# Major shares the Captain's visual loadout — distinct rank is represented via
-# the access level. Use the Major collar pin directly so the rank is shown
-# without relying on character setup loadout selection.
+
 - type: startingGear
   id: NCRProvostGear
   equipment:
