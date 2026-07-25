@@ -100,13 +100,13 @@
           BoSInitiate: [ 3, 3 ]  #Misfits Change /Add/
           BoSOffDuty: [4, 4] # Misfits Change - new off-duty BoS role for non-combatants and latejoiners
           Overseer: [ 1, 1 ]
-          VaultDoctor: [ 1, 2 ]
-          VaultDweller: [ 4, 5 ]
-          VaultEngineer: [ 1, 2 ]
-          VaultSecurity: [ 1, 4 ]
-          VaultCargoSpecialist: [ 1, 2 ]
-          VaultCourier: [ 1, 2 ]
-          VaultSalvageSpecialist: [ 1, 4 ]
+          VaultDoctor: [ 3, 3 ]
+          VaultDweller: [ 4, 4 ]
+          VaultEngineer: [ 1, 1 ]
+          VaultSecurity: [ 3, 3 ]
+          VaultCargoSpecialist: [ 1, 1 ]
+          VaultCourier: [ 1, 1 ]
+          VaultSalvageSpecialist: [ 2, 2 ]
           CaesarLegionLegate: [ 1, 0 ] # Forge-Legion # #Misfits Tweak - 0 active slots (admin-notify role)
           CaesarLegionCenturion: [ 1, 1 ] # Forge-Legion
           CaesarLegionVeteranDecanus: [ 1, 1 ] # Forge-Legion
