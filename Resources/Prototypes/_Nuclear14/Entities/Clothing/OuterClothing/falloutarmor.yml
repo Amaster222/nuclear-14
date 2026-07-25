@@ -821,8 +821,8 @@
   - type: Clothing
     sprite: _Nuclear14/Clothing/OuterClothing/Armor/falloutNCRvestcoatblack.rsi
   - type: ClothingSpeedModifier
-    walkModifier: 1.05
-    sprintModifier: 1.05
+    walkModifier: 1.00
+    sprintModifier: 1.00
   - type: Armor
     modifiers:
       coefficients:
