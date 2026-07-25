@@ -60,6 +60,7 @@
           Townsperson: [ -1, -1 ] # #Misfits Change - uncapped, now default starter role
           NCRMajor: [ 1, 0 ] # whitelist-only command role; 0 active late-join slots
           NCRCommander: [ 1, 1 ]
+          NCRProvost: [ 1, 1 ]
           NCRExecutiveOfficer: [ 1, 1 ]
           NCRPlatoonLeader: [ 1, 1 ]
           NCRRO: [ 1, 1 ]

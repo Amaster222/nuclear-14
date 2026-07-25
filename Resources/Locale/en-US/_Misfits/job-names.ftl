@@ -177,3 +177,6 @@ job-description-caesar-legion-Acolyte-of-mars = You are a devoted Acolyte of Mar
 
 job-name-bos-off-duty = Off Duty BOS
 job-description-bos-off-duty = You are an off-duty member of the Brotherhood of Steel. You are not to participate in combat operations as this week you are not on duty.
+
+job-name-ncr-provost = NCR Provost
+job-description-ncr-provost = You are An investigator sent on behalf of the Provost office.
