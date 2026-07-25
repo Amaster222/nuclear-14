@@ -324,7 +324,7 @@
   parent: PosterBase
   id: PosterContrabandCC64KAd
   name: "CC 64K Movie Ad"
-  description: "A poster for a movie from the European Commonwealth, about how a powerful computer takes control of the failing Soviet Union, and how Comrade Calculator was all to eager to control the rest of the world."
+  description: "A poster for a movie from the European Commonwealth, about how a powerful computer takes control of the failing Soviet Union, and how Comrade Calculator was all too eager to control the rest of the world."
   components:
   - type: Sprite
     state: poster31_contraband
