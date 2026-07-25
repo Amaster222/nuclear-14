@@ -221,7 +221,7 @@
   id: BedsheetNT
   parent: BedsheetBase
   name: NT bedsheet
-  description: It has the Nanotrasen logo on it and an aura of duty.
+  description: It has an old corporate logo on it and an aura of duty.
   components:
   - type: Sprite
     state: sheetNT
