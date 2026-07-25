@@ -120,6 +120,7 @@
   color: "#662727"
   uiCategory: MajorFaction
   roles:
+  - NCRProvost #_Misfits/Roles/Jobs/NCR/ncr_provost.yml
   - NCRMilitaryPoliceRecruit
   - NCRMilitaryPoliceSergeant
   - NCRMilitaryPoliceCaptain
