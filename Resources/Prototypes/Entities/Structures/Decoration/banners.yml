@@ -31,7 +31,7 @@
   id: BannerNanotrasen
   parent: BannerBase
   name: forgotten corporate banner
-  description: A banner displaying an old corporate logo . It looks rather cheap.
+  description: A banner displaying an old corporate logo. It looks rather cheap.
   categories: [ HideSpawnMenu ]
   components:
   - type: Sprite
