@@ -203,7 +203,7 @@
   graph: DecorationFlagBazaar
   startNode: start
   targetNode: FlagBazaar
-  description: The banner of the Town of Bazaar, based in the southern remains of Wendover, Utah. When the bombs first dropped, Wendover split into three survivor communities, the Locusts, Vultures and Willowers. At first a camp of scavengers, the Vulture Tribe eventually civilized into a fully fledged trading outpost of towners.
+  description: The banner of the Town of Bazaar, based in the southern remains of Wendover, Utah. When the bombs first dropped, Wendover split into three survivor communities, the Locusts, Vultures and Willowers. At first a camp of scavengers, the Vulture Tribe eventually civilized into a fully fledged trading outpost of towners. They built the Bazaar out of salvage they gathered and repaired over the first twenty years.
 #  category: construction-category-furniture
   objectType: Structure
   placementMode: SnapgridCenter
