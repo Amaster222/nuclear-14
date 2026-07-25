@@ -938,7 +938,7 @@
   parent: PosterBase
   id: PosterLegitJustAWeekAway
   name: "Just a Week Away..."
-  description: A poster advertising a table-top roleplaying game, setting the players as crew on a corporate space station with traitors onboard. A shame it'll never be released now.'
+  description: A poster advertising a table-top roleplaying game, setting the players as crew on a corporate space station with traitors onboard. A shame it'll never be released now.
   components:
   - type: Sprite
     state: poster38_legit
