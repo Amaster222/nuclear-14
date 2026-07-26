@@ -4,7 +4,7 @@
 # Excludes syndicate/antag-only levels (NuclearOperative, SyndicateAgent) — admin card shouldn't flag as antag.
 
 - type: accessGroup
-  id: AllAccessN14
+  id: AllAccessMisfits
   tags:
   # ── Standard SS14 (mirrors upstream AllAccess) ──
   - EmergencyShuttleRepealAll

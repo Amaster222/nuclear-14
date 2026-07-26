@@ -3,7 +3,7 @@
 
 - type: entity
   parent: MobHuman
-  id: N14MobHumanEnclaveEnlisted
+  id: MisfitsMobHumanEnclaveEnlisted
   name: Enclave Enlisted
   components:
     - type: RandomHumanoidAppearance
@@ -16,7 +16,7 @@
 
 - type: entity
   parent: MobHuman
-  id: N14MobHumanEnclaveNCO
+  id: MisfitsMobHumanEnclaveNCO
   name: Enclave NCO
   components:
   - type: RandomHumanoidAppearance
@@ -29,7 +29,7 @@
 
 - type: entity
   parent: MobHuman
-  id: N14MobHumanEnclaveJuniorOfficer
+  id: MisfitsMobHumanEnclaveJuniorOfficer
   name: Enclave Junior Officer
   components:
   - type: RandomHumanoidAppearance
@@ -42,7 +42,7 @@
 
 - type: entity
   parent: MobHuman
-  id: N14MobHumanEnclaveSeniorOfficer
+  id: MisfitsMobHumanEnclaveSeniorOfficer
   name: Enclave Senior Officer
   components:
   - type: RandomHumanoidAppearance
@@ -57,7 +57,7 @@
 
 - type: entity
   parent: MobHuman
-  id: N14MobHumanEnclaveCommander
+  id: MisfitsMobHumanEnclaveCommander
   name: Enclave Commander
   components:
   - type: RandomHumanoidAppearance
@@ -70,7 +70,7 @@
 
 - type: entity
   parent: MobHuman
-  id: N14MobHumanEnclaveReformer
+  id: MisfitsMobHumanEnclaveReformer
   name: Enclave Reformer
   components:
   - type: RandomHumanoidAppearance
@@ -85,7 +85,7 @@
 
 - type: entity
   parent: MobHuman
-  id: N14MobHumanEnclaveJuniorScientist
+  id: MisfitsMobHumanEnclaveJuniorScientist
   name: Enclave Junior Scientist
   components:
   - type: RandomHumanoidAppearance
@@ -98,7 +98,7 @@
 
 - type: entity
   parent: MobHuman
-  id: N14MobHumanEnclaveScientist
+  id: MisfitsMobHumanEnclaveScientist
   name: Enclave Scientist
   components:
   - type: RandomHumanoidAppearance
@@ -111,7 +111,7 @@
 
 - type: entity
   parent: MobHuman
-  id: N14MobHumanEnclaveHeadScientist
+  id: MisfitsMobHumanEnclaveHeadScientist
   name: Enclave Head Scientist
   components:
   - type: RandomHumanoidAppearance
@@ -126,7 +126,7 @@
 
 - type: entity
   parent: N14MobSuperMutant
-  id: N14MobSupermutantEnclave
+  id: MisfitsMobSupermutantEnclave
   name: Enclave Supermutant
   components:
   - type: RandomHumanoidAppearance
