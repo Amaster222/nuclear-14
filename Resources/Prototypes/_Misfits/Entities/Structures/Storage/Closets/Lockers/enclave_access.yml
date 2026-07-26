@@ -2,7 +2,7 @@
 
 - type: entity
   parent: N14ClosetEnclave
-  id: N14ClosetEnclaveIdLockerScientist
+  id: MisfitsClosetEnclaveIdLockerScientist
   name: enclave ID access locker
   suffix: Scientist
   components:
@@ -11,7 +11,7 @@
 
 - type: entity
   parent: N14ClosetEnclave
-  id: N14ClosetEnclaveIdLockerHeadScientist
+  id: MisfitsClosetEnclaveIdLockerHeadScientist
   name: enclave ID access locker
   suffix: Head Scientist
   components:
@@ -20,7 +20,7 @@
 
 - type: entity
   parent: N14ClosetEnclave
-  id: N14ClosetEnclaveIdLockerAll
+  id: MisfitsClosetEnclaveIdLockerAll
   name: enclave ID access locker
   suffix: Enclave All
   components:
@@ -29,7 +29,7 @@
 
 - type: entity
   parent: N14ClosetEnclave
-  id: N14ClosetEnclaveIdLockerNCO
+  id: MisfitsClosetEnclaveIdLockerNCO
   name: enclave ID access locker
   suffix: NCO
   components:
@@ -38,7 +38,7 @@
 
 - type: entity
   parent: N14ClosetEnclave
-  id: N14ClosetEnclaveIdLockerJuniorOfficer
+  id: MisfitsClosetEnclaveIdLockerJuniorOfficer
   name: enclave ID access locker
   suffix: Junior Officer
   components:
@@ -47,7 +47,7 @@
 
 - type: entity
   parent: N14ClosetEnclave
-  id: N14ClosetEnclaveIdLockerSeniorOfficer
+  id: MisfitsClosetEnclaveIdLockerSeniorOfficer
   name: enclave ID access locker
   suffix: Senior Officer
   components:
@@ -56,7 +56,7 @@
 
 - type: entity
   parent: N14ClosetEnclave
-  id: N14ClosetEnclaveIdLockerCommander
+  id: MisfitsClosetEnclaveIdLockerCommander
   name: enclave ID access locker
   suffix: Commander
   components:
@@ -65,7 +65,7 @@
 
 - type: entity
   parent: N14ClosetEnclave
-  id: N14ClosetEnclaveGunSafeScientist
+  id: MisfitsClosetEnclaveGunSafeScientist
   name: enclave gun safe
   suffix: Scientist
   components:
@@ -74,7 +74,7 @@
 
 - type: entity
   parent: N14ClosetEnclave
-  id: N14ClosetEnclaveGunSafeHeadScientist
+  id: MisfitsClosetEnclaveGunSafeHeadScientist
   name: enclave gun safe
   suffix: Head Scientist
   components:
@@ -83,7 +83,7 @@
 
 - type: entity
   parent: N14ClosetEnclave
-  id: N14ClosetEnclaveGunSafeAll
+  id: MisfitsClosetEnclaveGunSafeAll
   name: enclave gun safe
   suffix: Enclave All
   components:
@@ -92,7 +92,7 @@
 
 - type: entity
   parent: N14ClosetEnclave
-  id: N14ClosetEnclaveGunSafeNCO
+  id: MisfitsClosetEnclaveGunSafeNCO
   name: enclave gun safe
   suffix: NCO
   components:
@@ -101,7 +101,7 @@
 
 - type: entity
   parent: N14ClosetEnclave
-  id: N14ClosetEnclaveGunSafeJuniorOfficer
+  id: MisfitsClosetEnclaveGunSafeJuniorOfficer
   name: enclave gun safe
   suffix: Junior Officer
   components:
@@ -110,7 +110,7 @@
 
 - type: entity
   parent: N14ClosetEnclave
-  id: N14ClosetEnclaveGunSafeSeniorOfficer
+  id: MisfitsClosetEnclaveGunSafeSeniorOfficer
   name: enclave gun safe
   suffix: Senior Officer
   components:
@@ -119,7 +119,7 @@
 
 - type: entity
   parent: N14ClosetEnclave
-  id: N14ClosetEnclaveGunSafeCommander
+  id: MisfitsClosetEnclaveGunSafeCommander
   name: enclave gun safe
   suffix: Commander
   components:
