@@ -117,3 +117,61 @@
     access: [["EnclaveCommand"]]
   - type: Wires
     layoutId: HighSec
+
+# Role-specific access doors for the expanded Enclave hierarchy.
+
+- type: entity
+  parent: N14DoorBunkerLockedEnclave
+  id: N14DoorBunkerLockedEnclaveRoleScientist
+  suffix: Enclave, Locked, Role Scientist
+  components:
+  - type: AccessReader
+    access: [["EnclaveRoleScientist"]]
+
+- type: entity
+  parent: N14DoorBunkerLockedEnclave
+  id: N14DoorBunkerLockedEnclaveRoleHeadScientist
+  suffix: Enclave, Locked, Role Head Scientist
+  components:
+  - type: AccessReader
+    access: [["EnclaveRoleHeadScientist"]]
+
+- type: entity
+  parent: N14DoorBunkerLockedEnclave
+  id: N14DoorBunkerLockedEnclaveRoleAll
+  suffix: Enclave, Locked, Role All
+  components:
+  - type: AccessReader
+    access: [["EnclaveRoleAll"]]
+
+- type: entity
+  parent: N14DoorBunkerLockedEnclave
+  id: N14DoorBunkerLockedEnclaveRoleNCO
+  suffix: Enclave, Locked, Role NCO
+  components:
+  - type: AccessReader
+    access: [["EnclaveRoleNCO"]]
+
+- type: entity
+  parent: N14DoorBunkerLockedEnclave
+  id: N14DoorBunkerLockedEnclaveRoleJuniorOfficer
+  suffix: Enclave, Locked, Role Junior Officer
+  components:
+  - type: AccessReader
+    access: [["EnclaveRoleJuniorOfficer"]]
+
+- type: entity
+  parent: N14DoorBunkerLockedEnclave
+  id: N14DoorBunkerLockedEnclaveRoleSeniorOfficer
+  suffix: Enclave, Locked, Role Senior Officer
+  components:
+  - type: AccessReader
+    access: [["EnclaveRoleSeniorOfficer"]]
+
+- type: entity
+  parent: N14DoorBunkerLockedEnclave
+  id: N14DoorBunkerLockedEnclaveRoleCommander
+  suffix: Enclave, Locked, Role Commander
+  components:
+  - type: AccessReader
+    access: [["EnclaveRoleCommander"]]
