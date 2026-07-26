@@ -9405,3 +9405,106 @@ Entries:
   id: 6265
   time: '2026-07-23T02:26:22.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1083
+- author: Dpellowski
+  changes:
+    - type: Tweak
+      message: QOL War Changes + Invite to War post start
+  id: 6266
+  time: '2026-07-23T16:26:27.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1087
+- author: Dpellowski
+  changes:
+    - type: Fix
+      message: Genetic CD, Genetics Work while cuffed
+  id: 6267
+  time: '2026-07-23T19:47:31.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1089
+- author: Dpellowski
+  changes:
+    - type: Fix
+      message: Bug 1 and 1.5 in Discord
+  id: 6268
+  time: '2026-07-23T20:23:16.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1091
+- author: RedBookcase
+  changes:
+    - type: Add
+      message: Lots of new Jukebox songs.
+    - type: Add
+      message: >-
+        Standardized stats for BoS Midwest PA, restored them to parity with
+        standard armor (BoS Commander Midwest Armor was worse than the regular
+        T-51...)
+    - type: Add
+      message: >-
+        Updated Enclave PA models to reflect recent buffs to other standard PA,
+        added missing reflect values, etc. 
+    - type: Add
+      message: Enclave roles were missing spawn prototypes for admin use, added em in.
+    - type: Tweak
+      message: >-
+        Lowered Legion Slave slots to 2 to be in line with NCR and take
+        overworked Auxilia and Priestesses off suicide watch. Restricted
+        Pickpocket, Silent Takedown, and Handy Tools traits to not be available
+        to NCR Prisoners or Legion Slaves.
+  id: 6269
+  time: '2026-07-23T23:18:04.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1036
+- author: paige404
+  changes:
+    - type: Fix
+      message: >-
+        Put robots in their place (by not allowing them to melee charge
+        anymore). C-27s evade this on a technicality, but you're on THIN ICE
+        MISTER.
+  id: 6270
+  time: '2026-07-24T01:01:11.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1084
+- author: Squagg
+  changes:
+    - type: Tweak
+      message: N14 chemical syringes now take one second to inject someone else.
+  id: 6271
+  time: '2026-07-24T01:40:56.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1088
+- author: John-Dang
+  changes:
+    - type: Add
+      message: Added new flag and clutter descriptions!
+    - type: Add
+      message: >-
+        Added new names for the caravan network contractor ranks, adjusting
+        their badges too!
+  id: 6272
+  time: '2026-07-24T02:22:52.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1080
+- author: Bradysgaming
+  changes:
+    - type: Add
+      message: Added Supermutant rags
+    - type: Fix
+      message: Fixed Loadout longsword
+  id: 6273
+  time: '2026-07-24T02:36:25.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1092
+- author: Bradysgaming
+  changes:
+    - type: Tweak
+      message: Benezine does poison damage now
+  id: 6274
+  time: '2026-07-24T03:36:11.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1093
+- author: John-Dang
+  changes:
+    - type: Add
+      message: Added fun :D
+  id: 6275
+  time: '2026-07-25T23:20:21.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1097
+- author: aftemath434
+  changes:
+    - type: Add
+      message: Enclave Heavy Ordnance Plans with crafting costs :)
+  id: 6276
+  time: '2026-07-25T23:37:43.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1086

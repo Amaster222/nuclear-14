@@ -1,4 +1,5 @@
 using System.Linq;
+using Content.Shared._Misfits.Wielding;
 using Content.Shared.Examine;
 using Content.Shared.Hands;
 using Content.Shared.Hands.Components;
@@ -315,6 +316,10 @@ public sealed class WieldableSystem : EntitySystem
         var othersMessage = Loc.GetString("wieldable-component-successful-wield-other", ("user", Identity.Entity(user, EntityManager)), ("item", used));
         _popupSystem.PopupPredicted(selfMessage, othersMessage, user, user);
 
+        // Misfits Change - more functional ItemWieldedEvent
+        var misfEv = new MisfitsItemWieldedEvent(user);
+        RaiseLocalEvent(used, misfEv);
+        // Misfits Change End
         var targEv = new ItemWieldedEvent();
         RaiseLocalEvent(used, ref targEv);
 

@@ -6,8 +6,8 @@
 - type: entity
   parent: UnsensoredClothingUniformBase
   id: ClothingSuperMutantJumpsuit
-  name: super mutant garb
-  description: A crude set of garments cobbled together from scavenged materials, sized for a super mutant's massive frame.
+  name: super mutant rags
+  description: A tattered jumpsuit made from scavenged cloth, sized for a super mutant's massive frame.
   components:
   - type: Sprite
     sprite: _Misfits/Clothing/SuperMutant/jumpsuit.rsi
@@ -610,7 +610,7 @@
   - type: Tag
     tags:
     - SuperMutantWearable
-  - type: Armor 
+  - type: Armor
     modifiers:
       coefficients:
         Blunt: 0.80

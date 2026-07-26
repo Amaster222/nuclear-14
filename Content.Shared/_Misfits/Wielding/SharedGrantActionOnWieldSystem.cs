@@ -20,7 +20,7 @@ public sealed partial class SharedGrantActionOnWieldSystem : EntitySystem
     {
         base.Initialize();
 
-        SubscribeLocalEvent<GrantActionOnWieldComponent, UseInHandEvent>(OnUseInHand, before: [typeof(WieldableSystem),]);
+        SubscribeLocalEvent<GrantActionOnWieldComponent, MisfitsItemWieldedEvent>(OnWield);
         SubscribeLocalEvent<GrantActionOnWieldComponent, ItemUnwieldedEvent>(OnItemUnwielded);
     }
 
@@ -43,22 +43,8 @@ public sealed partial class SharedGrantActionOnWieldSystem : EntitySystem
         // ent.Comp.ActionIds.Clear();
     }
 
-    /// <summary>
-    /// This runs whenever an eligible item is used inhand. This could be a wield, or it could
-    /// be something else. We can determine which by ensuring this runs BEFORE the
-    /// <see cref="WieldableSystem"/> and checking whether the item is already being wielded.
-    /// </summary>
-    /// <param name="ent"></param>
-    /// <param name="args"></param>
-    private void OnUseInHand(Entity<GrantActionOnWieldComponent> ent, ref UseInHandEvent args)
+    private void OnWield(Entity<GrantActionOnWieldComponent> ent, ref MisfitsItemWieldedEvent args)
     {
-        if (!TryComp<WieldableComponent>(ent, out var wieldable))
-            return;
-
-        // if the item is wielded already, we don't need to add actions again
-        if (wieldable.Wielded)
-            return;
-
         if (ent.Comp.ActionIds.Count > 0)
         {
             foreach (var actionId in ent.Comp.ActionIds)
@@ -74,7 +60,5 @@ public sealed partial class SharedGrantActionOnWieldSystem : EntitySystem
                     ent.Comp.ActionIds.Add(actionId);
             }
         }
-
-
     }
 }
