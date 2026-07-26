@@ -89,6 +89,13 @@
   - EnclaveOfficer
   - EnclaveCommand
   - EnclaveScience
+  - EnclaveRoleAll
+  - EnclaveRoleScientist
+  - EnclaveRoleHeadScientist
+  - EnclaveRoleNCO
+  - EnclaveRoleJuniorOfficer
+  - EnclaveRoleSeniorOfficer
+  - EnclaveRoleCommander
   # ── N14: NCR ──
   - NCR
   - NCRSGT

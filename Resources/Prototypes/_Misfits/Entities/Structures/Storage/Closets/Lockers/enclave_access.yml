@@ -1,0 +1,127 @@
+# #Misfits Add - Enclave role-locked storage using existing Enclave closet textures.
+
+- type: entity
+  parent: N14ClosetEnclave
+  id: N14ClosetEnclaveIdLockerScientist
+  name: enclave ID access locker
+  suffix: Scientist
+  components:
+  - type: AccessReader
+    access: [["EnclaveRoleScientist"]]
+
+- type: entity
+  parent: N14ClosetEnclave
+  id: N14ClosetEnclaveIdLockerHeadScientist
+  name: enclave ID access locker
+  suffix: Head Scientist
+  components:
+  - type: AccessReader
+    access: [["EnclaveRoleHeadScientist"]]
+
+- type: entity
+  parent: N14ClosetEnclave
+  id: N14ClosetEnclaveIdLockerAll
+  name: enclave ID access locker
+  suffix: Enclave All
+  components:
+  - type: AccessReader
+    access: [["EnclaveRoleAll"]]
+
+- type: entity
+  parent: N14ClosetEnclave
+  id: N14ClosetEnclaveIdLockerNCO
+  name: enclave ID access locker
+  suffix: NCO
+  components:
+  - type: AccessReader
+    access: [["EnclaveRoleNCO"]]
+
+- type: entity
+  parent: N14ClosetEnclave
+  id: N14ClosetEnclaveIdLockerJuniorOfficer
+  name: enclave ID access locker
+  suffix: Junior Officer
+  components:
+  - type: AccessReader
+    access: [["EnclaveRoleJuniorOfficer"]]
+
+- type: entity
+  parent: N14ClosetEnclave
+  id: N14ClosetEnclaveIdLockerSeniorOfficer
+  name: enclave ID access locker
+  suffix: Senior Officer
+  components:
+  - type: AccessReader
+    access: [["EnclaveRoleSeniorOfficer"]]
+
+- type: entity
+  parent: N14ClosetEnclave
+  id: N14ClosetEnclaveIdLockerCommander
+  name: enclave ID access locker
+  suffix: Commander
+  components:
+  - type: AccessReader
+    access: [["EnclaveRoleCommander"]]
+
+- type: entity
+  parent: N14ClosetEnclave
+  id: N14ClosetEnclaveGunSafeScientist
+  name: enclave gun safe
+  suffix: Scientist
+  components:
+  - type: AccessReader
+    access: [["EnclaveRoleScientist"]]
+
+- type: entity
+  parent: N14ClosetEnclave
+  id: N14ClosetEnclaveGunSafeHeadScientist
+  name: enclave gun safe
+  suffix: Head Scientist
+  components:
+  - type: AccessReader
+    access: [["EnclaveRoleHeadScientist"]]
+
+- type: entity
+  parent: N14ClosetEnclave
+  id: N14ClosetEnclaveGunSafeAll
+  name: enclave gun safe
+  suffix: Enclave All
+  components:
+  - type: AccessReader
+    access: [["EnclaveRoleAll"]]
+
+- type: entity
+  parent: N14ClosetEnclave
+  id: N14ClosetEnclaveGunSafeNCO
+  name: enclave gun safe
+  suffix: NCO
+  components:
+  - type: AccessReader
+    access: [["EnclaveRoleNCO"]]
+
+- type: entity
+  parent: N14ClosetEnclave
+  id: N14ClosetEnclaveGunSafeJuniorOfficer
+  name: enclave gun safe
+  suffix: Junior Officer
+  components:
+  - type: AccessReader
+    access: [["EnclaveRoleJuniorOfficer"]]
+
+- type: entity
+  parent: N14ClosetEnclave
+  id: N14ClosetEnclaveGunSafeSeniorOfficer
+  name: enclave gun safe
+  suffix: Senior Officer
+  components:
+  - type: AccessReader
+    access: [["EnclaveRoleSeniorOfficer"]]
+
+- type: entity
+  parent: N14ClosetEnclave
+  id: N14ClosetEnclaveGunSafeCommander
+  name: enclave gun safe
+  suffix: Commander
+  components:
+  - type: AccessReader
+    access: [["EnclaveRoleCommander"]]
