@@ -9508,3 +9508,10 @@ Entries:
   id: 6276
   time: '2026-07-25T23:37:43.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1086
+- author: Bradysgaming
+  changes:
+    - type: Tweak
+      message: Wastelander has no timelock anymore
+  id: 6277
+  time: '2026-07-26T15:15:55.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1100
