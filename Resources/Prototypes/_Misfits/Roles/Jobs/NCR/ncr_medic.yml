@@ -43,7 +43,7 @@
     shoes: N14ClothingBootsLeatherFilled
     ears: N14ClothingHeadsetNCR # #Misfits Add - NCR radio earpiece
     head: N14ClothingHeadHatNCRBeretMedic #Misfits Add - Medics can spawn with a beret, since helmets are given in loadouts.
-    belt: ClothingBeltNCR
+    belt: MisfitsClothingBeltWebbingBrown
     id: N14IDNCRDogtagDoctor
     pocket2: NCRmedicloadoutkits
   innerClothingSkirt: N14ClothingUniformNCRDesert # Corvax-Change
