@@ -565,6 +565,8 @@ loadout-name-LoadoutNeckLegionForgemaster = blacksmith's apron
 loadout-name-LoadoutNeckLegionMedicus = medicus apron
 loadout-name-LoadoutNeckLegionTreasurer = treasurers mantle
 loadout-name-LoadoutUniformJumpsuitLegionnaireOther = legionnaire skirt
+loadout-name-MisfitsLoadoutLegionBackpackCapeRed = Legion red flag
+loadout-name-MisfitsLoadoutLegionBackpackCapeBlack = Legion black flag
 
 # Miscellaneous eyes
 loadout-name-ClothingEyesGlassesChemist = chemist glasses
