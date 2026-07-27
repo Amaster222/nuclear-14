@@ -1,7 +1,7 @@
 {
   "version": 1,
   "license": "CC-BY-SA-3.0",
-  "copyright": "Icon & On Mob by Eluxor; Inhand sprites are by pebbles only for placeholder. Taken from Wasteland (https://github.com/fortune13-ss13/thewasteland/pull/108), a SS13 Fallout fork. Modified for SS14.",
+  "copyright": "Taken from Atom Bomb (https://github.com/AtomBombf13/AtomBomb), a SS13 Fallout fork. Modified for SS14.",
     "size": {
         "x": 32,
         "y": 32
