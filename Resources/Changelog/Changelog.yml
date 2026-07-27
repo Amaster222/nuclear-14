@@ -9536,3 +9536,10 @@ Entries:
   id: 6280
   time: '2026-07-26T20:17:15.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1096
+- author: aftemath434
+  changes:
+    - type: Add
+      message: Glock 37M unique pistol
+  id: 6281
+  time: '2026-07-27T23:35:25.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1094
