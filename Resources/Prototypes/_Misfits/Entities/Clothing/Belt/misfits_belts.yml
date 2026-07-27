@@ -46,14 +46,3 @@
     sprite: _Misfits/Clothing/Belt/squirewebbing_brown.rsi
   - type: Clothing
     sprite: _Misfits/Clothing/Belt/squirewebbing_brown.rsi
-
-- type: entity
-  parent: N14ClothingBeltBoSWebbing
-  id: MisfitsClothingBeltWebbingBrown
-  name: brown webbing
-  description: Lightweight webbing with pouches for medicine, tools, and ammunition.
-  components:
-  - type: Sprite
-    sprite: _Misfits/Clothing/Belt/squirewebbing_brown.rsi
-  - type: Clothing
-    sprite: _Misfits/Clothing/Belt/squirewebbing_brown.rsi
