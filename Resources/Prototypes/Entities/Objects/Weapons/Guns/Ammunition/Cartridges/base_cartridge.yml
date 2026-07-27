@@ -3,6 +3,12 @@
   parent: BaseItem
   abstract: true
   components:
+  - type: Physics
+    Predict: true #Misfit Change: Prevent exceptions thrown on desync'd physics comps deleted on CasingPhysicsOptSystem
+                  #               Instead we just get warnings!!!
+                  #               Pending actual fix of underlying issue(spent cartidges being client only visual ents)
+    bodyType: Dynamic
+    fixedRotation: false
   - type: Sprite
     drawdepth: Items
   - type: Fixtures
