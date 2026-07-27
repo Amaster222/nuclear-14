@@ -4,7 +4,6 @@ namespace Content.Shared.Weapons.Ranged.Systems;
 
 public abstract partial class SharedGunSystem
 {
-    /// TODO: debug tool to get every single prototype that doesnt follow rules
     /// <summary>
     /// debug just for knowing which prototypes in yaml cause issues for future reference
     /// </summary>

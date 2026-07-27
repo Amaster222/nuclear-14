@@ -53,7 +53,6 @@ public abstract partial class SharedGunSystem
     /// </remarks>
     private void OnBallisticInit(EntityUid uid, BallisticAmmoProviderComponent comp, ComponentInit args)
     {
-        // TODO Misfit:
 #if !RELEASE
         DebugInfo(uid, comp);
 #endif
@@ -120,12 +119,10 @@ public abstract partial class SharedGunSystem
     /// <remarks>
     /// Other spechiul interactions with other comps could be put here for BallisticAmmoProviderComponent
     /// <remarks/>
-    // TODO MISFIT: see why args.Target is nullable here. It shouldn't be null at this point
     // TODO MISFIT: throw exeception on init if doesnt have whitelist or Tags to avoid null checks
     private void OnBallisticAfterInteract(EntityUid giverUID, BallisticAmmoProviderComponent giverComp, AfterInteractEvent args)
     {
         // TODO MISFIT: maybe as a code exercise see how to make this more readable
-        // checking if anything important is null/exists to prevent further null checks
         if (args.Handled || !giverComp.MayTransfer || Deleted(args.Target) ||
 
             !TryComp<BallisticAmmoProviderComponent>(args.Target, out var targetComp) ||
@@ -148,8 +145,7 @@ public abstract partial class SharedGunSystem
         });
     }
 
-    // raise TakeAmmoEvent to remove bullet from BallisticAmmoProviderComponent of giving/feeder container
-    // raise InteractUsingEvent to give bullet to BallisticAmmoProviderComponent of recieving/feeding container
+
     /// <summary>
     /// handler for <see cref="AmmoFillDoAfterEvent"/>. What Ballistic system does when do after is complete
     /// Ammo is taken 1 by 1(wait for repeated do after to be done) until giver runs out of ammo or target is full
@@ -249,7 +245,6 @@ public abstract partial class SharedGunSystem
     /// Side effects: giverComp.UnspawnedCount is decreased by ammo that had to be spawned and
     ///               already spawned ammo is removed from container
     /// <remarks/>
-    /// TODO MISFIT: why EntityUid in args.Ammo needs to be nullable?
     private void OnBallisticTakeAmmo(EntityUid giverUID, BallisticAmmoProviderComponent giverComp, TakeAmmoEvent args)
     {
 
