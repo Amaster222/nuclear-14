@@ -145,6 +145,7 @@
         Blunt: 0.70
         Slash: 0.70
         Piercing: 0.75
+        Heat: 0.75 # #Misfits Add - energy protection, mirrors Piercing as on power armor
 
 # --- Gladiator Boots ---
 - type: entity
@@ -181,6 +182,7 @@
         Blunt: 0.80
         Slash: 0.80
         Piercing: 0.85
+        Heat: 0.85 # #Misfits Add - energy protection, mirrors Piercing as on power armor
 
 # #Misfits Add - Ranger armor for the Supermutant Ranger job.
 # Tagged SupermutantWearable so only supermutants can equip it in Outerclothing slot.
@@ -203,6 +205,7 @@
         Blunt: 0.75
         Slash: 0.75
         Piercing: 0.70
+        Heat: 0.70 # #Misfits Add - energy protection, mirrors Piercing as on power armor
 
 - type: entity
   parent: ClothingHeadBase
@@ -223,6 +226,7 @@
         Blunt: 0.85
         Slash: 0.85
         Piercing: 0.80
+        Heat: 0.80 # #Misfits Add - energy protection, mirrors Piercing as on power armor
 
 - type: entity
   parent: ClothingHeadBase
@@ -243,6 +247,7 @@
         Blunt: 0.85
         Slash: 0.85
         Piercing: 0.80
+        Heat: 0.80 # #Misfits Add - energy protection, mirrors Piercing as on power armor
 
 - type: entity
   parent: ClothingMaskBase
@@ -297,6 +302,7 @@
         Blunt: 0.75
         Slash: 0.75
         Piercing: 0.70
+        Heat: 0.70 # #Misfits Add - energy protection, mirrors Piercing as on power armor
 
 - type: entity
   parent: ClothingHeadBase
@@ -317,6 +323,7 @@
         Blunt: 0.85
         Slash: 0.85
         Piercing: 0.80
+        Heat: 0.80 # #Misfits Add - energy protection, mirrors Piercing as on power armor
 
 # #Misfits Add - Extra supermutant outer outfit (outfit C) — spawnable standalone wearable.
 - type: entity
@@ -416,6 +423,7 @@
       coefficients:
         Blunt: 0.75
         Slash: 0.75
+        Heat: 0.75 # #Misfits Add - energy protection, matches Blunt/Slash as there is no Piercing value here
 
 # #Misfits Add - Supermutant Tribal Gloves
 - type: entity
@@ -494,6 +502,7 @@
         Blunt: 0.85
         Slash: 0.85
         Piercing: 0.80
+        Heat: 0.80 # #Misfits Add - energy protection, mirrors Piercing as on power armor
 
   # Fancy suits for fancy people
 
@@ -560,6 +569,7 @@
         Blunt: 0.75
         Slash: 0.75
         Piercing: 0.70
+        Heat: 0.70 # #Misfits Add - energy protection, mirrors Piercing as on power armor
 
 # Scavenged Armor Set
 
@@ -582,6 +592,7 @@
         Blunt: 0.70
         Slash: 0.70
         Piercing: 0.75
+        Heat: 0.75 # #Misfits Add - energy protection, mirrors Piercing as on power armor
 
 - type: entity
   parent: ClothingShoesBase
@@ -616,6 +627,7 @@
         Blunt: 0.80
         Slash: 0.80
         Piercing: 0.85
+        Heat: 0.85 # #Misfits Add - energy protection, mirrors Piercing as on power armor
 
 - type: entity
   parent: ClothingHandsBase
