@@ -9570,3 +9570,10 @@ Entries:
   id: 6284
   time: '2026-07-29T21:03:35.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1106
+- author: Tytos
+  changes:
+    - type: Tweak
+      message: added more torches to light up parts of legion base that were too dark.
+  id: 6285
+  time: '2026-07-29T21:44:24.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1104
