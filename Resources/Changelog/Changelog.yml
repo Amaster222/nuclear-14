@@ -9543,3 +9543,16 @@ Entries:
   id: 6281
   time: '2026-07-27T23:35:25.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1094
+- author: Vixting
+  changes:
+    - type: Add
+      message: You can now hit people riding bikes
+    - type: Add
+      message: You will be dismounted from bike if you go crit
+    - type: Add
+      message: You can no longer repair bike whilst being the rider
+    - type: Add
+      message: 'You can examine bike to see fuel amount '
+  id: 6282
+  time: '2026-07-29T20:59:11.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1103
