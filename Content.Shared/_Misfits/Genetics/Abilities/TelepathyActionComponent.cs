@@ -23,7 +23,8 @@ public sealed partial class TelepathyActionEvent : EntityTargetActionEvent;
 [Serializable, NetSerializable]
 public enum TelepathyUiKey : byte
 {
-    Key
+    Key,
+    Far
 }
 
 /// <summary>
@@ -32,5 +33,31 @@ public enum TelepathyUiKey : byte
 [Serializable, NetSerializable]
 public sealed class TelepathyChosenMessage(string message) : BoundUserInterfaceMessage
 {
+    public readonly string Message = message;
+}
+
+/// <summary>
+/// One reachable mind in the far-telepathy window.
+/// </summary>
+[Serializable, NetSerializable]
+public record struct TelepathyFarEntry(NetEntity Target, string Name);
+
+/// <summary>
+/// State for the far-telepathy window: every online player character you can reach.
+/// Opened by using the telepathy action on yourself.
+/// </summary>
+[Serializable, NetSerializable]
+public sealed class TelepathyFarState(List<TelepathyFarEntry> players) : BoundUserInterfaceState
+{
+    public readonly List<TelepathyFarEntry> Players = players;
+}
+
+/// <summary>
+/// Message sent by the far-telepathy BUI with the chosen target and text.
+/// </summary>
+[Serializable, NetSerializable]
+public sealed class TelepathyFarChosenMessage(NetEntity target, string message) : BoundUserInterfaceMessage
+{
+    public readonly NetEntity Target = target;
     public readonly string Message = message;
 }

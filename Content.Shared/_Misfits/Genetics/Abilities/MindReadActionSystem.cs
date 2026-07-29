@@ -69,6 +69,27 @@ public sealed partial class MindReadActionSystem : EntitySystem
         // reveal mindswaps or whatever
         if (mind.CharacterName is {} name && name != identity)
             Tell(user, Loc.GetString("MutationMindReader-popup-true-identity", ("target", target), ("name", name)), Color.Red);
+
+        // dredge up what they've been saying, each line only surfacing half the time
+        if (TryComp<RecentSpeechComponent>(target, out var speech) && speech.Messages.Count > 0)
+        {
+            var heard = false;
+            foreach (var message in speech.Messages)
+            {
+                if (!_random.Prob(0.5f))
+                    continue;
+
+                heard = true;
+                Tell(user, Loc.GetString("MutationMindReader-popup-thought", ("message", message)));
+            }
+
+            if (!heard)
+                Tell(user, Loc.GetString("MutationMindReader-popup-no-thoughts", ("target", identity)));
+        }
+        else
+        {
+            Tell(user, Loc.GetString("MutationMindReader-popup-no-thoughts", ("target", identity)));
+        }
     }
 
     private void Tell(EntityUid user, string message, Color? color = null)

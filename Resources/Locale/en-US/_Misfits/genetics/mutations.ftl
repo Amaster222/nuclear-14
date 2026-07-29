@@ -205,6 +205,66 @@ MutationShockTouch-removed = The energy in your hands subsides.
 
 MutationMendingTouch-mutated = Your hand feels blessed!
 MutationMendingTouch-removed = Your hand feels secular once more.
+MutationMendingTouch-mended = You draw {$target}'s wounds into your own body.
+MutationMendingTouch-nothing = {CAPITALIZE($target)} has no injuries you can mend.
+
+MutationTelepathy-popup-sent = You project your thoughts into {$target}'s mind.
+MutationTelepathy-far-title = Project Thoughts
+MutationTelepathy-far-target = Reach out to:
+MutationTelepathy-far-send = Send
+MutationTelepathy-far-nobody = No minds within reach...
+
+MutationMendingTouch-self = You knit your own wounds closed, feeling your blood run thin.
+MutationMendingTouch-self-nothing = You have no injuries to mend.
+
+MutationTongueSpike-popup-regrowing = Your tongue tears free! It will take a while to regrow...
+MutationChemSpike-no-chems = Your blood carries no chemicals to send.
+
+# Mind Reader - digging thoughts out of a head
+MutationMindReader-popup-thought = You catch a stray thought: "{$message}"
+MutationMindReader-popup-no-thoughts = {CAPITALIZE($target)}'s mind is quiet.
+
+# Rock Eater / Rock Absorber
+devour-mutation-verb = Devour
+devour-mutation-start = You start gnawing into {THE($item)}...
+devour-mutation-finish = You swallow {THE($item)} whole.
+
+# Elastic Arms
+elastic-arms-no-gloves = Your rubbery fingers won't stay in the gloves.
+elastic-arms-too-floppy = Your arms are far too floppy to keep hold of {THE($item)}.
+
+# Transcendent Olfaction - sniffing out a tracked scent
+scent-sense-no-target = You aren't tracking any scent. Sniff someone first.
+scent-sense-cold = You breathe deep, but the trail has gone cold.
+scent-sense-overwhelming = The scent of {$target} is overwhelming - they're right on top of you, to the {$direction}!
+scent-sense-strong = The scent of {$target} is strong, coming from the {$direction}.
+scent-sense-faint = You catch a faint trace of {$target} to the {$direction}.
+scent-sense-distant = The barest thread of {$target}'s scent drifts in from the {$direction}.
+
+scent-direction-north = north
+scent-direction-northeast = north-east
+scent-direction-east = east
+scent-direction-southeast = south-east
+scent-direction-south = south
+scent-direction-southwest = south-west
+scent-direction-west = west
+scent-direction-northwest = north-west
+
+# Genetics entity-effect popups. These were referenced by the effect prototypes but never
+# defined, so mutations like Spasms, Epilepsy and Headless showed raw loc keys (or nothing).
+entity-effect-popup-spasm-leg = Your leg spasms violently!
+entity-effect-popup-spasm-arm = Your arm spasms violently!
+entity-effect-popup-spasm-fingers = Your fingers twitch uncontrollably!
+entity-effect-popup-seizure = You collapse into a seizure!
+entity-effect-popup-feet-trip = You trip over your own feet!
+entity-effect-popup-head-removed = Your body rejects your head, absorbing it into your chest!
+entity-effect-popup-head-regrown = Your head painfully regrows atop your shoulders!
+entity-effect-popup-martyrdom-blinded = A blinding flash sears your eyes!
+entity-effect-popup-martyrdom-borg-disabled = Your systems are overwhelmed by the blast!
+entity-effect-popup-acidic-flesh-bubbles = Your skin bubbles ominously...
+entity-effect-popup-acidic-flesh-pops = Your acidic flesh bursts, searing everything nearby!
+entity-effect-popup-autotomy-failed = You have no limbs left to shed!
+entity-effect-popup-convoke-void = The void tugs hungrily at your body!
 
 MutationVoidMagnet-mutated = You feel a heavy, dull force just beyond the walls watching you.
 

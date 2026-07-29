@@ -44,6 +44,13 @@ public sealed partial class ChemSpikeMutationSystem : EntitySystem
             _solution.ResolveSolution(args.Performer, bloodstream.ChemicalSolutionName, ref bloodstream.ChemicalSolution))
         {
             var removed = _solution.SplitSolution(bloodstream.ChemicalSolution.Value, comp.MaxQuantity);
+            if (removed.Volume == 0)
+            {
+                // no chems in your blood: warn and keep the transfer available instead of wasting it
+                _popup.PopupEntity(Loc.GetString("MutationChemSpike-no-chems"), args.Performer, args.Performer);
+                args.Handled = true;
+                return;
+            }
             _blood.TryAddToChemicals(target, removed);
         }
 

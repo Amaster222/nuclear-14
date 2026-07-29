@@ -25,7 +25,7 @@
   - type: Projectile
     damage:
       types:
-        Cold: 3
+        Cold: 15 # buffed from 3: cold is weaker per-point than pyro's heat (which also ignites), so cryo needs more direct damage to compete
     impactEffect: BulletImpactEffectDisabler
   - type: TemperatureProjectile
     heat: -50000
@@ -42,3 +42,5 @@
     impactEffect: BulletImpactEffectRedDisabler
   - type: TemperatureProjectile
     heat: 50000
+  - type: IgniteOnCollide # pyrokinesis sets targets on fire
+    fireStacks: 3

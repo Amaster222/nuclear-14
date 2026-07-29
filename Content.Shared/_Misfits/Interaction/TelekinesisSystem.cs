@@ -4,10 +4,12 @@ using Content.Shared.ActionBlocker;
 using Content.Shared.Administration;
 using Content.Shared.Bed.Sleep;
 using Content.Shared.Cuffs;
+using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Interaction;
 using Content.Shared.Interaction.Events;
 using Content.Shared.Mobs;
 using Content.Shared.Stunnable;
+using Content.Shared.Throwing;
 using Content.Shared.Weapons.Misc;
 
 namespace Content.Shared._Misfits.Interaction;
@@ -16,8 +18,10 @@ public sealed partial class TelekinesisSystem : EntitySystem
 {
     [Dependency] private ActionBlockerSystem _blocker = default!;
     [Dependency] private INetManager _net = default!;
+    [Dependency] private SharedHandsSystem _hands = default!;
     [Dependency] private SharedTetherGunSystem _tether = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
+    [Dependency] private ThrowingSystem _throwing = default!;
     [Dependency] private EntityQuery<AdminFrozenComponent> _frozenQuery = default!;
     [Dependency] private EntityQuery<TelekineticInteractableComponent> _targetQuery = default!;
     [Dependency] private EntityQuery<TetherGunComponent> _tetherGunQuery = default!;
@@ -45,8 +49,11 @@ public sealed partial class TelekinesisSystem : EntitySystem
     private void OnRangeOverride(Entity<TelekinesisComponent> ent, ref InRangeOverrideEvent args)
     {
         args.Handled = true;
-        // allow interacting from any range if it has TelekineticInteractable
+        // remote interaction: anything within telekinesis range can be interacted with without
+        // touching it (open doors, pick up items, etc). TelekineticInteractable still marks
+        // targets usable from any distance.
         args.InRange = _targetQuery.HasComp(args.Target) ||
+            IsInRange(args.User, args.Target, ent.Comp.Range) ||
             IsInRange(args.User, args.Target, SharedInteractionSystem.InteractionRange);
     }
 
@@ -57,14 +64,41 @@ public sealed partial class TelekinesisSystem : EntitySystem
 
         args.Handled = true;
         var original = gun.Tethered;
+
+        // using the action on another target while holding something hurls the held
+        // object at them instead of switching the tether.
+        if (original is {} held && args.Target != held && args.Target != ent.Owner)
+        {
+            _tether.StopTether(ent, gun, land: false);
+
+            // chud shit doesnt predict anything :(
+            if (_net.IsClient) return;
+
+            // throw along the exact vector from the held object to the target so it
+            // flies at them no matter where the tether was holding it
+            var heldPos = _transform.GetMapCoordinates(held).Position;
+            var targetPos = _transform.GetMapCoordinates(args.Target).Position;
+            var direction = targetPos - heldPos;
+            if (direction.LengthSquared() > 0.01f)
+                _throwing.TryThrow(held, direction, ent.Comp.ThrowForce, user: args.Performer, playSound: false);
+            return;
+        }
+
         _tether.StopTether(ent, gun);
 
         // chud shit doesnt predict anything :(
         if (_net.IsClient) return;
 
         // don't tether if you use action on the same item twice, or if you use it on yourself (easy cancel)
-        if (args.Target != original && args.Target != ent.Owner)
-            _tether.TryTether(ent, args.Target, args.Performer, gun);
+        if (args.Target == original || args.Target == ent.Owner)
+            return;
+
+        // rip it straight out of whoever's holding it
+        var holder = Transform(args.Target).ParentUid;
+        if (holder.IsValid() && _hands.IsHolding(holder, args.Target, out _))
+            _hands.TryDrop(holder, args.Target, checkActionBlocker: false);
+
+        _tether.TryTether(ent, args.Target, args.Performer, gun);
     }
 
     // can't use your mind powers if you go eepy
@@ -80,7 +114,9 @@ public sealed partial class TelekinesisSystem : EntitySystem
     // can't use your mind powers if you fucking die
     private void OnMobStateChanged(Entity<TelekinesisComponent> ent, ref MobStateChangedEvent args)
     {
-        if (args.NewMobState != MobState.Alive)
+        // the condition was inverted before: it dropped the tether when you were ALIVE
+        // and kept it when you died/critted.
+        if (args.NewMobState == MobState.Alive)
             return;
 
         if (_tetherGunQuery.TryComp(ent, out var gun))

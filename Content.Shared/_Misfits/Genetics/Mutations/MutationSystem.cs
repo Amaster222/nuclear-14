@@ -344,6 +344,25 @@ public sealed partial class MutationSystem : CommonMutationSystem
     public bool IsMutatable(EntityUid uid) => _mutatableQuery.HasComp(uid);
 
     /// <summary>
+    /// Ensures an entity can hold mutations, initializing its container and DNA if the
+    /// component was just added. Lets admin mutators work on any living mob, not just
+    /// species that spawn with <see cref="MutatableComponent"/>.
+    /// </summary>
+    public Entity<MutatableComponent> EnsureMutatable(EntityUid uid)
+    {
+        if (_mutatableQuery.TryComp(uid, out var existing))
+            return (uid, existing);
+
+        var comp = AddComp<MutatableComponent>(uid);
+        var container = _container.EnsureContainer<Container>(uid, comp.ContainerId);
+        container.OccludesLight = false; // let glowy mutation shine
+        if (comp.GeneticDna.Length == 0)
+            comp.GeneticDna = RandomDna(32);
+        Dirty(uid, comp);
+        return (uid, comp);
+    }
+
+    /// <summary>
     /// Returns true if an entity has a specific mutation active.
     /// </summary>
     public bool HasMutation(Entity<MutatableComponent?> ent, [ForbidLiteral] EntProtoId<MutationComponent> id)
