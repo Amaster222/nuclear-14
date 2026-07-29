@@ -45,19 +45,6 @@
 
 - type: entity
   parent: GeneticsMutatorAdmin
-  id: GeneticsMutatorActionThermalVision
-  name: 'actionthermalvision mutator'
-  suffix: 'ActionThermalVision, Admin'
-  description: '???'
-  components:
-  - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
-    mutations:
-    - MutationActionThermalVision
-
-- type: entity
-  parent: GeneticsMutatorAdmin
   id: GeneticsMutatorAdrenalineRush
   name: 'adrenaline rush mutator'
   suffix: 'AdrenalineRush, Admin'
@@ -126,7 +113,7 @@
   id: GeneticsMutatorChameleon
   name: 'chameleon mutator'
   suffix: 'Chameleon, Admin'
-  description: 'A genome that causes the holder''s skin to become transparent over time.'
+  description: 'A genome that lets the holder turn their skin transparent at will, though keeping it up strains the body.'
   components:
   - type: Mutator
     injectTime: 0.5
@@ -568,7 +555,7 @@
   id: GeneticsMutatorLaserEyes
   name: 'laser eyes mutator'
   suffix: 'LaserEyes, Admin'
-  description: 'Reflects concentrated light back from the eyes.'
+  description: 'The subject''s eyes have become focusing lenses for coherent light. Try not to blink.'
   components:
   - type: Mutator
     injectTime: 0.5
@@ -763,7 +750,7 @@
   id: GeneticsMutatorRockAbsorber
   name: 'rock absorber mutator'
   suffix: 'RockAbsorber, Admin'
-  description: 'The subject''s body is able to digest rocks and minerals, taking on their properties.'
+  description: 'The subject''s body is able to digest anything at all, taking on the properties of whatever it swallows.'
   components:
   - type: Mutator
     injectTime: 0.5
@@ -776,7 +763,7 @@
   id: GeneticsMutatorRockEater
   name: 'rock eater mutator'
   suffix: 'RockEater, Admin'
-  description: 'The subject''s body is able to digest rocks and minerals.'
+  description: 'The subject''s body is able to digest anything at all - rocks, ore, scrap, whatever fits in a hand.'
   components:
   - type: Mutator
     injectTime: 0.5
