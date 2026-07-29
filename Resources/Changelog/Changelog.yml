@@ -9556,3 +9556,10 @@ Entries:
   id: 6282
   time: '2026-07-29T20:59:11.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1103
+- author: Marabout
+  changes:
+    - type: Tweak
+      message: Added a slowdown to the M60 when carrying it
+  id: 6283
+  time: '2026-07-29T20:59:32.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1105
