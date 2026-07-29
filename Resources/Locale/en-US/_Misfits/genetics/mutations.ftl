@@ -220,6 +220,10 @@ MutationMendingTouch-self-nothing = You have no injuries to mend.
 MutationTongueSpike-popup-regrowing = Your tongue tears free! It will take a while to regrow...
 MutationChemSpike-no-chems = Your blood carries no chemicals to send.
 
+# Telekinesis - tearing a held item out of someone's grip
+telekinesis-disarm-failed = {CAPITALIZE(THE($item))} won't come loose from their grip.
+telekinesis-disarm-resisted = {CAPITALIZE(THE($item))} tugs in your hand, but you hold on.
+
 # Mind Reader - digging thoughts out of a head
 MutationMindReader-popup-thought = You catch a stray thought: "{$message}"
 MutationMindReader-popup-no-thoughts = {CAPITALIZE($target)}'s mind is quiet.

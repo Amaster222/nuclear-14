@@ -25,6 +25,13 @@ public sealed partial class TelekinesisComponent : Component
     /// </summary>
     [DataField]
     public float ThrowForce = 15f;
+
+    /// <summary>
+    /// Chance that yanking an item out of someone's hands fails and they keep hold of it.
+    /// A held item is being actively gripped, so it shouldn't come free every time.
+    /// </summary>
+    [DataField]
+    public float DisarmFailChance = 0.3f;
 }
 
 /// <summary>

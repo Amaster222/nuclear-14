@@ -8,9 +8,11 @@ using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Interaction;
 using Content.Shared.Interaction.Events;
 using Content.Shared.Mobs;
+using Content.Shared.Popups;
 using Content.Shared.Stunnable;
 using Content.Shared.Throwing;
 using Content.Shared.Weapons.Misc;
+using Robust.Shared.Random;
 
 namespace Content.Shared._Misfits.Interaction;
 
@@ -18,7 +20,9 @@ public sealed partial class TelekinesisSystem : EntitySystem
 {
     [Dependency] private ActionBlockerSystem _blocker = default!;
     [Dependency] private INetManager _net = default!;
+    [Dependency] private IRobustRandom _random = default!;
     [Dependency] private SharedHandsSystem _hands = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private SharedTetherGunSystem _tether = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private ThrowingSystem _throwing = default!;
@@ -101,10 +105,25 @@ public sealed partial class TelekinesisSystem : EntitySystem
             return;
 
         var holder = Transform(args.Target).ParentUid;
-        if (holder.IsValid() && _hands.IsHolding(holder, args.Target, out _))
-            _hands.TryDrop(holder, args.Target, checkActionBlocker: false);
+        var wasHeld = holder.IsValid() && _hands.IsHolding(holder, args.Target, out _);
+        if (wasHeld)
+        {
+            // a held item is being actively gripped, so tearing it free isn't a sure thing
+            if (_random.Prob(ent.Comp.DisarmFailChance))
+            {
+                _popup.PopupEntity(Loc.GetString("telekinesis-disarm-failed", ("item", args.Target)), ent, ent);
+                _popup.PopupEntity(Loc.GetString("telekinesis-disarm-resisted", ("item", args.Target)), holder, holder);
+                return;
+            }
 
-        _tether.TryTether(ent, args.Target, args.Performer, gun);
+            if (!_hands.TryDrop(holder, args.Target, checkActionBlocker: false))
+                return;
+        }
+
+        // if the tether still fails after we tore it loose, hand it back rather than
+        // leaving it on the floor for free
+        if (!_tether.TryTether(ent, args.Target, args.Performer, gun) && wasHeld)
+            _hands.TryPickupAnyHand(holder, args.Target, checkActionBlocker: false);
     }
 
     // can't use your mind powers if you go eepy
