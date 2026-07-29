@@ -46,9 +46,11 @@ public sealed partial class ChemSpikeMutationSystem : EntitySystem
             var removed = _solution.SplitSolution(bloodstream.ChemicalSolution.Value, comp.MaxQuantity);
             if (removed.Volume == 0)
             {
-                // no chems in your blood: warn and keep the transfer available instead of wasting it
+                // No chems in your blood: warn and keep the transfer available instead of
+                // wasting it. Deliberately leaving Handled false - that's what consumes
+                // charges and starts the cooldown in PerformAction, so setting it here would
+                // quietly burn the use the day this action gains a useDelay.
                 _popup.PopupEntity(Loc.GetString("MutationChemSpike-no-chems"), args.Performer, args.Performer);
-                args.Handled = true;
                 return;
             }
             _blood.TryAddToChemicals(target, removed);

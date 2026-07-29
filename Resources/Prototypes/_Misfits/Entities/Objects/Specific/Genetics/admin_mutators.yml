@@ -6,6 +6,8 @@
 # mob (ensureMutatable adds MutatableComponent if the target lacks it) with a fast 0.5s
 # self-inject (1s on others). Reuses the default injector (medipen) sprite. Admin-spawn only.
 # Each injector's description states what its mutation does.
+# injectTime and ensureMutatable live on the abstract parent below; prototype inheritance
+# merges components per field, so the children only need to name their mutation.
 # Auto-generated from the mutation entity list; keep in sync when mutations are added/removed.
 
 - type: entity
@@ -25,8 +27,6 @@
   description: 'Subject has acidic chemicals building up underneath the skin. This is often lethal.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationAcidicFlesh
 
@@ -38,8 +38,6 @@
   description: 'A mutation believed to be the cause of acromegaly, or ''being unusually tall''.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationAcromegaly
 
@@ -51,8 +49,6 @@
   description: 'Allows the host to trigger their body''s adrenaline response at will.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationAdrenalineRush
 
@@ -64,8 +60,6 @@
   description: 'The affected person sprouts an antenna. This is known to allow them to access common radio channel passively.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationAntenna
 
@@ -77,8 +71,6 @@
   description: 'Your skin seems to attract and absorb nearby light, snuffing out any glow you had.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationAntiGlow
 
@@ -90,8 +82,6 @@
   description: 'Allows a creature to voluntary discard a random appendage.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationAutotomy
 
@@ -103,8 +93,6 @@
   description: 'Renders the subject completely blind.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationBlindness
 
@@ -116,8 +104,6 @@
   description: 'A genome that lets the holder turn their skin transparent at will, though keeping it up strains the body.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationChameleon
 
@@ -129,8 +115,6 @@
   description: 'Unknown'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationChav
 
@@ -142,8 +126,6 @@
   description: 'Allows a creature to voluntarily shoot their tongue out as biomass, allowing a long range transfer of chemicals.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationChemSpike
 
@@ -155,8 +137,6 @@
   description: 'Allows the user to concentrate nearby heat into a pile of ash. Wow. Very interesting.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationCindikinesis
 
@@ -168,8 +148,6 @@
   description: 'Causes the subject to feel just a little bit smarter. Most effective in specimens with low levels of intelligence.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationClever
 
@@ -181,8 +159,6 @@
   description: 'A genome that inhibits certain brain functions, causing the holder to appear clumsy. Honk!'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationClumsiness
 
@@ -194,8 +170,6 @@
   description: 'A strange mutation that renders the host immune to damage from low temperature environments.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationColdAdaptation
 
@@ -207,8 +181,6 @@
   description: 'A strange mutation that cripples the host''s ability to raise its body temperature. Cold is far more dangerous.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationColdWeakness
 
@@ -220,8 +192,6 @@
   description: 'A chronic cough.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationCough
 
@@ -233,8 +203,6 @@
   description: 'Draws negative energy from the sub-zero void to freeze surrounding temperatures at subject''s will.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationCryokinesis
 
@@ -246,8 +214,6 @@
   description: 'The holder of this genome is completely deaf.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationDeafness
 
@@ -259,8 +225,6 @@
   description: 'Your sense of smell is comparable to that of a canine.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationDogNose
 
@@ -272,8 +236,6 @@
   description: 'A mutation believed to be the cause of dwarfism.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationDwarfism
 
@@ -285,8 +247,6 @@
   description: 'Subject''s arms have become elastic, allowing them to stretch up to a meter away. However, this elasticity makes it difficult to wear gloves, handle complex tasks, or grab large objects.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationElasticArms
 
@@ -298,8 +258,6 @@
   description: 'A terrifying mutation named after its ''patient-zero''.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationElvis
 
@@ -311,8 +269,6 @@
   description: 'Improves the subject''s peripheral vision, letting them see things in the corner of their eyes better.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationEnhancedPerception
 
@@ -324,8 +280,6 @@
   description: 'A genetic defect that sporadically causes seizures.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationEpilepsy
 
@@ -337,8 +291,6 @@
   description: 'The subject''s eyes are able to see further than normal.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationFarsight
 
@@ -350,8 +302,6 @@
   description: 'Unknown'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationFelinized
 
@@ -363,8 +313,6 @@
   description: 'The user''s skin will randomly combust, but is generally a lot more resilient to burning.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationFierySweat
 
@@ -376,8 +324,6 @@
   description: 'An ancient mutation that gives lizards breath of fire.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationFireBreath
 
@@ -389,8 +335,6 @@
   description: 'Allows the user to concentrate moisture and sub-zero forces into snow.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationGeladikinesis
 
@@ -402,8 +346,6 @@
   description: 'The cells within the subject spread out to cover more area, making the subject appear larger.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationGigantism
 
@@ -415,8 +357,6 @@
   description: 'You permanently emit a light with a random color and intensity.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationGlowy
 
@@ -428,8 +368,6 @@
   description: 'A mutation that makes the body reject the head, the brain receding into the chest. Stands for Head Allergic Rejection Syndrome. Warning: Removing this mutation is very dangerous, though it will regenerate non-vital head organs.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationHeadless
 
@@ -441,8 +379,6 @@
   description: 'A strange mutation that renders the host immune to damage from high temperature, including being set alight, though the flame itself still burns clothing. It also seems to make the host resist ash storms.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationHeatAdaptation
 
@@ -454,8 +390,6 @@
   description: 'A strange mutation that cripples the host''s ability to lower its body temperature. Heat is far more dangerous.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationHeatWeakness
 
@@ -467,8 +401,6 @@
   description: 'duge what is WISH your words man...........'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationHeckaciousLarincks
 
@@ -480,8 +412,6 @@
   description: 'A poorly understood genome that causes the holder''s muscles to expand, inhibit speech and gives the person a bad skin condition.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationHulk
 
@@ -493,8 +423,6 @@
   description: 'The subject''s blood is hypermetabolic, causing it to be produced at a much faster rate.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationHypermetabolicBlood
 
@@ -506,8 +434,6 @@
   description: 'Causes a severe case of Aphasia that prevents reading or writing.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationIlliterate
 
@@ -519,8 +445,6 @@
   description: 'Your body can push on beyond the limits of normal human endurance. However, pushing it too far can cause severe damage to your body.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationInexorable
 
@@ -532,8 +456,6 @@
   description: 'The affected person does not conduct electricity.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationInsulated
 
@@ -545,8 +467,6 @@
   description: 'A mutation that makes the body destruct when near death. Not damaging, but very, VERY disorienting.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationInternalMartyrdom
 
@@ -558,8 +478,6 @@
   description: 'The subject''s eyes have become focusing lenses for coherent light. Try not to blink.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationLaserEyes
 
@@ -571,8 +489,6 @@
   description: 'A horrible mutation originating from the distant past, thought to have once been a common gene in all of old world Europe.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationMedieval
 
@@ -584,8 +500,6 @@
   description: 'The affected can lay their hands on other people to transfer a small amount of their injuries to themselves.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationMendingTouch
 
@@ -597,8 +511,6 @@
   description: 'The affected person can look into the recent memories of others.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationMindReader
 
@@ -610,8 +522,6 @@
   description: 'A strange genome, believed to be what differentiates monkeys from humans.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationMonkified
 
@@ -623,8 +533,6 @@
   description: 'Piep!'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationMouse
 
@@ -636,8 +544,6 @@
   description: 'Completely inhibits the vocal section of the brain.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationMute
 
@@ -649,8 +555,6 @@
   description: 'The holder of this mutation has poor eyesight.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationNearSightedness
 
@@ -662,8 +566,6 @@
   description: 'Causes the holder to stutter.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationNervousness
 
@@ -675,8 +577,6 @@
   description: 'A mutation caused by a mixup of hulk genes which severely impacts speech centers in owners'' brains.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationOrk
 
@@ -688,8 +588,6 @@
   description: 'Subject is easily terrified, and may suffer from hallucinations.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationParanoia
 
@@ -701,8 +599,6 @@
   description: 'Historians say back in the 2020''s humanity spoke entirely in this mystical language.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationPigLatin
 
@@ -714,8 +610,6 @@
   description: 'A strange mutation that renders the host immune to damage from both low and high pressure environments. Does not protect from temperature, including the cold of space.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationPressureAdaptation
 
@@ -727,8 +621,6 @@
   description: 'Draws positive energy from the surroundings to heat surrounding temperatures at subject''s will.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationPyrokinesis
 
@@ -740,8 +632,6 @@
   description: 'A volatile mutation that causes the host to sent out deadly beta radiation. This affects both the host and their surroundings.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationRadioactivity
 
@@ -753,8 +643,6 @@
   description: 'The subject''s body is able to digest anything at all, taking on the properties of whatever it swallows.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationRockAbsorber
 
@@ -766,8 +654,6 @@
   description: 'The subject''s body is able to digest anything at all - rocks, ore, scrap, whatever fits in a hand.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationRockEater
 
@@ -779,8 +665,6 @@
   description: 'The affected can channel excess electricity through their hands without shocking themselves, allowing them to shock others. Mostly harmless! Mostly...'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationShockTouch
 
@@ -792,8 +676,6 @@
   description: 'Subject suffers from muscle spasms.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationSpastic
 
@@ -805,8 +687,6 @@
   description: 'The victim of the mutation has a very weak link to spatial reality, and may be displaced. Often causes extreme nausea.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationSpatialInstability
 
@@ -818,8 +698,6 @@
   description: 'The user''s chemical balance is more robust. This mutation is known to speed up metabolism of chemicals.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationStimmed
 
@@ -831,8 +709,6 @@
   description: 'A common mutation that severely decreases intelligence.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationStoner
 
@@ -844,8 +720,6 @@
   description: 'The user''s muscles slightly expand. Commonly seen in top-ranking boxers.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationStrength
 
@@ -857,8 +731,6 @@
   description: 'A horrible mutation originating from the distant past. Thought to be eradicated after the incident in 2037.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationSwedish
 
@@ -870,8 +742,6 @@
   description: 'A strange mutation that allows the holder to interact with objects through thought.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationTelekinesis
 
@@ -883,8 +753,6 @@
   description: 'A rare mutation that allows the user to telepathically communicate to others.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationTelepathy
 
@@ -896,8 +764,6 @@
   description: 'A strange mutation that renders the host immune to damage from both low and high temperature environments. Does not protect from high or low pressure environments.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationThermalAdaptation
 
@@ -909,8 +775,6 @@
   description: 'The user of this genome can visually perceive the unique human thermal signature.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationThermalVision
 
@@ -922,8 +786,6 @@
   description: 'A life-threatening mutation that almost shuts down the host''s ability to control its body temperature.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationThermalWeakness
 
@@ -935,8 +797,6 @@
   description: 'Allows a creature to voluntarily shoot their tongue out as a deadly weapon.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationTongueSpike
 
@@ -948,8 +808,6 @@
   description: 'A chronic twitch that forces the user to scream bad words.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationTourettes
 
@@ -961,8 +819,6 @@
   description: 'A mutation that replaces the right foot with another left foot. Symptoms include kissing the floor when taking a step.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationTwoLeftFeet
 
@@ -974,8 +830,6 @@
   description: 'Partially inhibits the vocal center of the brain, severely distorting speech.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationUnintelligible
 
@@ -987,8 +841,6 @@
   description: '???'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationUnstableDna
 
@@ -1000,8 +852,6 @@
   description: 'A rare genome that attracts odd forces not usually observed.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationVoidMagnet
 
@@ -1013,8 +863,6 @@
   description: 'You are not a clown. You are the entire circus.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationWacky
 
@@ -1026,8 +874,6 @@
   description: 'The subject has almost no peripheral vision, only able to see almost directly infront of themselves.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationWeakPerception
 
@@ -1039,8 +885,6 @@
   description: 'Allows the user to lay webbing, and travel through it.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     mutations:
     - MutationWebbingProduction
 
@@ -1052,6 +896,4 @@
   description: 'A single-use injector flooded with genetic stabilizers that strip every mutation from the body, active or dormant.'
   components:
   - type: Mutator
-    injectTime: 0.5
-    ensureMutatable: true
     clearAll: true

@@ -4,6 +4,7 @@ using Content.Shared.Actions;
 using Content.Shared.Administration.Logs;
 using Content.Shared.Database;
 using Content.Shared.IdentityManagement;
+using Content.Shared.Mind.Components;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Popups;
 using Robust.Shared.Player;
@@ -56,10 +57,13 @@ public sealed partial class TelepathyActionSystem : EntitySystem
             {
                 if (session.AttachedEntity is not {} character ||
                     character == user ||
-                    !HasComp<MobStateComponent>(character))
+                    !HasComp<MobStateComponent>(character) ||
+                    !HasComp<MindContainerComponent>(character)) // match the action's own whitelist
                     continue;
 
-                players.Add(new TelepathyFarEntry(GetNetEntity(character), Name(character)));
+                // Identity.Name, not Name: reaching out to a mind shouldn't tell you who is
+                // behind a mask or a forged ID.
+                players.Add(new TelepathyFarEntry(GetNetEntity(character), Identity.Name(character, EntityManager)));
             }
             players.Sort((a, b) => string.Compare(a.Name, b.Name, StringComparison.OrdinalIgnoreCase));
 
@@ -95,7 +99,7 @@ public sealed partial class TelepathyActionSystem : EntitySystem
             return;
 
         // only allow reaching actual player characters, same filter as the list
-        if (!HasComp<MobStateComponent>(target.Value))
+        if (!HasComp<MobStateComponent>(target.Value) || !HasComp<MindContainerComponent>(target.Value))
             return;
 
         Deliver(ent, user, target.Value, args.Message);

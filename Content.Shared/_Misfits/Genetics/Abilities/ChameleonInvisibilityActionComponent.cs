@@ -35,6 +35,13 @@ public sealed partial class ChameleonInvisibilityActionComponent : Component
     public EntityUid? Target;
 
     /// <summary>
+    /// Whether we were the ones who added the stealth. If the mob was already cloaked by
+    /// something else we leave that alone instead of stripping it on our way out.
+    /// </summary>
+    [DataField]
+    public bool AddedStealth;
+
+    /// <summary>
     /// Poison dealt per second while invisible.
     /// </summary>
     [DataField]
@@ -105,6 +112,7 @@ public sealed class ChameleonInvisibilityActionSystem : EntitySystem
 
         // EnabledOnDeath isn't writable from here, but the Update loop already drops
         // the invisibility the moment the mob dies, so it doesn't matter.
+        ent.Comp.AddedStealth = !HasComp<StealthComponent>(mob);
         var stealth = EnsureComp<StealthComponent>(mob);
         _stealth.SetVisibility(mob, stealth.MinVisibility, stealth);
     }
@@ -132,7 +140,14 @@ public sealed class ChameleonInvisibilityActionSystem : EntitySystem
         if (_net.IsClient || mob is not {} target)
             return;
 
-        RemComp<StealthComponent>(target);
+        // only take the stealth away if it was ours to begin with, otherwise a cloak or
+        // another source would get stripped when the mutation drops
+        if (ent.Comp.AddedStealth)
+            RemComp<StealthComponent>(target);
+        else if (TryComp<StealthComponent>(target, out var stealth))
+            _stealth.SetVisibility(target, stealth.MaxVisibility, stealth);
+
+        ent.Comp.AddedStealth = false;
     }
 
     public override void Update(float frameTime)

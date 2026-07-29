@@ -38,28 +38,34 @@ public sealed class ShootOrganActionSystem : EntitySystem
             }
         }
 
-        EntityUid projectile;
-        if (organ is not null && _body.RemoveOrgan(organ.Value) &&
-            _polymorph.PolymorphEntity(organ.Value, ent.Comp.Polymorph) is {} polymorphed)
+        // Removal is kept separate from the polymorph so a failed polymorph can't leave the
+        // detached organ orphaned in the world while we fall through to the fallback.
+        EntityUid? projectile = null;
+        if (organ is not null && _body.RemoveOrgan(organ.Value))
         {
-            projectile = polymorphed;
+            if (_polymorph.PolymorphEntity(organ.Value, ent.Comp.Polymorph) is {} polymorphed)
+                projectile = polymorphed;
+            else
+                QueueDel(organ.Value); // polymorph failed, don't leave the organ lying around
         }
-        else if (ent.Comp.Fallback is {} fallback)
+
+        if (projectile is null && ent.Comp.Fallback is {} fallback)
         {
             // most bodies in this fork have no tongue organ slot, so grow a fresh spike
             // instead of failing with "you don't have a tongue".
             projectile = Spawn(fallback, Transform(args.Performer).Coordinates);
         }
-        else
+
+        if (projectile is not {} spike)
         {
             _popup.PopupEntity(Loc.GetString("MutationTongueSpike-popup-no-organ", ("organ", ent.Comp.Organ)), args.Performer, args.Performer);
             return;
         }
 
-        var projectileComp = EnsureComp<ActionProjectileComponent>(projectile);
+        var projectileComp = EnsureComp<ActionProjectileComponent>(spike);
         projectileComp.Container = args.Action.Comp.Container;
-        Dirty(projectile, projectileComp);
-        _throwing.TryThrow(projectile, args.Target, user: args.Performer, playSound: false);
+        Dirty(spike, projectileComp);
+        _throwing.TryThrow(spike, args.Target, user: args.Performer, playSound: false);
 
         // the tongue has to regrow: can't speak right until it's back
         if (ent.Comp.RegrowTime > TimeSpan.Zero)

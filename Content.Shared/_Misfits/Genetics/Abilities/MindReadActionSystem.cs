@@ -80,7 +80,8 @@ public sealed partial class MindReadActionSystem : EntitySystem
                     continue;
 
                 heard = true;
-                Tell(user, Loc.GetString("MutationMindReader-popup-thought", ("message", message)));
+                // escape it: this is player-authored text going into popup rich text
+                Tell(user, Loc.GetString("MutationMindReader-popup-thought", ("message", FormattedMessage.EscapeText(message))));
             }
 
             if (!heard)

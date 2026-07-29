@@ -25,6 +25,11 @@ public sealed class RecentSpeechSystem : EntitySystem
         if (!HasComp<MindContainerComponent>(args.Source))
             return;
 
+        // deliberate: whispers stay private. recording them verbatim would mean mind reading
+        // hands over things the speaker specifically took care not to say out loud.
+        if (args.IsWhisper)
+            return;
+
         var message = args.Message.Trim();
         if (message.Length == 0)
             return;

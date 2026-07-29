@@ -47,7 +47,27 @@ public sealed class AddMarkingsMutationSystem : EntitySystem
 
         foreach (var marking in ent.Comp.Markings)
         {
+            // this deliberately reruns after a polymorph transfer so the new body gets the
+            // markings, which means it can fire more than once on the same body - without
+            // this check you end up wearing two sets of ears.
+            if (HasMarking(humanoid, marking))
+                continue;
+
             _humanoid.AddMarking(target, marking, sync: true, forced: true, humanoid: humanoid);
         }
+    }
+
+    private static bool HasMarking(HumanoidAppearanceComponent humanoid, string id)
+    {
+        foreach (var (_, markings) in humanoid.MarkingSet.Markings)
+        {
+            foreach (var marking in markings)
+            {
+                if (marking.MarkingId == id)
+                    return true;
+            }
+        }
+
+        return false;
     }
 }

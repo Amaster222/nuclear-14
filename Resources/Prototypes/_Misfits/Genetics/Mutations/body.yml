@@ -463,6 +463,11 @@
   - type: ComponentMutation
     added:
     - type: DevourMutation
+      blacklist: &devourBlacklist
+        tags:
+        - HighRiskItem # nuke disk, command IDs
+        components:
+        - StealTarget # antag steal objectives
 
 - type: entity
   parent: MutationRockEater
@@ -479,6 +484,7 @@
   - type: ComponentMutation
     added:
     - type: DevourMutation
+      blacklist: *devourBlacklist
       devourTime: 2
       nutrition: 45
       hydration: 15

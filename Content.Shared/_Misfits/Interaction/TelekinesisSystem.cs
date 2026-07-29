@@ -52,9 +52,10 @@ public sealed partial class TelekinesisSystem : EntitySystem
         // remote interaction: anything within telekinesis range can be interacted with without
         // touching it (open doors, pick up items, etc). TelekineticInteractable still marks
         // targets usable from any distance.
+        // Only the InRangeUnobstructed overload that interactions use raises this event, so
+        // melee still goes through its own range check and can't reach any further than normal.
         args.InRange = _targetQuery.HasComp(args.Target) ||
-            IsInRange(args.User, args.Target, ent.Comp.Range) ||
-            IsInRange(args.User, args.Target, SharedInteractionSystem.InteractionRange);
+            IsInRange(args.User, args.Target, ent.Comp.Range);
     }
 
     private void OnAction(Entity<TelekinesisComponent> ent, ref TelekinesisActionEvent args)
@@ -93,7 +94,12 @@ public sealed partial class TelekinesisSystem : EntitySystem
         if (args.Target == original || args.Target == ent.Owner)
             return;
 
-        // rip it straight out of whoever's holding it
+        // Rip it straight out of whoever's holding it, but only once we know the tether can
+        // actually reach. Disarming first and tethering second meant a failed tether still
+        // dropped the item, at the action's full range.
+        if (!IsInRange(ent, args.Target, ent.Comp.Range))
+            return;
+
         var holder = Transform(args.Target).ParentUid;
         if (holder.IsValid() && _hands.IsHolding(holder, args.Target, out _))
             _hands.TryDrop(holder, args.Target, checkActionBlocker: false);

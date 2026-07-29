@@ -50,9 +50,13 @@ public sealed partial class HulkComponent : Component
     [DataField] public Color EyeColor = Color.FromHex("#910C17");
 
     /// <summary>
-    /// The mob's skin color from before the hulk skin was applied, saved so it can be restored on removal.
+    /// The mob's skin and eye colour from before the hulk look was applied, saved so they can be
+    /// restored on removal. Only ever assigned with ??=, otherwise a save/reload would re-capture
+    /// the already-green values and "restoring" would leave you green.
     /// </summary>
     [DataField] public Color? OriginalSkinColor;
+
+    [DataField] public Color? OriginalEyeColor;
 }
 
 public sealed class HulkSystem : EntitySystem
@@ -77,18 +81,25 @@ public sealed class HulkSystem : EntitySystem
         if (_net.IsClient || !TryComp<HumanoidAppearanceComponent>(ent, out var humanoid))
             return;
 
-        ent.Comp.OriginalSkinColor = humanoid.SkinColor;
+        // ??= so a save/reload can't re-capture the already-hulked colours as the "originals"
+        ent.Comp.OriginalSkinColor ??= humanoid.SkinColor;
+        ent.Comp.OriginalEyeColor ??= humanoid.EyeColor;
+
         // verify:false so the green isn't clamped back to a valid (human) skin tone
         _humanoid.SetSkinColor(ent, ent.Comp.SkinColor, verify: false, humanoid: humanoid);
+        _humanoid.SetBaseLayerColor(ent, HumanoidVisualLayers.Eyes, ent.Comp.EyeColor, humanoid: humanoid);
     }
 
-    // Restore the original skin color when the mutation is removed.
+    // Restore the original skin and eye colour when the mutation is removed.
     private void OnShutdown(Entity<HulkComponent> ent, ref ComponentShutdown args)
     {
-        if (_net.IsClient || ent.Comp.OriginalSkinColor is not { } original || !HasComp<HumanoidAppearanceComponent>(ent))
+        if (_net.IsClient || !HasComp<HumanoidAppearanceComponent>(ent))
             return;
 
-        _humanoid.SetSkinColor(ent, original, verify: false);
+        if (ent.Comp.OriginalSkinColor is {} skin)
+            _humanoid.SetSkinColor(ent, skin, verify: false);
+
+        _humanoid.SetBaseLayerColor(ent, HumanoidVisualLayers.Eyes, ent.Comp.OriginalEyeColor);
     }
 
     private static void OnBeforeStaminaDamage(Entity<HulkComponent> ent, ref BeforeStaminaDamageEvent args)
