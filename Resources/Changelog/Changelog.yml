@@ -9596,3 +9596,16 @@ Entries:
   id: 6286
   time: '2026-07-30T23:18:14.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1113
+- author: Oli
+  changes:
+    - type: Add
+      message: >-
+        Legion flag backpacks exclusively for vex, prime dec, vet dec, optio and
+        centurion. 
+    - type: Add
+      message: Legion mantle exclusive by Optio
+    - type: Tweak
+      message: treasurer and medicus to all PoM + Acolytes
+  id: 6287
+  time: '2026-07-30T23:47:29.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1108
