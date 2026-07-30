@@ -4,16 +4,13 @@
 
 undecided-loadout-category-explorer-tracker-name = Explorer Tracker
 undecided-loadout-category-explorer-tracker-description =
-    Includes a Legion SKS with 3 clips, 2 bolas,
-    a .45 Colt pistol, 2 .45 magazines, a rope belt,
-    night vision goggles, a healing powder,
+    Includes a hunting rifle, 3 308. Ammo boxes, a bola, healing powder,
     a healing poultice, 2 K rations, and a ceramic flask.
 
 undecided-loadout-category-explorer-raider-name = Explorer Raider
 undecided-loadout-category-explorer-raider-description =
-    Includes a FAL Rifle with 3 magazines, 2 bolas,
-    a .45 Colt pistol, 2 .45 magazines, a rope belt,
-    night vision goggles, a healing powder,
+    Includes 2 bolas,
+    a grease gun and a 1911,
     a healing poultice, 2 K rations, and a ceramic flask.
 
 # Migrated Corvax legacy Legion keys
@@ -744,8 +741,8 @@ undecided-loadout-category-misfits-priestess-zealot-desc =
 undecided-loadout-category-misfits-eighties-block-road-captain-name = Road Captain Kit
 undecided-loadout-category-misfits-eighties-block-road-captain-description =
     A kit filled with everything a block needs to rip them apart.
-    Comes with a 12.7 SMG, a heavy ripper sword, and some meds with various other
-    looted equipment. Includes a 45-70 hunter and a shitload of meds.
+    Comes with a 12.7 SMG, a ripper, and some meds with various other
+    looted equipment.
 
 undecided-loadout-category-misfits-eighties-block-boss-brawler-name = Boss Brawler Kit
 undecided-loadout-category-misfits-eighties-block-boss-brawler-description =
