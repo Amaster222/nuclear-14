@@ -9577,3 +9577,22 @@ Entries:
   id: 6285
   time: '2026-07-29T21:44:24.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1104
+- author: Bradysgaming
+  changes:
+    - type: Add
+      message: Gave 80's more bikes to prep for more slots coming back
+    - type: Add
+      message: Gave 80's more tools to create drugs/chems
+    - type: Fix
+      message: Fixed Provost and OffDuty bos job spawns.
+    - type: Fix
+      message: Fixed two OOB methods.
+    - type: Tweak
+      message: >-
+        Adjusted Ranger job supervisors to further hammer in the fact they do
+        all indeed listen to the major.
+    - type: Fix
+      message: Fixed Legion Explorer kit descriptions
+  id: 6286
+  time: '2026-07-30T23:18:14.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1113
