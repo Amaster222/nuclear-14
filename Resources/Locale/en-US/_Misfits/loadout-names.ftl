@@ -821,3 +821,4 @@ loadout-name-LoadoutNCRRangerEliteArmor = elite ranger combat armor
 loadout-name-LoadoutNCRRangerFoxArmor = fox ranger combat armor
 loadout-name-MisfitsLoadoutHeadAntlerSkull = antler skullcap
 loadout-name-MisfitsLoadoutBoSMidwestCommanderPowerArmor = BoS Commander Power Armor
+loadout-name-MisfitsLoadoutFollowerResponderDuster = Follower Responder Duster
