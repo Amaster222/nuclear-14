@@ -21,6 +21,7 @@
   description: Spew out flames from your lungs!
   components:
   - type: WorldTargetAction
+    useDelay: 30 # cooldown so it can't be spammed
     event: !type:ProjectileSpellEvent
       prototype: ProjectileDragonsBreath # not a spread just 1 line of fire, funny lizard is weaker than a space dragon
   - type: EffectAction

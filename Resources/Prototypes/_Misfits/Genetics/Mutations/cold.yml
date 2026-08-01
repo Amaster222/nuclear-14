@@ -45,7 +45,7 @@
   description: This power fires a frozen bolt at a target.
   components:
   - type: WorldTargetAction
-    useDelay: 16
+    useDelay: 10 # buffed: faster cast than before (was 16), cryo was too weak
     icon:
       sprite: _Misfits/Actions/mutations.rsi
       state: icebeam

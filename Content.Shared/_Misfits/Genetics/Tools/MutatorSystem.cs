@@ -5,6 +5,8 @@ using Content.Shared.Examine;
 using Content.Shared.IdentityManagement;
 using Content.Shared.Interaction;
 using Content.Shared.Interaction.Events;
+using Content.Shared.Mobs.Components;
+using Content.Shared.Mobs.Systems;
 using Content.Shared.Popups;
 using Content.Shared.Tag;
 using Content.Shared._Misfits.Genetics.Console;
@@ -16,6 +18,8 @@ namespace Content.Shared._Misfits.Genetics.Tools;
 public sealed partial class MutatorSystem : EntitySystem
 {
     [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private INetManager _net = default!;
+    [Dependency] private MobStateSystem _mob = default!;
     [Dependency] private MutationSystem _mutation = default!;
     [Dependency] private SharedAppearanceSystem _appearance = default!;
     [Dependency] private SharedDoAfterSystem _doAfter = default!;
@@ -39,7 +43,7 @@ public sealed partial class MutatorSystem : EntitySystem
         if (!args.IsInDetailsRange)
             return;
 
-        var msg = ent.Comp.Mutations.Count > 0
+        var msg = ent.Comp.Mutations.Count > 0 || ent.Comp.ClearAll
             ? "mutator-examine-loaded"
             : "mutator-examine-spent";
         args.PushMarkup(Loc.GetString(msg));
@@ -65,14 +69,18 @@ public sealed partial class MutatorSystem : EntitySystem
 
     public void StartInject(Entity<MutatorComponent> ent, EntityUid target, EntityUid user)
     {
-        if (ent.Comp.Mutations.Count == 0)
+        if (ent.Comp.Mutations.Count == 0 && !ent.Comp.ClearAll)
         {
             _popup.PopupEntity(Loc.GetString("mutator-depleted"), user, user);
             return;
         }
 
         var targetName = Identity.Name(target, EntityManager);
-        if (!_mutation.CanMutate(target))
+        // EnsureMutatable mutators accept any living mob; the component gets added on injection.
+        var canMutate = ent.Comp.EnsureMutatable
+            ? HasComp<MobStateComponent>(target) && !_mob.IsDead(target)
+            : _mutation.CanMutate(target);
+        if (!canMutate)
         {
             _popup.PopupEntity(Loc.GetString("mutator-cant-mutate", ("target", targetName)), user, user);
             return;
@@ -107,14 +115,22 @@ public sealed partial class MutatorSystem : EntitySystem
         if (!_timing.IsFirstTimePredicted || args.Cancelled || args.Target is not {} target)
             return;
 
+        // Admin mutators work on any living mob: add MutatableComponent server-side if missing.
+        if (ent.Comp.EnsureMutatable && _net.IsServer && HasComp<MobStateComponent>(target))
+            _mutation.EnsureMutatable(target);
+
         // prevent TOCTOU
-        if (ent.Comp.Mutations.Count == 0 || _mutation.GetMutatable(target) is not {} mutatable)
+        if ((ent.Comp.Mutations.Count == 0 && !ent.Comp.ClearAll) || _mutation.GetMutatable(target) is not {} mutatable)
             return;
 
         args.Handled = true;
 
         var body = mutatable.AsNullable();
-        if (ent.Comp.Remove)
+        if (ent.Comp.ClearAll)
+        {
+            _mutation.ClearMutations(body, user: args.User, predicted: true);
+        }
+        else if (ent.Comp.Remove)
         {
             _mutation.RemoveMutations(body, ent.Comp.Mutations, user: args.User, predicted: true);
             // TODO: maybe do genetic damage if it succeeded
@@ -129,6 +145,7 @@ public sealed partial class MutatorSystem : EntitySystem
         }
 
         // prevent reuse
+        ent.Comp.ClearAll = false;
         ent.Comp.Mutations.Clear();
         Dirty(ent);
         UpdateAppearance(ent);

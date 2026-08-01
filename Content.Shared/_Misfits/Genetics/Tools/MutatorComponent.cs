@@ -38,6 +38,20 @@ public sealed partial class MutatorComponent : Component
     /// </summary>
     [DataField]
     public TimeSpan InjectTime = TimeSpan.FromSeconds(3);
+
+    /// <summary>
+    /// If true, the mutator works on any living mob: targets without MutatableComponent
+    /// get it added on injection instead of being rejected. Used by admin mutators.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public bool EnsureMutatable;
+
+    /// <summary>
+    /// Strips every active and dormant mutation from the target instead of adding any.
+    /// The mutator is spent after use like any other. <see cref="Mutations"/> is ignored.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public bool ClearAll;
 }
 
 [Serializable, NetSerializable]
