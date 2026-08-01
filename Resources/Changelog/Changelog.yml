@@ -9382,3 +9382,239 @@ Entries:
   id: 6262
   time: '2026-07-22T23:38:10.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1081
+- author: Oli
+  changes:
+    - type: Fix
+      message: Capitalization on western poncho files
+  id: 6263
+  time: '2026-07-23T00:49:28.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1078
+- author: JohnKieser
+  changes:
+    - type: Tweak
+      message: >-
+        Nuka cola crate and kitchen shelf items adjusted to prevent errors msgs
+        and let other coded items to spawn 
+  id: 6264
+  time: '2026-07-23T00:54:32.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/995
+- author: Dpellowski
+  changes:
+    - type: Add
+      message: Enclave Behavior Reaffirming device (Keep your contract)
+  id: 6265
+  time: '2026-07-23T02:26:22.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1083
+- author: Dpellowski
+  changes:
+    - type: Tweak
+      message: QOL War Changes + Invite to War post start
+  id: 6266
+  time: '2026-07-23T16:26:27.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1087
+- author: Dpellowski
+  changes:
+    - type: Fix
+      message: Genetic CD, Genetics Work while cuffed
+  id: 6267
+  time: '2026-07-23T19:47:31.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1089
+- author: Dpellowski
+  changes:
+    - type: Fix
+      message: Bug 1 and 1.5 in Discord
+  id: 6268
+  time: '2026-07-23T20:23:16.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1091
+- author: RedBookcase
+  changes:
+    - type: Add
+      message: Lots of new Jukebox songs.
+    - type: Add
+      message: >-
+        Standardized stats for BoS Midwest PA, restored them to parity with
+        standard armor (BoS Commander Midwest Armor was worse than the regular
+        T-51...)
+    - type: Add
+      message: >-
+        Updated Enclave PA models to reflect recent buffs to other standard PA,
+        added missing reflect values, etc. 
+    - type: Add
+      message: Enclave roles were missing spawn prototypes for admin use, added em in.
+    - type: Tweak
+      message: >-
+        Lowered Legion Slave slots to 2 to be in line with NCR and take
+        overworked Auxilia and Priestesses off suicide watch. Restricted
+        Pickpocket, Silent Takedown, and Handy Tools traits to not be available
+        to NCR Prisoners or Legion Slaves.
+  id: 6269
+  time: '2026-07-23T23:18:04.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1036
+- author: paige404
+  changes:
+    - type: Fix
+      message: >-
+        Put robots in their place (by not allowing them to melee charge
+        anymore). C-27s evade this on a technicality, but you're on THIN ICE
+        MISTER.
+  id: 6270
+  time: '2026-07-24T01:01:11.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1084
+- author: Squagg
+  changes:
+    - type: Tweak
+      message: N14 chemical syringes now take one second to inject someone else.
+  id: 6271
+  time: '2026-07-24T01:40:56.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1088
+- author: John-Dang
+  changes:
+    - type: Add
+      message: Added new flag and clutter descriptions!
+    - type: Add
+      message: >-
+        Added new names for the caravan network contractor ranks, adjusting
+        their badges too!
+  id: 6272
+  time: '2026-07-24T02:22:52.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1080
+- author: Bradysgaming
+  changes:
+    - type: Add
+      message: Added Supermutant rags
+    - type: Fix
+      message: Fixed Loadout longsword
+  id: 6273
+  time: '2026-07-24T02:36:25.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1092
+- author: Bradysgaming
+  changes:
+    - type: Tweak
+      message: Benezine does poison damage now
+  id: 6274
+  time: '2026-07-24T03:36:11.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1093
+- author: John-Dang
+  changes:
+    - type: Add
+      message: Added fun :D
+  id: 6275
+  time: '2026-07-25T23:20:21.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1097
+- author: aftemath434
+  changes:
+    - type: Add
+      message: Enclave Heavy Ordnance Plans with crafting costs :)
+  id: 6276
+  time: '2026-07-25T23:37:43.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1086
+- author: Bradysgaming
+  changes:
+    - type: Tweak
+      message: Wastelander has no timelock anymore
+  id: 6277
+  time: '2026-07-26T15:15:55.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1100
+- author: Dpellowski
+  changes:
+    - type: Add
+      message: Enclave Access + Slight Enlisted PT change
+  id: 6278
+  time: '2026-07-26T15:26:31.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1101
+- author: Dpellowski
+  changes:
+    - type: Fix
+      message: ID Rename
+  id: 6279
+  time: '2026-07-26T16:28:33.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1102
+- author: Tytos
+  changes:
+    - type: Tweak
+      message: remade entire legion base from scratch.
+  id: 6280
+  time: '2026-07-26T20:17:15.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1096
+- author: aftemath434
+  changes:
+    - type: Add
+      message: Glock 37M unique pistol
+  id: 6281
+  time: '2026-07-27T23:35:25.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1094
+- author: Vixting
+  changes:
+    - type: Add
+      message: You can now hit people riding bikes
+    - type: Add
+      message: You will be dismounted from bike if you go crit
+    - type: Add
+      message: You can no longer repair bike whilst being the rider
+    - type: Add
+      message: 'You can examine bike to see fuel amount '
+  id: 6282
+  time: '2026-07-29T20:59:11.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1103
+- author: Marabout
+  changes:
+    - type: Tweak
+      message: Added a slowdown to the M60 when carrying it
+  id: 6283
+  time: '2026-07-29T20:59:32.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1105
+- author: Marabout
+  changes:
+    - type: Tweak
+      message: Gaved the NCR belt/harness the capacity to store medicine
+  id: 6284
+  time: '2026-07-29T21:03:35.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1106
+- author: Tytos
+  changes:
+    - type: Tweak
+      message: added more torches to light up parts of legion base that were too dark.
+  id: 6285
+  time: '2026-07-29T21:44:24.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1104
+- author: Bradysgaming
+  changes:
+    - type: Add
+      message: Gave 80's more bikes to prep for more slots coming back
+    - type: Add
+      message: Gave 80's more tools to create drugs/chems
+    - type: Fix
+      message: Fixed Provost and OffDuty bos job spawns.
+    - type: Fix
+      message: Fixed two OOB methods.
+    - type: Tweak
+      message: >-
+        Adjusted Ranger job supervisors to further hammer in the fact they do
+        all indeed listen to the major.
+    - type: Fix
+      message: Fixed Legion Explorer kit descriptions
+  id: 6286
+  time: '2026-07-30T23:18:14.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1113
+- author: Oli
+  changes:
+    - type: Add
+      message: >-
+        Legion flag backpacks exclusively for vex, prime dec, vet dec, optio and
+        centurion. 
+    - type: Add
+      message: Legion mantle exclusive by Optio
+    - type: Tweak
+      message: treasurer and medicus to all PoM + Acolytes
+  id: 6287
+  time: '2026-07-30T23:47:29.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1108
+- author: Squagg
+  changes:
+    - type: Remove
+      message: Weather stencils.
+    - type: Tweak
+      message: Cassette tapes now hold thirty minutes of recording instead of three.
+  id: 6288
+  time: '2026-08-01T00:14:31.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1112

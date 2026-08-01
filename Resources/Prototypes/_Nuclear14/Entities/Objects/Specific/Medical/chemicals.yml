@@ -36,6 +36,7 @@
     onlyAffectsMobs: false
     solutionName: pen
     transferAmount: 30
+    otherInjectionDelay: 1 # #Misfits Add - N14 chemical syringes take time to inject others.
   - type: Appearance
   - type: WelderRefinable
     refineResult:
@@ -953,7 +954,7 @@
   parent: N14HealingPowder
   id: N14MourningPoultice
   name: mourning poultice
-  description: A bag of powder made from poisonous flowers for use within tribal ceremenoies.
+  description: A bag of powder made from poisonous flowers for use within tribal ceremonies.
   components:
   - type: Sprite
     sprite: _Nuclear14/Objects/Specific/Medical/drugs.rsi

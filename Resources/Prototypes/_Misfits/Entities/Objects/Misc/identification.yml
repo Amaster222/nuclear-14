@@ -12,7 +12,7 @@
     state: passport_blank
   - type: Access
     groups:
-    - AllAccessN14
+    - AllAccessMisfits
   - type: Clothing
     sprite: _Nuclear14/Objects/Misc/identification.rsi
   - type: IdCard

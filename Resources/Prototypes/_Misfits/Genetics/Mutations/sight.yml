@@ -55,6 +55,7 @@
   id: MutationActionThermalVision
   components:
   - type: InstantAction
+    checkCanInteract: false
     useDelay: 25
   - type: EffectAction
     onPerformed: true

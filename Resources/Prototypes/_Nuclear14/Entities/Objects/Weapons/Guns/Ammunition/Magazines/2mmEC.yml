@@ -12,7 +12,7 @@
     whitelist:
       tags:
         - N14Cartridge2mmEC
-    capacity: 20
+    capacity: 12
     soundRack:
       path: /Audio/Weapons/Guns/Cock/smg_cock.ogg
   - type: ContainerContainer
@@ -20,7 +20,7 @@
       ballistic-ammo: !type:Container
   - type: Sprite
     netsync: false
-    sprite: _Nuclear14/Objects/Weapons/Guns/Ammunition/Magazines/12gauge/mag.rsi
+    sprite: _Nuclear14/Objects/Weapons/Guns/Ammunition/Magazines/308/mag.rsi
     layers:
     - state: base
       map: ["enum.GunVisualLayers.Base"]
@@ -34,7 +34,7 @@
 
 - type: entity
   id: N14Magazine2mmECRifle
-  name: 2mmEC 20 capacity magazine
+  name: 2mmEC 12 capacity magazine
   parent: N14BaseMagazine2mmECRifle
   components:
   - type: BallisticAmmoProvider
@@ -53,7 +53,7 @@
     whitelist:
       tags:
         - N14Cartridge2mmEC
-    capacity: 12
+    capacity: 8
     soundRack:
       path: /Audio/Weapons/Guns/Cock/smg_cock.ogg
   - type: ContainerContainer
@@ -61,7 +61,7 @@
       ballistic-ammo: !type:Container
   - type: Sprite
     netsync: false
-    sprite: _Nuclear14/Objects/Weapons/Guns/Ammunition/Magazines/12gauge/mag.rsi
+    sprite: _Nuclear14/Objects/Weapons/Guns/Ammunition/Magazines/308/mag.rsi
     layers:
     - state: base
       map: ["enum.GunVisualLayers.Base"]
@@ -75,7 +75,7 @@
 
 - type: entity
   id: N14Magazine2mmECPistol
-  name: 2mmEC 12 capacity magazine
+  name: 2mmEC 8 capacity magazine
   parent: N14BaseMagazine2mmECPistol
   components:
   - type: BallisticAmmoProvider

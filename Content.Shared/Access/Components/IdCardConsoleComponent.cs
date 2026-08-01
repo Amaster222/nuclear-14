@@ -77,6 +77,18 @@ public sealed partial class IdCardConsoleComponent : Component
         "NCRMedic",
         "NCRLT",
         "NCRRanger",
+        "Enclave", // Misfits: Enclave Start
+        "EnclaveNCO",
+        "EnclaveOfficer",
+        "EnclaveCommand",
+        "EnclaveScience",
+        "EnclaveRoleAll",
+        "EnclaveRoleScientist",
+        "EnclaveRoleHeadScientist",
+        "EnclaveRoleNCO",
+        "EnclaveRoleJuniorOfficer",
+        "EnclaveRoleSeniorOfficer",
+        "EnclaveRoleCommander",
         "CaesarLegion", // Misfit: Legion Start
         "CaesarLegionRecruit", // #Misfits Add - Cell door gate access for Legion IDs
         "CaesarLegionSlave",

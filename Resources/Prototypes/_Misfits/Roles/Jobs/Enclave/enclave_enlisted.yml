@@ -19,7 +19,7 @@
       - Ghoul
     - !type:CharacterDepartmentTimeRequirement # #Misfits Tweak - T2 faction timelock (4h Enclave)
       department: Enclave
-      min: 14400 # 4 hours
+      min: 36000 # 10 hours
   startingGear: EnclaveEnlistedGear
   icon: "JobIconEnclaveEnlisted"
   supervisors: job-supervisors-enclave
@@ -47,7 +47,7 @@
     belt: ClothingBeltMilitary
     ears: N14ClothingHeadsetEnclave
     pocket1: EnclaveSoldierloadoutkits
-    id: N14IDEnclaveTrooper
+    id: N14EnclaveTrooperPipboy
   satchel: N14ClothingBackpackSatchelMilitaryFilled
   duffelbag: N14ClothingBackpackDuffelMilitaryFilled
   storage:

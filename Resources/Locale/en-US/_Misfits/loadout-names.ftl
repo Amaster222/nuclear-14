@@ -565,6 +565,8 @@ loadout-name-LoadoutNeckLegionForgemaster = blacksmith's apron
 loadout-name-LoadoutNeckLegionMedicus = medicus apron
 loadout-name-LoadoutNeckLegionTreasurer = treasurers mantle
 loadout-name-LoadoutUniformJumpsuitLegionnaireOther = legionnaire skirt
+loadout-name-MisfitsLoadoutLegionBackpackCapeRed = Legion red flag
+loadout-name-MisfitsLoadoutLegionBackpackCapeBlack = Legion black flag
 
 # Miscellaneous eyes
 loadout-name-ClothingEyesGlassesChemist = chemist glasses
@@ -798,7 +800,6 @@ loadout-name-N14Gladius = gladius
 loadout-name-N14GladiusLegion = gladius
 loadout-name-N14ChineseSword = chinese officer sword
 loadout-name-N14LongSword = longsword
-loadout-name-N14LongSwordBoS = longsword
 loadout-name-N14CeremonialSwordCent = ceremonial sword
 loadout-name-N14GoliathFistLeader = goliath power fist
 loadout-name-N14TrenchClub = trench club

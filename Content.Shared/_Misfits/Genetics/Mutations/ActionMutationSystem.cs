@@ -9,6 +9,8 @@ public sealed partial class ActionMutationSystem : EntitySystem
     [Dependency] private INetManager _net = default!;
     [Dependency] private SharedActionsSystem _actions = default!;
 
+    private static readonly TimeSpan DefaultMutationUseDelay = TimeSpan.FromSeconds(30);
+
     public override void Initialize()
     {
         base.Initialize();
@@ -23,7 +25,15 @@ public sealed partial class ActionMutationSystem : EntitySystem
         if (_net.IsClient)
             return;
 
-        _actions.AddAction(args.Target.Owner, ref ent.Comp.ActionEntity, ent.Comp.Action, container: ent.Owner);
+        if (_actions.AddAction(args.Target.Owner, ref ent.Comp.ActionEntity, ent.Comp.Action, container: ent.Owner))
+        {
+            BaseActionComponent? action = null;
+            if (_actions.ResolveActionData(ent.Comp.ActionEntity, ref action) && action.UseDelay == null)
+                _actions.SetUseDelay(ent.Comp.ActionEntity, DefaultMutationUseDelay);
+
+            _actions.SetCheckCanInteract(ent.Comp.ActionEntity, false);
+        }
+
         Dirty(ent);
     }
 
