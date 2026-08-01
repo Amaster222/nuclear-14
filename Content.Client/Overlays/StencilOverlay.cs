@@ -8,7 +8,6 @@ using Robust.Client.GameObjects;
 using Robust.Client.Graphics;
 using Robust.Shared.Enums;
 using Robust.Shared.Map;
-using Robust.Shared.Map.Components;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
 
@@ -36,7 +35,11 @@ public sealed partial class StencilOverlay : Overlay
     private readonly ShaderInstance _shader;
     private readonly ShaderInstance _weatherDrawShader;
 
-    private List<Entity<MapGridComponent>> _grids = new();
+    // #Misfits Fix - Stencil mask throttle: while the view is static the roofed-tile
+    // stencil mask only needs rebuilding at 4 Hz to catch tile/roof changes, instead
+    // of every frame. Any view change rebuilds it, since the mask is screen space.
+    private float _stencilAccum;
+    private Matrix3x2 _lastStencilMatrix;
 
     public StencilOverlay(ParallaxSystem parallax, SharedTransformSystem transform, SpriteSystem sprite, WeatherSystem weather)
     {
@@ -58,7 +61,7 @@ public sealed partial class StencilOverlay : Overlay
         if (_blep?.Texture.Size != args.Viewport.Size)
         {
             _blep?.Dispose();
-            _blep = _clyde.CreateRenderTarget(args.Viewport.Size, new RenderTargetFormatParameters(RenderTargetColorFormat.Rgba8Srgb), name: "overlay-stencil");
+            _blep = _clyde.CreateRenderTarget(args.Viewport.Size, new RenderTargetFormatParameters(RenderTargetColorFormat.Rgba8Srgb), name: "weather-stencil");
         }
 
         if (_entManager.TryGetComponent<WeatherComponent>(mapUid, out var comp))
