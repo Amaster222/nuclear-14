@@ -9609,3 +9609,12 @@ Entries:
   id: 6287
   time: '2026-07-30T23:47:29.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1108
+- author: Squagg
+  changes:
+    - type: Remove
+      message: Weather stencils.
+    - type: Tweak
+      message: Cassette tapes now hold thirty minutes of recording instead of three.
+  id: 6288
+  time: '2026-08-01T00:14:31.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1112
