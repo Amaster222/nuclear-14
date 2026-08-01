@@ -348,6 +348,9 @@
     sprite: _Nuclear14/Objects/Weapons/Guns/LMGs/m60.rsi
   - type: Wieldable
     wieldedSpeedModifier: 0.8
+  - type: ClothingSpeedModifier # Misfit-Add
+    walkModifier: 0.85
+    sprintModifier: 0.85
   - type: GunRequiresWield
   - type: GunWieldBonus
     minAngle: -21
