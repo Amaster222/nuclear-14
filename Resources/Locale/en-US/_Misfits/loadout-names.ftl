@@ -388,6 +388,8 @@ loadout-name-LoadoutClothingNeckNCRMPBeret = NCR MP beret
 loadout-name-LoadoutMaskGas = gas mask
 loadout-name-LoadoutMaskMuzzle = muzzle mask
 loadout-name-LoadoutMaskBandSkull = skull bandana
+loadout-name-LoadoutN14ClothingMaskWeatheredGasMask = weathered ranger gas mask
+loadout-name-LoadoutN14ClothingMaskGasRangerBroken = old riot gas mask
 
 # Brotherhood of Steel loadouts (Midwest)
 loadout-name-LoadoutBoSMidwestSquire = Brotherhood squire armor (Midwest)
@@ -500,7 +502,7 @@ loadout-name-N14ClothingHeadHatCombatHelmet = combat helmet
 loadout-name-N14ClothingHeadHatPressHelmet = press helmet
 loadout-name-N14ClothingHeadHatPrewarMilitaryHelmet = pre-war military helmet
 loadout-name-LoadoutN14ClothingHeadFourLeafRangerHelmet = Four Leaf ranger helmet
-loadout-name-LoadoutN14ClothingNeckHighlandRangerHelmet = Highland ranger helmet
+loadout-name-LoadoutN14ClothingHeadHighlandRangerHelmet = Highland ranger helmet
 
 # Misfits Add - Neckwear loadout names
 loadout-name-LoadoutN14ClothingNeckRangerDuster = ranger duster
@@ -518,6 +520,7 @@ loadout-name-LoadoutSprayPaintWhite = white spray paint
 loadout-name-LoadoutSprayPaintBlack = black spray paint
 loadout-name-LoadoutSprayPaintPurple = purple spray paint
 loadout-name-LoadoutSprayPaintRed = red spray paint
+loadout-name-LoadoutSprayPaintDesertTan = desert tan spray paint
 loadout-name-LoadoutHealingPoutltice = healing poultice
 loadout-name-LoadoutHealingPowder = healing powder
 loadout-name-LoadoutPsycho = Psycho
