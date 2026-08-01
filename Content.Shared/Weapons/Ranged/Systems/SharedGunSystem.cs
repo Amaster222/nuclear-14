@@ -77,7 +77,7 @@ public abstract partial class SharedGunSystem : EntitySystem
     [Dependency] protected SharedPopupSystem _popup = default!;
     [Dependency] protected SharedPhysicsSystem Physics = default!;
     [Dependency] protected SharedProjectileSystem Projectiles = default!;
-    [Dependency] protected SharedTransformSystem TransformSystem = default!;
+    [Dependency] protected SharedTransformSystem _xform = default!;
     [Dependency] protected TagSystem TagSystem = default!;
     [Dependency] protected ThrowingSystem ThrowingSystem = default!;
     [Dependency] private UseDelaySystem _useDelay = default!;
@@ -515,8 +515,8 @@ public abstract partial class SharedGunSystem : EntitySystem
         //
         // Fix: reparent the projectile to the map and set map-level velocity directly,
         // so parent physics cannot influence the projectile's trajectory.
-        var mapCoords = TransformSystem.GetMapCoordinates(uid);
-        TransformSystem.SetCoordinates(uid, TransformSystem.ToCoordinates(mapCoords));
+        var mapCoords = _xform.GetMapCoordinates(uid);
+        _xform.SetCoordinates(uid, _xform.ToCoordinates(mapCoords));
         Physics.SetLinearVelocity(uid, gunVelocity + direction.Normalized() * speed, body: physics);
 
         var projectile = EnsureComp<ProjectileComponent>(uid);
@@ -524,7 +524,7 @@ public abstract partial class SharedGunSystem : EntitySystem
         projectile.Weapon = gunUid;
         projectile.ExtraIgnoredEntity = GetShotExtraIgnoredEntity(user);
 
-        TransformSystem.SetWorldRotationNoLerp(uid, direction.ToWorldAngle() + projectile.Angle);
+        _xform.SetWorldRotationNoLerp(uid, direction.ToWorldAngle() + projectile.Angle);
     }
 
     protected void ShootOrThrow(EntityUid uid,
@@ -658,8 +658,8 @@ public abstract partial class SharedGunSystem : EntitySystem
         // [Changed by MisfitsCrew/Operator] Hitscan beam effects must be anchored to the grid or map,
         // not to a ridden vehicle that happens to be the shooter's coordinate parent.
         return MapManager.TryFindGridAt(mapCoordinates, out var gridUid, out _)
-            ? EntityCoordinates.FromMap(gridUid, mapCoordinates, TransformSystem, EntityManager)
-            : EntityCoordinates.FromMap(MapManager.GetMapEntityId(mapCoordinates.MapId), mapCoordinates, TransformSystem, EntityManager);
+            ? EntityCoordinates.FromMap(gridUid, mapCoordinates, _xform, EntityManager)
+            : EntityCoordinates.FromMap(MapManager.GetMapEntityId(mapCoordinates.MapId), mapCoordinates, _xform, EntityManager);
     }
 
     protected bool TryResolveGunHitscan(EntityUid gunUid, out HitscanPrototype hitscan)
@@ -799,8 +799,8 @@ public abstract partial class SharedGunSystem : EntitySystem
         var coordinates = xform.Coordinates;
         coordinates = coordinates.Offset(offsetPos);
 
-        TransformSystem.SetLocalRotation(xform, Random.NextAngle());
-        TransformSystem.SetCoordinates(entity, xform, coordinates);
+        _xform.SetLocalRotation(xform, Random.NextAngle());
+        _xform.SetCoordinates(entity, xform, coordinates);
 
         // decides direction the casing ejects and only when not cycling
         if (angle != null)
@@ -862,8 +862,8 @@ public abstract partial class SharedGunSystem : EntitySystem
 
     public void CauseImpulse(EntityCoordinates fromCoordinates, EntityCoordinates toCoordinates, EntityUid user, PhysicsComponent userPhysics)
     {
-        var fromMap = fromCoordinates.ToMapPos(EntityManager, TransformSystem);
-        var toMap = toCoordinates.ToMapPos(EntityManager, TransformSystem);
+        var fromMap = fromCoordinates.ToMapPos(EntityManager, _xform);
+        var toMap = toCoordinates.ToMapPos(EntityManager, _xform);
         var shotDirection = (toMap - fromMap).Normalized();
 
         const float impulseStrength = 25.0f;

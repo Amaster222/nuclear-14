@@ -106,8 +106,8 @@ public sealed partial class GunSystem : SharedGunSystem
             }
         }
 
-        var fromMap = fromCoordinates.ToMap(EntityManager, TransformSystem);
-        var toMap = toCoordinates.ToMapPos(EntityManager, TransformSystem);
+        var fromMap = fromCoordinates.ToMap(EntityManager, _xform);
+        var toMap = toCoordinates.ToMapPos(EntityManager, _xform);
         var mapDirection = toMap - fromMap.Position;
         var mapAngle = mapDirection.ToAngle();
         var angle = base.GetRecoilAngle(Timing.CurTime, gun, mapDirection.ToAngle(), user);
@@ -596,10 +596,10 @@ public sealed partial class GunSystem : SharedGunSystem
 
         if (xformQuery.TryGetComponent(gridUid, out var gridXform))
         {
-            var (_, gridRot, gridInvMatrix) = TransformSystem.GetWorldPositionRotationInvMatrix(gridXform, xformQuery);
+            var (_, gridRot, gridInvMatrix) = _xform.GetWorldPositionRotationInvMatrix(gridXform, xformQuery);
 
             fromCoordinates = new EntityCoordinates(gridUid.Value,
-                Vector2.Transform(fromCoordinates.ToMapPos(EntityManager, TransformSystem), gridInvMatrix));
+                Vector2.Transform(fromCoordinates.ToMapPos(EntityManager, _xform), gridInvMatrix));
 
             // Use the fallback angle I guess?
             angle -= gridRot;

@@ -89,7 +89,7 @@ public sealed partial class GunSystem : SharedGunSystem
                     _inputManager,
                     _player,
                     this,
-                    TransformSystem));
+                    _xform));
             }
             else
             {
@@ -188,7 +188,7 @@ public sealed partial class GunSystem : SharedGunSystem
         }
 
         // Define target coordinates relative to gun entity, so that network latency on moving grids doesn't fuck up the target location.
-        var coordinates = TransformSystem.ToCoordinates(entity, mousePos);
+        var coordinates = _xform.ToCoordinates(entity, mousePos);
 
         NetEntity? target = null;
         if (_state.CurrentState is GameplayStateBase screen)
@@ -228,7 +228,7 @@ public sealed partial class GunSystem : SharedGunSystem
         {
             // Rather than splitting client / server for every ammo provider it's easier
             // to just delete the spawned entities. This is for programmer sanity despite the wasted perf.
-            var direction = TransformSystem.ToMapCoordinates(fromCoordinates).Position - TransformSystem.ToMapCoordinates(toCoordinates).Position;
+            var direction = _xform.ToMapCoordinates(fromCoordinates).Position - _xform.ToMapCoordinates(toCoordinates).Position;
             var worldAngle = direction.ToAngle().Opposite();
 
             foreach (var (ent, shootable) in ammo)
@@ -283,8 +283,8 @@ public sealed partial class GunSystem : SharedGunSystem
             return null;
         }
 
-        var fromMap = fromCoordinates.ToMap(EntityManager, TransformSystem);
-        var toMap = toCoordinates.ToMapPos(EntityManager, TransformSystem);
+        var fromMap = fromCoordinates.ToMap(EntityManager, _xform);
+        var toMap = toCoordinates.ToMapPos(EntityManager, _xform);
         var mapDirection = toMap - fromMap.Position;
         var mapAngle = mapDirection.ToAngle();
         var angle = GetRecoilAngle(Timing.CurTime, gun, mapDirection.ToAngle(), user);
@@ -426,7 +426,7 @@ public sealed partial class GunSystem : SharedGunSystem
         }
         else if (gunXform.MapUid != null)
         {
-            coordinates = new EntityCoordinates(gunXform.MapUid.Value, TransformSystem.GetWorldPosition(gunXform));
+            coordinates = new EntityCoordinates(gunXform.MapUid.Value, _xform.GetWorldPosition(gunXform));
         }
         else
         {
@@ -434,7 +434,7 @@ public sealed partial class GunSystem : SharedGunSystem
         }
 
         var ent = Spawn(message.Prototype, coordinates);
-        TransformSystem.SetWorldRotationNoLerp(ent, message.Angle);
+        _xform.SetWorldRotationNoLerp(ent, message.Angle);
 
         if (tracked != null)
         {
@@ -543,7 +543,7 @@ public sealed partial class GunSystem : SharedGunSystem
         if (!IsLocalShooter(user) || !TryResolveGunHitscan(gunUid, out var hitscan))
             return;
 
-        var fromMap = fromCoordinates.ToMap(EntityManager, TransformSystem);
+        var fromMap = fromCoordinates.ToMap(EntityManager, _xform);
         if (fromMap.MapId == MapId.Nullspace || direction.LengthSquared() <= 0.0001f)
             return;
 
@@ -591,8 +591,8 @@ public sealed partial class GunSystem : SharedGunSystem
             if (!reflectEv.Reflected || reflectEv.Direction.LengthSquared() <= 0.0001f)
                 break;
 
-            fromEffect = GetShotEffectCoordinates(Transform(hit).Coordinates.ToMap(EntityManager, TransformSystem));
-            from = fromEffect.ToMap(EntityManager, TransformSystem);
+            fromEffect = GetShotEffectCoordinates(Transform(hit).Coordinates.ToMap(EntityManager, _xform));
+            from = fromEffect.ToMap(EntityManager, _xform);
             normalizedDirection = reflectEv.Direction.Normalized();
             worldAngle = normalizedDirection.ToAngle();
         }
@@ -757,11 +757,11 @@ public sealed partial class GunSystem : SharedGunSystem
         if (coordinates == EntityCoordinates.Invalid)
             return false;
 
-        var mapCoordinates = TransformSystem.ToMapCoordinates(coordinates);
+        var mapCoordinates = _xform.ToMapCoordinates(coordinates);
         if (mapCoordinates.MapId == MapId.Nullspace)
             return false;
 
-        var worldAngle = TransformSystem.GetWorldRotation(coordinates.EntityId) + angle;
+        var worldAngle = _xform.GetWorldRotation(coordinates.EntityId) + angle;
         var transform = new Transform(mapCoordinates.Position, worldAngle);
         var initialized = false;
 

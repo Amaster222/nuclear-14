@@ -113,7 +113,7 @@ public abstract partial class SharedGunSystem
             else
             {
                 // Similar to below just due to prediction.
-                TransformSystem.DetachEntity(chamberEnt.Value, Transform(chamberEnt.Value));
+                _xform.DetachEntity(chamberEnt.Value, Transform(chamberEnt.Value));
             }
         }
 
@@ -186,7 +186,7 @@ public abstract partial class SharedGunSystem
                     // The problem is client will dump the cartridge on the ground and the new server state
                     // won't correspond due to randomness so looks weird
                     // but we also need to always take it from the chamber or else ammocount won't be correct.
-                    TransformSystem.DetachParentToNull(chambered.Value, Transform(chambered.Value));
+                    _xform.DetachParentToNull(chambered.Value, Transform(chambered.Value));
                 }
 
                 UpdateAmmoCount(uid);

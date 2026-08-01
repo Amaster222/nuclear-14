@@ -341,7 +341,7 @@ public partial class SharedGunSystem
 
     public void EmptyRevolver(EntityUid revolverUid, RevolverAmmoProviderComponent component, EntityUid? user = null)
     {
-        var mapCoordinates = TransformSystem.GetMapCoordinates(revolverUid);
+        var mapCoordinates = _xform.GetMapCoordinates(revolverUid);
         var anyEmpty = false;
 
         for (var i = 0; i < component.Capacity; i++)

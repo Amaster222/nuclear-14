@@ -1,12 +1,17 @@
 using System.Linq;
+using Content.Shared.Coordinates;
 using Content.Shared.DoAfter;
 using Content.Shared.Examine;
 using Content.Shared.Interaction;
 using Content.Shared.Interaction.Events;
+using Content.Shared.Random.Helpers;
 using Content.Shared.Verbs;
 using Content.Shared.Weapons.Ranged.Components;
 using Content.Shared.Weapons.Ranged.Events;
+using Robust.Shared.Random;
 using Robust.Shared.Serialization;
+using Robust.Shared.Timing;
+using Robust.Shared.Toolshed.Commands.Math;
 
 
 namespace Content.Shared.Weapons.Ranged.Systems;
@@ -18,8 +23,9 @@ namespace Content.Shared.Weapons.Ranged.Systems;
 public abstract partial class SharedGunSystem
 {
     [Dependency] private SharedDoAfterSystem _doAfter = default!;
-    private const int DEFAULT_AMMO = -1;
 
+    private const int DEFAULT_AMMO = -1;
+    //private static System.Random RNG;
     protected virtual void InitializeBallistic()
     {
         SubscribeLocalEvent<BallisticAmmoProviderComponent, ComponentInit>(OnBallisticInit);
@@ -33,6 +39,8 @@ public abstract partial class SharedGunSystem
         SubscribeLocalEvent<BallisticAmmoProviderComponent, AfterInteractEvent>(OnBallisticAfterInteract);
         SubscribeLocalEvent<BallisticAmmoProviderComponent, AmmoFillDoAfterEvent>(OnBallisticAmmoFillDoAfter);
         SubscribeLocalEvent<BallisticAmmoProviderComponent, UseInHandEvent>(OnBallisticUse);
+
+
     }
     // pressing z on in hand item
     private void OnBallisticUse(EntityUid uid, BallisticAmmoProviderComponent component, UseInHandEvent args)
@@ -40,7 +48,7 @@ public abstract partial class SharedGunSystem
         if (args.Handled || !component.Cycleable)
             return;
 
-        ManualCycle(uid, component, TransformSystem.GetMapCoordinates(uid), args.User);
+        ManualCycle(uid, component, _xform.GetMapCoordinates(uid), args.User);
         args.Handled = true;
     }
 
@@ -163,11 +171,11 @@ public abstract partial class SharedGunSystem
         // Deleted already checks for null
         // but I do it here to tell compiler within scope that it isnt null
         // to stop repetitive null checking
-        if (args.Target is not EntityUid targetUid || Deleted(targetUid) ||
-            !TryComp<BallisticAmmoProviderComponent>(args.Target, out var targetComp))
+        if (Deleted(args.Target) ||
+            !TryComp<BallisticAmmoProviderComponent>(args.Target.Value, out var targetComp))
             return;
 
-        StartAmmoSwap(1, giverUID, targetComp, targetUid, args.User);
+        StartAmmoSwap(1, giverUID, targetComp, args.Target.Value, args.User);
 
         args.Repeat = targetComp.AmmoCount < targetComp.Capacity // target has room for more ammo
                    && giverComp.AmmoCount > 0;                   // giver still has ammo left
@@ -184,7 +192,7 @@ public abstract partial class SharedGunSystem
         {
             Text = Loc.GetString("gun-ballistic-cycle"),
             Disabled = component.AmmoCount == 0,
-            Act = () => ManualCycle(uid, component, TransformSystem.GetMapCoordinates(uid), args.User),
+            Act = () => ManualCycle(uid, component, _xform.GetMapCoordinates(uid), args.User),
         });
     }
 
@@ -247,6 +255,7 @@ public abstract partial class SharedGunSystem
     /// <remarks/>
     private void OnBallisticTakeAmmo(EntityUid giverUID, BallisticAmmoProviderComponent giverComp, TakeAmmoEvent args)
     {
+        //var rng = new System.Random();
 
         int ammoToSpawn = Math.Max(0, args.Shots - giverComp.Container.Count);
         ammoToSpawn = Math.Min(giverComp.AmmoCount, ammoToSpawn);
@@ -261,10 +270,13 @@ public abstract partial class SharedGunSystem
             Containers.Remove(shot, giverComp.Container);
         }
 
+
         for (int i = 0; i < ammoToSpawn; i++)
         {
             var spawnedAmmo = PredictedSpawnAtPosition(giverComp.Proto, args.Coordinates);
             args.Ammo.Add((spawnedAmmo, EnsureShootable(spawnedAmmo)));
+
+            RandomVector(args.Rng, GetNetEntity(giverUID), spawnedAmmo, giverComp.AmmoCount, Transform(spawnedAmmo).Coordinates.Position);
         }
 
         Dirty(giverUID, giverComp);

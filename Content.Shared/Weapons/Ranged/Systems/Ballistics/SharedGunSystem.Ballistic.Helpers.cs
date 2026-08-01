@@ -7,6 +7,7 @@ using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
 
 
+
 namespace Content.Shared.Weapons.Ranged.Systems;
 /// <summary>
 /// More detailed implementation for event handlers of <see cref="BallisticAmmoProviderComponent"/>
@@ -68,12 +69,12 @@ public abstract partial class SharedGunSystem
     /// where we only want to "remove" ammo from container and not get/take it
     /// So doesnt return ammo
     /// THIS STILL REMOVES AMMO ENTITIES FROM THE GIVING CONTAINER!!!!
-    /// SO DONT CANCEL W/O EXPECTING SIDE EFFECTS!!!!
+    /// SO DONT CANCEL WITHOUT EXPECTING SIDE EFFECTS!!!!
     /// </summary>
-    public void DoTakeAmmo(int ammoAmount, EntityUid giverUID, EntityUid? user = null)
+    public void DoTakeAmmo(int ammoAmount, EntityUid giverUID, EntityUid? user = null, bool rng = false)
     {
         List<(EntityUid? Entity, IShootable Shootable)> ammo = new(ammoAmount);
-        RaiseLocalEvent(giverUID, new TakeAmmoEvent(ammoAmount, ammo, Transform(giverUID).Coordinates, user));
+        RaiseLocalEvent(giverUID, new TakeAmmoEvent(ammoAmount, ammo, Transform(giverUID).Coordinates, user, rng));
     }
     /// <summary>
     /// Location in ballistics system code where we actually put the ammo into the comp(reciever)
@@ -121,10 +122,11 @@ public abstract partial class SharedGunSystem
     /// <remarks>GunCycledEvent seems unused for now<remarks/>
     protected void Cycle(EntityUid uid, BallisticAmmoProviderComponent comp, MapCoordinates coordinates, EntityUid user)
     {
-        DoTakeAmmo(1, uid, user);
+        DoTakeAmmo(1, uid, user, true);
         var cycledEvent = new GunCycledEvent();
         RaiseLocalEvent(uid, ref cycledEvent);
     }
+
 
     /// <summary>
     /// Corrects comp values from bad yaml to prevent errors
