@@ -785,7 +785,8 @@ loadout-name-MisfitsLoadoutUniformMasondudsUniform = vagabond's gang attire
 loadout-name-MisfitsLoadoutUniformSchlimmUniform = foreign gentleman's attire
 loadout-name-MisfitsLoadoutUniformKhansUniform = great khans uniform
 loadout-name-MisfitsLoadoutUniformKhansUniformShorts = great khan jorts
-
+loadout-name-MisfitsLoadoutUniformEnclaveUniformGrey = grey enclave jumpsuit
+loadout-name-MisfitsLoadoutUniformEnclaveUniformBlue = blue enclave jumpsuit
 
 # Ammo and magazines
 loadout-name-N14MagazinePistol45 = pistol magazine (.45 auto)
