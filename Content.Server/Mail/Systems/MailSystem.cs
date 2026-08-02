@@ -613,7 +613,7 @@ namespace Content.Server.Mail.Systems
         /// <summary>
         /// Get the list of valid mail recipients for a mail teleporter.
         /// </summary>
-        private List<MailRecipient> GetMailRecipientCandidates(EntityUid uid)
+        private List<MailRecipient> GetMailRecipientCandidates(EntityUid uid, MailDeliveryPoolPrototype? pool = null)
         {
             var candidateList = new List<MailRecipient>();
             var query = EntityQueryEnumerator<MailReceiverComponent>();
@@ -626,10 +626,26 @@ namespace Content.Server.Mail.Systems
                     continue;
 
                 if (TryGetMailRecipientForReceiver(receiverUid, out var recipient))
+                {
+                    if (pool != null && !IsValidRecipientForPool(recipient.Value, pool))
+                        continue;
+
                     candidateList.Add(recipient.Value);
+                }
             }
 
             return candidateList;
+        }
+
+        private bool IsValidRecipientForPool(MailRecipient recipient, MailDeliveryPoolPrototype pool)
+        {
+            if (pool.Jobs.Count == 0)
+                return true;
+
+            if (TryMatchJobTitleToPrototype(recipient.Job, out var jobPrototype))
+                return pool.Jobs.ContainsKey(jobPrototype.ID);
+
+            return false;
         }
 
         /// <summary>
@@ -646,17 +662,17 @@ namespace Content.Server.Mail.Systems
             if (GetUndeliveredParcelCount(uid) >= component.MaximumUndeliveredParcels)
                 return;
 
-            var candidateList = GetMailRecipientCandidates(uid);
+            if (!_prototypeManager.TryIndex<MailDeliveryPoolPrototype>(component.MailPool, out var pool))
+            {
+                _sawmill.Error($"Can't index {ToPrettyString(uid)}'s MailPool {component.MailPool}!");
+                return;
+            }
+
+            var candidateList = GetMailRecipientCandidates(uid, pool);
 
             if (candidateList.Count <= 0)
             {
                 _sawmill.Warning("List of mail candidates was empty!");
-                return;
-            }
-
-            if (!_prototypeManager.TryIndex<MailDeliveryPoolPrototype>(component.MailPool, out var pool))
-            {
-                _sawmill.Error($"Can't index {ToPrettyString(uid)}'s MailPool {component.MailPool}!");
                 return;
             }
 
