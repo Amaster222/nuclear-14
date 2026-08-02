@@ -613,7 +613,7 @@ namespace Content.Server.Mail.Systems
         /// <summary>
         /// Get the list of valid mail recipients for a mail teleporter.
         /// </summary>
-        private List<MailRecipient> GetMailRecipientCandidates(EntityUid uid, MailDeliveryPoolPrototype? pool = null)
+        private List<MailRecipient> GetMailRecipientCandidates(EntityUid uid, MailDeliveryPoolPrototype? pool = null) // misfits
         {
             var candidateList = new List<MailRecipient>();
             var query = EntityQueryEnumerator<MailReceiverComponent>();
@@ -627,7 +627,7 @@ namespace Content.Server.Mail.Systems
 
                 if (TryGetMailRecipientForReceiver(receiverUid, out var recipient))
                 {
-                    if (pool != null && !IsValidRecipientForPool(recipient.Value, pool))
+                    if (pool != null && !IsValidRecipientForPool(recipient.Value, pool)) //misfits
                         continue;
 
                     candidateList.Add(recipient.Value);
@@ -637,7 +637,7 @@ namespace Content.Server.Mail.Systems
             return candidateList;
         }
 
-        private bool IsValidRecipientForPool(MailRecipient recipient, MailDeliveryPoolPrototype pool)
+        private bool IsValidRecipientForPool(MailRecipient recipient, MailDeliveryPoolPrototype pool) //misfits, everyone section now only jobs defined
         {
             if (pool.Jobs.Count == 0)
                 return true;
@@ -655,7 +655,7 @@ namespace Content.Server.Mail.Systems
         {
             if (!Resolve(uid, ref component))
             {
-                _sawmill.Error($"Tried to SpawnMail on {ToPrettyString(uid)} without a valid MailTeleporterComponent!");
+                _sawmill.Error($"Tried to SpawnMail on {ToPrettyString(uid)} without a valid MailTeleporterComponent!"); //misfits
                 return;
             }
 
@@ -672,7 +672,7 @@ namespace Content.Server.Mail.Systems
 
             if (candidateList.Count <= 0)
             {
-                _sawmill.Warning("List of mail candidates was empty!");
+                _sawmill.Warning("List of mail candidates was empty!"); //misifts
                 return;
             }
 
