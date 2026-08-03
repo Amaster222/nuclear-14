@@ -1462,6 +1462,48 @@
   items:
     - M14ClothingUniformKhansUniformShorts
 
+- type: loadout
+  id: MisfitsLoadoutUniformEnclaveUniformBlue
+  category: Uniform
+  cost: 0
+  exclusive: true
+  requirements:
+  - !type:CharacterItemGroupRequirement
+    group: N14LoadoutUniform
+  - !type:CharacterJobRequirement
+    jobs:
+    - EnclaveEnlisted
+    - EnclaveNCO
+    - EnclaveJuniorOfficer
+    - EnclaveSeniorOfficer
+    - EnclaveCommander
+    - EnclaveJuniorScientist
+    - EnclaveScientist
+    - EnclaveHeadScientist
+  items:
+  - N14ClothingUniformJumpsuitEnclaveBlue
+
+- type: loadout
+  id: MisfitsLoadoutUniformEnclaveUniformGrey
+  category: Uniform
+  cost: 0
+  exclusive: true
+  requirements:
+  - !type:CharacterItemGroupRequirement
+    group: N14LoadoutUniform
+  - !type:CharacterJobRequirement
+    jobs:
+    - EnclaveEnlisted
+    - EnclaveNCO
+    - EnclaveJuniorOfficer
+    - EnclaveSeniorOfficer
+    - EnclaveCommander
+    - EnclaveJuniorScientist
+    - EnclaveScientist
+    - EnclaveHeadScientist
+  items:
+  - N14ClothingUniformJumpsuitEnclaveGrey
+
 # === Neck: NCR faction cloaks and mantles ===
 
 - type: loadout
