@@ -1,6 +1,10 @@
+using System.Diagnostics;
 using Content.Shared.Throwing;
 using Content.Shared.Weapons.Ranged.Components;
+using Robust.Server.GameObjects;
+using Robust.Shared.Physics;
 using Robust.Shared.Physics.Components;
+using Robust.Shared.Physics.Systems;
 using Robust.Shared.Spawners;
 
 // #Misfits Add - Remove physics from spent casings on landing + enforce a global casing entity cap
@@ -37,7 +41,9 @@ public sealed class CasingPhysicsOptSystem : EntitySystem
 
     // FIFO queue of tracked casing UIDs for cap enforcement.
     private readonly Queue<EntityUid> _casingQueue = new();
+    [Dependency] private SharedPhysicsSystem _sharedPhysics = default!;
 
+    [Dependency] private SharedJointSystem _sharedJoints = default!;
     public override void Initialize()
     {
         base.Initialize();
@@ -59,10 +65,17 @@ public sealed class CasingPhysicsOptSystem : EntitySystem
         if (!cartridge.Spent)
             return;
 
+        _sharedPhysics.SetAwake(uid, Comp<PhysicsComponent>(uid), false);
+        // _sharedPhysics.DestroyContacts;
+        // _sharedPhysics.SetCanCollide(uid, false, true, true, body: physComp);
+        var net = GetNetEntity(uid);
+        Log.Debug($"NetID:{net.Id} IsClientSide:{net.IsClientSide()}");
         // Deferred removal keeps us safely outside the physics engine's event stack.
         // RobustToolbox's SharedPhysicsSystem.OnPhysicsRemoved cascades fixture/broadphase
         // cleanup automatically.
-        RemCompDeferred<PhysicsComponent>(uid);
+
+
+        // RemCompDeferred<PhysicsComponent>(uid);
     }
 
     /// <summary>

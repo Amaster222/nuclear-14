@@ -315,9 +315,8 @@ public partial class SharedGunSystem
                 component.AmmoSlots[i] = null;
                 Containers.Remove(slot.Value, component.AmmoContainer);
                 component.Chambers[i] = null;
+                EjectCartridge(slot.Value);
 
-                if (!_netManager.IsClient)
-                    EjectCartridge(slot.Value);
 
                 anyEmpty = true;
             }

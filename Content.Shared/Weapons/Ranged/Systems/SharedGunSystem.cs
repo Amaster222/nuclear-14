@@ -49,6 +49,9 @@ using Robust.Shared.Serialization;
 using Robust.Shared.Spawners;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
+using System.IO.Compression;
+using MathNet.Numerics.Distributions;
+using System.Diagnostics;
 
 namespace Content.Shared.Weapons.Ranged.Systems;
 
@@ -83,6 +86,10 @@ public abstract partial class SharedGunSystem : EntitySystem
     [Dependency] private readonly UseDelaySystem _useDelay = default!;
     [Dependency] private readonly EntityWhitelistSystem _whitelistSystem = default!;
     [Dependency] private readonly IEntityManager _entManager = default!;
+    [Dependency] private readonly FixtureSystem _fixtureSystem = default!;
+    [Dependency] private readonly EntityLookupSystem _lookup = default!;
+    [Dependency] private SharedPhysicsSystem _sharedPhysics = default!;
+    [Dependency] private CollisionWakeSystem _wakeSystem = default!;
 
     private const float InteractNextFire = 0.3f;
     private const double SafetyNextFire = 0.5;
@@ -583,9 +590,8 @@ public abstract partial class SharedGunSystem : EntitySystem
         random /= Contests.MassContest(user);
         var spread = component.CurrentAngle.Theta * random;
         var angle = new Angle(direction.Theta + spread);
-        // Misfit Fix: spread -> random ||| corrects slight typo or misinterpretation
-        //                spread is the already modified angle and random is that modification
-        DebugTools.Assert(random <= component.MaxAngleModified.Theta);
+
+        DebugTools.Assert(spread <= component.MaxAngleModified.Theta);
         return angle;
     }
 
@@ -798,13 +804,6 @@ public abstract partial class SharedGunSystem : EntitySystem
         TransformSystem.SetLocalRotation(xform, Random.NextAngle());
         TransformSystem.SetCoordinates(entity, xform, coordinates);
 
-        // decides direction the casing ejects and only when not cycling
-        if (angle != null)
-        {
-            Angle ejectAngle = angle.Value;
-            ejectAngle += 3.7f; // 212 degrees; casings should eject slightly to the right and behind of a gun
-            ThrowingSystem.TryThrow(entity, ejectAngle.ToVec().Normalized() / 100, 5f);
-        }
         if (playSound && TryComp<CartridgeAmmoComponent>(entity, out var cartridge))
         {
             Audio.PlayPvs(cartridge.EjectSound, entity, AudioParams.Default.WithVariation(SharedContentAudioSystem.DefaultVariation).WithVolume(-1f));
@@ -816,16 +815,47 @@ public abstract partial class SharedGunSystem : EntitySystem
             var despawn = EnsureComp<TimedDespawnComponent>(entity);
             despawn.Lifetime = 30f; // #Misfits Tweak - Reduce casing despawn from 5min to 30s to prevent entity buildup during war
 
-            _entManager.RemoveComponent<ItemComponent>(entity);
+            RemComp<ItemComponent>(entity);
+            RemComp<JointComponent>(entity);
+            RemComp<DamageOnHighSpeedImpactComponent>(entity);
+            // RemComp<SpaceGarbageComponent>(entity);
+            var e = Comp<PhysicsComponent>(entity);
+            var f = Comp<FixturesComponent>(entity);
+            var w = Comp<CollisionWakeComponent>(entity);
 
+            _wakeSystem.SetEnabled(entity, false, w);
+            //_sharedPhysics.SetCanCollide(entity, false, true, true, body: e);
+            _sharedPhysics.DestroyContacts(e);
+            if (f.FixtureCount > 0)
+            {
+                _sharedPhysics.SetCollisionLayer(entity, "fix1", f.Fixtures["fix1"], 0, f, e);
+                _sharedPhysics.SetBodyType(entity, BodyType.KinematicController);
+                _lookup.RemoveFromEntityTree(entity, Transform(entity));
+                _fixtureSystem.DestroyFixture(entity, "fix1", false);
+                StripCartComps(entity, e, f);
+
+            }
+            var net = GetNetEntity(entity);
+            Log.Debug($"NetID:{net.Id} IsClientSide:{net.IsClientSide()}");
             // #Misfits Fix - Casings ejected without a throw angle (revolver/manual cycling)
             // never get ThrownItemComponent, so LandEvent never fires and
             // CasingPhysicsOptSystem can't strip their physics. Remove it here.
             if (angle == null)
                 RemCompDeferred<PhysicsComponent>(entity);
+            else
+            {
+                //_sharedPhysics.SetCanCollide(entity, true, force: true);
+                //_sharedPhysics.SetAwake((entity, e), true);
+                Angle ejectAngle = angle.Value;
+                ejectAngle += 3.7f; // 212 degrees; casings should eject slightly to the right and behind of a gun
+                ThrowingSystem.TryThrow(entity, ejectAngle.ToVec().Normalized(), 5f);
+            }
         }
     }
+    public virtual void StripCartComps(EntityUid uid, PhysicsComponent physics, FixturesComponent fix)
+    {
 
+    }
     protected IShootable EnsureShootable(EntityUid uid)
     {
         if (TryComp<CartridgeAmmoComponent>(uid, out var cartridge))

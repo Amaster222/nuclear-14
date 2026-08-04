@@ -287,7 +287,7 @@ public abstract partial class SharedGunSystem
             else if (component.UnspawnedCount > 0)
             {
                 component.UnspawnedCount--;
-                entity = Spawn(component.Proto, args.Coordinates);
+                entity = PredictedSpawnAtPosition(component.Proto, args.Coordinates);
                 args.Ammo.Add((entity, EnsureShootable(entity)));
             }
         }
