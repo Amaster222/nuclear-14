@@ -1197,8 +1197,7 @@ namespace Content.Shared.Interaction
                 return false;
             // ] Goobstation
 
-            // Misfit Add:
-            //              Interested in doing this with generics
+            // Misfit Add: easier to add newer stuff
             var beforeUseMsg = new BeforeUseInHandEvent(user);
             RaiseLocalEvent(used, beforeUseMsg, true);
             if (beforeUseMsg.Handled)

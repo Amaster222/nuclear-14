@@ -4,7 +4,7 @@ using Content.Shared.Weapons.Ranged.Components;
 using Content.Shared.Weapons.Ranged.Events;
 using Robust.Shared.Containers;
 using Robust.Shared.Map;
-using Robust.Shared.Prototypes;
+
 
 
 
@@ -163,17 +163,17 @@ public abstract partial class SharedGunSystem
     /// <summary>
     /// Big method of ingame popups that can happen on afterinteraction
     /// </summary>
-    private bool PopupCancels(BallisticAmmoProviderComponent targetComp, EntityUid targetUid, List<ProtoId<TagPrototype>> targetTags,
+    private bool PopupCancels(BallisticAmmoProviderComponent recieverComp, EntityUid recieverUid, List<ProtoId<TagPrototype>> recieverTags,
                                 BallisticAmmoProviderComponent giverComp, EntityUid giverUid, List<ProtoId<TagPrototype>> giverTags,
                                 EntityUid user)
     {
 
-        if (targetComp.AmmoCount == targetComp.Capacity)
+        if (recieverComp.AmmoCount == recieverComp.Capacity)
         {
             _popup.PopupPredicted(
                 Loc.GetString("gun-ballistic-transfer-target-full",
-                    ("entity", targetComp)),
-                targetUid,
+                    ("entity", MetaData(recieverUid).EntityName)),
+                recieverUid,
                 user);
             return true;
         }
@@ -182,18 +182,18 @@ public abstract partial class SharedGunSystem
         {
             _popup.PopupPredicted(
                 Loc.GetString("gun-ballistic-transfer-empty",
-                    ("entity", giverUid)),
+                    ("entity", MetaData(giverUid).EntityName)),
                 giverUid,
                 user);
             return true;
         }
 
-        if (!targetTags.Any(giverTags.Contains))
+        if (!recieverTags.Any(giverTags.Contains))
         {
             _popup.PopupPredicted(
                         Loc.GetString("gun-ballistic-transfer-invalid",
-                            ("ammoEntity", giverUid),
-                            ("targetEntity", targetUid)),
+                            ("ammoEntity", MetaData(giverUid).EntityName),
+                            ("targetEntity", MetaData(recieverUid).EntityName)),
                         giverUid,
                         user);
             return true;

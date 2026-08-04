@@ -1,17 +1,11 @@
 using System.Linq;
-using Content.Shared.Coordinates;
 using Content.Shared.DoAfter;
 using Content.Shared.Examine;
 using Content.Shared.Interaction;
 using Content.Shared.Interaction.Events;
-using Content.Shared.Random.Helpers;
 using Content.Shared.Verbs;
 using Content.Shared.Weapons.Ranged.Components;
 using Content.Shared.Weapons.Ranged.Events;
-using Robust.Shared.Random;
-using Robust.Shared.Serialization;
-using Robust.Shared.Timing;
-using Robust.Shared.Toolshed.Commands.Math;
 
 
 namespace Content.Shared.Weapons.Ranged.Systems;
@@ -19,6 +13,9 @@ namespace Content.Shared.Weapons.Ranged.Systems;
 /// This file has all of the event handlers for <see cref="BallisticAmmoProviderComponent"/>
 /// showing the general flow and logic of what it does. The main work is done in TakeAmmoEvent
 /// since everything circulates on when/how ammo is taken out/put in a container defined by the comp
+///
+/// This is used by things that dont use mags and act as a 'container' themselves
+/// ie... bows, launchers, some guns ect...
 /// </summary>
 public abstract partial class SharedGunSystem
 {
@@ -68,53 +65,40 @@ public abstract partial class SharedGunSystem
         UpdateBallisticAppearance(uid, comp);
         Dirty(uid, comp);
     }
-    /// <summary>
-    /// Corrects bad yaml and sets appearance data on Map init
-    /// </summary>
-    /// <remarks>
-    /// visualizer handled by system described in <see cref="UpdateBallisticAppearance"/>
-    /// So shouldnt have something like genericvisualizer in yaml
-    /// </remarks>
-    private void OnBallisticMapInit(EntityUid uid, BallisticAmmoProviderComponent comp, MapInitEvent args)
-    {
-        // TODO Misfit:
-#if !RELEASE
-        DebugInfo(uid, comp);
-#endif
-        EnsureCorrect(uid, comp);
-        UpdateBallisticAppearance(uid, comp);
-        Dirty(uid, comp);
-    }
-
-
+    /// Same as above ^^
+    private void OnBallisticMapInit(EntityUid uid, BallisticAmmoProviderComponent comp, MapInitEvent args) => OnBallisticInit(uid, comp, new ComponentInit());
 
     /// <summary>
-    /// When we click on a entity with BallisticAmmoProviderComponent, with some other ent in hand,
-    /// this is how it's handled
+    /// Usually first event triggered when clicking on ent with something
+    /// Just check if used ent is speedloader or bullet via whitelist and comp
+    /// Only marks as handled if reciever is full
     /// </summary>
-    /// <param name="reciverUID"></param>
-    /// <param name="reciverComp"></param>
-    /// <param name="args"></param>
-    private void OnBallisticInteractUsing(EntityUid reciverUID, BallisticAmmoProviderComponent reciverComp, InteractUsingEvent args)
+    /// <param name="recieverUID">UID of clicked on ent. Also stored as args.Target</param>
+    /// <param name="recieverComp">known comp that listened for event</param>
+    /// <param name="args">event args with info like user, and ent used to click on target</param>
+    private void OnBallisticInteractUsing(EntityUid recieverUID, BallisticAmmoProviderComponent recieverComp, InteractUsingEvent args)
     {
-        if (args.Handled || _whitelistSystem.IsWhitelistFailOrNull(reciverComp.Whitelist, args.Used))
+        //
+        if (args.Handled || _whitelistSystem.IsWhitelistFailOrNull(recieverComp.Whitelist, args.Used))
             return;
-        if (!(reciverComp.Capacity - reciverComp.AmmoCount is int emptySlots and > 0))
+        // reciever is full so doesnt matter what used ent is for useAfter event
+        // special interactions can go into BeforeUseInHandEvent event
+        if (!(recieverComp.Capacity - recieverComp.AmmoCount is int emptySlots and > 0))
         {
             args.Handled = true;
-            _popup.PopupPredicted(Loc.GetString("gun-ballistic-transfer-target-full", ("entity", reciverUID)), reciverUID, args.User);
+            _popup.PopupPredicted(Loc.GetString("gun-ballistic-transfer-target-full", ("entity", MetaData(recieverUID).EntityName)), recieverUID, args.User);
             return;
         }
-
+        // ent has whitelist but doesnt pass method to instantly insert more than 1 ammo
         if (!CanInstantFill(args.User)) emptySlots = 1;
-        StartAmmoSwap(emptySlots, args.Used, reciverComp, args.Target, args.User);
+        StartAmmoSwap(emptySlots, args.Used, recieverComp, recieverUID, args.User);
 
         args.Handled = true;
-        Audio.PlayPredicted(reciverComp.SoundInsert, reciverUID, args.User);
+        Audio.PlayPredicted(recieverComp.SoundInsert, recieverUID, args.User);
 
-        UpdateAmmoCount(reciverUID);
-        UpdateBallisticAppearance(reciverUID, reciverComp);
-        Dirty(reciverUID, reciverComp);
+        UpdateAmmoCount(recieverUID);
+        UpdateBallisticAppearance(recieverUID, recieverComp);
+        Dirty(recieverUID, recieverComp);
     }
 
     /// <summary>
@@ -127,7 +111,7 @@ public abstract partial class SharedGunSystem
     /// <remarks>
     /// Other spechiul interactions with other comps could be put here for BallisticAmmoProviderComponent
     /// <remarks/>
-    // TODO MISFIT: throw exeception on init if doesnt have whitelist or Tags to avoid null checks
+    // TODO MISFIT: throw exeception on init if doesnt have whitelist or Tags to avoid null checks later on
     private void OnBallisticAfterInteract(EntityUid giverUID, BallisticAmmoProviderComponent giverComp, AfterInteractEvent args)
     {
         // TODO MISFIT: maybe as a code exercise see how to make this more readable
