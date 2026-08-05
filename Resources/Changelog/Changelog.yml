@@ -9641,3 +9641,14 @@ Entries:
   id: 6291
   time: '2026-08-03T21:03:35.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1121
+- author: JohnKieser
+  changes:
+    - type: Fix
+      message: >-
+        SMGs reload interact fixed and made better. Pressing Z bolts SMGs
+        one-handed. Pressing Z again wields it
+    - type: Add
+      message: 'Revolvers now auto-empty when all cartridges are spent by pressing Z '
+  id: 6292
+  time: '2026-08-05T20:33:25.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1115
