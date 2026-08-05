@@ -9676,3 +9676,12 @@ Entries:
   id: 6294
   time: '2026-08-05T20:37:17.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1123
+- author: Bradysgaming
+  changes:
+    - type: Remove
+      message: Removed Road rashes abillity to ride + took their keys away
+    - type: Tweak
+      message: 80's is back to 14 slots
+  id: 6295
+  time: '2026-08-05T21:19:53.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1125
