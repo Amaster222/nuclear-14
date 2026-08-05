@@ -111,6 +111,10 @@ public abstract partial class SharedGunSystem : EntitySystem
         InitializeContainer();
         InitializeSolution();
 
+        // Misfit Additions:
+        InitializeSMGInteractions(); // no concrete comp to distguinish smg from other weapon types
+        Misfit_InitializeRevolver(); // has RevolverAmmoProviderComponent listen for added event
+
         // Interactions
         SubscribeLocalEvent<GunComponent, GetVerbsEvent<AlternativeVerb>>(OnAltVerb);
         SubscribeLocalEvent<GunComponent, ExaminedEvent>(OnExamine);
