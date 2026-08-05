@@ -587,9 +587,7 @@ public abstract partial class SharedGunSystem : EntitySystem
         random /= Contests.MassContest(user);
         var spread = component.CurrentAngle.Theta * random;
         var angle = new Angle(direction.Theta + spread);
-        // Misfit Fix: spread -> random ||| corrects slight typo or misinterpretation
-        //                spread is the already modified angle and random is that modification
-        DebugTools.Assert(random <= component.MaxAngleModified.Theta);
+        DebugTools.Assert(spread <= component.MaxAngleModified.Theta);
         return angle;
     }
 
