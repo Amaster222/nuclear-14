@@ -9667,3 +9667,12 @@ Entries:
   id: 6293
   time: '2026-08-05T20:35:17.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1117
+- author: RedBookcase
+  changes:
+    - type: Fix
+      message: >-
+        Fixed Pinyon Nuts and certain other plants not growing properly when
+        treated with fertilizer.
+  id: 6294
+  time: '2026-08-05T20:37:17.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1123
