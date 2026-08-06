@@ -23,12 +23,13 @@
     icon:
       sprite: _Misfits/Actions/mutations.rsi
       state: spike
-    useDelay: 1
+    useDelay: 60 # matches the tongue regrow time - no spawn-shooting spikes
     range: 10
     event: !type:ShootOrganActionEvent
   - type: ShootOrganAction
     organ: Tongue
     polymorph: TongueSpike
+    fallback: TongueSpike # bodies without tongue organs grow a fresh spike instead
 
 - type: entity
   parent: MutationTongueSpike
@@ -59,6 +60,7 @@
       state: chemspike
   - type: ShootOrganAction
     polymorph: TongueSpikeChem
+    fallback: TongueSpikeChem # bodies without tongue organs grow a fresh spike instead
 
 # only added if the spike embeds in a mob
 - type: entity

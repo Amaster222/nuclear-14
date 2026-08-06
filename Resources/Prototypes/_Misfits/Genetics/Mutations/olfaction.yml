@@ -13,4 +13,21 @@
   - type: ComponentMutation
     added:
     - type: ScentTracker
-  # TODO: huge shitcode needed for parity
+      sniffDelay: 1.5 # canine noses work fast (default 5s felt useless)
+  - type: ActionMutation
+    action: ActionMutationScentSense
+
+- type: entity
+  parent: BaseMutationAction
+  id: ActionMutationScentSense
+  name: Sniff the Air
+  description: Catch the scent you're tracking on the air, and know which way it came from.
+  components:
+  - type: InstantAction
+    useDelay: 8
+    checkCanInteract: false
+    itemIconStyle: BigAction
+    # placeholder art: reuses the scent-tracking verb icon until a nose sprite exists
+    icon: /Textures/Interface/VerbIcons/psionic_invisibility.png
+    event: !type:ScentSenseActionEvent
+  - type: ScentSenseAction

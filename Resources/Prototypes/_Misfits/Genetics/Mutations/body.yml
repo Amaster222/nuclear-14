@@ -78,12 +78,17 @@
     - MutationGigantism
   - type: EffectsMutation
     added:
+    # scale both axes so the body and its hitbox actually shrink - height-only left
+    # dwarves full width, which is why the shrink never looked or felt right
     - !type:Scale
-      multiplier: 1, 0.8
+      multiplier: 0.8, 0.8
+    - !type:ScaleFixtures
+      multiplier: 0.8
     removed:
     - !type:Scale
-      multiplier: 1, 1.25
-    # TODO: adjust hitbox?
+      multiplier: 1.25, 1.25
+    - !type:ScaleFixtures
+      multiplier: 1.25
 
 - type: entity
   parent: BaseMutation
@@ -226,18 +231,16 @@
     energy: 0.5, 2.0
 
 - type: entity
-  parent: BaseLightMutation
+  parent: BaseMutation # not BaseLightMutation: the engine doesn't support negative lights and the -3 energy hack made the mutation flicker while moving
   id: MutationAntiGlow
   name: Anti-Glow
-  description: "Your skin seems to attract and absorb nearby light creating 'darkness' around you."
+  description: "Your skin seems to attract and absorb nearby light, snuffing out any glow you had."
   components:
   - type: Mutation
     instability: 10
   - type: RemovesMutation
     removes:
     - MutationGlowy
-  - type: PointLight
-    energy: -3 # TODO: find a way to make this work
 
 - type: entity
   parent: BaseMutation
@@ -409,6 +412,12 @@
   - type: Mutation
     instability: -40
     difficulty: 12
+  - type: UnequipSlotsMutation # no head, nothing to hang a hat on
+    slots:
+    - head
+    - eyes
+    - mask
+    - ears
   - type: EffectsMutation
     ignoreAutomatic: true # shapeshift system will handle the organs and parts being mirrored
     added:
@@ -444,20 +453,27 @@
   parent: BaseMutation
   id: MutationRockEater
   name: Rock Eater
-  description: The subject's body is able to digest rocks and minerals.
+  description: The subject's body is able to digest anything at all - rocks, ore, scrap, whatever fits in a hand.
   components:
   - type: Mutation
     instability: 10
     difficulty: 12
     conflicts:
     - MutationRockAbsorber # can't stack them, one-way conflict to allow upgrading
-  # TODO
+  - type: ComponentMutation
+    added:
+    - type: DevourMutation
+      blacklist: &devourBlacklist
+        tags:
+        - HighRiskItem # nuke disk, command IDs
+        components:
+        - StealTarget # antag steal objectives
 
 - type: entity
   parent: MutationRockEater
   id: MutationRockAbsorber
   name: Rock Absorber
-  description: The subject's body is able to digest rocks and minerals, taking on their properties.
+  description: The subject's body is able to digest anything at all, taking on the properties of whatever it swallows.
   components:
   - type: Mutation
     instability: 35
@@ -465,7 +481,18 @@
   - type: RemovesMutation
     removes:
     - MutationRockEater
-  # TODO
+  - type: ComponentMutation
+    added:
+    - type: DevourMutation
+      blacklist: *devourBlacklist
+      devourTime: 2
+      nutrition: 45
+      hydration: 15
+      absorb: # minerals knit the body back together
+        types:
+          Blunt: -5
+          Slash: -5
+          Piercing: -5
 
 - type: entity
   parent: BaseMutation
@@ -492,3 +519,7 @@
       Human: MutationFelinid
       Reptilian: MutationFelinid
       Diona: MutationFelinid
+  - type: AddMarkingsMutation # runs again after the polymorph transfer so the cat body gets them
+    markings:
+    - FelinidEarsBasic
+    - FelinidTailBasic

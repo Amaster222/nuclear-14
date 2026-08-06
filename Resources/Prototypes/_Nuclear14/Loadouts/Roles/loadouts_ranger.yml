@@ -534,6 +534,9 @@
   requirements:
     - !type:CharacterJobRequirement
       jobs:
+        - NCRRangerRecruit
+        - NCRFieldRanger
+        - NCRPatrolRanger
         - NCRVeteranRanger
   items:
     - N14ClothingNeckCloakRangerPoncho

@@ -1027,7 +1027,7 @@
 - type: entity
   parent: N14ClothingOuterBase
   id: N14ClothingOuterRangerVest
-  name: ranger custom leather vest
+  name: NCR tactical vest
   description: A custom NCR leather vest modified to become more versatile and protective.
   components:
   - type: Sprite
@@ -1128,8 +1128,8 @@
 - type: entity
   parent: N14ClothingOuterRangerCoat
   id: N14ClothingOuterRangerFieldArmor
-  name: NCR field ranger armor
-  description: A set of combat armor refurbished from old national guard stock, issued to Field Rangers.
+  name: NCR field armor
+  description: A set of combat armor refurbished from old national guard stock, issued to Field Rangers and senior Army personnel.
   components:
   - type: Sprite
     sprite: _Nuclear14/Clothing/OuterClothing/Armor/falloutrangerfieldarmor.rsi

@@ -867,6 +867,23 @@
 
     Steel: 4000
 
+- type: latheRecipe
+  id: N14BPNCRArmorRangerFieldArmor
+  result: N14ClothingOuterRangerFieldArmor
+  category: N14BlueprintNCRArmorT3
+  completetime: 14
+  requiresBlueprint: true
+  availableFaction:
+  - NCR
+  - Rangers
+  materials:
+    Leather: 300
+
+    Cloth: 300
+
+    Thread: 220
+
+    Steel: 4000
 
 - type: latheRecipe
   id: N14BPNCRArmorRangerDuster
@@ -2606,7 +2623,7 @@
 # --- NCR Tier 3 Helmets (combat / ranger) ---
 - type: latheRecipe
   id: N14BPNCRArmorCombatHelmet
-  result: N14ClothingHeadHatCombatHelmet
+  result: N14ClothingHeadHatNCRCombatHelmet
   category: N14BlueprintNCRArmorT3
   completetime: 8
   requiresBlueprint: true

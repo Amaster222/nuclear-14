@@ -9536,3 +9536,152 @@ Entries:
   id: 6280
   time: '2026-07-26T20:17:15.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1096
+- author: aftemath434
+  changes:
+    - type: Add
+      message: Glock 37M unique pistol
+  id: 6281
+  time: '2026-07-27T23:35:25.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1094
+- author: Vixting
+  changes:
+    - type: Add
+      message: You can now hit people riding bikes
+    - type: Add
+      message: You will be dismounted from bike if you go crit
+    - type: Add
+      message: You can no longer repair bike whilst being the rider
+    - type: Add
+      message: 'You can examine bike to see fuel amount '
+  id: 6282
+  time: '2026-07-29T20:59:11.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1103
+- author: Marabout
+  changes:
+    - type: Tweak
+      message: Added a slowdown to the M60 when carrying it
+  id: 6283
+  time: '2026-07-29T20:59:32.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1105
+- author: Marabout
+  changes:
+    - type: Tweak
+      message: Gaved the NCR belt/harness the capacity to store medicine
+  id: 6284
+  time: '2026-07-29T21:03:35.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1106
+- author: Tytos
+  changes:
+    - type: Tweak
+      message: added more torches to light up parts of legion base that were too dark.
+  id: 6285
+  time: '2026-07-29T21:44:24.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1104
+- author: Bradysgaming
+  changes:
+    - type: Add
+      message: Gave 80's more bikes to prep for more slots coming back
+    - type: Add
+      message: Gave 80's more tools to create drugs/chems
+    - type: Fix
+      message: Fixed Provost and OffDuty bos job spawns.
+    - type: Fix
+      message: Fixed two OOB methods.
+    - type: Tweak
+      message: >-
+        Adjusted Ranger job supervisors to further hammer in the fact they do
+        all indeed listen to the major.
+    - type: Fix
+      message: Fixed Legion Explorer kit descriptions
+  id: 6286
+  time: '2026-07-30T23:18:14.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1113
+- author: Oli
+  changes:
+    - type: Add
+      message: >-
+        Legion flag backpacks exclusively for vex, prime dec, vet dec, optio and
+        centurion. 
+    - type: Add
+      message: Legion mantle exclusive by Optio
+    - type: Tweak
+      message: treasurer and medicus to all PoM + Acolytes
+  id: 6287
+  time: '2026-07-30T23:47:29.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1108
+- author: Squagg
+  changes:
+    - type: Remove
+      message: Weather stencils.
+    - type: Tweak
+      message: Cassette tapes now hold thirty minutes of recording instead of three.
+  id: 6288
+  time: '2026-08-01T00:14:31.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1112
+- author: Squagg
+  changes:
+    - type: Fix
+      message: Roofs
+  id: 6289
+  time: '2026-08-01T17:23:18.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1119
+- author: RedBookcase
+  changes:
+    - type: Add
+      message: >-
+        Followers R&D have finished the development of the Followers upgraded
+        headset & Responder Duster.
+  id: 6290
+  time: '2026-08-01T19:23:20.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1111
+- author: RedBookcase
+  changes:
+    - type: Add
+      message: Enclave Jumpsuits & Scientist Suits.
+  id: 6291
+  time: '2026-08-03T21:03:35.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1121
+- author: JohnKieser
+  changes:
+    - type: Fix
+      message: >-
+        SMGs reload interact fixed and made better. Pressing Z bolts SMGs
+        one-handed. Pressing Z again wields it
+    - type: Add
+      message: 'Revolvers now auto-empty when all cartridges are spent by pressing Z '
+  id: 6292
+  time: '2026-08-05T20:33:25.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1115
+- author: JohnKieser
+  changes:
+    - type: Fix
+      message: bow sprites fixed
+    - type: Tweak
+      message: bow crafting altered a little. No balancing stuff just fixes really
+    - type: Tweak
+      message: >-
+        recurve bow has reduced interact limit so it is technically faster to
+        use if you got the finger speed ss14 warriors.
+    - type: Tweak
+      message: 'broadhead arrow damage adjusted to make a little more sense. '
+  id: 6293
+  time: '2026-08-05T20:35:17.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1117
+- author: RedBookcase
+  changes:
+    - type: Fix
+      message: >-
+        Fixed Pinyon Nuts and certain other plants not growing properly when
+        treated with fertilizer.
+  id: 6294
+  time: '2026-08-05T20:37:17.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1123
+- author: Bradysgaming
+  changes:
+    - type: Remove
+      message: Removed Road rashes abillity to ride + took their keys away
+    - type: Tweak
+      message: 80's is back to 14 slots
+  id: 6295
+  time: '2026-08-05T21:19:53.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1125

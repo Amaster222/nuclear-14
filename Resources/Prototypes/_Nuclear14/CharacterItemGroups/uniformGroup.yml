@@ -175,3 +175,7 @@
       id: MisfitsLoadoutUniformKhansUniform
     - type: loadout # Misfits
       id: MisfitsLoadoutUniformKhansUniformShorts
+    - type: loadout # Misfits
+      id: MisfitsLoadoutUniformEnclaveUniformGrey
+    - type: loadout # Misfits
+      id: MisfitsLoadoutUniformEnclaveUniformBlue

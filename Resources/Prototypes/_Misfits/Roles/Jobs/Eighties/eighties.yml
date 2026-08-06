@@ -290,8 +290,6 @@
           - Eighties
           - PlayerRaider
           - Wastelander
-  - !type:AddTraitSpecial
-    traits: [ N14RidingPerk ]
 - type: startingGear
   id: EightiesRoadRashGear
   equipment:
@@ -306,7 +304,6 @@
     ears: MisfitsClothingHeadsetEighties
     back: N14ClothingBackpackMilitary
     pocket1: EightiesRoadRashloadoutkits
-    pocket2: VehicleKeyMotorbike
     belt: ClothingBeltMilitary
   storage:
     back:
