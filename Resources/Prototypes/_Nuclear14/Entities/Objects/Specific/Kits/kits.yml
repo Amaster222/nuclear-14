@@ -1631,7 +1631,7 @@
     size: Huge
   - type: SpawnItemsOnUse
     items:
-      - id: BowImprovised
+      - id: N14TribalBow
       - id: ClothingBeltQuiver
       - id: ArrowRegular
         amount: 17

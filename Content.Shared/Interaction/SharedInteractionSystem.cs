@@ -47,6 +47,8 @@ using Robust.Shared.Random;
 using Robust.Shared.Serialization;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
+using System.ComponentModel;
+using Robust.Shared.Toolshed.TypeParsers;
 
 namespace Content.Shared.Interaction
 {
@@ -1191,12 +1193,24 @@ namespace Content.Shared.Interaction
                 return false;
 
             // Goobstation [
-            var useAttemptEv = new UseInHandAttemptEvent(user); 
+            var useAttemptEv = new UseInHandAttemptEvent(user);
             RaiseLocalEvent(used, useAttemptEv);
 
             if (useAttemptEv.Cancelled)
                 return false;
             // ] Goobstation
+
+            // Misfit Add:
+            //              Interested in doing this with generics
+            var beforeUseMsg = new BeforeUseInHandEvent(user);
+            RaiseLocalEvent(used, beforeUseMsg, true);
+            if (beforeUseMsg.Handled)
+            {
+                DoContactInteraction(user, used, beforeUseMsg);
+                if (delayComponent != null && beforeUseMsg.ApplyDelay)
+                    _useDelay.TryResetDelay((used, delayComponent));
+                return true;
+            }
 
             var useMsg = new UseInHandEvent(user);
             RaiseLocalEvent(used, useMsg, true);
@@ -1394,7 +1408,7 @@ namespace Content.Shared.Interaction
                 return;
 
             if (!TryComp(uidB, out MetaDataComponent? metaB) || metaB.EntityPaused)
-                return ;
+                return;
 
             // TODO Struct event
             var ev = new ContactInteractionEvent(uidB.Value);

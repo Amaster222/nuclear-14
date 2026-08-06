@@ -9641,3 +9641,47 @@ Entries:
   id: 6291
   time: '2026-08-03T21:03:35.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1121
+- author: JohnKieser
+  changes:
+    - type: Fix
+      message: >-
+        SMGs reload interact fixed and made better. Pressing Z bolts SMGs
+        one-handed. Pressing Z again wields it
+    - type: Add
+      message: 'Revolvers now auto-empty when all cartridges are spent by pressing Z '
+  id: 6292
+  time: '2026-08-05T20:33:25.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1115
+- author: JohnKieser
+  changes:
+    - type: Fix
+      message: bow sprites fixed
+    - type: Tweak
+      message: bow crafting altered a little. No balancing stuff just fixes really
+    - type: Tweak
+      message: >-
+        recurve bow has reduced interact limit so it is technically faster to
+        use if you got the finger speed ss14 warriors.
+    - type: Tweak
+      message: 'broadhead arrow damage adjusted to make a little more sense. '
+  id: 6293
+  time: '2026-08-05T20:35:17.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1117
+- author: RedBookcase
+  changes:
+    - type: Fix
+      message: >-
+        Fixed Pinyon Nuts and certain other plants not growing properly when
+        treated with fertilizer.
+  id: 6294
+  time: '2026-08-05T20:37:17.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1123
+- author: Bradysgaming
+  changes:
+    - type: Remove
+      message: Removed Road rashes abillity to ride + took their keys away
+    - type: Tweak
+      message: 80's is back to 14 slots
+  id: 6295
+  time: '2026-08-05T21:19:53.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1125
