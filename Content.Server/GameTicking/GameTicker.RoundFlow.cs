@@ -170,14 +170,14 @@ namespace Content.Server.GameTicking
             // TryMergeMap doesn't support grid-maps (entities that are both map and grid).
             if (_mapManager.MapExists(targetMapId))
             {
-                var existingMapUid = _mapManager.GetMapEntityId(targetMapId);
+                var existingMapUid = _mapManager.GetMap(targetMapId);
                 EntityManager.DeleteEntity(existingMapUid);
             }
 
             _map.TryLoadMapWithId(targetMapId, ev.GameMap.MapPath, out _, out var grids,
                 offset: ev.Options.Offset, rot: ev.Options.Rotation);
 
-            _metaData.SetEntityName(_mapManager.GetMapEntityId(targetMapId), $"station map - {map.MapName}");
+            _metaData.SetEntityName(_mapManager.GetMap(targetMapId), $"station map - {map.MapName}");
 
             var gridUids = grids?.Select(g => g.Owner).ToList() ?? new List<EntityUid>();
             RaiseLocalEvent(new PostGameMapLoad(map, targetMapId, gridUids, stationName));
@@ -281,7 +281,7 @@ namespace Content.Server.GameTicking
             }
 
             // MapInitialize *before* spawning players, our codebase is too shit to do it afterwards...
-            _mapManager.DoMapInitialize(DefaultMap);
+            _mapManager.InitializeMap(DefaultMap);
 
             SpawnPlayers(readyPlayers, readyPlayerProfiles, force);
 
@@ -576,8 +576,6 @@ namespace Content.Server.GameTicking
             RaiseNetworkEvent(ev);
 
             EntityManager.FlushEntities();
-
-            _mapManager.Restart();
 
             _banManager.Restart();
 

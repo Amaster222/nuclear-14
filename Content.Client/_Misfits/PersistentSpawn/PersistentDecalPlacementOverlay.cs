@@ -18,7 +18,7 @@ public sealed class PersistentDecalPlacementOverlay : Overlay
 {
     [Dependency] private readonly IEyeManager _eyeManager = default!;
     [Dependency] private readonly IInputManager _inputManager = default!;
-    [Dependency] private readonly IMapManager _mapManager = default!;
+    [Dependency] private readonly SharedMapSystem _mapManager = default!;
 
     private readonly PersistentDecalPlacementSystem _placement;
     private readonly SharedTransformSystem _transform;

@@ -14,7 +14,7 @@ namespace Content.Server._NC.Clouds;
 public sealed class NCCloudCommand : IConsoleCommand
 {
     [Dependency] private readonly IEntityManager _entManager = default!;
-    [Dependency] private readonly IMapManager _mapManager = default!;
+    [Dependency] private readonly SharedMapSystem _mapManager = default!;
 
     public string Command => "nccloud";
 
