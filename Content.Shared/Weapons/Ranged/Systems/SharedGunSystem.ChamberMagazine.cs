@@ -166,19 +166,9 @@ public abstract partial class SharedGunSystem
         {
             if (TryTakeChamberEntity(uid, out var chambered))
             {
-                if (_netManager.IsServer)
-                {
-                    EjectCartridge(chambered.Value);
-                }
-                else
-                {
-                    // Prediction moment
-                    // The problem is client will dump the cartridge on the ground and the new server state
-                    // won't correspond due to randomness so looks weird
-                    // but we also need to always take it from the chamber or else ammocount won't be correct.
-                    TransformSystem.DetachParentToNull(chambered.Value, Transform(chambered.Value));
-                }
-
+                // Misfit removed: if (_netManager.IsServer)
+                //                 prediction handled in EjectCartridge
+                EjectCartridge(chambered.Value);
                 UpdateAmmoCount(uid);
             }
 

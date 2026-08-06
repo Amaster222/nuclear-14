@@ -1,8 +1,10 @@
+using Content.Server.Shuttles.Components;
 using Content.Shared.Damage;
 using Content.Shared.Damage.Events;
 using Content.Shared.Examine;
 using Content.Shared.FixedPoint;
 using Content.Shared.Projectiles;
+using Content.Shared.Sound.Components;
 using Content.Shared.Weapons.Ranged.Components;
 using Robust.Shared.Prototypes;
 
@@ -16,7 +18,13 @@ public sealed partial class GunSystem
         SubscribeLocalEvent<CartridgeAmmoComponent, ExaminedEvent>(OnCartridgeExamine);
         SubscribeLocalEvent<CartridgeAmmoComponent, DamageExamineEvent>(OnCartridgeDamageExamine);
     }
-
+    /// strips server only comps of spent cart
+    /// <see cref="SharedGunSystem.Cartridges"/>
+    public override void StripCartComps(EntityUid uid)
+    {
+        RemComp<SpaceGarbageComponent>(uid);
+        RemComp<EmitSoundOnCollideComponent>(uid);
+    }
     private void OnCartridgeDamageExamine(EntityUid uid, CartridgeAmmoComponent component, ref DamageExamineEvent args)
     {
         var damageSpec = GetProjectileDamage(component.Prototype);

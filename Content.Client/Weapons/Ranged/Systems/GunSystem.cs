@@ -117,10 +117,7 @@ public sealed partial class GunSystem : SharedGunSystem
         InitializeMagazineVisuals();
         InitializeSpentAmmo();
     }
-    public override void StripCartComps(EntityUid uid, PhysicsComponent phys, FixturesComponent fix)
-    {
-        base.StripCartComps(uid, phys, fix);
-    }
+
     private void OnUpdateClientAmmo(EntityUid uid, AmmoCounterComponent ammoComp, ref UpdateClientAmmoEvent args)
     {
         UpdateAmmoCount(uid, ammoComp);

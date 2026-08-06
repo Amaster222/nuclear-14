@@ -1,31 +1,33 @@
-using System.Diagnostics;
 using Content.Shared.Throwing;
 using Content.Shared.Weapons.Ranged.Components;
-using Robust.Server.GameObjects;
-using Robust.Shared.Physics;
 using Robust.Shared.Physics.Components;
 using Robust.Shared.Physics.Systems;
 using Robust.Shared.Spawners;
 
-// #Misfits Add - Remove physics from spent casings on landing + enforce a global casing entity cap
+// #Misfits Add - sleep physics on spent casings on landing + enforce a global casing entity cap
 
 namespace Content.Server._Misfits.Weapons.Guns;
 
 /// <summary>
 /// Server-side optimisation system for spent bullet casings:
+/// <c>SharedGunSystem.OnCartEjected</c> relied on for optimizations
+/// as it strips down physics but still allowing movement. Basically
+/// remove collision physics on entity without turning CanCollide to false
+/// nor without removing physComp or fixtureComp(causes gamestate sync issues)
 ///
 /// <list type="number">
-///   <item>Strips <see cref="PhysicsComponent"/> on landing so casings leave
-///         the broadphase immediately (the original behaviour).</item>
+///   <item>sleeps <see cref="PhysicsComponent"/> on landing, stopping movement
+///   by setting CanCollide off. </item>
 ///   <item>Enforces a global cap on concurrent casing entities. When the cap
 ///         is exceeded the oldest casings are deleted, preventing runaway
 ///         accumulation during sustained 20v20 firefights even with the
-///         30-second <see cref="TimedDespawnComponent"/> timer.</item>
+///         30-second <see cref="TimedDespawnComponent"/> timer.
+///         </item>
 /// </list>
 ///
 /// <para>
 /// The no-throw-angle edge case (revolver eject, manual cycling) is now handled
-/// in <c>SharedGunSystem.EjectCartridge</c> which strips physics immediately
+/// in <c>SharedGunSystem.OnCartEjected</c> which strips physics immediately
 /// when <c>angle == null</c>.
 /// </para>
 /// </summary>
@@ -42,13 +44,11 @@ public sealed class CasingPhysicsOptSystem : EntitySystem
     // FIFO queue of tracked casing UIDs for cap enforcement.
     private readonly Queue<EntityUid> _casingQueue = new();
     [Dependency] private SharedPhysicsSystem _sharedPhysics = default!;
-
-    [Dependency] private SharedJointSystem _sharedJoints = default!;
     public override void Initialize()
     {
         base.Initialize();
 
-        // Strip physics on landing (existing behaviour).
+        // Sleep entities on landing
         SubscribeLocalEvent<CartridgeAmmoComponent, LandEvent>(OnCasingLand);
 
         // Track casings for the global cap when their despawn timer is attached.
@@ -57,25 +57,19 @@ public sealed class CasingPhysicsOptSystem : EntitySystem
     }
 
     /// <summary>
-    /// Raised by <c>ThrownItemSystem</c> when a thrown entity comes to rest.
-    /// Strips the physics body so the entity becomes a pure visual/timer entity.
+    /// Raised by <c>ThrownItemSystem</c> on ent's throw timer finishing
+    /// Landed cart is set to rest
     /// </summary>
     private void OnCasingLand(EntityUid uid, CartridgeAmmoComponent cartridge, ref LandEvent args)
     {
-        if (!cartridge.Spent)
+        if (!cartridge.Spent || !TryComp<PhysicsComponent>(uid, out var physComp))
             return;
 
-        _sharedPhysics.SetAwake(uid, Comp<PhysicsComponent>(uid), false);
-        // _sharedPhysics.DestroyContacts;
-        // _sharedPhysics.SetCanCollide(uid, false, true, true, body: physComp);
-        var net = GetNetEntity(uid);
-        Log.Debug($"NetID:{net.Id} IsClientSide:{net.IsClientSide()}");
-        // Deferred removal keeps us safely outside the physics engine's event stack.
-        // RobustToolbox's SharedPhysicsSystem.OnPhysicsRemoved cascades fixture/broadphase
-        // cleanup automatically.
+        // Misfit change: carts now removed from broadphase(reduced physics) on eject with CanCollide still on true
+        //                to retain movement. This is when we explicitly tell the engine
+        //                that the ent doesnt have physics by sleeping ent which sets CanCollide to false
+        _sharedPhysics.SetAwake((uid, physComp), false);
 
-
-        // RemCompDeferred<PhysicsComponent>(uid);
     }
 
     /// <summary>

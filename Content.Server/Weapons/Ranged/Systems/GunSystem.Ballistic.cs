@@ -11,16 +11,7 @@ namespace Content.Server.Weapons.Ranged.Systems;
 
 public sealed partial class GunSystem
 {
-    [Dependency] private readonly FixtureSystem _fixtures = default!;
 
-    public override void StripCartComps(EntityUid uid, PhysicsComponent phys, FixturesComponent fix)
-    {
-        base.StripCartComps(uid, phys, fix);
-        RemComp<SpaceGarbageComponent>(uid);
-
-
-
-    }
     protected override void Cycle(EntityUid uid, BallisticAmmoProviderComponent component, MapCoordinates coordinates)
     {
         EntityUid? ent = null;
