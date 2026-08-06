@@ -9685,3 +9685,13 @@ Entries:
   id: 6295
   time: '2026-08-05T21:19:53.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1125
+- author: cythisiax
+  changes:
+    - type: Tweak
+      message: >-
+        adds component variable addition to give recruit functionality, not
+        restricted to jobtype. I.E Wastelander jobslot with component can use
+        EnclaveRecruit function and give others EnclaveRecruitMindComponent.
+  id: 6296
+  time: '2026-08-06T23:13:10.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1127
