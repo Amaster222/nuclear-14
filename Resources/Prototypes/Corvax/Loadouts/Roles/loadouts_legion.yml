@@ -274,6 +274,8 @@
     - !type:CharacterJobRequirement
       jobs:
         - CaesarLegionAuxilia
+        - CaesarLegionPriestessOfMars
+        - CaesarLegionAcolyteOfMars
   items:
     - M14ClothingNeckLegionMedicus
 
@@ -286,6 +288,8 @@
     - !type:CharacterJobRequirement
       jobs:
         - CaesarLegionAuxilia
+        - CaesarLegionPriestessOfMars
+        - CaesarLegionAcolyteOfMars
   items:
     - M14ClothingNeckLegionTreasurer
 

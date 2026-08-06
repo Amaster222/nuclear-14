@@ -624,7 +624,7 @@
     energy: 1
     mask: /Textures/Effects/LightMasks/cone.png
     autoRot: true
-    # netsync: false # #Misfits Fix - this was preventing flashlight state from syncing to clients after toggle
+    netsync: false
   - type: LightBehaviour
     behaviours:
     - !type:FadeBehaviour

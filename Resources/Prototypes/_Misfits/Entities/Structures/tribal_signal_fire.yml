@@ -1,7 +1,7 @@
 # #Misfits Add — Tribal Signal Fire entity.
 # A permanent signal fire structure placed in villages. Any Tribe-dept player can right-click
 # it to compose and broadcast a short smoke signal message to all online tribe members.
-# Cooldown: 5 minutes between uses.
+# Cooldown: 10 minutes between uses.
 # Note: N14Bonfire (crafted/map-placed) also carries SmokeSignal — this is a dedicated decorative prop.
 
 - type: entity
@@ -14,7 +14,7 @@
   components:
   # Smoke signal functionality — enables the BUI text-input broadcast verb
   - type: SmokeSignal
-    cooldown: 300 # 5 minutes
+    cooldown: 600 # #Misfits Change - dedicated signal fires match campfire cooldowns.
     maxMessageLength: 128
     targetDepartment: Tribe
     announcementColor: "#d69b3d"

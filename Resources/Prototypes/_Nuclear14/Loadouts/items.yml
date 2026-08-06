@@ -402,4 +402,11 @@
   items:
     - SprayPaintGreen
 
+- type: loadout
+  id: LoadoutSprayPaintDesertTan
+  category: Items
+  cost: 0
+  items:
+    - SprayPaintDesertTan
+
 

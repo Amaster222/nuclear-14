@@ -4,7 +4,7 @@
 # Excludes syndicate/antag-only levels (NuclearOperative, SyndicateAgent) — admin card shouldn't flag as antag.
 
 - type: accessGroup
-  id: AllAccessN14
+  id: AllAccessMisfits
   tags:
   # ── Standard SS14 (mirrors upstream AllAccess) ──
   - EmergencyShuttleRepealAll
@@ -89,6 +89,13 @@
   - EnclaveOfficer
   - EnclaveCommand
   - EnclaveScience
+  - EnclaveRoleAll
+  - EnclaveRoleScientist
+  - EnclaveRoleHeadScientist
+  - EnclaveRoleNCO
+  - EnclaveRoleJuniorOfficer
+  - EnclaveRoleSeniorOfficer
+  - EnclaveRoleCommander
   # ── N14: NCR ──
   - NCR
   - NCRSGT
@@ -105,6 +112,9 @@
   - VaultChemistry
   - VaultEngineer
   - VaultDweller
+  - VaultCargo
+  - VaultCourier
+  - VaultSalvage
   # ── N14: Legion (Corvax) ──
   - CaesarLegion
   - CaesarLegionSlave

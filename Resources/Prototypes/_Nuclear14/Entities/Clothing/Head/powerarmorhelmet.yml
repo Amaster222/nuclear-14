@@ -96,11 +96,13 @@
       - state: on-equipped-HELMET
   - type: PointLight
     enabled: false
-    radius: 6
+    radius: 8
     energy: 1
+    offset: 0, .75
     mask: /Textures/Effects/LightMasks/cone.png
     autoRot: true
     netsync: false
+    color: "#ff0000" #Misfits Change: Your ride's over, mutie. Time to die.
   - type: Clothing
     equipSound: # Corvax-Change
       path: /Audio/_Nuclear14/Effects/PowerArmor/PowerArmor_Equip_Helmet_01.ogg
