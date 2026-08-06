@@ -55,7 +55,7 @@ public sealed class DungeonPlacementHijack : PlacementHijack
             return true;
 
         // Find the map entity
-        var mapManager = IoCManager.Resolve<SharedMapSystem>();
+        var mapManager = IoCManager.Resolve<IEntitySystemManager>().GetEntitySystem<SharedMapSystem>();
         var mapUid = mapManager.GetMap(mapId);
 
         // Use the snapped tile position as the dungeon origin
