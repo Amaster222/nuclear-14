@@ -182,8 +182,8 @@
 - type: entity
   parent: ClothingHeadHardsuitWithLightBase
   id: N14ClothingHeadHelmetPowerArmorT51
-  name: t-51 power armor helmet
-  description: An old helmet used with T-51 Power Armor suits. It looks more advanced than your common everyday T-45.
+  name: T-51 Power Armor Helmet
+  description: An old helmet used with suits of T-51 Power Armor. The gaze of these visors became commonplace in pre-war victory footage across television sets nationwide.
   components:
   - type: Sprite
     netsync: false
@@ -250,8 +250,8 @@
 - type: entity
   parent: ClothingHeadHardsuitWithLightBase
   id: N14ClothingHeadHelmetPowerArmorT60
-  name: t-60 power armor helmet
-  description: An old helmet used with T-60 Power Armor suits, very similar to the T-45.
+  name: T-60 Power Armor Helmet
+  description: An old helmet used with T-60 Power Armor suits, nearly identical to the T-45 variant. These helmets saw more use on the domestic front, issed only months before the bombs dropped.
   components:
   - type: Sprite
     netsync: false
@@ -320,8 +320,8 @@
 - type: entity
   parent: N14ClothingHeadHelmetPowerArmorT60
   id: N14ClothingHeadHelmetPowerArmorT60BOS
-  name: t-60 power armor helmet
-  description: A T-60 helmet carrying Brotherhood of Steel livery. The tactical map feed is active on the visor.
+  name: T-60 Power Armor Helmet
+  description: An old helmet used with T-60 Power Armor suits, with a tactical map feed built into it. These helmets gazed down on hungry domestic protestors more than foreign enemy combatants.
   components:
   - type: WastelandMap
     mapTexturePath: _Misfits/Maps/wendover_map.png
@@ -787,8 +787,8 @@
 - type: entity
   parent: N14ClothingHeadHelmetPowerArmorT51
   id: N14ClothingHeadHelmetPowerArmorT51Wash
-  name: t-51 power armor helmet
-  description: An old helmet used with T-51 Power Armor suits. It looks more advanced than your common everyday T-45.
+  name: T-51 Power Armor Helmet
+  description: An old helmet used with suits of T-51 Power Armor. The gaze of these visors became commonplace in pre-war victory footage across television sets nationwide.
   components:
   - type: Sprite
     netsync: false
@@ -817,8 +817,8 @@
 - type: entity
   parent: N14ClothingHeadHelmetPowerArmorT51
   id: N14ClothingHeadHelmetPowerArmorT51WashElite
-  name: t-51 power armor helmet
-  description: An old helmet used with T-51 Power Armor suits. It's way more advanced than any helmet you could normally find.
+  name: T-51 Power Armor Helmet
+  description: An old helmet used with suits of T-51 Power Armor. The gaze of these visors became commonplace in pre-war victory footage across television sets nationwide.
   components:
   - type: Sprite
     netsync: false

@@ -1327,14 +1327,14 @@
     },
     "N14ClothingHeadHelmetPowerArmorT51": {
         "parent": "ClothingHeadHardsuitWithLightBase",
-        "name": "t-51 power armor helmet",
-        "desc": "An old helmet used with T-51 Power Armor suits. It looks more advanced than your common everyday T-45.",
+        "name": "T-51 Power Armor Helmet",
+        "desc": "An old helmet used with suits of T-51 Power Armor. The gaze of these visors became commonplace in pre-war victory footage across television sets nationwide.",
         "suffix": null
     },
     "N14ClothingHeadHelmetPowerArmorT60": {
         "parent": "ClothingHeadHardsuitWithLightBase",
-        "name": "t-60 power armor helmet",
-        "desc": "An old helmet used with T-60 Power Armor suits, very similar to the T-45.",
+        "name": "T-60 Power Armor Helmet",
+        "desc": "An old helmet used with T-60 Power Armor suits, nearly identical to the T-45 variant. These helmets saw more use on the domestic front, issed only months before the bombs dropped.",
         "suffix": null
     },
     "N14ClothingHeadHelmetPowerArmorX01": {
@@ -1819,14 +1819,14 @@
     },
     "N14ClothingOuterPowerArmorT51": {
         "parent": "N14ClothingOuterPowerArmorT45",
-        "name": "t-51 power armor suit",
-        "desc": "An old suit of T-51 Power Armor. It looks more advanced than your common everyday T-45.",
+        "name": "T-51 Power Armor Suit",
+        "desc": "An old T-51 Power Armor suit. Before the world ended, these were the pride of the US military, and proved essential against the People's Liberation Army.",
         "suffix": null
     },
     "N14ClothingOuterPowerArmorT60": {
         "parent": "N14ClothingOuterPowerArmorT45",
-        "name": "t-60 power armor suit",
-        "desc": "A suit of T-60 Power Armor. The T-60 series of power armor was designed to eventually replace the T-51 as the pinnacle of powered armor technology.",
+        "name": "T-60 Power Armor Suit",
+        "desc": "An old T-60 Power Armor suit. It was used by the US military in the last few months before the bombs dropped, and was considered a replacement for the T-45.",
         "suffix": null
     },
     "N14ClothingOuterPowerArmorT60Tesla": {
@@ -1849,8 +1849,8 @@
     },
     "N14ClothingOuterPowerArmorRaider": {
         "parent": "ClothingOuterEVASuitBase",
-        "name": "raider power armor suit",
-        "desc": "Terrifying, AND robust. Everything a Raider needs in a power armor suit.",
+        "name": "Raider Power Armor Suit",
+        "desc": "An old T-45 Power Armor suit. It shows signs of rust and aesthetic spikes for pure intimidation. It has not been properly maintained, but is still functional.",
         "suffix": null
     },
     "N14ClothingOuterPowerArmorT51BC": {
@@ -1987,8 +1987,8 @@
     },
     "N14ClothingUniformJumpskirtRDFormal": {
         "parent": "ClothingUniformSkirtBase",
-        "name": "research director's formal dress",
-        "desc": "Some formal attire for the research director.",
+        "name": "formal brown dress",
+        "desc": "Formal attire for office workers and research personnel alike, in the safe neutral tones of beige and brown, it even has a clip-on tie included. This outfit has achieved true neutrality.",
         "suffix": null
     },
     "N14ClothingUniformJumpskirtBOSBlack": {
@@ -2035,8 +2035,8 @@
     },
     "N14ClothingUniformJumpsuitRDFormal": {
         "parent": "ClothingUniformBase",
-        "name": "research director's formal suit",
-        "desc": "Some formal attire for the research director.",
+        "name": "formal brown outfit",
+        "desc": "Formal attire for office workers and research personnel alike, in the safe neutral tones of beige and brown, it even has a clip-on tie included. This outfit has achieved true neutrality.",
         "suffix": null
     },
     "N14ClothingUniformJumpsuitRags": {
