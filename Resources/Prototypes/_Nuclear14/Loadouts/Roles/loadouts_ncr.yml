@@ -362,6 +362,7 @@
         - NCRPatrolRanger
         - NCRVeteranRanger
         - NCRRO
+        - NCRCitizen
     - !type:CharacterDepartmentTimeRequirement # T7 faction timelock (40h NCR)
       department: NCR
       min: 36000 # 10 hours
@@ -395,6 +396,7 @@
         - NCRPatrolRanger
         - NCRVeteranRanger
         - NCRRO
+        - NCRCitizen
     - !type:CharacterDepartmentTimeRequirement # T7 faction timelock (40h NCR)
       department: NCR
       min: 36000 # 10 hours
@@ -428,6 +430,7 @@
         - NCRPatrolRanger
         - NCRVeteranRanger
         - NCRRO
+        - NCRCitizen
     - !type:CharacterDepartmentTimeRequirement
       department: NCR
       min: 144000 # 40 hours, work for them shorts!
@@ -461,6 +464,7 @@
         - NCRPatrolRanger
         - NCRVeteranRanger
         - NCRRO
+        - NCRCitizen
     - !type:CharacterDepartmentTimeRequirement # T7 faction timelock (40h NCR)
       department: NCR
       min: 36000 # 10 hours
@@ -494,6 +498,7 @@
         - NCRPatrolRanger
         - NCRVeteranRanger
         - NCRRO
+        - NCRCitizen
     - !type:CharacterDepartmentTimeRequirement
       department: NCR
       min: 18000 # 5 hours
@@ -527,6 +532,7 @@
         - NCRPatrolRanger
         - NCRVeteranRanger
         - NCRRO
+        - NCRCitizen
     - !type:CharacterDepartmentTimeRequirement
       department: NCR
       min: 72000 # 20 hours
@@ -590,9 +596,13 @@
         - NCRPatrolRanger
         - NCRVeteranRanger
         - NCRRO
+        - NCRCitizen
     - !type:CharacterDepartmentTimeRequirement
       department: NCR
       min: 144000 # 40 hours, work for that hat!
+    - !type:CharacterTraitRequirement
+      traits:
+      - N14RidingPerk
   items:
     - N14ClothingHeadHatNCRStetson
 
@@ -832,7 +842,7 @@
     - N14ClothingHeadFourLeafRangerHelmet
 
 - type: loadout
-  id: LoadoutN14ClothingNeckHighlandRangerHelmet
+  id: LoadoutN14ClothingHeadHighlandRangerHelmet
   category: Roles
   cost: 0
   exclusive: true
@@ -844,7 +854,143 @@
       tracker: NCRVeteranRanger
       min: 72000 # 1200 minutes
   items:
-    - N14ClothingNeckHighlandRangerHelmet
+    - N14ClothingHeadHighlandRangerHelmet
+
+- type: loadout
+  id: LoadoutN14ClothingHeadCanOpenerRangerHelmet
+  category: Roles
+  cost: 0
+  exclusive: true
+  requirements:
+    - !type:CharacterJobRequirement
+      jobs:
+        - NCRVeteranRanger
+    - !type:CharacterPlaytimeRequirement
+      tracker: NCRVeteranRanger
+      min: 72000 # 1200 minutes
+  items:
+    - N14ClothingHeadCanOpenerRangerHelmet
+
+- type: loadout
+  id: LoadoutN14ClothingHeadTheDevoutRangerHelmet
+  category: Roles
+  cost: 0
+  exclusive: true
+  requirements:
+    - !type:CharacterJobRequirement
+      jobs:
+        - NCRVeteranRanger
+    - !type:CharacterPlaytimeRequirement
+      tracker: NCRVeteranRanger
+      min: 46800 # 780 minutes
+  items:
+    - N14ClothingHeadTheDevoutRangerHelmet
+
+- type: loadout
+  id: LoadoutN14ClothingHeadDemoExpertRangerHelmet
+  category: Roles
+  cost: 0
+  exclusive: true
+  requirements:
+    - !type:CharacterJobRequirement
+      jobs:
+        - NCRVeteranRanger
+    - !type:CharacterPlaytimeRequirement
+      tracker: NCRVeteranRanger
+      min: 72000 # 1200 minutes
+  items:
+    - N14ClothingHeadDemoExpertRangerHelmet
+
+- type: loadout
+  id: LoadoutN14ClothingHeadHardCaseRangerHelmet
+  category: Roles
+  cost: 0
+  exclusive: true
+  requirements:
+    - !type:CharacterJobRequirement
+      jobs:
+        - NCRVeteranRanger
+    - !type:CharacterPlaytimeRequirement
+      tracker: NCRVeteranRanger
+      min: 72000 # 1200 minutes
+  items:
+    - N14ClothingHeadHardCaseRangerHelmet
+
+- type: loadout
+  id: LoadoutN14ClothingHatTheDevoutMask
+  category: Roles
+  cost: 0
+  exclusive: true
+  requirements:
+    - !type:CharacterJobRequirement
+      jobs:
+        - NCRVeteranRanger
+        - NCRFieldRanger # Purely cosmetic, identical to field ranger mask
+    - !type:CharacterPlaytimeRequirement
+      tracker: NCRVeteranRanger
+      min: 46800 # 780 minutes
+  items:
+    - N14ClothingHatTheDevoutMask
+
+- type: loadout
+  id: LoadoutN14ClothingOuterCaliforniaGirlVetRangerRiotArmor
+  category: Roles
+  cost: 0
+  exclusive: true
+  requirements:
+    - !type:CharacterJobRequirement
+      jobs:
+        - NCRVeteranRanger
+    - !type:CharacterPlaytimeRequirement
+      tracker: NCRVeteranRanger
+      min: 72000 # 1200 minutes
+  items:
+    - N14ClothingOuterCaliforniaGirlVetRangerRiotArmor
+
+- type: loadout
+  id: LoadoutN14ClothingOuterCanOpenerVetRangerRiotArmor
+  category: Roles
+  cost: 0
+  exclusive: true
+  requirements:
+    - !type:CharacterJobRequirement
+      jobs:
+        - NCRVeteranRanger
+    - !type:CharacterPlaytimeRequirement
+      tracker: NCRVeteranRanger
+      min: 72000 # 1200 minutes
+  items:
+    - N14ClothingOuterCanOpenerVetRangerRiotArmor
+
+- type: loadout
+  id: LoadoutN14ClothingOuterDemoExpertVetRangerRiotArmor
+  category: Roles
+  cost: 0
+  exclusive: true
+  requirements:
+    - !type:CharacterJobRequirement
+      jobs:
+        - NCRVeteranRanger
+    - !type:CharacterPlaytimeRequirement
+      tracker: NCRVeteranRanger
+      min: 72000 # 1200 minutes
+  items:
+    - N14ClothingOuterDemoExpertVetRangerRiotArmor
+
+- type: loadout
+  id: LoadoutN14ClothingOuterTheDevoutVetRangerRiotArmor
+  category: Roles
+  cost: 0
+  exclusive: true
+  requirements:
+    - !type:CharacterJobRequirement
+      jobs:
+        - NCRVeteranRanger
+    - !type:CharacterPlaytimeRequirement
+      tracker: NCRVeteranRanger
+      min: 46800 # 780 minutes
+  items:
+    - N14ClothingOuterTheDevoutVetRangerRiotArmor
 
 - type: loadout
   id: LoadoutN14ClothingNeckHighlandRangerDuster
@@ -896,3 +1042,33 @@
       min: 72000 # 1200 minutes
   items:
     - N14ClothingNeckCaliforniaGirlDuster
+
+- type: loadout
+  id: LoadoutN14ClothingMaskWeatheredGasMask
+  category: Roles
+  cost: 5
+  exclusive: true
+  requirements:
+    - !type:CharacterJobRequirement
+      jobs:
+        - NCRRangerRecruit
+        - NCRFieldRanger
+        - NCRPatrolRanger
+        - NCRVeteranRanger
+  items:
+    - ClothingMaskGasRangerWeathered
+
+- type: loadout
+  id: LoadoutN14ClothingMaskGasRangerBroken
+  category: Roles
+  cost: 5
+  exclusive: true
+  requirements:
+    - !type:CharacterJobRequirement
+      jobs:
+        - NCRRangerRecruit
+        - NCRFieldRanger
+        - NCRPatrolRanger
+        - NCRVeteranRanger
+  items:
+    - ClothingMaskGasRangerBroken

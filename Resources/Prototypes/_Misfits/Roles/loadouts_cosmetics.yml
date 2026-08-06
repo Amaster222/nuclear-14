@@ -528,6 +528,57 @@
   items:
     - MisfitsClothingHeadRedBandana
 
+- type: loadout
+  id: MisfitsLoadoutHeadHeadMarlowHat
+  category: Head
+  cost: 0
+  exclusive: true
+  requirements:
+    - !type:CharacterDepartmentRequirement
+      departments:
+        - Wastelander
+        - Townsfolk
+  items:
+    - MisfitsClothingHeadMarlowHat
+
+- type: loadout
+  id: MisfitsLoadoutHeadHeadSchlimmHat
+  category: Head
+  cost: 0
+  exclusive: true
+  requirements:
+    - !type:CharacterDepartmentRequirement
+      departments:
+        - Wastelander
+        - Townsfolk
+  items:
+    - MisfitsClothingHeadSchlimmHat
+
+- type: loadout
+  id: MisfitsLoadoutHeadHeadAHPhelmet
+  category: Head
+  cost: 0
+  exclusive: true
+  requirements:
+    - !type:CharacterDepartmentRequirement
+      departments:
+        - Wastelander
+        - Townsfolk
+  items:
+    - MisfitsClothingHeadAHPhelmet
+
+- type: loadout
+  id: MisfitsLoadoutHeadKhanHelmet
+  category: Head
+  cost: 0
+  exclusive: true
+  requirements:
+    - !type:CharacterDepartmentRequirement
+      departments:
+        - Wastelander
+  items:
+    - MisfitsClothingHeadKhanHelmet
+
 # === Head: NCR soldiers ===
 
 - type: loadout
@@ -920,6 +971,40 @@
   items:
     - N14ClothingBootsLeather
 
+- type: loadout
+  id: MisfitsLoadoutMilitaryCowboyBoots
+  category: Shoes
+  cost: 2
+  exclusive: true
+  requirements:
+    - !type:CharacterItemGroupRequirement
+      group: N14LoadoutShoes
+    - !type:CharacterJobRequirement # Forge-Change
+      inverted: true
+      jobs:
+      - BoSMidSerf
+      - CaesarLegionSlave
+      - NCRPrisoner
+  items:
+    - MisfitsMilitaryCowboyBoots
+
+- type: loadout
+  id: MisfitsLoadoutMilitarySteelTippedBoots
+  category: Shoes
+  cost: 2
+  exclusive: true
+  requirements:
+    - !type:CharacterItemGroupRequirement
+      group: N14LoadoutShoes
+    - !type:CharacterJobRequirement # Forge-Change
+      inverted: true
+      jobs:
+      - BoSMidSerf
+      - CaesarLegionSlave
+      - NCRPrisoner
+  items:
+    - MisfitsMilitarySteelTippedBoots
+
 # === Shoes: Faction-restricted footwear ===
 
 - type: loadout
@@ -1124,6 +1209,300 @@
   items:
     - ClothingOuterCoatJacketBiker
 
+# === Outer: Wasteland jackets and coats ===
+
+- type: loadout
+  id: MisfitsLoadoutOuterHighwayPatrolJacket
+  category: Outer
+  cost: 1
+  exclusive: true
+  requirements:
+    - !type:CharacterItemGroupRequirement
+      group: N14LoadoutOuter
+    - !type:CharacterDepartmentRequirement
+      departments:
+        - Wastelander
+        - Townsfolk
+  items:
+    - M14ClothingOuterHighwayPatrolJacket
+
+- type: loadout
+  id: MisfitsLoadoutOuterMarlowGangOvercoat
+  category: Outer
+  cost: 1
+  exclusive: true
+  requirements:
+    - !type:CharacterItemGroupRequirement
+      group: N14LoadoutOuter
+    - !type:CharacterDepartmentRequirement
+      departments:
+        - Wastelander
+        - Townsfolk
+  items:
+    -  M14ClothingOuterMarlowGangOvercoat
+
+- type: loadout
+  id: MisfitsLoadoutOuterGunfightersOvercoat
+  category: Outer
+  cost: 1
+  exclusive: true
+  requirements:
+    - !type:CharacterItemGroupRequirement
+      group: N14LoadoutOuter
+    - !type:CharacterDepartmentRequirement
+      departments:
+        - Wastelander
+        - Townsfolk
+  items:
+    -  M14ClothingOuterGunfightersOvercoat
+
+- type: loadout
+  id: MisfitsLoadoutOuterVegabondsVest
+  category: Outer
+  cost: 1
+  exclusive: true
+  requirements:
+    - !type:CharacterItemGroupRequirement
+      group: N14LoadoutOuter
+    - !type:CharacterDepartmentRequirement
+      departments:
+        - Wastelander
+        - Townsfolk
+  items:
+    -  M14ClothingOuterVegabondsVest
+
+- type: loadout
+  id: MisfitsLoadoutOuterArmorKit
+  category: Outer
+  cost: 1
+  exclusive: true
+  requirements:
+    - !type:CharacterDepartmentRequirement
+        inverted: true
+        departments:
+        - Vault
+    - !type:CharacterJobRequirement
+      inverted: true
+      jobs:
+        - BoSMidSerf
+        - CaesarLegionSlave
+        - NCRPrisoner
+  items:
+    -  M14ClothingOuterArmorKit
+
+- type: loadout
+  id: MisfitsLoadoutOuterArmorKitPunk
+  category: Outer
+  cost: 1
+  exclusive: true
+  requirements:
+    - !type:CharacterDepartmentRequirement
+        inverted: true
+        departments:
+        - Vault
+    - !type:CharacterJobRequirement
+      inverted: true
+      jobs:
+        - BoSMidSerf
+        - CaesarLegionSlave
+        - NCRPrisoner
+  items:
+    -  M14ClothingOuterArmorKitPunk
+
+- type: loadout
+  id: MisfitsLoadoutOuterArmorKitShoulder
+  category: Outer
+  cost: 1
+  exclusive: true
+  requirements:
+    - !type:CharacterDepartmentRequirement
+        inverted: true
+        departments:
+        - Vault
+    - !type:CharacterJobRequirement
+      inverted: true
+      jobs:
+        - BoSMidSerf
+        - CaesarLegionSlave
+        - NCRPrisoner
+  items:
+    -  M14ClothingOuterArmorKitShoulder
+
+- type: loadout
+  id: MisfitsLoadoutOuterKhanLeather
+  category: Outer
+  cost: 1
+  exclusive: true
+  requirements:
+    - !type:CharacterItemGroupRequirement
+      group: N14LoadoutOuter
+    - !type:CharacterDepartmentRequirement
+      departments:
+        - Wastelander
+  items:
+    -  M14ClothingOuterKhanLeather
+
+# === Uniform: Wastelanders drip ===
+
+- type: loadout
+  id: MisfitsLoadoutUniformADPUniform
+  category: Uniform
+  cost: 0
+  exclusive: true
+  requirements:
+    - !type:CharacterItemGroupRequirement
+      group: N14LoadoutUniform
+    - !type:CharacterDepartmentRequirement
+      departments:
+        - Wastelander
+        - Townsfolk
+  items:
+    - M14ClothingUniformADPUniform
+
+- type: loadout
+  id: MisfitsLoadoutUniformMarlowdudsUniform
+  category: Uniform
+  cost: 0
+  exclusive: true
+  requirements:
+    - !type:CharacterItemGroupRequirement
+      group: N14LoadoutUniform
+    - !type:CharacterDepartmentRequirement
+      departments:
+        - Wastelander
+        - Townsfolk
+  items:
+    - M14ClothingUniformMarlowdudsUniform
+
+- type: loadout
+  id: MisfitsLoadoutUniformIkedudsUniform
+  category: Uniform
+  cost: 0
+  exclusive: true
+  requirements:
+    - !type:CharacterItemGroupRequirement
+      group: N14LoadoutUniform
+    - !type:CharacterDepartmentRequirement
+      departments:
+        - Wastelander
+        - Townsfolk
+  items:
+    - M14ClothingUniformIkedudsUniform
+
+- type: loadout
+  id: MisfitsLoadoutUniformHelendudsUniform
+  category: Uniform
+  cost: 0
+  exclusive: true
+  requirements:
+    - !type:CharacterItemGroupRequirement
+      group: N14LoadoutUniform
+    - !type:CharacterDepartmentRequirement
+      departments:
+        - Wastelander
+        - Townsfolk
+  items:
+    - M14ClothingUniformHelendudsUniform
+
+- type: loadout
+  id: MisfitsLoadoutUniformMasondudsUniform
+  category: Uniform
+  cost: 0
+  exclusive: true
+  requirements:
+    - !type:CharacterItemGroupRequirement
+      group: N14LoadoutUniform
+    - !type:CharacterDepartmentRequirement
+      departments:
+        - Wastelander
+        - Townsfolk
+  items:
+    - M14ClothingUniformMasondudsUniform
+
+- type: loadout
+  id: MisfitsLoadoutUniformSchlimmUniform
+  category: Uniform
+  cost: 0
+  exclusive: true
+  requirements:
+    - !type:CharacterItemGroupRequirement
+      group: N14LoadoutUniform
+    - !type:CharacterDepartmentRequirement
+      departments:
+        - Wastelander
+        - Townsfolk
+  items:
+    - M14ClothingUniformSchlimmUniform
+
+- type: loadout
+  id: MisfitsLoadoutUniformKhansUniform
+  category: Uniform
+  cost: 0
+  exclusive: true
+  requirements:
+    - !type:CharacterItemGroupRequirement
+      group: N14LoadoutUniform
+    - !type:CharacterDepartmentRequirement
+      departments:
+        - Wastelander
+  items:
+    - M14ClothingUniformKhansUniform
+
+- type: loadout
+  id: MisfitsLoadoutUniformKhansUniformShorts
+  category: Uniform
+  cost: 0
+  exclusive: true
+  requirements:
+    - !type:CharacterItemGroupRequirement
+      group: N14LoadoutUniform
+    - !type:CharacterDepartmentRequirement
+      departments:
+        - Wastelander
+  items:
+    - M14ClothingUniformKhansUniformShorts
+
+- type: loadout
+  id: MisfitsLoadoutUniformEnclaveUniformBlue
+  category: Uniform
+  cost: 0
+  exclusive: true
+  requirements:
+  - !type:CharacterItemGroupRequirement
+    group: N14LoadoutUniform
+  - !type:CharacterJobRequirement
+    jobs:
+    - EnclaveEnlisted
+    - EnclaveNCO
+    - EnclaveJuniorOfficer
+    - EnclaveSeniorOfficer
+    - EnclaveCommander
+    - EnclaveJuniorScientist
+    - EnclaveScientist
+    - EnclaveHeadScientist
+  items:
+  - N14ClothingUniformJumpsuitEnclaveBlue
+
+- type: loadout
+  id: MisfitsLoadoutUniformEnclaveUniformGrey
+  category: Uniform
+  cost: 0
+  exclusive: true
+  requirements:
+  - !type:CharacterItemGroupRequirement
+    group: N14LoadoutUniform
+  - !type:CharacterJobRequirement
+    jobs:
+    - EnclaveEnlisted
+    - EnclaveNCO
+    - EnclaveJuniorOfficer
+    - EnclaveSeniorOfficer
+    - EnclaveCommander
+    - EnclaveJuniorScientist
+    - EnclaveScientist
+    - EnclaveHeadScientist
+  items:
+  - N14ClothingUniformJumpsuitEnclaveGrey
 
 # === Neck: NCR faction cloaks and mantles ===
 
@@ -1241,3 +1620,26 @@
         - TribalElder
   items:
     - N14ClothingNeckCloakTribal
+
+# === Neck: General Cloaks & Mantles ===
+
+- type: loadout
+  id: MisfitsLoadoutOuterCloakWesternPoncho
+  category: Accessories
+  cost: 0
+  exclusive: true
+  requirements:
+    - !type:CharacterItemGroupRequirement
+      group: N14LoadoutNeck
+    - !type:CharacterDepartmentRequirement
+        inverted: true
+        departments:
+        - Vault
+    - !type:CharacterJobRequirement
+      inverted: true
+      jobs:
+        - BoSMidSerf
+        - CaesarLegionSlave
+        - NCRPrisoner
+  items:
+    -  M14ClothingNeckCloakWesternPoncho

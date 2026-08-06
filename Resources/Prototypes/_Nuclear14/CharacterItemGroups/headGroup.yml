@@ -153,3 +153,11 @@
       id: N14ClothingHeadHatNCRSlouch
     - type: loadout
       id: MisfitsClothingHeadRedBandana
+    - type: loadout
+      id: MisfitsLoadoutHeadHeadMarlowHat
+    - type: loadout
+      id: MisfitsLoadoutHeadHeadSchlimmHat
+    - type: loadout
+      id: MisfitsLoadoutHeadHeadAHPhelmet
+    - type: loadout
+      id: MisfitsLoadoutHeadKhanHelmet

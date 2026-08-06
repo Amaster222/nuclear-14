@@ -40,12 +40,13 @@
     head: N14ClothingHeadHatEnclaveScientist
     back: N14ClothingBackpackSatchelMilitary
     jumpsuit: N14ClothingUniformJumpsuitEnclave
+    outerClothing: N14ClothingOuterRadSuitEnclave
     shoes: N14ClothingBootsLeatherFilled
     neck: ClothingNeckPinEnclaveJuniorScientist
     belt: ClothingBeltMilitary
     ears: N14ClothingHeadsetEnclave
     pocket2: EnclaveScientistloadoutkits
-    id: N14IDEnclaveNoncombat
+    id: N14EnclaveNoncombatPipboy
   satchel: N14ClothingBackpackSatchelMilitaryFilled
   storage:
     back:

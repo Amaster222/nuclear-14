@@ -35,6 +35,7 @@
       - type: NpcFactionMember
         factions:
           - Enclave
+      - type: PowerArmorProficiency
 
 - type: startingGear
   id: EnclaveSeniorOfficerGear
@@ -42,7 +43,7 @@
     head: N14ClothingHeadHatEnclaveOfficer
     back: N14ClothingBackpackMilitary
     jumpsuit: N14ClothingUniformJumpsuitEnclave
-    outerClothing: N14ClothingOuterEnclaverOfficerCoat
+    outerClothing: N14ClothingOuterPowerArmorAdvanced2
     shoes: N14ClothingBootsCombatFilled
     gloves: N14ClothingHandsGlovesCombat
     neck: ClothingNeckPinEnclaveCaptain
@@ -50,7 +51,7 @@
     ears: N14ClothingHeadsetEnclave
     pocket1: EnclaveOfficerloadoutkits
     pocket2: RadioHandheld
-    id: N14IDEnclaveOfficer
+    id: N14EnclaveOfficerPipboy
   satchel: N14ClothingBackpackSatchelMilitaryFilled
   duffelbag: N14ClothingBackpackDuffelMilitaryFilled
   storage:

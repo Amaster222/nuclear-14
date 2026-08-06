@@ -17,10 +17,10 @@
     size: Huge
     sprite: _Nuclear14/Objects/Weapons/Guns/LMGs/autorifle.rsi
   - type: Wieldable
-    wieldedSpeedModifier: 0.8
+    wieldedSpeedModifier: 0.9
   - type: GunRequiresWield
   - type: GunWieldBonus
-    minAngle: -18 # Corvax-Change
+    minAngle: -19 # Corvax-Change
     maxAngle: -50 # Corvax-Change
   - type: Gun
     minAngle: 24
@@ -266,7 +266,7 @@
   name: bren machine gun
   parent: BaseWeaponRifle
   id: N14WeaponLMGBren
-  description: A high-caliber, high-damage, heavy machine gun mass-produced by the RCMP, chambered in the powerful .308 ammunition.
+  description: A high-caliber, high-damage, heavy machine gun mass-produced by the Canadians pre-war, chambered in the powerful .308 ammunition.
   components:
   - type: Clothing
     sprite: _Nuclear14/Objects/Weapons/Guns/LMGs/bren.rsi
@@ -348,10 +348,13 @@
     sprite: _Nuclear14/Objects/Weapons/Guns/LMGs/m60.rsi
   - type: Wieldable
     wieldedSpeedModifier: 0.8
+  - type: ClothingSpeedModifier # Misfit-Add
+    walkModifier: 0.85
+    sprintModifier: 0.85
   - type: GunRequiresWield
   - type: GunWieldBonus
-    minAngle: -21 
-    maxAngle: -40 
+    minAngle: -21
+    maxAngle: -40
   - type: Gun
     minAngle: 22
     maxAngle: 50
