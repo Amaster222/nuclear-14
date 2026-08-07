@@ -9730,3 +9730,18 @@ Entries:
   id: 6298
   time: '2026-08-07T00:57:07.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1107
+- author: cythisiax
+  changes:
+    - type: Add
+      message: >-
+        Security Update, see RTB changelogs for definitive detail, otherwise
+        most notable below VVVV
+    - type: Add
+      message: 'Chunk entities (v285): Native PVS support for streaming chunk-based data'
+    - type: Tweak
+      message: iMapManager gone > SharedMapSystem
+    - type: Tweak
+      message: 'Lidgren networking (v280-286): Multiple rounds of DOS/MTU/NAT fixes'
+  id: 6299
+  time: '2026-08-07T01:49:34.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1129
