@@ -173,7 +173,7 @@
 - type: entity
   parent: N14ClothingOuterPowerArmorT45
   id: MisfitsT45ClothingOuterPowerArmorBoS
-  name: BOS T-45 Power Armor Suit
+  name: T-45 Power Armor Suit [Bos]
   description: An old suit of T-45 Power Armor. It's amazing these still exist.
   components:
   - type: PowerArmorIntegrity
