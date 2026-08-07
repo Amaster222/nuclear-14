@@ -152,8 +152,7 @@ namespace Content.Client.Viewport
 
             MultiZBeforeRender();
 
-            if (!_mzSkipNormalRender)
-                _viewport!.Render();
+            _viewport!.Render();
 
             if (_queuedScreenshots.Count != 0)
             {
@@ -174,6 +173,7 @@ namespace Content.Client.Viewport
             var drawBoxGlobal = drawBox.Translated(GlobalPixelPosition);
             _viewport.RenderScreenOverlaysBelow(handle, this, drawBoxGlobal);
             handle.DrawingHandleScreen.DrawTextureRect(_viewport.RenderTarget.Texture, drawBox);
+            MultiZDrawComposite(handle, drawBox);
             _viewport.RenderScreenOverlaysAbove(handle, this, drawBoxGlobal);
         }
 

@@ -2,9 +2,11 @@
 // Ported to misfits-14
 // #Cythisiax Ported — Multi-Z viewport rendering
 //
-// Approach matches CMU's RenderZLevelPasses: render levels bottom-to-top
-// into the main viewport. First pass clears, subsequent passes don't,
-// so empty tiles on upper levels reveal the level below.
+// Renders the level below into an offscreen viewport and composites it
+// at FaintUpperAlpha. Matches CMU's RenderFaintUpperComposite approach.
+// DrawFov=true so entities render; minor FOV cone / space edge artifacts
+// at low alpha are acceptable. Stencil masking for per-tile occlusion
+// can be added later.
 
 using Content.Shared._MultiZ;
 using Content.Shared._MultiZ.Core;
@@ -24,16 +26,18 @@ public sealed partial class ScalingViewport
     [Dependency] private readonly IConfigurationManager _mzCfg = default!;
     [Dependency] private readonly IEntityManager _mzEntMan = default!;
 
-    private bool _mzSkipNormalRender;
+    private IClydeViewport? _mzBelowViewport;
+    private bool _mzDrawBelow;
+    private float _mzBelowAlpha;
 
     private void MultiZBeforeRender()
     {
-        _mzSkipNormalRender = false;
-
-        if (_viewport == null || _eye == null)
-            return;
+        _mzDrawBelow = false;
 
         if (!_mzCfg.GetCVar(MZCVars.Enabled) || !_mzCfg.GetCVar(MZCVars.RenderEnabled))
+            return;
+
+        if (_eye is not { } eye || _viewport == null)
             return;
 
         var playerManager = IoCManager.Resolve<IPlayerManager>();
@@ -52,38 +56,59 @@ public sealed partial class ScalingViewport
 
         var zSystem = _mzEntMan.System<MZSharedSystem>();
 
-        // Player is on an upper level with a map below - render the below map first
         if (!zSystem.TryMapDown((mapUid, zMap), out var belowMap))
             return;
 
         if (!_mzEntMan.TryGetComponent<MapComponent>(belowMap.Value, out var belowMC))
             return;
 
-        // Save current eye, swap to below map, render with clear
-        var savedEye = _viewport.Eye;
-        var savedClear = _viewport.ClearColor;
+        EnsureBelowViewport();
+        if (_mzBelowViewport == null)
+            return;
 
-        var belowCoords = new MapCoordinates(_eye.Position.Position, belowMC.MapId);
-        _viewport.Eye = new Robust.Shared.Graphics.Eye
+        _mzBelowViewport.RenderScale = _viewport.RenderScale;
+
+        var belowCoords = new MapCoordinates(eye.Position.Position, belowMC.MapId);
+        _mzBelowViewport.Eye = new Robust.Shared.Graphics.Eye
         {
             Position = belowCoords,
-            Rotation = _eye.Rotation,
-            Scale = _eye.Scale,
-            DrawFov = _eye.DrawFov,
-            DrawLight = _eye.DrawLight,
-            Offset = _eye.Offset,
+            Rotation = eye.Rotation,
+            Scale = eye.Scale,
+            DrawFov = eye.DrawFov,
+            DrawLight = eye.DrawLight,
+            Offset = eye.Offset,
         };
-        _viewport.ClearColor = Color.Black;
-        _viewport.Render();
+        _mzBelowViewport.ClearColor = Color.Transparent;
+        _mzBelowViewport.Render();
 
-        // Restore original eye and do the current-map render on top.
-        // ClearColor=null means no clear, so empty tiles reveal the below pass.
-        _viewport.Eye = savedEye;
-        _viewport.ClearColor = null;
-        _viewport.Render();
+        _mzBelowAlpha = _mzCfg.GetCVar(MZCVars.FaintUpperAlpha);
+        _mzDrawBelow = true;
+    }
 
-        // Restore normal clear behavior for next frame
-        _viewport.ClearColor = savedClear;
-        _mzSkipNormalRender = true;
+    private void MultiZDrawComposite(IRenderHandle handle, UIBox2i drawBox)
+    {
+        if (!_mzDrawBelow || _mzBelowViewport == null)
+            return;
+
+        handle.DrawingHandleScreen.DrawTextureRect(
+            _mzBelowViewport.RenderTarget.Texture,
+            drawBox,
+            Color.White.WithAlpha(_mzBelowAlpha));
+    }
+
+    private void EnsureBelowViewport()
+    {
+        if (_viewport == null)
+            return;
+
+        if (_mzBelowViewport != null &&
+            _mzBelowViewport.Size == _viewport.Size)
+            return;
+
+        _mzBelowViewport?.Dispose();
+        _mzBelowViewport = _clyde.CreateViewport(
+            _viewport.Size,
+            TextureSampleParameters.Default,
+            "multi-z-below");
     }
 }
