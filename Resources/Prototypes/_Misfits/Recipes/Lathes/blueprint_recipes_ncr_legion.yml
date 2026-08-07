@@ -886,6 +886,24 @@
     Steel: 4000
 
 - type: latheRecipe
+  id: N14BPNCRArmorRangerFlakVest
+  result: N14ClothingOuterNCRFlakVestOpen
+  category: N14BlueprintNCRArmorT3
+  completetime: 14
+  requiresBlueprint: true
+  availableFaction:
+  - NCR
+  - Rangers
+  materials:
+    Leather: 300
+
+    Cloth: 300
+
+    Thread: 220
+
+    Steel: 4000
+
+- type: latheRecipe
   id: N14BPNCRArmorRangerDuster
   result: N14ClothingOuterRangerDuster
   category: N14BlueprintNCRArmorT3
