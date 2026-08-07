@@ -82,7 +82,6 @@ public sealed class MZOpeningCache
         float searchRadius,
         out Vector2 openingCenter,
         List<Entity<MapGridComponent>> gridScratch,
-        IMapManager mapManager,
         SharedMapSystem map,
         SharedTransformSystem transform,
         ITileDefinitionManager tileDefinition,
@@ -92,7 +91,7 @@ public sealed class MZOpeningCache
 
         var searchBounds = Box2.CenteredAround(sourcePosition, new Vector2(searchRadius * 2f, searchRadius * 2f));
         gridScratch.Clear();
-        mapManager.FindGridsIntersecting(mapId, searchBounds, ref gridScratch, approx: true, includeMap: true);
+        map.FindGridsIntersecting(mapId, searchBounds, ref gridScratch, approx: true, includeMap: true);
 
         if (gridScratch.Count == 0)
             return false;

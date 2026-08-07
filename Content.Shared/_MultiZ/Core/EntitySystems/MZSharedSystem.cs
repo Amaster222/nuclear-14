@@ -28,7 +28,6 @@ public abstract partial class MZSharedSystem : EntitySystem
     public const float ZLevelVisualOffset = 0.75f;
 
     [Dependency] private SharedTransformSystem _transform = default!;
-    [Dependency] private readonly IMapManager _mapManager = default!;
     [Dependency] private readonly SharedMapSystem _map = default!;
     [Dependency] protected ProfManager Prof = default!;
 
