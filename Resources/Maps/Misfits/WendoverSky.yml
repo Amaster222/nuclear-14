@@ -5,10 +5,15 @@ meta:
   forkId: misfits
   forkVersion: 0.1
   time: 08/07/2026 00:00:00
-  entityCount: 0
+  entityCount: 1
 maps:
 - 1
 grids: []
 orphans: []
 nullspace: []
 tilemap: {}
+entities:
+- uid: 1
+  type: Map
+  components:
+  - type: MetaData
