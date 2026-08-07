@@ -11,7 +11,9 @@ using Content.Shared.Interaction.Events;
 using JetBrains.Annotations;
 
 namespace Content.Shared.Weapons.Ranged.Systems;
-
+/*
+Pending refactor
+*/
 public partial class SharedGunSystem
 {
     protected const string RevolverContainer = "revolver-ammo";
@@ -339,7 +341,7 @@ public partial class SharedGunSystem
 
     public void EmptyRevolver(EntityUid revolverUid, RevolverAmmoProviderComponent component, EntityUid? user = null)
     {
-        var mapCoordinates = TransformSystem.GetMapCoordinates(revolverUid);
+        var mapCoordinates = _xform.GetMapCoordinates(revolverUid);
         var anyEmpty = false;
 
         for (var i = 0; i < component.Capacity; i++)
@@ -404,7 +406,7 @@ public partial class SharedGunSystem
         Audio.PlayPredicted(component.SoundSpin, revolverUid, user);
         Popup(Loc.GetString("gun-revolver-spun"), revolverUid, user);
     }
-
+    // called for speedloaders
     private void OnRevolverTakeAmmo(EntityUid uid, RevolverAmmoProviderComponent component, TakeAmmoEvent args)
     {
         var currentIndex = component.CurrentIndex;
@@ -430,7 +432,7 @@ public partial class SharedGunSystem
                 {
                     // Pretend it's always been there.
                     ent = Spawn(component.FillPrototype, args.Coordinates);
-
+                    // looks like we put the bullet here as server
                     if (!_netManager.IsClient)
                     {
                         component.AmmoSlots[index] = ent;

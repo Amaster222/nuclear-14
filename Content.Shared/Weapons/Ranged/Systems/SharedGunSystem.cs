@@ -54,35 +54,35 @@ namespace Content.Shared.Weapons.Ranged.Systems;
 
 public abstract partial class SharedGunSystem : EntitySystem
 {
-    [Dependency] private readonly ActionBlockerSystem _actionBlockerSystem = default!;
-    [Dependency] protected readonly IGameTiming Timing = default!;
-    [Dependency] protected readonly IMapManager MapManager = default!;
-    [Dependency] private readonly INetManager _netManager = default!;
-    [Dependency] private readonly IConfigurationManager _config = default!;
-    [Dependency] protected readonly IPrototypeManager ProtoManager = default!;
-    [Dependency] protected readonly IRobustRandom Random = default!;
-    [Dependency] protected readonly ISharedAdminLogManager Logs = default!;
-    [Dependency] protected readonly ContestsSystem Contests = default!;
-    [Dependency] protected readonly DamageableSystem Damageable = default!;
-    [Dependency] protected readonly ExamineSystemShared Examine = default!;
-    [Dependency] private readonly ItemSlotsSystem _slots = default!;
-    [Dependency] private readonly RechargeBasicEntityAmmoSystem _recharge = default!;
-    [Dependency] protected readonly SharedActionsSystem Actions = default!;
-    [Dependency] protected readonly SharedAppearanceSystem Appearance = default!;
-    [Dependency] protected readonly SharedAudioSystem Audio = default!;
-    [Dependency] private readonly SharedCombatModeSystem _combatMode = default!;
-    [Dependency] protected readonly SharedContainerSystem Containers = default!;
-    [Dependency] private readonly SharedGravitySystem _gravity = default!;
-    [Dependency] protected readonly SharedPointLightSystem Lights = default!;
-    [Dependency] protected readonly SharedPopupSystem PopupSystem = default!;
-    [Dependency] protected readonly SharedPhysicsSystem Physics = default!;
-    [Dependency] protected readonly SharedProjectileSystem Projectiles = default!;
-    [Dependency] protected readonly SharedTransformSystem TransformSystem = default!;
-    [Dependency] protected readonly TagSystem TagSystem = default!;
-    [Dependency] protected readonly ThrowingSystem ThrowingSystem = default!;
-    [Dependency] private readonly UseDelaySystem _useDelay = default!;
-    [Dependency] private readonly EntityWhitelistSystem _whitelistSystem = default!;
-    [Dependency] private readonly IEntityManager _entManager = default!;
+    [Dependency] private ActionBlockerSystem _actionBlockerSystem = default!;
+    [Dependency] protected IGameTiming Timing = default!;
+    [Dependency] protected IMapManager MapManager = default!;
+    [Dependency] private INetManager _netManager = default!;
+    [Dependency] private IConfigurationManager _config = default!;
+    [Dependency] protected IPrototypeManager ProtoManager = default!;
+    [Dependency] protected IRobustRandom Random = default!;
+    [Dependency] protected ISharedAdminLogManager Logs = default!;
+    [Dependency] protected ContestsSystem Contests = default!;
+    [Dependency] protected DamageableSystem Damageable = default!;
+    [Dependency] protected ExamineSystemShared Examine = default!;
+    [Dependency] private ItemSlotsSystem _slots = default!;
+    [Dependency] private RechargeBasicEntityAmmoSystem _recharge = default!;
+    [Dependency] protected SharedActionsSystem Actions = default!;
+    [Dependency] protected SharedAppearanceSystem Appearance = default!;
+    [Dependency] protected SharedAudioSystem Audio = default!;
+    [Dependency] private SharedCombatModeSystem _combatMode = default!;
+    [Dependency] protected SharedContainerSystem Containers = default!;
+    [Dependency] private SharedGravitySystem _gravity = default!;
+    [Dependency] protected SharedPointLightSystem Lights = default!;
+    [Dependency] protected SharedPopupSystem _popup = default!;
+    [Dependency] protected SharedPhysicsSystem Physics = default!;
+    [Dependency] protected SharedProjectileSystem Projectiles = default!;
+    [Dependency] protected SharedTransformSystem _xform = default!;
+    [Dependency] protected TagSystem TagSystem = default!;
+    [Dependency] protected ThrowingSystem ThrowingSystem = default!;
+    [Dependency] private UseDelaySystem _useDelay = default!;
+    [Dependency] private EntityWhitelistSystem _whitelistSystem = default!;
+    [Dependency] private IEntityManager _entManager = default!;
 
     private const float InteractNextFire = 0.3f;
     private const double SafetyNextFire = 0.5;
@@ -361,7 +361,7 @@ public abstract partial class SharedGunSystem : EntitySystem
         if (attemptEv.Cancelled)
         {
             if (attemptEv.Message != null)
-                PopupSystem.PopupClient(attemptEv.Message, gunUid, user);
+                _popup.PopupClient(attemptEv.Message, gunUid, user);
 
             gun.BurstActivated = false;
             gun.BurstShotsCount = 0;
@@ -409,7 +409,7 @@ public abstract partial class SharedGunSystem : EntitySystem
             {
                 if (ev.Reason != null && Timing.IsFirstTimePredicted)
                 {
-                    PopupSystem.PopupCursor(ev.Reason);
+                    _popup.PopupCursor(ev.Reason);
                 }
 
                 // Don't spam safety sounds at gun fire rate, play it at a reduced rate.
@@ -515,8 +515,8 @@ public abstract partial class SharedGunSystem : EntitySystem
         //
         // Fix: reparent the projectile to the map and set map-level velocity directly,
         // so parent physics cannot influence the projectile's trajectory.
-        var mapCoords = TransformSystem.GetMapCoordinates(uid);
-        TransformSystem.SetCoordinates(uid, TransformSystem.ToCoordinates(mapCoords));
+        var mapCoords = _xform.GetMapCoordinates(uid);
+        _xform.SetCoordinates(uid, _xform.ToCoordinates(mapCoords));
         Physics.SetLinearVelocity(uid, gunVelocity + direction.Normalized() * speed, body: physics);
 
         var projectile = EnsureComp<ProjectileComponent>(uid);
@@ -524,7 +524,7 @@ public abstract partial class SharedGunSystem : EntitySystem
         projectile.Weapon = gunUid;
         projectile.ExtraIgnoredEntity = GetShotExtraIgnoredEntity(user);
 
-        TransformSystem.SetWorldRotationNoLerp(uid, direction.ToWorldAngle() + projectile.Angle);
+        _xform.SetWorldRotationNoLerp(uid, direction.ToWorldAngle() + projectile.Angle);
     }
 
     protected void ShootOrThrow(EntityUid uid,
@@ -656,8 +656,8 @@ public abstract partial class SharedGunSystem : EntitySystem
         // [Changed by MisfitsCrew/Operator] Hitscan beam effects must be anchored to the grid or map,
         // not to a ridden vehicle that happens to be the shooter's coordinate parent.
         return MapManager.TryFindGridAt(mapCoordinates, out var gridUid, out _)
-            ? EntityCoordinates.FromMap(gridUid, mapCoordinates, TransformSystem, EntityManager)
-            : EntityCoordinates.FromMap(MapManager.GetMapEntityId(mapCoordinates.MapId), mapCoordinates, TransformSystem, EntityManager);
+            ? EntityCoordinates.FromMap(gridUid, mapCoordinates, _xform, EntityManager)
+            : EntityCoordinates.FromMap(MapManager.GetMapEntityId(mapCoordinates.MapId), mapCoordinates, _xform, EntityManager);
     }
 
     protected bool TryResolveGunHitscan(EntityUid gunUid, out HitscanPrototype hitscan)
@@ -797,8 +797,8 @@ public abstract partial class SharedGunSystem : EntitySystem
         var coordinates = xform.Coordinates;
         coordinates = coordinates.Offset(offsetPos);
 
-        TransformSystem.SetLocalRotation(xform, Random.NextAngle());
-        TransformSystem.SetCoordinates(entity, xform, coordinates);
+        _xform.SetLocalRotation(xform, Random.NextAngle());
+        _xform.SetCoordinates(entity, xform, coordinates);
 
         // decides direction the casing ejects and only when not cycling
         if (angle != null)
@@ -860,8 +860,8 @@ public abstract partial class SharedGunSystem : EntitySystem
 
     public void CauseImpulse(EntityCoordinates fromCoordinates, EntityCoordinates toCoordinates, EntityUid user, PhysicsComponent userPhysics)
     {
-        var fromMap = fromCoordinates.ToMapPos(EntityManager, TransformSystem);
-        var toMap = toCoordinates.ToMapPos(EntityManager, TransformSystem);
+        var fromMap = fromCoordinates.ToMapPos(EntityManager, _xform);
+        var toMap = toCoordinates.ToMapPos(EntityManager, _xform);
         var shotDirection = (toMap - fromMap).Normalized();
 
         const float impulseStrength = 25.0f;
