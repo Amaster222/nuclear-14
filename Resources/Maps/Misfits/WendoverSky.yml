@@ -1,0 +1,14 @@
+meta:
+  format: 7
+  category: Map
+  engineVersion: 275.2.0
+  forkId: misfits
+  forkVersion: 0.1
+  time: 08/07/2026 00:00:00
+  entityCount: 0
+maps:
+- 1
+grids: []
+orphans: []
+nullspace: []
+tilemap: {}
