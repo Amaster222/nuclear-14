@@ -68,7 +68,7 @@ public sealed partial class ScalingViewport
                 Position = mapCoords,
                 Rotation = eye.Rotation,
                 Scale = eye.Scale,
-                DrawFov = false,
+                DrawFov = true,
                 DrawLight = true,
                 Offset = eye.Offset,
             };
