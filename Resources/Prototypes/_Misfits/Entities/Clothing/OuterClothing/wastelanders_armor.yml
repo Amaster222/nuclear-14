@@ -174,3 +174,128 @@
         Slash: 0.9
         Piercing: 0.9
         Heat: 0.9
+
+#East Coast /Organization/ Talon Company. Make up the lore as you play them. Why are they west coast? Thats up to you as the player.
+- type: entity
+  parent: N14ClothingOuterCombatArmor
+  id: M14ClothingOuterCombatTalon
+  name: talon company combat armor
+  description: A set of weathered combat armour spray-painted black, with the Talon Company symbol grafted onto the chest. This set has been stripped down to just the chespiece and kneepads, with the right pauldron removed for ease with shouldering rifles.
+  components:
+  - type: Sprite
+    sprite: _Misfits/Clothing/OuterClothing/Armor/talonarmor.rsi
+  - type: Clothing
+    sprite: _Misfits/Clothing/OuterClothing/Armor/talonarmor.rsi
+
+- type: entity
+  parent: N14ClothingOuterCombatArmor
+  id: M14ClothingOuterCombatTalonDuster
+  name: talon company combat duster armor
+  description: A set of weathered combat armour spray-painted black, with the Talon Company symbol grafted onto the chest. This set has been stripped down to just the chespiece and kneepads, the left pauldron stitched into a dark grey duster.
+  components:
+  - type: Sprite
+    sprite: _Misfits/Clothing/OuterClothing/Armor/talonduster.rsi
+  - type: Clothing
+    sprite: _Misfits/Clothing/OuterClothing/Armor/talonduster.rsi
+
+
+#All of the armors below are equivalent to White Legs armor. These armors are for Tribals / Wastelanders. All tribes in this category gets two armors outside of the Sorrows.
+- type: entity
+  parent: N14FalloutArmorBase
+  id: M14ClothingOuterDeadHorsesArmor
+  name: dead horses armor
+  description: A simple leather bandolier and gecko hide chest covering, with an engraved metal pauldron and a pair of black leather straps. Commonly worn by the members of the Dead Horses tribe.
+  components:
+  - type: Sprite
+    sprite: _Misfits/Clothing/OuterClothing/Armor/deadhorsesarmor.rsi
+  - type: Clothing
+    sprite: _Misfits/Clothing/OuterClothing/Armor/deadhorsesarmor.rsi
+  - type: Armor
+    modifiers:
+      coefficients:
+        Blunt: 0.88
+        Slash: 0.80
+        Piercing: 0.82
+        Heat: 0.78
+  - type: ExplosionResistance
+    damageCoefficient: 0.92
+
+- type: entity
+  parent: N14FalloutArmorBase
+  id: M14ClothingOuterDeadHorsesLightArmor
+  name: dead horses light armor
+  description: A simple leather bandolier and gecko hide chest covering. Worn by the members of the Dead Horses tribe.
+  components:
+  - type: Sprite
+    sprite: _Misfits/Clothing/OuterClothing/Armor/deadhorseslightarmor.rsi
+  - type: Clothing
+    sprite: _Misfits/Clothing/OuterClothing/Armor/deadhorseslightarmor.rsi
+  - type: Armor
+    modifiers:
+      coefficients:
+        Blunt: 0.88
+        Slash: 0.80
+        Piercing: 0.82
+        Heat: 0.78
+  - type: ExplosionResistance
+    damageCoefficient: 0.92
+
+- type: entity
+  parent: N14FalloutArmorBase
+  id: M14ClothingOuterSorrowsArmor
+  name: sorrows armor
+  description: A worn ballistic vest from Salt Lake, adorned with feathers and turqoise beads, with an ornamental pattern painted over the sides. Commonly worn by the members of the peaceful Sorrows tribe.
+  components:
+  - type: Sprite
+    sprite: _Misfits/Clothing/OuterClothing/Armor/sorrowsarmor.rsi
+  - type: Clothing
+    sprite: _Misfits/Clothing/OuterClothing/Armor/sorrowsarmor.rsi
+  - type: Armor
+    modifiers:
+      coefficients:
+        Blunt: 0.88
+        Slash: 0.80
+        Piercing: 0.82
+        Heat: 0.78
+  - type: ExplosionResistance
+    damageCoefficient: 0.92
+
+- type: entity
+  parent: N14FalloutArmorBase
+  id: M14ClothingOuterRustwalkersArmor
+  name: rustwalkers armor
+  description: A chestplate, pauldron and vambrace that bear a distinct resemblance to a coolant tank, engine valves and an exhaust. Commonly worn by members of the Rustwalkers tribe
+  components:
+  - type: Sprite
+    sprite: _Misfits/Clothing/OuterClothing/Armor/rustwalkerarmor.rsi
+  - type: Clothing
+    sprite: _Misfits/Clothing/OuterClothing/Armor/rustwalkerarmor.rsi
+  - type: Armor
+    modifiers:
+      coefficients:
+        Blunt: 0.88
+        Slash: 0.80
+        Piercing: 0.82
+        Heat: 0.78
+  - type: ExplosionResistance
+    damageCoefficient: 0.92
+
+- type: entity
+  parent: N14FalloutArmorBase
+  id: M14ClothingOuterRustwalkersLightArmor
+  name: rustwalkers light armor
+  description: A duster made from some combination of leather and cloth, probably torn out of an old car. The shoulders appear to have had parts of an engine either strapped or stitched onto them. Commonly worn by members of the Rustwalkers tribe.
+  components:
+  - type: Sprite
+    sprite: _Misfits/Clothing/OuterClothing/Armor/rustwalkerlightarmor.rsi
+  - type: Clothing
+    sprite: _Misfits/Clothing/OuterClothing/Armor/rustwalkerlightarmor.rsi
+  - type: Armor
+    modifiers:
+      coefficients:
+        Blunt: 0.88
+        Slash: 0.80
+        Piercing: 0.82
+        Heat: 0.78
+  - type: ExplosionResistance
+    damageCoefficient: 0.92

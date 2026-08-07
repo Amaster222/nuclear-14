@@ -491,6 +491,13 @@ loadout-name-N14LoadoutOuterSoldierCoat = soldier coat
 loadout-name-N14LoadoutOuterZealotDuster = zealot duster
 loadout-name-N14LoadoutOuterRaiderCombat1 = raider combat armor
 loadout-name-N14LoadoutOuterCombatArmorRaider = raider combat armor
+loadout-name-MisfitsLoadoutOuterCombatTalon = talon combat armor
+loadout-name-MisfitsLoadoutOuterCombatTalonDuster = talon combat duster
+loadout-name-MisfitsLoadoutOuterDeadHorsesArmor = dead horses armor
+loadout-name-MisfitsLoadoutOuterDeadHorsesLightArmor = dead horses light armor
+loadout-name-MisfitsLoadoutOuterSorrowsArmor = sorrows armor
+loadout-name-MisfitsLoadoutOuterRustwalkersArmor = rustwalkers armor
+loadout-name-MisfitsLoadoutOuterRustwalkersLightArmor = rustwalkers light armor
 
 # Misfits Add - Headgear loadout names
 loadout-name-LoadoutN14ClothingHatSaltRunnerMask = Salt Runner mask
@@ -790,6 +797,10 @@ loadout-name-MisfitsLoadoutUniformKhansUniform = great khans uniform
 loadout-name-MisfitsLoadoutUniformKhansUniformShorts = great khan jorts
 loadout-name-MisfitsLoadoutUniformEnclaveUniformGrey = grey enclave jumpsuit
 loadout-name-MisfitsLoadoutUniformEnclaveUniformBlue = blue enclave jumpsuit
+loadout-name-MisfitsLoadoutUniformDeadHorsesUniform = dead horses garb
+loadout-name-MisfitsLoadoutUniformSorrowsUniform = sorrows garb
+loadout-name-MisfitsLoadoutUniformRustwalkersUniform = rustwalkers uniform
+loadout-name-MisfitsLoadoutUniformWhiteLegsUniform = white legs garb
 
 # Ammo and magazines
 loadout-name-N14MagazinePistol45 = pistol magazine (.45 auto)
