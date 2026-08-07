@@ -9775,3 +9775,12 @@ Entries:
   id: 6300
   time: '2026-08-07T01:49:53.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1132
+- author: Bradysgaming
+  changes:
+    - type: Tweak
+      message: >-
+        Ranger Loadout drip is department timelocked instead of role timelocked.
+        (Ranger time not vet ranger time)
+  id: 6301
+  time: '2026-08-07T01:56:22.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1133
