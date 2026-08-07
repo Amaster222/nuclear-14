@@ -60,7 +60,7 @@
 - type: loadout
   id: MisfitsLoadoutOuterKhanLeather
   category: Outer
-  cost: 1
+  cost: 2
   exclusive: true
   requirements:
     - !type:CharacterItemGroupRequirement
@@ -76,7 +76,7 @@
 - type: loadout
   id: MisfitsLoadoutOuterHighwayPatrolJacket
   category: Outer
-  cost: 1
+  cost: 2
   exclusive: true
   requirements:
     - !type:CharacterItemGroupRequirement
@@ -91,7 +91,7 @@
 - type: loadout
   id: MisfitsLoadoutOuterMarlowGangOvercoat
   category: Outer
-  cost: 1
+  cost: 2
   exclusive: true
   requirements:
     - !type:CharacterItemGroupRequirement
@@ -106,7 +106,7 @@
 - type: loadout
   id: MisfitsLoadoutOuterGunfightersOvercoat
   category: Outer
-  cost: 1
+  cost: 2
   exclusive: true
   requirements:
     - !type:CharacterItemGroupRequirement
@@ -121,7 +121,7 @@
 - type: loadout
   id: MisfitsLoadoutOuterVegabondsVest
   category: Outer
-  cost: 1
+  cost: 2
   exclusive: true
   requirements:
     - !type:CharacterItemGroupRequirement
