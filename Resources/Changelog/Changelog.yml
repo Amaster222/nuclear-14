@@ -9695,3 +9695,12 @@ Entries:
   id: 6296
   time: '2026-08-06T23:13:10.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1127
+- author: JohnKieser
+  changes:
+    - type: Add
+      message: Cycling bullets on ammo boxes and such spreads them out now
+    - type: Add
+      message: '556 ammo box sprites added to show how full it is in more detail. '
+  id: 6297
+  time: '2026-08-07T00:53:28.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1118
