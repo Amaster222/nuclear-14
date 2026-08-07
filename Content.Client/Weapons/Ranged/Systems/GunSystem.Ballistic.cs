@@ -16,37 +16,39 @@ public sealed partial class GunSystem
     {
         if (args.Control is DefaultStatusControl control)
         {
-            control.Update(GetBallisticShots(component), component.Capacity);
+            control.Update(component.AmmoCount, component.Capacity);
         }
     }
-
-    protected override void Cycle(EntityUid uid, BallisticAmmoProviderComponent component, MapCoordinates coordinates)
-    {
-        if (!Timing.IsFirstTimePredicted)
-            return;
-
-        EntityUid? ent = null;
-
-        // TODO: Combine with TakeAmmo
-        if (component.Entities.Count > 0)
+    // Misfit Change: outdated.Client/Server Implementation in SharedGunSystem.Ballistics
+    /*
+        protected override void Cycle(EntityUid uid, BallisticAmmoProviderComponent component, MapCoordinates coordinates)
         {
-            var existing = component.Entities[^1];
-            component.Entities.RemoveAt(component.Entities.Count - 1);
+            if (!Timing.IsFirstTimePredicted)
+                return;
 
-            Containers.Remove(existing, component.Container);
-            EnsureShootable(existing);
+            EntityUid? ent = null;
+
+            // TODO: Combine with TakeAmmo
+            if (component.Entities.Count > 0)
+            {
+                var existing = component.Entities[^1];
+                component.Entities.RemoveAt(component.Entities.Count - 1);
+
+                Containers.Remove(existing, component.Container);
+                EnsureShootable(existing);
+            }
+            else if (component.UnspawnedCount > 0)
+            {
+                component.UnspawnedCount--;
+                ent = Spawn(component.Proto, coordinates);
+                EnsureShootable(ent.Value);
+            }
+
+            if (ent != null && IsClientSide(ent.Value))
+                Del(ent.Value);
+
+            var cycledEvent = new GunCycledEvent();
+            RaiseLocalEvent(uid, ref cycledEvent);
         }
-        else if (component.UnspawnedCount > 0)
-        {
-            component.UnspawnedCount--;
-            ent = Spawn(component.Proto, coordinates);
-            EnsureShootable(ent.Value);
-        }
-
-        if (ent != null && IsClientSide(ent.Value))
-            Del(ent.Value);
-
-        var cycledEvent = new GunCycledEvent();
-        RaiseLocalEvent(uid, ref cycledEvent);
-    }
+        */
 }

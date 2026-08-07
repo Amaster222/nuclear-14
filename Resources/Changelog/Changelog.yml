@@ -9685,3 +9685,48 @@ Entries:
   id: 6295
   time: '2026-08-05T21:19:53.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1125
+- author: cythisiax
+  changes:
+    - type: Tweak
+      message: >-
+        adds component variable addition to give recruit functionality, not
+        restricted to jobtype. I.E Wastelander jobslot with component can use
+        EnclaveRecruit function and give others EnclaveRecruitMindComponent.
+  id: 6296
+  time: '2026-08-06T23:13:10.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1127
+- author: JohnKieser
+  changes:
+    - type: Add
+      message: Cycling bullets on ammo boxes and such spreads them out now
+    - type: Add
+      message: '556 ammo box sprites added to show how full it is in more detail. '
+  id: 6297
+  time: '2026-08-07T00:53:28.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1118
+- author: Squagg
+  changes:
+    - type: Tweak
+      message: >-
+        Super mutants and nightkin now take half damage instead of 30 percent
+        less, and have higher health thresholds.
+    - type: Tweak
+      message: >-
+        Super mutants and nightkin sprint faster than humans and have longer
+        melee reach.
+    - type: Tweak
+      message: >-
+        Super mutant armor now protects against energy weapons, though less well
+        than it protects against bullets.
+    - type: Tweak
+      message: >-
+        The Experimental X-01 power armor has less integrity, since a super
+        mutant's own damage resistance was making the suit absorb far more than
+        intended.
+    - type: Tweak
+      message: >-
+        Super mutants in Experimental X-01 power armor no longer get slowed when
+        the suit's integrity runs out.
+  id: 6298
+  time: '2026-08-07T00:57:07.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1107
