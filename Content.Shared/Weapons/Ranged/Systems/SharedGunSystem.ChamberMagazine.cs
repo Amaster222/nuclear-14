@@ -9,7 +9,9 @@ using Content.Shared.Weapons.Ranged.Events;
 using Robust.Shared.Containers;
 
 namespace Content.Shared.Weapons.Ranged.Systems;
-
+/*
+Pending refactor
+*/
 public abstract partial class SharedGunSystem
 {
     protected const string ChamberSlot = "gun_chamber";
@@ -42,7 +44,7 @@ public abstract partial class SharedGunSystem
         // Appearance data doesn't get serialized and want to make sure this is correct on spawn (regardless of MapInit) so.
         if (component.BoltClosed != null)
         {
-           Appearance.SetData(uid, AmmoVisuals.BoltClosed, component.BoltClosed.Value);
+            Appearance.SetData(uid, AmmoVisuals.BoltClosed, component.BoltClosed.Value);
         }
     }
 
@@ -111,7 +113,7 @@ public abstract partial class SharedGunSystem
             else
             {
                 // Similar to below just due to prediction.
-                TransformSystem.DetachEntity(chamberEnt.Value, Transform(chamberEnt.Value));
+                _xform.DetachEntity(chamberEnt.Value, Transform(chamberEnt.Value));
             }
         }
 
@@ -161,7 +163,7 @@ public abstract partial class SharedGunSystem
             CycleCartridge(uid, component, user, appearance);
 
             if (user != null)
-                PopupSystem.PopupClient(Loc.GetString("gun-chamber-bolt-closed"), uid, user.Value);
+                _popup.PopupClient(Loc.GetString("gun-chamber-bolt-closed"), uid, user.Value);
 
             if (slots != null)
             {
@@ -184,14 +186,14 @@ public abstract partial class SharedGunSystem
                     // The problem is client will dump the cartridge on the ground and the new server state
                     // won't correspond due to randomness so looks weird
                     // but we also need to always take it from the chamber or else ammocount won't be correct.
-                    TransformSystem.DetachParentToNull(chambered.Value, Transform(chambered.Value));
+                    _xform.DetachParentToNull(chambered.Value, Transform(chambered.Value));
                 }
 
                 UpdateAmmoCount(uid);
             }
 
             if (user != null)
-                PopupSystem.PopupClient(Loc.GetString("gun-chamber-bolt-opened"), uid, user.Value);
+                _popup.PopupClient(Loc.GetString("gun-chamber-bolt-opened"), uid, user.Value);
 
             if (slots != null)
             {

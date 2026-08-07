@@ -14,15 +14,15 @@
   - type: Icon
     sprite: _Misfits/Mobs/Species/Nightkin/parts.rsi
     state: full
-  # #Misfits Tweak - Nightkin are tougher than standard supermutants (200 crit / 400 dead).
+  # #Misfits Tweak - Nightkin are tougher than standard supermutants (300 crit / 500 dead).
   - type: MobThresholds
     thresholds:
       0: Alive
-      250: Critical
-      400: Dead
-  # Scale healCap to 90% of dead threshold (360 = 90% of 400).
+      350: Critical
+      500: Dead
+  # Scale healCap to 90% of dead threshold (450 = 90% of 500).
   - type: RadiationHealing
-    healCap: 360
+    healCap: 450
 
 # Character-creation preview dummy for Nightkin.
 # Parents MobHumanDummy (not the base mob) to match the supermutant dummy pattern.

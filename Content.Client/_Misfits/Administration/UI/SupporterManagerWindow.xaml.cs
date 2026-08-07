@@ -86,7 +86,7 @@ public sealed partial class SupporterManagerWindow : FancyWindow
         // Color swatch
         var swatchColor = string.IsNullOrWhiteSpace(entry.NameColor)
             ? (Color?) null
-            : Color.TryFromHex(entry.NameColor);
+            : Color.TryFromHex(entry.NameColor, out var parsedColor) ? parsedColor : null;
 
         if (swatchColor.HasValue)
         {

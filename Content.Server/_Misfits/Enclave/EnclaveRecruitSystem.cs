@@ -243,6 +243,10 @@ public sealed class EnclaveRecruitSystem : EntitySystem
     /// </summary>
     private bool IsEnclaveMember(EntityUid uid)
     {
+        // Bypass: admins can addcomp EnclaveRecruiterComponent to any player
+        if (HasComp<EnclaveRecruiterComponent>(uid))
+            return true;
+
         // Get the mind ID from the user's entity
         if (!TryComp<MindContainerComponent>(uid, out var mindContainer) || !mindContainer.HasMind)
             return false;

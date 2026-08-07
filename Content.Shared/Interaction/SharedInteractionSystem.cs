@@ -60,7 +60,7 @@ namespace Content.Shared.Interaction
     {
         [Dependency] private readonly IGameTiming _gameTiming = default!;
         [Dependency] private readonly INetManager _net = default!;
-        [Dependency] private readonly IMapManager _mapManager = default!;
+        [Dependency] private readonly SharedMapSystem _mapManager = default!;
         [Dependency] private readonly ISharedAdminLogManager _adminLogger = default!;
         [Dependency] private readonly ActionBlockerSystem _actionBlockerSystem = default!;
         [Dependency] private readonly RotateToFaceSystem _rotateToFaceSystem = default!;
@@ -976,8 +976,8 @@ namespace Content.Shared.Interaction
             bool canReach,
             bool checkDeletion = false)
         {
-            if (checkDeletion && (IsDeleted(user) || IsDeleted(used) || IsDeleted(target)))
-                return false;
+            //if (checkDeletion && (IsDeleted(user) || IsDeleted(used) || IsDeleted(target)))
+            //    return false;
 
             var ev = new BeforeRangedInteractEvent(user, used, target, clickLocation, canReach);
             RaiseLocalEvent(used, ev);
@@ -1016,9 +1016,6 @@ namespace Content.Shared.Interaction
             if (checkCanInteract && !_actionBlockerSystem.CanInteract(user, target))
                 return false;
 
-            if (checkCanInteract && !_actionBlockerSystem.CanInteract(user, target))
-                return false;
-
             if (checkCanUse && !_actionBlockerSystem.CanUseHeldEntity(user, used))
                 return false;
 
@@ -1029,7 +1026,7 @@ namespace Content.Shared.Interaction
 
             if (RangedInteractDoBefore(user, used, target, clickLocation, true))
                 return true;
-
+            // LogManager.RootSawmill.Log(LogLevel.Info, $"Interact Using: user:{user} used:{used} target:{target} clickLoc:{clickLocation}");
             // all interactions should only happen when in range / unobstructed, so no range check is needed
             var interactUsingEvent = new InteractUsingEvent(user, used, target, clickLocation);
             RaiseLocalEvent(target, interactUsingEvent, true);
@@ -1200,8 +1197,7 @@ namespace Content.Shared.Interaction
                 return false;
             // ] Goobstation
 
-            // Misfit Add:
-            //              Interested in doing this with generics
+            // Misfit Add: easier to add newer stuff
             var beforeUseMsg = new BeforeUseInHandEvent(user);
             RaiseLocalEvent(used, beforeUseMsg, true);
             if (beforeUseMsg.Handled)
