@@ -56,7 +56,7 @@ public abstract partial class SharedGunSystem : EntitySystem
 {
     [Dependency] private ActionBlockerSystem _actionBlockerSystem = default!;
     [Dependency] protected IGameTiming Timing = default!;
-    [Dependency] protected IMapManager MapManager = default!;
+    [Dependency] protected SharedMapSystem MapManager = default!;
     [Dependency] private INetManager _netManager = default!;
     [Dependency] private IConfigurationManager _config = default!;
     [Dependency] protected IPrototypeManager ProtoManager = default!;
@@ -657,7 +657,7 @@ public abstract partial class SharedGunSystem : EntitySystem
         // not to a ridden vehicle that happens to be the shooter's coordinate parent.
         return MapManager.TryFindGridAt(mapCoordinates, out var gridUid, out _)
             ? EntityCoordinates.FromMap(gridUid, mapCoordinates, _xform, EntityManager)
-            : EntityCoordinates.FromMap(MapManager.GetMapEntityId(mapCoordinates.MapId), mapCoordinates, _xform, EntityManager);
+            : EntityCoordinates.FromMap(MapManager.GetMap(mapCoordinates.MapId), mapCoordinates, _xform, EntityManager);
     }
 
     protected bool TryResolveGunHitscan(EntityUid gunUid, out HitscanPrototype hitscan)
