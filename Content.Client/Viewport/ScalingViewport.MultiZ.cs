@@ -68,8 +68,8 @@ public sealed partial class ScalingViewport
                 Position = mapCoords,
                 Rotation = eye.Rotation,
                 Scale = eye.Scale,
-                DrawFov = true,
-                DrawLight = true,
+                DrawFov = false,
+                DrawLight = false,
                 Offset = eye.Offset,
             };
             _mzOffscreenViewport.Eye = zEye;
