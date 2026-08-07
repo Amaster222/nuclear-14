@@ -9745,3 +9745,33 @@ Entries:
   id: 6299
   time: '2026-08-07T01:49:34.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1129
+- author: cythisiax
+  changes:
+    - type: Add
+      message: >-
+        MultiZ ported from CrystallEdge (crystallpunk-14) updated and included
+        port from ColonialMarinesUniverse (AU-14) PR #---1058 &amp; #---1119 by
+        TheHellFireo. With performance refactors from TTMC (ttmc14).
+    - type: Add
+      message: >-
+        Z-network system that links multiple maps as stacked Z-levels, so
+        Vault.yml eventually under Wendover
+    - type: Add
+      message: Z-physics movement, fall you die
+    - type: Add
+      message: >-
+        HighGround support including ramps, stair height curves, sticky ground
+        yadayada
+    - type: Add
+      message: 'Ladder system: do-after climb between Z-levels'
+    - type: Add
+      message: Ghost mover button up/down
+    - type: Add
+      message: Overlays including blur tint, projection, stair preview
+    - type: Add
+      message: Light projection with light indicators from other levels
+    - type: Add
+      message: 'Action icons: look_up, z_up, z_down (temp disabled)'
+  id: 6300
+  time: '2026-08-07T01:49:53.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1132
