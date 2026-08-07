@@ -19,7 +19,7 @@ namespace Content.Client.Viewport
     /// <summary>
     ///     Viewport control that has a fixed viewport size and scales it appropriately.
     /// </summary>
-    public sealed class ScalingViewport : Control, IViewportControl
+    public sealed partial class ScalingViewport : Control, IViewportControl
     {
         [Dependency] private readonly IClyde _clyde = default!;
         [Dependency] private readonly IEntityManager _entityManager = default!;
@@ -150,6 +150,8 @@ namespace Content.Client.Viewport
 
             DebugTools.AssertNotNull(_viewport);
 
+            MultiZBeforeRender();
+
             _viewport!.Render();
 
             if (_queuedScreenshots.Count != 0)
@@ -171,6 +173,7 @@ namespace Content.Client.Viewport
             var drawBoxGlobal = drawBox.Translated(GlobalPixelPosition);
             _viewport.RenderScreenOverlaysBelow(handle, this, drawBoxGlobal);
             handle.DrawingHandleScreen.DrawTextureRect(_viewport.RenderTarget.Texture, drawBox);
+            MultiZDrawComposite(handle, drawBox);
             _viewport.RenderScreenOverlaysAbove(handle, this, drawBoxGlobal);
         }
 
