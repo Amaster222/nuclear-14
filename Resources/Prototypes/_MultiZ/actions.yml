@@ -9,7 +9,7 @@
   id: ActionToggleMultiZLookUp
   name: "Toggle Look Up"
   description: "Toggle looking through Z-level openings at the level above."
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   components:
   - type: InstantAction
     itemIconStyle: NoItem
@@ -23,7 +23,7 @@
   id: ActionMultiZGhostUp
   name: "Move Up (Z-Level)"
   description: "Move to the Z-level above."
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   components:
   - type: InstantAction
     itemIconStyle: NoItem
@@ -37,7 +37,7 @@
   id: ActionMultiZGhostDown
   name: "Move Down (Z-Level)"
   description: "Move to the Z-level below."
-  noSpawn: true
+  categories: [ HideSpawnMenu ]
   components:
   - type: InstantAction
     itemIconStyle: NoItem
