@@ -15,15 +15,14 @@
   mapAuthor: 'mc_rainbow32' # Misfits Add - map credit displayed in lobby
   mapPath: /Maps/Misfits/Wendover.yml
   minPlayers: 0
+  mapsBelow:
+    - /Maps/Misfits/Vault.yml
   stations:
     Wendover:
       stationProto: FalloutStation
       components:
       - type: StationNameSetup
         mapNameTemplate: 'Wendover'
-      - type: CP14StationAdditionalMap
-        mapPaths:
-        - /Maps/Misfits/Vault.yml
       - type: StationJobs
         overflowJobs:
         - Townsperson # #Misfits Change - Townsperson is now the default starter overflow role
