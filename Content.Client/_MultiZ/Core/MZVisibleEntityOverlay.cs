@@ -14,6 +14,9 @@ using Robust.Client.Graphics;
 using Robust.Client.Player;
 using Robust.Shared.Configuration;
 using Robust.Shared.Enums;
+using Robust.Shared.Map;
+using Robust.Shared.Map.Components;
+using Robust.Shared.Enums;
 using Robust.Shared.Map.Components;
 
 namespace Content.Client._MultiZ.Core;
@@ -53,7 +56,6 @@ public sealed class MZVisibleEntityOverlay : Overlay
 
         var spriteSystem = _entMan.System<SpriteSystem>();
         var transformSystem = _entMan.System<SharedTransformSystem>();
-        var mapSystem = _entMan.System<SharedMapSystem>();
 
         var playerXform = _entMan.GetComponent<TransformComponent>(player.Value);
         if (playerXform.MapUid is not { } mapUid)
@@ -62,28 +64,37 @@ public sealed class MZVisibleEntityOverlay : Overlay
         if (!_entMan.TryGetComponent<MZMapComponent>(mapUid, out var zMap))
             return;
 
-        // Try to get the map above
-        var zSystem = _entMan.System<MZSharedSystem>();
-        if (!zSystem.TryMapUp((mapUid, zMap), out var aboveMap))
-            return;
-
-        if (!_entMan.TryGetComponent<MapGridComponent>(aboveMap.Value, out var aboveGrid))
-            return;
-
         var alpha = viewer.LookUp ? 1f : _cfg.GetCVar(MZCVars.FaintUpperAlpha);
         var offset = new Vector2(0, MZSharedSystem.ZLevelVisualOffset);
 
-        // Query entities on the map above and render them at offset
+        // Try to get the map above and render its entities through openings
+        var zSystem = _entMan.System<MZSharedSystem>();
+        if (zSystem.TryMapUp((mapUid, zMap), out var aboveMap))
+        {
+            if (_entMan.TryGetComponent<MapGridComponent>(aboveMap.Value, out var aboveGrid))
+                RenderEntitiesFromMap(args, aboveMap.Value.Owner, offset, alpha, transformSystem);
+        }
+
+        // Also render the map below so entities on upper levels can see down
+        if (zSystem.TryMapDown((mapUid, zMap), out var belowMap))
+        {
+            if (_entMan.TryGetComponent<MapGridComponent>(belowMap.Value, out var belowGrid))
+                RenderEntitiesFromMap(args, belowMap.Value.Owner, -offset, alpha, transformSystem);
+        }
+    }
+
+    private void RenderEntitiesFromMap(
+        in OverlayDrawArgs args, EntityUid sourceMap, Vector2 offset, float alpha,
+        SharedTransformSystem transformSystem)
+    {
         var query = _entMan.EntityQueryEnumerator<TransformComponent, SpriteComponent>();
         while (query.MoveNext(out var uid, out var xform, out var sprite))
         {
-            if (xform.MapUid != aboveMap.Value.Owner)
+            if (xform.MapUid != sourceMap)
                 continue;
 
             var worldPos = transformSystem.GetWorldPosition(xform) + offset;
             var color = sprite.Color.WithAlpha(alpha);
-            // #Cythisiax Note: Full entity rendering through openings requires
-            // a more sophisticated approach. For now, draw position markers.
             args.WorldHandle.DrawCircle(worldPos, 0.3f, color);
         }
     }
