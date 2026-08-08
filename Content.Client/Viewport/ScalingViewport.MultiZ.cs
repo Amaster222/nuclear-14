@@ -2,11 +2,10 @@
 // Ported to misfits-14
 // #Cythisiax Ported — Multi-Z viewport rendering
 //
-// Renders the level below into an offscreen viewport and composites it
-// at FaintUpperAlpha. Matches CMU's RenderFaintUpperComposite approach.
-// DrawFov=true so entities render; minor FOV cone / space edge artifacts
-// at low alpha are acceptable. Stencil masking for per-tile occlusion
-// can be added later.
+// Main-viewport multi-pass approach matching CMU's RenderZLevelPasses.
+// Each Z-level renders through the main viewport's full pipeline (entities,
+// FOV, lights all work). Lowest level renders first with clear to black,
+// higher levels render without clearing so empty space reveals the level below.
 
 using Content.Shared._MultiZ;
 using Content.Shared._MultiZ.Core;
@@ -26,18 +25,16 @@ public sealed partial class ScalingViewport
     [Dependency] private readonly IConfigurationManager _mzCfg = default!;
     [Dependency] private readonly IEntityManager _mzEntMan = default!;
 
-    private IClydeViewport? _mzBelowViewport;
-    private bool _mzDrawBelow;
-    private float _mzBelowAlpha;
+    private bool _mzSkipNormalRender;
 
     private void MultiZBeforeRender()
     {
-        _mzDrawBelow = false;
+        _mzSkipNormalRender = false;
 
-        if (!_mzCfg.GetCVar(MZCVars.Enabled) || !_mzCfg.GetCVar(MZCVars.RenderEnabled))
+        if (_viewport == null || _eye == null)
             return;
 
-        if (_eye is not { } eye || _viewport == null)
+        if (!_mzCfg.GetCVar(MZCVars.Enabled) || !_mzCfg.GetCVar(MZCVars.RenderEnabled))
             return;
 
         var playerManager = IoCManager.Resolve<IPlayerManager>();
@@ -55,6 +52,7 @@ public sealed partial class ScalingViewport
             return;
 
         var zSystem = _mzEntMan.System<MZSharedSystem>();
+        var eye = _eye;
 
         if (!zSystem.TryMapDown((mapUid, zMap), out var belowMap))
             return;
@@ -62,14 +60,11 @@ public sealed partial class ScalingViewport
         if (!_mzEntMan.TryGetComponent<MapComponent>(belowMap.Value, out var belowMC))
             return;
 
-        EnsureBelowViewport();
-        if (_mzBelowViewport == null)
-            return;
+        var savedEye = _viewport.Eye;
 
-        _mzBelowViewport.RenderScale = _viewport.RenderScale;
-
+        // Pass 1: render the below map with clear to black
         var belowCoords = new MapCoordinates(eye.Position.Position, belowMC.MapId);
-        _mzBelowViewport.Eye = new Robust.Shared.Graphics.Eye
+        _viewport.Eye = new Robust.Shared.Graphics.Eye
         {
             Position = belowCoords,
             Rotation = eye.Rotation,
@@ -78,37 +73,17 @@ public sealed partial class ScalingViewport
             DrawLight = eye.DrawLight,
             Offset = eye.Offset,
         };
-        _mzBelowViewport.ClearColor = Color.Transparent;
-        _mzBelowViewport.Render();
+        _viewport.ClearColor = Color.Black;
+        _viewport.Render();
 
-        _mzBelowAlpha = _mzCfg.GetCVar(MZCVars.FaintUpperAlpha);
-        _mzDrawBelow = true;
-    }
+        // Pass 2: render the current map on top without clearing.
+        // Empty tiles on the current map don't draw, so below pass shows through.
+        _viewport.Eye = savedEye;
+        _viewport.ClearColor = null;
+        _viewport.Render();
 
-    private void MultiZDrawComposite(IRenderHandle handle, UIBox2i drawBox)
-    {
-        if (!_mzDrawBelow || _mzBelowViewport == null)
-            return;
-
-        handle.DrawingHandleScreen.DrawTextureRect(
-            _mzBelowViewport.RenderTarget.Texture,
-            drawBox,
-            Color.White.WithAlpha(_mzBelowAlpha));
-    }
-
-    private void EnsureBelowViewport()
-    {
-        if (_viewport == null)
-            return;
-
-        if (_mzBelowViewport != null &&
-            _mzBelowViewport.Size == _viewport.Size)
-            return;
-
-        _mzBelowViewport?.Dispose();
-        _mzBelowViewport = _clyde.CreateViewport(
-            _viewport.Size,
-            TextureSampleParameters.Default,
-            "multi-z-below");
+        // Restore normal clear for next frame
+        _viewport.ClearColor = Color.Black;
+        _mzSkipNormalRender = true;
     }
 }
