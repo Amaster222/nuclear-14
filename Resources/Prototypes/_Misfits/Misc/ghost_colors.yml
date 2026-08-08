@@ -1,7 +1,7 @@
 # Misfits Add - Ghost color presets. Add usernames to tint their ghost.
-# Admin ghosts (aghost) are red via the AdminObserver prototype sprite, but users
-# listed here override that red with their preset color (the client neutralizes the
-# prototype sprite tint whenever a custom ghost color is set).
+# Admin ghosts (aghost) default to red via AdminObserver's GhostComponent.color, but users
+# listed here override that red with their preset color (ApplyMisfitsGhostColor sets
+# GhostComponent.color, which the client applies as the ghost layer tint).
 # Regular ghosts are white via MobObserver. This file tints specific users.
 #
 # To add an engineer with a yellow ghost, add their username to the users list:
@@ -17,6 +17,7 @@
   - Cythisia
   - Paige_404
   - Bradysgaming
+  - IFRIGGINLOVEHAZBINHOTEL
 
 # --- Pink ---
 - type: misfitsGhostColor
@@ -27,7 +28,7 @@
 
 # --- Admin Red ---
 # Uncomment if you want to override admin ghost color via this system too.
-# By default, admin ghosts are red from the AdminObserver prototype sprite.
+# By default, admin ghosts are red via AdminObserver's GhostComponent.color.
 # - type: misfitsGhostColor
 #   id: AdminRed
 #   color: "#ff3333cc"
