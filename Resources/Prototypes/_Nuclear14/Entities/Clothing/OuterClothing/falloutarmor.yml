@@ -812,6 +812,30 @@
 
 - type: entity
   parent: N14FalloutArmorBase
+  id: N14ClothingOuterNCRVestCoatBlackArmored
+  name: NCR Provost Armored Coat
+  description: A light ballistic plate inside a leather vest over a long coat. This one is covered in black camo for night operations.
+  components:
+  - type: Sprite
+    sprite: _Nuclear14/Clothing/OuterClothing/Armor/falloutNCRvestcoatblack.rsi
+  - type: Clothing
+    sprite: _Nuclear14/Clothing/OuterClothing/Armor/falloutNCRvestcoatblack.rsi
+  - type: ClothingSpeedModifier
+    walkModifier: 1.00
+    sprintModifier: 1.00
+  - type: Armor
+    modifiers:
+      coefficients:
+        Blunt: 0.60
+        Slash: 0.60
+        Piercing: 0.55
+        Heat: 0.60
+    priceMultiplier: 0.6
+  - type: ExplosionResistance
+    damageCoefficient: 0.85
+
+- type: entity
+  parent: N14FalloutArmorBase
   id: N14ClothingOuterNCRPlateWoods
   name: NCR plate armor
   description: A bunch of light steel plates connected to a hollow regular vest, designed to protect during melee combat.

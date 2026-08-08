@@ -5,6 +5,7 @@ using Content.Server.Maps;
 using Content.Server.Radiation.Components;
 using Content.Server.Radiation.Systems;
 using Content.Shared.Administration;
+using Content.Shared._Misfits.Genetics.Abilities;
 using Content.Shared.CCVar;
 using Content.Shared.Ghost;
 using Content.Shared.Light.Components;
@@ -27,7 +28,7 @@ public sealed class WeatherSystem : SharedWeatherSystem
     [Dependency] private readonly IConfigurationManager _config = default!;
     [Dependency] private readonly IConsoleHost _console = default!;
     [Dependency] private readonly ChatSystem _chat = default!;
-    [Dependency] private readonly IMapManager _map = default!;
+    [Dependency] private readonly SharedMapSystem _map = default!;
     [Dependency] private readonly IPrototypeManager _prototype = default!;
     [Dependency] private readonly RadiationSystem _radiation = default!;
     [Dependency] private readonly IRobustRandom _random = default!;
@@ -203,7 +204,7 @@ public sealed class WeatherSystem : SharedWeatherSystem
         var query = EntityQueryEnumerator<RadiationReceiverComponent, TransformComponent>();
         while (query.MoveNext(out var uid, out var receiver, out var xform))
         {
-            if (HasComp<GhostComponent>(uid))
+            if (HasComp<GhostComponent>(uid) || HasComp<WeatherImmuneComponent>(uid))
                 continue;
 
             if (!IsWeatherExposed(mapUid, xform))

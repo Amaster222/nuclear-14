@@ -2,6 +2,7 @@ using System.Linq;
 using Content.Server.Administration.Logs;
 using Content.Server.Popups;
 using Content.Shared.UserInterface;
+using Content.Shared._Misfits.Paper;
 using Content.Shared.Database;
 using Content.Shared.Examine;
 using Content.Shared.Interaction;
@@ -42,9 +43,9 @@ namespace Content.Server.Paper
 
         private void OnMapInit(EntityUid uid, PaperComponent paperComp, MapInitEvent args)
         {
-            if (!string.IsNullOrEmpty(paperComp.Content))
+            if (!string.IsNullOrEmpty(paperComp.PaperContent))
             {
-                paperComp.Content = Loc.GetString(paperComp.Content);
+                paperComp.PaperContent = Loc.GetString(paperComp.PaperContent);
             }
         }
 
@@ -55,7 +56,7 @@ namespace Content.Server.Paper
 
             if (TryComp<AppearanceComponent>(uid, out var appearance))
             {
-                if (paperComp.Content != "")
+                if (paperComp.PaperContent != "")
                     _appearance.SetData(uid, PaperVisuals.Status, PaperStatus.Written, appearance);
 
                 if (paperComp.StampState != null)
@@ -77,7 +78,7 @@ namespace Content.Server.Paper
 
             using (args.PushGroup(nameof(PaperComponent)))
             {
-                if (paperComp.Content != "")
+                if (paperComp.PaperContent != "")
                     args.PushMarkup(
                         Loc.GetString(
                             "paper-component-examine-detail-has-words", ("paper", uid)
@@ -98,6 +99,13 @@ namespace Content.Server.Paper
 
         private void OnInteractUsing(EntityUid uid, PaperComponent paperComp, InteractUsingEvent args)
         {
+            if (_tagSystem.HasTag(args.Used, "Write") && TryComp<BlockWritingComponent>(args.User, out var blocked))
+            {
+                _popupSystem.PopupEntity(Loc.GetString(blocked.FailWriteMessage), args.User, args.User);
+                args.Handled = true;
+                return;
+            }
+
             // only allow editing if there are no stamps or when using a cyberpen
             var editable = paperComp.StampedBy.Count == 0 || _tagSystem.HasTag(args.Used, "WriteIgnoreStamps");
             if (_tagSystem.HasTag(args.Used, "Write") && editable && paperComp.CanEdit)
@@ -143,7 +151,7 @@ namespace Content.Server.Paper
         {
             if (args.Text.Length <= paperComp.ContentSize)
             {
-                paperComp.Content = args.Text;
+                paperComp.PaperContent = args.Text;
 
                 if (TryComp<AppearanceComponent>(uid, out var appearance))
                     _appearance.SetData(uid, PaperVisuals.Status, PaperStatus.Written, appearance);
@@ -193,7 +201,7 @@ namespace Content.Server.Paper
             if (!Resolve(uid, ref paperComp))
                 return;
 
-            paperComp.Content = content + '\n';
+            paperComp.PaperContent = content + '\n';
             UpdateUserInterface(uid, paperComp);
 
             if (!TryComp<AppearanceComponent>(uid, out var appearance))
@@ -211,7 +219,7 @@ namespace Content.Server.Paper
             if (!Resolve(uid, ref paperComp))
                 return;
 
-            _uiSystem.SetUiState(uid, PaperUiKey.Key, new PaperBoundUserInterfaceState(paperComp.Content, paperComp.StampedBy, paperComp.Mode));
+            _uiSystem.SetUiState(uid, PaperUiKey.Key, new PaperBoundUserInterfaceState(paperComp.PaperContent, paperComp.StampedBy, paperComp.Mode));
         }
     }
 

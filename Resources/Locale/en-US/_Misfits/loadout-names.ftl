@@ -125,6 +125,10 @@ loadout-name-MisfitsLoadoutOuterHighwayPatrolJacket = highway patrol jacket
 loadout-name-MisfitsLoadoutOuterMarlowGangOvercoat = marlow gang overcoat
 loadout-name-MisfitsLoadoutOuterGunfightersOvercoat = gunfighter's gang overcoat
 loadout-name-MisfitsLoadoutOuterVegabondsVest = vagabond's vest
+loadout-name-MisfitsLoadoutOuterArmorKit = armor kit
+loadout-name-MisfitsLoadoutOuterArmorKitPunk = punk armor kit
+loadout-name-MisfitsLoadoutOuterArmorKitShoulder = shoulder armor kit
+loadout-name-MisfitsLoadoutOuterKhanLeather = great khan leather vest
 
 # Shoes
 loadout-name-ClothingShoesBootsLaceupVault = laceup shoes
@@ -576,6 +580,8 @@ loadout-name-LoadoutNeckLegionForgemaster = blacksmith's apron
 loadout-name-LoadoutNeckLegionMedicus = medicus apron
 loadout-name-LoadoutNeckLegionTreasurer = treasurers mantle
 loadout-name-LoadoutUniformJumpsuitLegionnaireOther = legionnaire skirt
+loadout-name-MisfitsLoadoutLegionBackpackCapeRed = Legion red flag
+loadout-name-MisfitsLoadoutLegionBackpackCapeBlack = Legion black flag
 
 # Miscellaneous eyes
 loadout-name-ClothingEyesGlassesChemist = chemist glasses
@@ -647,6 +653,7 @@ loadout-name-MisfitsLoadoutHeadRedBandana = red bandana
 loadout-name-MisfitsLoadoutHeadHeadMarlowHat = marlow hat
 loadout-name-MisfitsLoadoutHeadHeadSchlimmHat = schlimm hat
 loadout-name-MisfitsLoadoutHeadHeadAHPhelmet = highway patrol helmet
+loadout-name-MisfitsLoadoutHeadKhanHelmet = khan helmet
 # Head — NCR soldiers
 loadout-name-MisfitsLoadoutHeadNCRSidecap = NCR sidecap
 loadout-name-MisfitsLoadoutHeadNCRBeretOfficer = NCR officer beret
@@ -685,6 +692,7 @@ loadout-name-MisfitsLoadoutShoesLeatherBoots = leather boots
 loadout-name-MisfitsLoadoutShoesTribal = tribal shoes
 loadout-name-MisfitsLoadoutShoesRaider = raider treads
 loadout-name-MisfitsLoadoutMilitaryCowboyBoots = military cowboy boots
+loadout-name-MisfitsLoadoutMilitarySteelTippedBoots = steel-tipped boots
 # Neck — faction cloaks
 loadout-name-MisfitsLoadoutNeckCloakNCR = NCR cloak
 loadout-name-MisfitsLoadoutNeckCloakNCRSnow = NCR winter cloak
@@ -732,6 +740,7 @@ loadout-name-N14LoadoutUniversalNeckTownGuardCloak = old cloak
 loadout-name-N14LoadoutUniversalNeckTribalCloak = tribal cloak
 loadout-name-N14LoadoutUniversalNeckTribalCloakBr = tribal cloak
 loadout-name-MisfitsLoadoutNeckNCRmantleQM = Requisitions Officer's mantle
+loadout-name-MisfitsLoadoutOuterCloakWesternPoncho = western poncho
 
 # Outer
 loadout-name-N14LoadoutUniversalOuterBlackRobes = black robe
@@ -790,7 +799,10 @@ loadout-name-MisfitsLoadoutUniformIkedudsUniform = gunfighter's gang attire
 loadout-name-MisfitsLoadoutUniformHelendudsUniform = gambler's gang attire
 loadout-name-MisfitsLoadoutUniformMasondudsUniform = vagabond's gang attire
 loadout-name-MisfitsLoadoutUniformSchlimmUniform = foreign gentleman's attire
-
+loadout-name-MisfitsLoadoutUniformKhansUniform = great khans uniform
+loadout-name-MisfitsLoadoutUniformKhansUniformShorts = great khan jorts
+loadout-name-MisfitsLoadoutUniformEnclaveUniformGrey = grey enclave jumpsuit
+loadout-name-MisfitsLoadoutUniformEnclaveUniformBlue = blue enclave jumpsuit
 
 # Ammo and magazines
 loadout-name-N14MagazinePistol45 = pistol magazine (.45 auto)
@@ -805,7 +817,6 @@ loadout-name-N14Gladius = gladius
 loadout-name-N14GladiusLegion = gladius
 loadout-name-N14ChineseSword = chinese officer sword
 loadout-name-N14LongSword = longsword
-loadout-name-N14LongSwordBoS = longsword
 loadout-name-N14CeremonialSwordCent = ceremonial sword
 loadout-name-N14GoliathFistLeader = goliath power fist
 loadout-name-N14TrenchClub = trench club
@@ -824,3 +835,4 @@ loadout-name-LoadoutNCRRangerEliteArmor = elite ranger combat armor
 loadout-name-LoadoutNCRRangerFoxArmor = fox ranger combat armor
 loadout-name-MisfitsLoadoutHeadAntlerSkull = antler skullcap
 loadout-name-MisfitsLoadoutBoSMidwestCommanderPowerArmor = BoS Commander Power Armor
+loadout-name-MisfitsLoadoutFollowerResponderDuster = Follower Responder Duster

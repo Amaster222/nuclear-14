@@ -165,7 +165,7 @@
         - BoSScribe
         - BoSMidScribe
     - !type:CharacterPlaytimeRequirement
-      tracker: BoSMidKnight
+      tracker: BoSPaladin
       min: 36000
   items:
     - N14ClothingMaskLinerBlack

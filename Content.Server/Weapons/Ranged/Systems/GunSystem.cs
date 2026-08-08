@@ -6,6 +6,7 @@ using Content.Server.Cargo.Systems;
 using Content.Server.Movement.Components;
 using Content.Server.Power.EntitySystems;
 using Content.Server.Weapons.Ranged.Components;
+using Content.Shared.Buckle.Components;
 using Content.Shared.Damage;
 using Content.Shared.Damage.Systems;
 using Content.Shared.Database;
@@ -106,8 +107,8 @@ public sealed partial class GunSystem : SharedGunSystem
             }
         }
 
-        var fromMap = fromCoordinates.ToMap(EntityManager, TransformSystem);
-        var toMap = toCoordinates.ToMapPos(EntityManager, TransformSystem);
+        var fromMap = fromCoordinates.ToMap(EntityManager, _xform);
+        var toMap = toCoordinates.ToMapPos(EntityManager, _xform);
         var mapDirection = toMap - fromMap.Position;
         var mapAngle = mapDirection.ToAngle();
         var angle = base.GetRecoilAngle(Timing.CurTime, gun, mapDirection.ToAngle(), user);
@@ -115,7 +116,7 @@ public sealed partial class GunSystem : SharedGunSystem
         // If applicable, this ensures the projectile is parented to grid on spawn, instead of the map.
         var fromEnt = MapManager.TryFindGridAt(fromMap, out var gridUid, out var grid)
             ? fromCoordinates.WithEntityId(gridUid, EntityManager)
-            : new EntityCoordinates(MapManager.GetMapEntityId(fromMap.MapId), fromMap.Position);
+            : new EntityCoordinates(MapManager.GetMap(fromMap.MapId), fromMap.Position);
 
         // Update shot based on the recoil
         toMap = fromMap.Position + angle.ToVec() * mapDirection.Length();
@@ -404,8 +405,10 @@ public sealed partial class GunSystem : SharedGunSystem
 
         EntityUid? staticHit = null;
         EntityUid? currentLagCompHit = null;
+        EntityUid? strapHit = null;
         var staticDistance = hitscan.MaxLength;
         var currentLagCompDistance = hitscan.MaxLength;
+        var strapDistance = hitscan.MaxLength;
 
         foreach (var result in raycastEvent.RayCastResults)
         {
@@ -418,6 +421,16 @@ public sealed partial class GunSystem : SharedGunSystem
             {
                 currentLagCompHit ??= result.HitEntity;
                 currentLagCompDistance = MathF.Min(currentLagCompDistance, result.Distance);
+                continue;
+            }
+
+            // thing buckled to genrally has larger fixture, defer to rider, if not fallback to strap
+            if (strapHit == null &&
+                TryComp<StrapComponent>(result.HitEntity, out var strap) &&
+                strap.BuckledEntities.Count > 0)
+            {
+                strapHit = result.HitEntity;
+                strapDistance = result.Distance;
                 continue;
             }
 
@@ -456,6 +469,13 @@ public sealed partial class GunSystem : SharedGunSystem
         {
             hit = currentLagCompHit.Value;
             distance = currentLagCompDistance;
+            return true;
+        }
+
+        if (strapHit != null)
+        {
+            hit = strapHit.Value;
+            distance = strapDistance;
             return true;
         }
 
@@ -596,10 +616,10 @@ public sealed partial class GunSystem : SharedGunSystem
 
         if (xformQuery.TryGetComponent(gridUid, out var gridXform))
         {
-            var (_, gridRot, gridInvMatrix) = TransformSystem.GetWorldPositionRotationInvMatrix(gridXform, xformQuery);
+            var (_, gridRot, gridInvMatrix) = _xform.GetWorldPositionRotationInvMatrix(gridXform, xformQuery);
 
             fromCoordinates = new EntityCoordinates(gridUid.Value,
-                Vector2.Transform(fromCoordinates.ToMapPos(EntityManager, TransformSystem), gridInvMatrix));
+                Vector2.Transform(fromCoordinates.ToMapPos(EntityManager, _xform), gridInvMatrix));
 
             // Use the fallback angle I guess?
             angle -= gridRot;

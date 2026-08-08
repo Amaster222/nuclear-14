@@ -154,8 +154,10 @@
     - type: loadout
       id: MisfitsClothingHeadRedBandana
     - type: loadout
-      id: MisfitsClothingHeadHeadMarlowHat
+      id: MisfitsLoadoutHeadHeadMarlowHat
     - type: loadout
-      id: MisfitsClothingHeadHeadSchlimmHat
+      id: MisfitsLoadoutHeadHeadSchlimmHat
     - type: loadout
-      id: MisfitsClothingHeadHeadAHPhelmet
+      id: MisfitsLoadoutHeadHeadAHPhelmet
+    - type: loadout
+      id: MisfitsLoadoutHeadKhanHelmet

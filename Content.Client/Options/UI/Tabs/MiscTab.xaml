@@ -40,6 +40,7 @@
                 </BoxContainer>
                 <CheckBox Name="ColorblindFriendlyCheckBox" Text="{Loc 'ui-options-colorblind-friendly'}" />
                 <CheckBox Name="DisableFiltersCheckBox" Text="{Loc 'ui-options-no-filters'}" />
+                <CheckBox Name="CensorNudityCheckBox" Text="{Loc 'ui-options-censor-nudity'}" />
                 <BoxContainer Orientation="Horizontal">
                     <Label Text="{Loc 'ui-options-chatstack'}" />
                     <Control MinSize="4 0" />

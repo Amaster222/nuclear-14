@@ -47,7 +47,7 @@ public abstract class SharedMeleeWeaponSystem : EntitySystem
     [Dependency] protected readonly SharedCombatModeSystem   CombatMode      = default!;
     [Dependency] protected readonly DamageableSystem         Damageable      = default!;
     [Dependency] protected readonly SharedInteractionSystem  Interaction     = default!;
-    [Dependency] protected readonly IMapManager              MapManager      = default!;
+    [Dependency] protected readonly SharedMapSystem              MapManager      = default!;
     [Dependency] protected readonly SharedPopupSystem        PopupSystem     = default!;
     [Dependency] protected readonly IGameTiming              Timing          = default!;
     [Dependency] protected readonly SharedTransformSystem    TransformSystem = default!;
@@ -203,6 +203,8 @@ public abstract class SharedMeleeWeaponSystem : EntitySystem
 
         var ev = new GetMeleeDamageEvent(uid, new(component.Damage), new(), user, component.ResistanceBypass);
         RaiseLocalEvent(uid, ref ev);
+        if (user != uid)
+            RaiseLocalEvent(user, ref ev);
 
         if (component.ContestArgs is not null)
 
@@ -229,6 +231,8 @@ public abstract class SharedMeleeWeaponSystem : EntitySystem
 
         var ev = new GetHeavyDamageModifierEvent(uid, component.ClickDamageModifier, 1, user);
         RaiseLocalEvent(uid, ref ev);
+        if (user != uid)
+            RaiseLocalEvent(user, ref ev);
 
         return ev.DamageModifier * ev.Multipliers * component.HeavyDamageBaseModifier;
     }
@@ -240,6 +244,8 @@ public abstract class SharedMeleeWeaponSystem : EntitySystem
 
         var ev = new GetMeleeDamageEvent(uid, new(component.Damage), new(), user, component.ResistanceBypass);
         RaiseLocalEvent(uid, ref ev);
+        if (user != uid)
+            RaiseLocalEvent(user, ref ev);
 
         return ev.ResistanceBypass;
     }

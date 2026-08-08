@@ -122,6 +122,7 @@ namespace Content.Client.Options.UI.Tabs
             StaticStorageUI.OnToggled += OnCheckBoxToggled;
             ModernProgressBar.OnToggled += OnCheckBoxToggled;
             DisableFiltersCheckBox.OnToggled += OnCheckBoxToggled;
+            CensorNudityCheckBox.OnToggled += OnCheckBoxToggled;
 
             HudThemeOption.SelectId(_hudThemeIdToIndex.GetValueOrDefault(_cfg.GetCVar(CVars.InterfaceTheme), 0));
             DiscordRich.Pressed = _cfg.GetCVar(CVars.DiscordEnabled);
@@ -147,6 +148,7 @@ namespace Content.Client.Options.UI.Tabs
             StaticStorageUI.Pressed = _cfg.GetCVar(CCVars.StaticStorageUI);
             ModernProgressBar.Pressed = _cfg.GetCVar(CCVars.ModernProgressBar);
             DisableFiltersCheckBox.Pressed = _cfg.GetCVar(CCVars.NoVisionFilters);
+            CensorNudityCheckBox.Pressed = _cfg.GetCVar(CCVars.AccessibilityClientCensorNudity);
 
 
             ApplyButton.OnPressed += OnApplyButtonPressed;
@@ -209,6 +211,7 @@ namespace Content.Client.Options.UI.Tabs
             _cfg.SetCVar(CCVars.StaticStorageUI, StaticStorageUI.Pressed);
             _cfg.SetCVar(CCVars.ModernProgressBar, ModernProgressBar.Pressed);
             _cfg.SetCVar(CCVars.NoVisionFilters, DisableFiltersCheckBox.Pressed);
+            _cfg.SetCVar(CCVars.AccessibilityClientCensorNudity, CensorNudityCheckBox.Pressed);
             _cfg.SetCVar(CCVars.ChatStackLastLines, ChatStackOption.SelectedId);
 
             if (HudLayoutOption.SelectedMetadata is string opt)
@@ -257,6 +260,7 @@ namespace Content.Client.Options.UI.Tabs
             var isStaticStorageUISame = StaticStorageUI.Pressed == _cfg.GetCVar(CCVars.StaticStorageUI);
             var isModernProgressBarSame = ModernProgressBar.Pressed == _cfg.GetCVar(CCVars.ModernProgressBar);
             var isNoVisionFiltersSame = DisableFiltersCheckBox.Pressed == _cfg.GetCVar(CCVars.NoVisionFilters);
+            var isCensorNuditySame = CensorNudityCheckBox.Pressed == _cfg.GetCVar(CCVars.AccessibilityClientCensorNudity);
             var isChatStackTheSame = ChatStackOption.SelectedId == _cfg.GetCVar(CCVars.ChatStackLastLines);
 
             ApplyButton.Disabled = isHudThemeSame &&
@@ -282,6 +286,7 @@ namespace Content.Client.Options.UI.Tabs
                                    isStaticStorageUISame &&
                                    isModernProgressBarSame &&
                                    isNoVisionFiltersSame &&
+                                   isCensorNuditySame &&
                                    isChatStackTheSame;
         }
 

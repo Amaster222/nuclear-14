@@ -16,7 +16,7 @@
   whitelisted: true # #Misfits Fix — allow job-whitelist fallback in lobby visibility filter
   hideWithoutWhitelist: true # #Misfits Change
   spawnLoadout: true
-  startingGear: SuperMutantVaultSuitGear # #Misfits Add - prevents naked spawns
+  startingGear: SuperMutantRagsGear # #Misfits Add - prevents naked spawns
   applyTraits: true # #Misfits Change - enable perks tab for Supermutants
   requirements:
     - !type:CharacterSpeciesRequirement
@@ -36,9 +36,9 @@
 
 # #Misfits Add - startingGear for the base Supermutant: a vault suit so they don't spawn naked.
 - type: startingGear
-  id: SuperMutantVaultSuitGear
+  id: SuperMutantRagsGear
   equipment:
-    jumpsuit: ClothingSuperMutantVaultSuit
+    jumpsuit: ClothingSuperMutantJumpsuit
     id: N14ClothingNeckDogtags # #Misfits Change - wastelander supermutants get dogtag IDs
     ears: MisfitsClothingHeadsetWastelandScrap
 
@@ -438,6 +438,7 @@
     jumpsuit: ClothingSuperMutantLabcoat
     outerClothing: MisfitsFOTASuperMutantArmoredLabcoat
     mask: ClothingSuperMutantSterileMask
+    head: ClothingSuperMutantDoctorBeret
     back: ClothingBackpackDuffelSurgeryFilled
     belt: N14ClothingBeltMedicalFilled
     shoes: ClothingSuperMutantGladiatorBoots
@@ -488,7 +489,7 @@
     outerClothing: MisfitsEnclavePowerArmor
     jumpsuit: ClothingSuperMutantLabcoat
     ears: N14ClothingHeadsetEnclave
-    id: N14IDEnclaveTrooper
+    id: N14EnclaveTrooperPipboy
     belt: ClothingBeltMilitary
     pocket1: EnclaveSoldierloadoutkits
 - type: playTimeTracker
