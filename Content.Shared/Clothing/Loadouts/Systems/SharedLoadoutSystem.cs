@@ -1,5 +1,6 @@
 using System.Linq;
 using Content.Shared._Misfits.Special;
+using Content.Shared._Misfits.Supporter; // #Cythisiax Add - Patreon supporter loadouts
 using Content.Shared._NC.Sponsor; // Forge-Change
 using Content.Shared.Body.Systems;
 using Content.Shared.CCVar;
@@ -12,6 +13,7 @@ using Content.Shared.Preferences;
 using Content.Shared.Roles;
 using Content.Shared.Station;
 using Robust.Shared.Configuration;
+using Robust.Shared.Network;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Serialization;
@@ -30,6 +32,7 @@ public sealed class SharedLoadoutSystem : EntitySystem
     [Dependency] private readonly SharedTransformSystem _sharedTransformSystem = default!;
     [Dependency] private readonly ILogManager _log = default!;
     [Dependency] private readonly ISharedSponsorManager _sponsorManager = default!; // Forge-Change
+    [Dependency] private readonly ISharedSupporterManager _supporterManager = default!; // #Cythisiax Add - Patreon supporter loadouts
 
     private ISawmill _sawmill = default!;
 
@@ -59,10 +62,11 @@ public sealed class SharedLoadoutSystem : EntitySystem
         HumanoidCharacterProfile profile,
         Dictionary<string, TimeSpan> playTimes,
         bool whitelisted,
-        out List<(EntityUid, LoadoutPreference)> heirlooms)
+        out List<(EntityUid, LoadoutPreference)> heirlooms,
+        NetUserId? player = null) // #Cythisiax Edited - player for Patreon tier enforcement
     {
         var jobPrototype = _prototype.Index(job);
-        return ApplyCharacterLoadout(uid, jobPrototype, profile, playTimes, whitelisted, out heirlooms);
+        return ApplyCharacterLoadout(uid, jobPrototype, profile, playTimes, whitelisted, out heirlooms, player);
     }
 
     /// <summary>
@@ -74,6 +78,7 @@ public sealed class SharedLoadoutSystem : EntitySystem
     /// <param name="playTimes">Playtime for the player for use with playtime requirements</param>
     /// <param name="whitelisted">If the player is whitelisted</param>
     /// <param name="heirlooms">Every entity the player selected as a potential heirloom</param>
+    /// <param name="player">The owning player, used to enforce Patreon supporter loadout tiers server-side</param>
     /// <returns>A list of loadout items that couldn't be equipped but passed checks</returns>
     public (List<EntityUid>, List<(EntityUid, LoadoutPreference, int)>) ApplyCharacterLoadout(
         EntityUid uid,
@@ -81,7 +86,8 @@ public sealed class SharedLoadoutSystem : EntitySystem
         HumanoidCharacterProfile profile,
         Dictionary<string, TimeSpan> playTimes,
         bool whitelisted,
-        out List<(EntityUid, LoadoutPreference)> heirlooms)
+        out List<(EntityUid, LoadoutPreference)> heirlooms,
+        NetUserId? player = null) // #Cythisiax Edited - player for Patreon tier enforcement
     {
         var failedLoadouts = new List<EntityUid>();
         var allLoadouts = new List<(EntityUid, LoadoutPreference, int)>();
@@ -102,6 +108,18 @@ public sealed class SharedLoadoutSystem : EntitySystem
             // Ignore loadouts that don't exist
             if (!_prototype.TryIndex<LoadoutPrototype>(loadout.LoadoutName, out var loadoutProto))
                 continue;
+
+            // #Cythisiax Added - server-side Patreon supporter enforcement (defense against edited profiles)
+            if (loadoutProto.SupporterTier != SupporterTier.None)
+            {
+                if (player is not { } userId
+                    || !_supporterManager.TryGetSupporterTier(userId, out var supporterTier)
+                    || loadoutProto.SupporterTier > supporterTier)
+                {
+                    _sawmill.Verbose($"Skipping supporter loadout {loadoutProto.ID} for {player}; requires tier {loadoutProto.SupporterTier}.");
+                    continue;
+                }
+            }
 
             if (!_characterRequirements.CheckRequirementsValid(
                 loadoutProto.Requirements, job, profile, playTimes, whitelisted, loadoutProto,

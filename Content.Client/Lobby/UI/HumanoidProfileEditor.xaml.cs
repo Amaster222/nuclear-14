@@ -52,6 +52,8 @@ using System.Reflection;
 using Robust.Shared.Network;
 using Content.Client._NC.Sponsor;
 using Content.Client._NC.TTS; // Forge-Change
+using Content.Client._Misfits.Supporter; // #Cythisiax Add - Patreon supporter loadouts
+using Content.Shared._Misfits.Supporter; // #Cythisiax Add - Patreon supporter loadouts
 
 namespace Content.Client.Lobby.UI
 {
@@ -74,6 +76,7 @@ namespace Content.Client.Lobby.UI
         private readonly LobbyUIController _controller;
         private readonly IRobustRandom _random;
         private readonly SponsorManager _sponsorMan; // Forge-Change
+        private readonly SupporterManager _supporterMan; // #Cythisiax Add - Patreon supporter loadouts
 
         private FlavorText.FlavorText? _flavorText;
         private BoxContainer _ccustomspecienamecontainerEdit => CCustomSpecieName;
@@ -175,6 +178,7 @@ namespace Content.Client.Lobby.UI
         private Dictionary<Button, ConfirmationData> _confirmationData = new();
         private List<TraitPreferenceSelector> _traitPreferences = new();
         private int _traitCount;
+        private HashSet<LoadoutPreferenceSelector> _patreonLoadoutPreferences = new(); // #Cythisiax Add - Patreon supporter loadouts
         private HashSet<LoadoutPreferenceSelector> _loadoutPreferences = new();
         private BoxContainer? _specialTab;
         private BoxContainer? _specialRows;
@@ -216,7 +220,8 @@ namespace Content.Client.Lobby.UI
             IResourceManager resManager, // Forge-Change
             JobRequirementsManager requirements,
             MarkingManager markings,
-            IRobustRandom random,
+            IRobustRandom random,, // Forge-Change
+            SupporterManager supporterMan // #Cythisiax Add - Patreon supporter loadouts
             SponsorManager sponsorMan // Forge-Change
             )
         {
@@ -231,6 +236,7 @@ namespace Content.Client.Lobby.UI
             _resManager = resManager; // Forge-Change
             _requirements = requirements;
             _random = random;
+            _supporterMan = supporterMan; // #Cythisiax Add - Patreon supporter loadouts
             _sponsorMan = sponsorMan; // Forge-Change
 
             _characterRequirementsSystem = _entManager.System<CharacterRequirementsSystem>();
@@ -678,6 +684,25 @@ namespace Content.Client.Lobby.UI
             LoadoutsRemoveUnusableButton.OnPressed += _ => TryRemoveUnusableLoadouts();
 
             UpdateLoadouts(false);
+
+            #endregion
+
+            #region Patreon Loadouts
+            // #Cythisiax Add - Patreon supporter-exclusive loadout tab.
+            // Mirrors the regular loadout tab but only lists loadouts with a supporterTier
+            // requirement, and the whole tab is hidden unless the local player is a supporter.
+            PatreonLoadoutsTab.Orphan();
+            CTabContainer.AddTab(PatreonLoadoutsTab, Loc.GetString("humanoid-profile-editor-patreon-loadouts-tab"));
+            _patreonLoadoutPreferences = new();
+
+            var isPatreonSupporter = _playerManager.LocalUser is { } localUser
+                && _supporterMan.TryGetSupporterTier(localUser, out _);
+            CTabContainer.SetTabVisible(PatreonLoadoutsTab, isPatreonSupporter);
+
+            PatreonLoadoutsShowUnusableButton.OnToggled += args => UpdatePatreonLoadouts(args.Pressed);
+            PatreonLoadoutsRemoveUnusableButton.OnPressed += _ => TryRemoveUnusablePatreonLoadouts();
+
+            UpdatePatreonLoadouts(false);
 
             #endregion
 
@@ -3504,6 +3529,10 @@ namespace Content.Client.Lobby.UI
             _loadouts.Clear();
             foreach (var loadout in _prototypeManager.EnumeratePrototypes<LoadoutPrototype>())
             {
+                // #Cythisiax Added - Patreon-supporter loadouts are shown in their own tab instead
+                if (loadout.SupporterTier != SupporterTier.None)
+                    continue;
+
                 var usable = _characterRequirementsSystem.CheckRequirementsValid(
                     loadout.Requirements,
                     highJob ?? new JobPrototype(),
@@ -3758,6 +3787,190 @@ namespace Content.Client.Lobby.UI
             }
         }
 
+        // #Cythisiax Add - Patreon supporter-exclusive loadout tab
+        #region Patreon Loadouts
+
+        private void UpdatePatreonLoadoutPreferences()
+        {
+            var points = LoadoutPointBudget;
+            PatreonLoadoutsPointsBar.Value = points;
+            PatreonLoadoutsPointsLabel.Text = Loc.GetString("humanoid-profile-editor-loadouts-points-label", ("points", points), ("max", points));
+
+            foreach (var preferenceSelector in _patreonLoadoutPreferences)
+            {
+                var loadoutId = preferenceSelector.Loadout.ID;
+                var loadoutPreference = Profile?.LoadoutPreferences.FirstOrDefault(l => l.LoadoutName == loadoutId) ?? preferenceSelector.Preference;
+                var preference = new LoadoutPreference(
+                    loadoutPreference.LoadoutName,
+                    loadoutPreference.CustomName,
+                    loadoutPreference.CustomDescription,
+                    loadoutPreference.CustomColorTint,
+                    loadoutPreference.CustomHeirloom);
+
+                // The custom color tint needs to be reset so the preview updates when cleared
+                if (preferenceSelector.Preference.CustomColorTint != preference.CustomColorTint)
+                    preferenceSelector.Preference = new LoadoutPreference(loadoutId, preference.CustomName, preference.CustomDescription, null, preference.CustomHeirloom);
+
+                preferenceSelector.Preference = preference;
+            }
+        }
+
+        public void UpdatePatreonLoadouts(bool? showUnusable = null, bool reload = false)
+        {
+            showUnusable ??= PatreonLoadoutsShowUnusableButton.Pressed;
+
+            // Whole tab is hidden unless the local player is a Patreon supporter
+            var userId = _playerManager.LocalUser;
+            if (userId is not { } user
+                || !_supporterMan.TryGetSupporterTier(user, out var tier))
+            {
+                CTabContainer.SetTabVisible(PatreonLoadoutsTab, false);
+                return;
+            }
+            CTabContainer.SetTabVisible(PatreonLoadoutsTab, true);
+
+            // Shared point budget with the regular loadout tab
+            var points = LoadoutPointBudget;
+            PatreonLoadoutsPointsLabel.Text = Loc.GetString("humanoid-profile-editor-loadouts-points-label", ("points", points), ("max", points));
+            PatreonLoadoutsPointsBar.MaxValue = points;
+            PatreonLoadoutsPointsBar.Value = points;
+
+            // Reset the whole UI and delete caches
+            if (reload)
+            {
+                PatreonLoadoutsList.RemoveAllChildren();
+                _patreonLoadoutPreferences.Clear();
+            }
+
+            var highJob = _controller.GetPreferredJob(Profile ?? HumanoidCharacterProfile.DefaultWithSpecies());
+
+            foreach (var loadout in _prototypeManager.EnumeratePrototypes<LoadoutPrototype>())
+            {
+                // Only supporter-gated loadouts belong here, and only up to the player's tier
+                if (loadout.SupporterTier == SupporterTier.None || loadout.SupporterTier > tier)
+                    continue;
+
+                // Reuse an existing selector for this loadout (keeps its state across refreshes)
+                var existing = _patreonLoadoutPreferences.FirstOrDefault(s => s.Loadout.ID == loadout.ID);
+                if (existing != null)
+                {
+                    var prof = Profile?.LoadoutPreferences.FirstOrDefault(lp => lp.LoadoutName == loadout.ID);
+                    existing.Preference = new LoadoutPreference(
+                        loadout.ID, prof?.CustomName, prof?.CustomDescription, prof?.CustomColorTint, prof?.CustomHeirloom);
+                    continue;
+                }
+
+                var usable = _characterRequirementsSystem.CheckRequirementsValid(
+                    loadout.Requirements,
+                    highJob ?? new JobPrototype(),
+                    Profile ?? HumanoidCharacterProfile.DefaultWithSpecies(),
+                    _requirements.GetRawPlayTimeTrackers(),
+                    _requirements.IsWhitelisted(),
+                    loadout,
+                    _entManager,
+                    _prototypeManager,
+                    _cfgManager,
+                    _sponsorMan, // Forge-Change
+                    out _
+                );
+
+                var selector = new LoadoutPreferenceSelector(
+                    loadout, highJob ?? new JobPrototype(),
+                    Profile ?? HumanoidCharacterProfile.DefaultWithSpecies(), ref _dummyLoadouts,
+                    _entManager, _prototypeManager, _cfgManager, _characterRequirementsSystem, _requirements, _sponsorMan) // Forge-Change
+                    { Preference = new LoadoutPreference(loadout.ID) };
+
+                UpdatePatreonSelector(selector, usable, showUnusable.Value);
+                _patreonLoadoutPreferences.Add(selector);
+                selector.PreferenceChanged += preference =>
+                {
+                    // Make sure they have enough loadout points
+                    var wasSelected = Profile?.LoadoutPreferences
+                        .FirstOrDefault(it => it.LoadoutName == selector.Loadout.ID)
+                        ?.Selected ?? false;
+                    var selected = preference.Selected && (wasSelected || CheckPatreonPoints(-selector.Loadout.Cost, true));
+
+                    // Update Preferences
+                    Profile = Profile?.WithLoadoutPreference(
+                        selector.Loadout.ID,
+                        selected,
+                        preference.CustomName,
+                        preference.CustomDescription,
+                        preference.CustomColorTint,
+                        preference.CustomHeirloom);
+                    IsDirty = true;
+                    UpdateLoadoutPreferences();
+                    UpdatePatreonLoadoutPreferences();
+                    SetProfile(Profile, CharacterSlot);
+                };
+
+                PatreonLoadoutsList.AddChild(selector);
+            }
+
+            if (_patreonLoadoutPreferences.Count == 0)
+            {
+                PatreonLoadoutsList.AddChild(new Label
+                {
+                    Text = Loc.GetString("humanoid-profile-editor-patreon-loadouts-no-loadouts"),
+                    HorizontalAlignment = HAlignment.Center,
+                    Margin = new Thickness(0, 8),
+                });
+            }
+        }
+
+        // Mirrors the regular loadout tab's UpdateSelector: flags unusable/unwearable entries
+        private void UpdatePatreonSelector(LoadoutPreferenceSelector selector, bool usable, bool showUnusable)
+        {
+            selector.Valid = usable;
+            selector.ShowUnusable = showUnusable;
+
+            foreach (var item in selector.Loadout.Items)
+            {
+                if (_dummyLoadouts.TryGetValue(selector.Loadout.ID + selector.Loadout.Items.IndexOf(item), out var entity)
+                    && _entManager.GetComponent<MetaDataComponent>(entity).EntityPrototype!.ID == item)
+                {
+                    if (!_entManager.HasComponent<ClothingComponent>(entity))
+                    {
+                        selector.Wearable = true;
+                        continue;
+                    }
+                    selector.Wearable = _characterRequirementsSystem.CanEntityWearItem(PreviewDummy, entity);
+                    continue;
+                }
+
+                entity = _entManager.SpawnEntity(item, MapCoordinates.Nullspace);
+                _dummyLoadouts[selector.Loadout.ID + selector.Loadout.Items.IndexOf(item)] = entity;
+
+                if (!_entManager.HasComponent<ClothingComponent>(entity))
+                {
+                    selector.Wearable = true;
+                    continue;
+                }
+                selector.Wearable = _characterRequirementsSystem.CanEntityWearItem(PreviewDummy, entity);
+            }
+        }
+
+        private void TryRemoveUnusablePatreonLoadouts()
+        {
+            // Confirm the user wants to remove unusable loadouts
+            if (!AdminUIHelpers.TryConfirm(PatreonLoadoutsRemoveUnusableButton, _confirmationData))
+                return;
+
+            // Remove unusable and unwearable loadouts
+            foreach (var selector in _patreonLoadoutPreferences
+                .Where(l => !l.Valid || !l.Wearable).ToList())
+                Profile = Profile?.WithLoadoutPreference(selector.Loadout.ID, false);
+            UpdateCharacterRequired();
+        }
+
+        private bool CheckPatreonPoints(int points, bool preference)
+        {
+            var temp = PatreonLoadoutsPointsBar.Value + points;
+            return preference ? temp >= 0 : temp < 0;
+        }
+
+        #endregion
+
         #endregion
 
         #region Functions
@@ -3886,6 +4099,30 @@ namespace Content.Client.Lobby.UI
                 }
             }
         }
+
+        // #Cythisiax Add - drop Patreon loadouts the local player no longer qualifies for
+        private void RemoveSupporterLoadouts()
+        {
+            if (Profile?.LoadoutPreferences == null)
+                return;
+
+            var user = _playerManager.LocalUser;
+            if (user == null)
+                return;
+
+            foreach (var pref in Profile.LoadoutPreferences.Where(l => l.Selected))
+            {
+                var loadoutProto = _prototypeManager.Index<LoadoutPrototype>(pref.LoadoutName);
+                if (loadoutProto.SupporterTier == SupporterTier.None)
+                    continue;
+
+                if (!_supporterMan.TryGetSupporterTier(user.Value, out var tier)
+                    || loadoutProto.SupporterTier > tier)
+                {
+                    Profile.LoadoutPreferences.Remove(pref);
+                }
+            }
+        }
         // Forge-Change-End
 
         #endregion
@@ -3898,10 +4135,12 @@ namespace Content.Client.Lobby.UI
             RemoveSuperfluousTraits(); // Forge-Change
             RemoveSuperfluousLoadouts(); // Forge-Change
             RemoveSponsorLoadouts(); // Forge-Change
+            RemoveSupporterLoadouts(); // #Cythisiax Add - Patreon loadout cleanup
 
             UpdateRoleRequirements();
             UpdateTraits(TraitsShowUnusableButton.Pressed);
             UpdateLoadouts(LoadoutsShowUnusableButton.Pressed);
+            UpdatePatreonLoadouts(PatreonLoadoutsShowUnusableButton.Pressed); // #Cythisiax Add
         }
     }
 }
