@@ -1861,6 +1861,12 @@ namespace Content.Server.Database.Migrations.Postgres
                         .HasColumnType("text")
                         .HasColumnName("name_color");
 
+                    b.Property<int>("Tier")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0)
+                        .HasColumnName("tier");
+
                     b.Property<string>("Title")
                         .HasColumnType("text")
                         .HasColumnName("title");

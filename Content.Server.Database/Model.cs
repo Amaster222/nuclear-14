@@ -1489,6 +1489,9 @@ namespace Content.Server.Database
         public string? Title { get; set; }
 
         public string? NameColor { get; set; }
+
+        // #Cythisiax Added - Patreon tier (0 = not a supporter), gates supporter-exclusive features.
+        public int Tier { get; set; }
     }
 
     /// A hardware ID value together with its <see cref="HwidType"/>.

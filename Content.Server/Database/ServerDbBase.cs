@@ -2292,7 +2292,7 @@ INSERT INTO player_round (players_id, rounds_id) VALUES ({players[player]}, {id}
             return await db.DbContext.Supporter.ToListAsync(cancel);
         }
 
-        public async Task UpsertSupporterAsync(Guid userId, string username, string? title, string? nameColor)
+        public async Task UpsertSupporterAsync(Guid userId, string username, string? title, string? nameColor, int tier = 0)
         {
             await using var db = await GetDb();
 
@@ -2305,6 +2305,7 @@ INSERT INTO player_round (players_id, rounds_id) VALUES ({players[player]}, {id}
                 existing.Username = username;
                 existing.Title = title;
                 existing.NameColor = nameColor;
+                existing.Tier = tier; // #Cythisiax Added - persist Patreon tier
             }
             else
             {
@@ -2314,6 +2315,7 @@ INSERT INTO player_round (players_id, rounds_id) VALUES ({players[player]}, {id}
                     Username = username,
                     Title = title,
                     NameColor = nameColor,
+                    Tier = tier, // #Cythisiax Added - persist Patreon tier
                 });
             }
 

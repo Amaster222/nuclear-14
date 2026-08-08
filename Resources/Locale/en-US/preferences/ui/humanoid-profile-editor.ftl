@@ -84,6 +84,9 @@ humanoid-profile-editor-naming-rules-warning = Warning: Offensive or LRP IC name
 
 humanoid-profile-editor-loadouts-tab = Loadout
 humanoid-profile-editor-loadouts-points-label = You have {$points}/{$max} points
+# #Cythisiax Add - Patreon supporter-exclusive loadout tab
+humanoid-profile-editor-patreon-loadouts-tab = Patreon
+humanoid-profile-editor-patreon-loadouts-no-loadouts = No Patreon loadouts available for your tier.
 humanoid-profile-editor-loadouts-show-unusable-button = Show Unusable Loadouts
 humanoid-profile-editor-loadouts-show-unusable-button-tooltip =
     When enabled, loadouts that your current character setup cannot use will be highlighted in red.

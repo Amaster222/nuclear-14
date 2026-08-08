@@ -1770,6 +1770,12 @@ namespace Content.Server.Database.Migrations.Sqlite
                         .HasColumnType("TEXT")
                         .HasColumnName("name_color");
 
+                    b.Property<int>("Tier")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(0)
+                        .HasColumnName("tier");
+
                     b.Property<string>("Title")
                         .HasColumnType("TEXT")
                         .HasColumnName("title");

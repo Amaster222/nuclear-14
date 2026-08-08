@@ -823,3 +823,9 @@ loadout-name-LoadoutNCRRangerFoxArmor = fox ranger combat armor
 loadout-name-MisfitsLoadoutHeadAntlerSkull = antler skullcap
 loadout-name-MisfitsLoadoutBoSMidwestCommanderPowerArmor = BoS Commander Power Armor
 loadout-name-MisfitsLoadoutFollowerResponderDuster = Follower Responder Duster
+
+# #Cythisiax Add - Patreon supporter loadout names/category
+loadout-category-Patreon = Patreon
+loadout-name-LoadoutPatreonSilverUniformVaultJumpsuit = vault jumpsuit (Patreon)
+loadout-name-LoadoutPatreonGoldCombatBoots = combat boots (Patreon)
+loadout-name-LoadoutPatreonNuclearPistol10mm = 10mm pistol (Patreon)

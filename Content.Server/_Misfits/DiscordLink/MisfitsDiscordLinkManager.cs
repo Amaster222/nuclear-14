@@ -292,8 +292,9 @@ public sealed class MisfitsDiscordLinkManager
             username = record?.LastSeenUserName ?? userId.ToString();
         }
 
-        await _supporters.SetSupporterAsync(userId.UserId, username, match.Title, match.Color);
-        _sawmill.Info($"Synced Discord supporter data for {username} ({userId}) from role {match.Role} with priority {match.Priority}.");
+        // #Cythisiax Edited - pass the Patreon tier from the matched role mapping
+        await _supporters.SetSupporterAsync(userId.UserId, username, match.Title, match.Color, (SupporterTier) match.Tier);
+        _sawmill.Info($"Synced Discord supporter data for {username} ({userId}) from role {match.Role} with priority {match.Priority}, tier {match.Tier}.");
     }
 
     private void Send(NetUserId userId, bool linked, string link = "", string error = "")
@@ -410,5 +411,10 @@ public sealed class MisfitsDiscordLinkManager
 
         [JsonPropertyName("priority")]
         public int Priority { get; init; }
+
+        // #Cythisiax Added - Patreon tier granted by this role (1=Silver, 2=Gold, 3=Nuclear).
+        // Defaults to 1 so any supporter role unlocks at least the Silver tier.
+        [JsonPropertyName("tier")]
+        public int Tier { get; init; } = 1;
     }
 }
