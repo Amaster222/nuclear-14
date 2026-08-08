@@ -15,6 +15,7 @@ using Content.Server.Database;
 using Content.Server._Misfits.Supporter;
 using Content.Shared.CCVar;
 using Content.Shared._Misfits.DiscordLink;
+using Content.Shared._Misfits.Supporter; // #Cythisiax Add - Patreon supporter tier
 using Robust.Server.Player;
 using Robust.Shared.Configuration;
 using Robust.Shared.ContentPack;

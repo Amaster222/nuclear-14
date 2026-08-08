@@ -60,7 +60,7 @@ public sealed class SupporterManager : ISupporterManager, ISharedSupporterManage
             lock (_cache)
             {
                 foreach (var row in rows)
-                    _cache[row.UserId] = new SupporterEntry(row.UserId, row.Username, row.Title, row.NameColor, row.Tier);
+                    _cache[row.UserId] = new SupporterEntry(row.UserId, row.Username, row.Title, row.NameColor, (SupporterTier) row.Tier);
             }
             _sawmill.Info($"Loaded {_cache.Count} supporter(s) from database.");
 
@@ -101,7 +101,7 @@ public sealed class SupporterManager : ISupporterManager, ISharedSupporterManage
         await _writeSemaphore.WaitAsync();
         try
         {
-            await _db.UpsertSupporterAsync(userId, username, title, nameColor, tier);
+            await _db.UpsertSupporterAsync(userId, username, title, nameColor, (int) tier);
             lock (_cache)
                 _cache[userId] = new SupporterEntry(userId, username, title, nameColor, tier);
             // #Cythisiax Added - keep the affected client's tier in sync
