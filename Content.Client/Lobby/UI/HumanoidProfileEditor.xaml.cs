@@ -220,9 +220,9 @@ namespace Content.Client.Lobby.UI
             IResourceManager resManager, // Forge-Change
             JobRequirementsManager requirements,
             MarkingManager markings,
-            IRobustRandom random,, // Forge-Change
+            IRobustRandom random, // Forge-Change
+            SponsorManager sponsorMan, // Forge-Change
             SupporterManager supporterMan // #Cythisiax Add - Patreon supporter loadouts
-            SponsorManager sponsorMan // Forge-Change
             )
         {
             RobustXamlLoader.Load(this);
