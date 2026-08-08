@@ -145,7 +145,6 @@
         Blunt: 0.70
         Slash: 0.70
         Piercing: 0.75
-        Heat: 0.85 # #Misfits Add - energy protection, one tier weaker than ballistic; scrap plate sheds bullets better than beams
 
 # --- Gladiator Boots ---
 - type: entity
@@ -182,7 +181,6 @@
         Blunt: 0.80
         Slash: 0.80
         Piercing: 0.85
-        Heat: 0.90 # #Misfits Add - energy protection, one tier weaker than ballistic; scrap plate sheds bullets better than beams
 
 # #Misfits Add - Ranger armor for the Supermutant Ranger job.
 # Tagged SupermutantWearable so only supermutants can equip it in Outerclothing slot.
@@ -205,7 +203,6 @@
         Blunt: 0.75
         Slash: 0.75
         Piercing: 0.70
-        Heat: 0.80 # #Misfits Add - energy protection, one tier weaker than ballistic; scrap plate sheds bullets better than beams
 
 - type: entity
   parent: ClothingSuperMutantRangerArmor
@@ -240,7 +237,6 @@
         Blunt: 0.85
         Slash: 0.85
         Piercing: 0.80
-        Heat: 0.85 # #Misfits Add - energy protection, one tier weaker than ballistic; scrap plate sheds bullets better than beams
 
 - type: entity
   parent: ClothingSuperMutantRangerHat
@@ -317,7 +313,6 @@
         Blunt: 0.85
         Slash: 0.85
         Piercing: 0.80
-        Heat: 0.85 # #Misfits Add - energy protection, one tier weaker than ballistic; scrap plate sheds bullets better than beams
 
 - type: entity
   parent: ClothingMaskBase
@@ -383,7 +378,6 @@
         Blunt: 0.75
         Slash: 0.75
         Piercing: 0.70
-        Heat: 0.80 # #Misfits Add - energy protection, one tier weaker than ballistic; scrap plate sheds bullets better than beams
 
 - type: entity
   parent: ClothingHeadBase
@@ -404,7 +398,6 @@
         Blunt: 0.85
         Slash: 0.85
         Piercing: 0.80
-        Heat: 0.85 # #Misfits Add - energy protection, one tier weaker than ballistic; scrap plate sheds bullets better than beams
 
 # #Misfits Add - Extra supermutant outer outfit (outfit C) — spawnable standalone wearable.
 - type: entity
@@ -504,7 +497,6 @@
       coefficients:
         Blunt: 0.75
         Slash: 0.75
-        Heat: 0.80 # #Misfits Add - energy protection, one tier weaker than the Blunt/Slash value as there is no Piercing here
 
 # #Misfits Add - Supermutant Tribal Gloves
 - type: entity
@@ -583,7 +575,6 @@
         Blunt: 0.85
         Slash: 0.85
         Piercing: 0.80
-        Heat: 0.85 # #Misfits Add - energy protection, one tier weaker than ballistic; scrap plate sheds bullets better than beams
 
   # Fancy suits for fancy people
 
@@ -650,7 +641,6 @@
         Blunt: 0.75
         Slash: 0.75
         Piercing: 0.70
-        Heat: 0.80 # #Misfits Add - energy protection, one tier weaker than ballistic; scrap plate sheds bullets better than beams
 
 # Scavenged Armor Set
 
@@ -673,7 +663,6 @@
         Blunt: 0.70
         Slash: 0.70
         Piercing: 0.75
-        Heat: 0.85 # #Misfits Add - energy protection, one tier weaker than ballistic; scrap plate sheds bullets better than beams
 
 - type: entity
   parent: ClothingShoesBase
@@ -708,7 +697,6 @@
         Blunt: 0.80
         Slash: 0.80
         Piercing: 0.85
-        Heat: 0.90 # #Misfits Add - energy protection, one tier weaker than ballistic; scrap plate sheds bullets better than beams
 
 - type: entity
   parent: ClothingHandsBase
