@@ -223,7 +223,7 @@
                 <BoxContainer HorizontalExpand="True" Margin="0 0 0 5">
                     <Button
                         Name="PatreonLoadoutsShowUnusableButton"
-                        Text="{Loc humanoid-profile-editor-loadouts-show-unusable-button}"
+                        Text="Show Unusable"
                         ToolTip="{Loc humanoid-profile-editor-loadouts-show-unusable-button-tooltip}"
                         ToggleMode="True"
                         HorizontalAlignment="Stretch"
@@ -231,7 +231,7 @@
                         StyleClasses="OpenRight" />
                     <Button
                         Name="PatreonLoadoutsRemoveUnusableButton"
-                        Text="{Loc humanoid-profile-editor-loadouts-remove-unusable-button}"
+                        Text="Remove Unusable"
                         ToolTip="{Loc humanoid-profile-editor-loadouts-remove-unusable-button-tooltip}"
                         HorizontalAlignment="Stretch"
                         HorizontalExpand="True"

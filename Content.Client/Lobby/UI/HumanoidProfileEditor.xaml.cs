@@ -3813,6 +3813,11 @@ namespace Content.Client.Lobby.UI
 
                 preferenceSelector.Preference = preference;
             }
+
+            // Set the remove unusable button's label to have the correct amount of unusable loadouts
+            PatreonLoadoutsRemoveUnusableButton.Text = Loc.GetString("humanoid-profile-editor-loadouts-remove-unusable-button",
+                ("count", _patreonLoadoutPreferences.Count(l => !l.Valid || !l.Wearable)));
+            AdminUIHelpers.RemoveConfirm(PatreonLoadoutsRemoveUnusableButton, _confirmationData);
         }
 
         public void UpdatePatreonLoadouts(bool? showUnusable = null, bool reload = false)
