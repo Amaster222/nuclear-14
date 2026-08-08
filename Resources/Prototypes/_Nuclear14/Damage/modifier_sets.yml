@@ -210,22 +210,21 @@
     Piercing: 4
     Heat: 4
 
-# Misfits Change - FEV-mutated super mutants: 50% damage reduction across the board, immune to radiation.
-# Shared with super mutant body parts so limbs are not the weak link in the chain.
+# Misfits Change - FEV-mutated super mutants: 30% damage reduction across the board, immune to radiation.
 - type: damageModifierSet
   id: SuperMutant
   coefficients:
-    Blunt: 0.5
-    Slash: 0.5
-    Piercing: 0.5
-    Heat: 0.5
-    Shock: 0.5
-    Cold: 0.5
-    Caustic: 0.5
-    Poison: 0.5
-    Asphyxiation: 0.5
-    Bloodloss: 0.5
-    Cellular: 0.5
+    Blunt: 0.7
+    Slash: 0.7
+    Piercing: 0.7
+    Heat: 0.7
+    Shock: 0.7
+    Cold: 0.7
+    Caustic: 0.7
+    Poison: 0.7
+    Asphyxiation: 0.7
+    Bloodloss: 0.7
+    Cellular: 0.7
     Radiation: 0.0
 
 # Misfits Change - Super Mutant damage modifier sets
