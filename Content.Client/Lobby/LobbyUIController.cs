@@ -139,6 +139,9 @@ public sealed class LobbyUIController : UIController, IOnStateEntered<LobbyState
 
         if (obj.WasModified<LoadoutPrototype>())
             _profileEditor.UpdateLoadouts(null, true);
+
+        if (obj.WasModified<LoadoutPrototype>() || obj.WasModified<LoadoutCategoryPrototype>())
+            _profileEditor.UpdatePatreonLoadouts(null, true); // #Cythisiax Add - Patreon tab refresh on prototype reload
     }
 
 
