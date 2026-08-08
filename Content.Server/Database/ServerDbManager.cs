@@ -445,7 +445,7 @@ namespace Content.Server.Database
         #region Supporter
 
         Task<List<Supporter>> GetAllSupportersAsync(CancellationToken cancel = default);
-        Task UpsertSupporterAsync(Guid userId, string username, string? title, string? nameColor);
+        Task UpsertSupporterAsync(Guid userId, string username, string? title, string? nameColor, int tier = 0);
         Task RemoveSupporterAsync(Guid userId);
 
         #endregion
@@ -1340,10 +1340,10 @@ namespace Content.Server.Database
             return RunDbCommand(() => _db.GetAllSupportersAsync(cancel));
         }
 
-        public Task UpsertSupporterAsync(Guid userId, string username, string? title, string? nameColor)
+        public Task UpsertSupporterAsync(Guid userId, string username, string? title, string? nameColor, int tier = 0)
         {
             DbWriteOpsMetric.Inc();
-            return RunDbCommand(() => _db.UpsertSupporterAsync(userId, username, title, nameColor));
+            return RunDbCommand(() => _db.UpsertSupporterAsync(userId, username, title, nameColor, tier));
         }
 
         public Task RemoveSupporterAsync(Guid userId)
