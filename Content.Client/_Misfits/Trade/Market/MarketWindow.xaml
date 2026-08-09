@@ -4,74 +4,96 @@
     xmlns:controls="clr-namespace:Robust.Client.UserInterface.CustomControls;assembly=Robust.Client"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     x:Class="Content.Client._Misfits.Trade.Market.MarketWindow"
-    MinSize="800 600">
+    MinSize="900 650">
     <BoxContainer Orientation="Vertical">
+        <!-- Header / balances -->
+        <PanelContainer StyleClasses="PanelDark" Margin="6 4">
+            <BoxContainer Orientation="Horizontal" SeparationOverride="12">
+                <Label Name="CapsLabel" Text="Caps: 0" StyleClasses="LabelHeading" />
+                <Label Name="NcrLabel" Text="NCR: 0" />
+                <Label Name="SilverLabel" Text="Silver: 0" />
+                <Label Name="GoldLabel" Text="Gold: 0" />
+            </BoxContainer>
+        </PanelContainer>
+
         <!-- Tab bar -->
-        <BoxContainer Name="TabBar" Orientation="Horizontal" SeparationOverride="2" Margin="8 4 8 0">
-            <Button Name="TabMarketBtn" Text="Market" Disabled="True" />
+        <BoxContainer Name="TabBar" Orientation="Horizontal" SeparationOverride="4" Margin="8 4 8 0">
+            <Button Name="TabMarketBtn" Text="Item Overview" Disabled="True" StyleClasses="OpenBoth" />
             <Button Name="TabMyListingsBtn" Text="My Listings" />
-            <Button Name="TabListNewBtn" Text="+ List Item" />
-            <Button Name="TabActivityBtn" Text="Activity" />
+            <Button Name="TabListNewBtn" Text="+ List Item" StyleClasses="OpenRight" />
+            <Button Name="TabActivityBtn" Text="Activity Feed" />
         </BoxContainer>
 
-        <!-- Balances bar -->
-        <BoxContainer Name="BalancesBar" Orientation="Horizontal" SeparationOverride="8" Margin="8 2 8 0">
-            <Label Name="CapsLabel" Text="Caps: 0" />
-            <Label Name="NcrLabel" Text="NCR: 0" />
-            <Label Name="SilverLabel" Text="Silver: 0" />
-            <Label Name="GoldLabel" Text="Gold: 0" />
-        </BoxContainer>
-
-        <!-- Market tab -->
+        <!-- Item Overview tab (EVE-like) -->
         <ScrollContainer Name="TabMarketContent" Visible="True" HScrollEnabled="False" VerticalExpand="True" Margin="8 4 8 8">
-            <BoxContainer Name="MarketListContainer" Orientation="Vertical" />
+            <BoxContainer Name="MarketItemsContainer" Orientation="Vertical" SeparationOverride="4" />
         </ScrollContainer>
 
         <!-- My Listings tab -->
         <ScrollContainer Name="TabMyListingsContent" Visible="False" HScrollEnabled="False" VerticalExpand="True" Margin="8 4 8 8">
-            <BoxContainer Name="MyListingsContainer" Orientation="Vertical" />
+            <BoxContainer Name="MyListingsContainer" Orientation="Vertical" SeparationOverride="2" />
         </ScrollContainer>
 
         <!-- List New Item tab -->
         <ScrollContainer Name="TabListNewContent" Visible="False" HScrollEnabled="False" VerticalExpand="True" Margin="8 4 8 8">
             <BoxContainer Orientation="Vertical" SeparationOverride="8">
-                <Label Text="List an item from your inventory" StyleClasses="LabelHeading" />
-                <BoxContainer Orientation="Horizontal" SeparationOverride="4">
-                    <Label Text="Prototype ID:" MinWidth="100" />
-                    <LineEdit Name="ListProtoId" PlaceHolder="e.g. N14MaterialSteel1" HorizontalExpand="True" />
-                </BoxContainer>
-                <BoxContainer Orientation="Horizontal" SeparationOverride="4">
-                    <Label Text="Quantity:" MinWidth="100" />
-                    <LineEdit Name="ListQuantity" PlaceHolder="1" MinWidth="80" />
-                </BoxContainer>
-                <BoxContainer Orientation="Horizontal" SeparationOverride="4">
-                    <Label Text="Stack Count:" MinWidth="100" />
-                    <LineEdit Name="ListStackCount" PlaceHolder="0" MinWidth="80" />
-                </BoxContainer>
-                <BoxContainer Orientation="Horizontal" SeparationOverride="4">
-                    <Label Text="Currency:" MinWidth="100" />
-                    <OptionButton Name="ListCurrency" MinWidth="150" />
-                </BoxContainer>
-                <BoxContainer Orientation="Horizontal" SeparationOverride="4">
-                    <Label Text="Price per unit:" MinWidth="100" />
-                    <LineEdit Name="ListPrice" PlaceHolder="10" MinWidth="80" />
-                    <Label Name="ListFeeLabel" Text="" />
-                </BoxContainer>
-                <BoxContainer Orientation="Horizontal" SeparationOverride="4" Visible="False" Name="BarterRow">
-                    <Label Text="Requested item ID:" MinWidth="100" />
-                    <LineEdit Name="ListRequestedItem" PlaceHolder="e.g. N14MaterialAntiseptic" HorizontalExpand="True" />
-                </BoxContainer>
-                <BoxContainer Orientation="Horizontal" SeparationOverride="4" Visible="False" Name="BarterQtyRow">
-                    <Label Text="Requested qty:" MinWidth="100" />
-                    <LineEdit Name="ListRequestedQty" PlaceHolder="1" MinWidth="80" />
-                </BoxContainer>
-                <Button Name="ListSubmitBtn" Text="LIST ITEM (10% fee)" />
+                <PanelContainer StyleClasses="PanelDark">
+                    <BoxContainer Orientation="Vertical" SeparationOverride="6" Margin="8 6">
+                        <Label Text="1. Pick item from your hands" StyleClasses="LabelHeading" />
+                        <BoxContainer Orientation="Horizontal" SeparationOverride="8">
+                            <Button Name="GetHeldItemBtn" Text="Use Held Item" MinWidth="140" />
+                            <Label Name="HeldItemLabel" Text="Nothing in hand" VerticalAlignment="Center" />
+                        </BoxContainer>
+                    </BoxContainer>
+                </PanelContainer>
+
+                <PanelContainer StyleClasses="PanelDark">
+                    <BoxContainer Orientation="Vertical" SeparationOverride="6" Margin="8 6">
+                        <Label Text="2. Set price &amp; currency" StyleClasses="LabelHeading" />
+                        <BoxContainer Orientation="Horizontal" SeparationOverride="8">
+                            <Label Text="Proto ID:" MinWidth="90" VerticalAlignment="Center" />
+                            <LineEdit Name="ListProtoId" PlaceHolder="e.g. N14MaterialSteel1" HorizontalExpand="True" />
+                        </BoxContainer>
+                        <BoxContainer Orientation="Horizontal" SeparationOverride="8">
+                            <Label Text="Qty:" MinWidth="90" VerticalAlignment="Center" />
+                            <LineEdit Name="ListQuantity" PlaceHolder="1" MinWidth="70" />
+                            <Label Text="Stack:" VerticalAlignment="Center" />
+                            <LineEdit Name="ListStackCount" PlaceHolder="0" MinWidth="70" />
+                        </BoxContainer>
+                        <BoxContainer Orientation="Horizontal" SeparationOverride="8">
+                            <Label Text="Currency:" MinWidth="90" VerticalAlignment="Center" />
+                            <OptionButton Name="ListCurrency" MinWidth="150" />
+                        </BoxContainer>
+                        <BoxContainer Orientation="Horizontal" SeparationOverride="8">
+                            <Label Text="Price/unit:" MinWidth="90" VerticalAlignment="Center" />
+                            <LineEdit Name="ListPrice" PlaceHolder="10" MinWidth="80" />
+                            <Label Name="ListFeeLabel" Text="" VerticalAlignment="Center" />
+                        </BoxContainer>
+                    </BoxContainer>
+                </PanelContainer>
+
+                <!-- Barter fields (hidden unless Barter selected) -->
+                <PanelContainer Name="BarterPanel" Visible="False" StyleClasses="PanelDark">
+                    <BoxContainer Orientation="Vertical" SeparationOverride="6" Margin="8 6">
+                        <Label Text="3. Barter — what you want in return" StyleClasses="LabelHeading" />
+                        <BoxContainer Orientation="Horizontal" SeparationOverride="8">
+                            <Label Text="Item ID:" MinWidth="90" VerticalAlignment="Center" />
+                            <LineEdit Name="ListRequestedItem" PlaceHolder="e.g. N14MaterialAntiseptic" HorizontalExpand="True" />
+                        </BoxContainer>
+                        <BoxContainer Orientation="Horizontal" SeparationOverride="8">
+                            <Label Text="Qty:" MinWidth="90" VerticalAlignment="Center" />
+                            <LineEdit Name="ListRequestedQty" PlaceHolder="1" MinWidth="80" />
+                        </BoxContainer>
+                    </BoxContainer>
+                </PanelContainer>
+
+                <Button Name="ListSubmitBtn" Text="LIST ITEM (10% fee)" StyleClasses="OpenBoth" />
             </BoxContainer>
         </ScrollContainer>
 
-        <!-- Activity tab -->
+        <!-- Activity Feed tab -->
         <ScrollContainer Name="TabActivityContent" Visible="False" HScrollEnabled="False" VerticalExpand="True" Margin="8 4 8 8">
-            <BoxContainer Name="FeedContainer" Orientation="Vertical" />
+            <BoxContainer Name="FeedContainer" Orientation="Vertical" SeparationOverride="1" />
         </ScrollContainer>
     </BoxContainer>
 </controls:DefaultWindow>
