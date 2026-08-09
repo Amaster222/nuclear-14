@@ -7,10 +7,16 @@ namespace Content.Shared._Misfits.Trade.Market;
 /// <summary>
 /// Marker component for the Wendover Free Market terminal.
 /// Interaction is handled by MarketSystem (server) and MarketBoundUi (client).
+/// Tracks per-player deposit storage entities.
 /// </summary>
 [RegisterComponent, NetworkedComponent]
 public sealed partial class MarketTerminalComponent : Component
 {
+    /// <summary>
+    /// Per-player deposit storage entities, keyed by user GUID.
+    /// </summary>
+    [DataField]
+    public Dictionary<Guid, EntityUid> PlayerStorage = new();
 }
 
 /// <summary>

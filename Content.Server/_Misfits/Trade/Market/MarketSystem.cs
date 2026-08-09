@@ -8,6 +8,7 @@ using Content.Shared._Misfits.Trade.Market;
 using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Interaction;
 using Content.Shared.Stacks;
+using Content.Shared.Storage;
 using Content.Shared.Verbs;
 using Robust.Server.Containers;
 using Robust.Server.GameObjects;
@@ -98,6 +99,14 @@ public sealed class MarketSystem : EntitySystem
             Priority = 10,
             Act = () => OpenMarketForPlayer(user, ent),
         });
+
+        // "Open Market Storage" — opens the player's deposit storage grid
+        args.Verbs.Add(new AlternativeVerb
+        {
+            Text = Loc.GetString("market-verb-storage"),
+            Priority = 9,
+            Act = () => OpenDepositStorage(user, ent),
+        });
     }
 
     /// <summary>
@@ -176,10 +185,28 @@ public sealed class MarketSystem : EntitySystem
         var userId = session.UserId;
         var sellerCharName = session.Name;
 
-        // ── Validate: item exists in player's possession ──────────────────
-        if (!TryFindItemInPossession(user.Value, msg.PrototypeId, out var itemEnt))
+        // ── Validate: item exists in player's deposit storage ─────────────
+        var comp = terminal.Comp;
+        if (!comp.PlayerStorage.TryGetValue(userId.UserId, out var storageUid) || !Exists(storageUid)
+            || !TryComp<StorageComponent>(storageUid, out var storageComp))
         {
-            _log.Debug($"List rejected: {sellerCharName} doesn't have {msg.PrototypeId}");
+            _log.Debug($"List rejected: {sellerCharName} has no deposit storage");
+            return;
+        }
+
+        EntityUid itemEnt = EntityUid.Invalid;
+        foreach (var contained in storageComp.Container.ContainedEntities)
+        {
+            if (MetaData(contained).EntityPrototype?.ID == msg.PrototypeId)
+            {
+                itemEnt = contained;
+                break;
+            }
+        }
+
+        if (itemEnt == EntityUid.Invalid)
+        {
+            _log.Debug($"List rejected: {sellerCharName} doesn't have {msg.PrototypeId} in storage");
             return;
         }
 
@@ -220,7 +247,9 @@ public sealed class MarketSystem : EntitySystem
             Status = "Active",
         };
 
-        // ── Move item into terminal storage ───────────────────────────────
+        // ── Move item from deposit storage to listing container ───────────
+        _container.Remove(itemEnt, storageComp.Container);
+
         var slotName = $"{ListingSlotPrefix}{listingId}";
         var slot = _container.EnsureContainer<ContainerSlot>(terminal.Owner, slotName);
         if (!_container.Insert(itemEnt, slot))
@@ -369,109 +398,81 @@ public sealed class MarketSystem : EntitySystem
         RefreshMarketState(terminal);
     }
 
-    // ── Deposit / Withdraw (player-private storage) ────────────────────────────
+    // ── Deposit Storage (per-player grid) ──────────────────────────────────────
 
-    /// <summary>
-    /// Deposit an item into the player's market storage via right-click verb.
-    /// </summary>
+    private EntityUid GetOrCreateDepositStorage(EntityUid terminal, EntityUid user)
+    {
+        if (!TryComp<ActorComponent>(user, out var actor))
+            return EntityUid.Invalid;
+
+        var userId = actor.PlayerSession.UserId.UserId;
+        var comp = Comp<MarketTerminalComponent>(terminal);
+
+        if (comp.PlayerStorage.TryGetValue(userId, out var existing) && Exists(existing))
+            return existing;
+
+        var storage = Spawn("MarketDepositStorage", Transform(terminal).Coordinates);
+        comp.PlayerStorage[userId] = storage;
+        Dirty(terminal, comp);
+        return storage;
+    }
+
+    private void OpenDepositStorage(EntityUid user, Entity<MarketTerminalComponent> terminal)
+    {
+        if (!TryComp<ActorComponent>(user, out var actor))
+            return;
+
+        var storage = GetOrCreateDepositStorage(terminal.Owner, user);
+        if (storage == EntityUid.Invalid)
+            return;
+
+        _ui.OpenUi(storage, StorageComponent.StorageUiKey.Key, actor.PlayerSession);
+    }
+
     private void DepositItemIntoMarket(EntityUid item, EntityUid terminal, EntityUid user)
     {
         if (!TryComp<ActorComponent>(user, out var actor))
             return;
 
-        var userId = actor.PlayerSession.UserId.UserId;
-
-        // Find an unused slot index
-        var slotIdx = 0;
-        string slotName;
-        do
-        {
-            slotName = $"{DepositSlotPrefix}{userId}_{slotIdx}";
-            slotIdx++;
-        } while (_container.TryGetContainer(terminal, slotName, out _));
-
-        var slot = _container.EnsureContainer<ContainerSlot>(terminal, slotName);
-        if (!_container.Insert(item, slot))
+        var storage = GetOrCreateDepositStorage(terminal, user);
+        if (storage == EntityUid.Invalid || !TryComp<StorageComponent>(storage, out var storageComp))
             return;
 
-        _log.Debug($"Market verb deposit: {actor.PlayerSession.Name} deposited {MetaData(item).EntityPrototype?.ID}");
-
-        // Refresh any open market UIs for this player
-        if (_openMarketUis.Contains(user) && TryComp<MarketTerminalComponent>(terminal, out var termComp))
-            RefreshMarketState((terminal, termComp));
-    }
-
-    private void OnDepositItem(Entity<MarketTerminalComponent> terminal, ref MarketDepositItemMessage msg)
-    {
-        // Get the player who has the UI open (actor from BUI session)
-        EntityUid? user = null;
-        foreach (var uid in _openMarketUis)
-        {
-            if (_ui.IsUiOpen(terminal.Owner, MarketUiKey.Key, uid))
-            {
-                user = uid;
-                break;
-            }
-        }
-
-        if (user == null)
+        if (!_container.Insert(item, storageComp.Container))
             return;
 
-        if (!TryComp<ActorComponent>(user.Value, out var actor))
-            return;
-
-        var userId = actor.PlayerSession.UserId.UserId;
-
-        // Find an item in the player's active hand
-        EntityUid? heldItem = null;
-        foreach (var held in _hands.EnumerateHeld(user.Value))
-        {
-            heldItem = held;
-            break;
-        }
-
-        if (heldItem == null)
-            return;
-
-        // Create a deposit slot keyed to this player
-        var slotIdx = 0;
-        string slotName;
-        do
-        {
-            slotName = $"{DepositSlotPrefix}{userId}_{slotIdx}";
-            slotIdx++;
-        } while (_container.TryGetContainer(terminal.Owner, slotName, out _));
-
-        var slot = _container.EnsureContainer<ContainerSlot>(terminal.Owner, slotName);
-        if (!_container.Insert(heldItem.Value, slot))
-            return;
-
-        RefreshMarketState(terminal);
+        if (_openMarketUis.Contains(user))
+            RefreshMarketState((terminal, Comp<MarketTerminalComponent>(terminal)));
     }
 
     private void OnWithdrawItem(Entity<MarketTerminalComponent> terminal, ref MarketWithdrawItemMessage msg)
     {
-        if (!TryComp<ActorComponent>(terminal, out var terminalActor))
+        EntityUid? user = null;
+        foreach (var uid in _openMarketUis)
+        {
+            if (_ui.IsUiOpen(terminal.Owner, MarketUiKey.Key, uid))
+            { user = uid; break; }
+        }
+        if (user == null || !TryComp<ActorComponent>(user.Value, out var actor))
             return;
 
-        var user = terminalActor.PlayerSession.AttachedEntity;
-        if (user == null || user == EntityUid.Invalid)
+        var userId = actor.PlayerSession.UserId.UserId;
+        var comp = terminal.Comp;
+        if (!comp.PlayerStorage.TryGetValue(userId, out var storage) || !Exists(storage)
+            || !TryComp<StorageComponent>(storage, out var storageComp))
             return;
 
-        // Only allow withdrawing your own items
-        var userId = terminalActor.PlayerSession.UserId.UserId;
-        if (!msg.SlotKey.StartsWith($"{DepositSlotPrefix}{userId}_"))
-            return;
+        EntityUid? toRemove = null;
+        foreach (var contained in storageComp.Container.ContainedEntities)
+        {
+            toRemove = contained;
+            break;
+        }
+        if (toRemove == null) return;
 
-        if (!_container.TryGetContainer(terminal.Owner, msg.SlotKey, out var container)
-            || container is not ContainerSlot slot
-            || slot.ContainedEntity is not { } item)
-            return;
-
-        _container.Remove(item, slot);
-
-        if (!_hands.TryPickupAnyHand(user.Value, item))
-            _xform.DropNextTo(item, user.Value);
+        _container.Remove(toRemove.Value, storageComp.Container);
+        if (!_hands.TryPickupAnyHand(user.Value, toRemove.Value))
+            _xform.DropNextTo(toRemove.Value, user.Value);
 
         RefreshMarketState(terminal);
     }
@@ -933,17 +934,14 @@ public sealed class MarketSystem : EntitySystem
             return entries;
 
         var userId = actor.PlayerSession.UserId.UserId;
-        var prefix = $"{DepositSlotPrefix}{userId}_";
+        var comp = terminal.Comp;
 
-        // Try slots numbered 0..99 (reasonable max deposits per player)
-        for (var idx = 0; idx < 100; idx++)
+        if (!comp.PlayerStorage.TryGetValue(userId, out var storage) || !Exists(storage)
+            || !TryComp<StorageComponent>(storage, out var storageComp))
+            return entries;
+
+        foreach (var item in storageComp.Container.ContainedEntities)
         {
-            var slotName = $"{DepositSlotPrefix}{userId}_{idx}";
-            if (!_container.TryGetContainer(terminal.Owner, slotName, out var container)
-                || container is not ContainerSlot slot
-                || slot.ContainedEntity is not { } item)
-                continue;
-
             var meta = MetaData(item);
             var protoId = meta.EntityPrototype?.ID ?? "";
             var protoName = meta.EntityPrototype?.Name ?? meta.EntityName;
@@ -951,7 +949,7 @@ public sealed class MarketSystem : EntitySystem
 
             entries.Add(new MarketDepositEntry
             {
-                SlotKey = slotName,
+                SlotKey = protoId,
                 ProtoId = protoId,
                 ProtoName = protoName,
                 StackCount = stackCount,
