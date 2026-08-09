@@ -65,6 +65,9 @@ public sealed class MarketSystem : EntitySystem
         SubscribeLocalEvent<MarketTerminalComponent, GetVerbsEvent<AlternativeVerb>>(OnGetVerbs);
         SubscribeLocalEvent<MarketTerminalComponent, BoundUIClosedEvent>(OnUiClosed);
 
+        // Global item verb: "Deposit to Market" when near a terminal
+        SubscribeLocalEvent<GetVerbsEvent<UtilityVerb>>(OnItemVerb);
+
         // Round lifecycle
         SubscribeLocalEvent<RoundStartedEvent>(OnRoundStarted);
 
@@ -96,6 +99,38 @@ public sealed class MarketSystem : EntitySystem
             Priority = 10,
             Act = () => OpenMarketForPlayer(user, ent),
         });
+    }
+
+    /// <summary>
+    /// Add "Deposit to Market" verb on items when the user is near a market terminal.
+    /// </summary>
+    private void OnItemVerb(GetVerbsEvent<UtilityVerb> args)
+    {
+        if (!args.CanInteract || !args.CanAccess || args.Target == args.User)
+            return;
+
+        var user = args.User;
+
+        // Check if the user is near a market terminal
+        var query = EntityQueryEnumerator<MarketTerminalComponent, TransformComponent>();
+        while (query.MoveNext(out var terminalUid, out _, out var terminalXform))
+        {
+            var userXform = Transform(user);
+            if (!terminalXform.Coordinates.InRange(EntityManager, userXform.Coordinates, 2f))
+                continue;
+
+            // Found a nearby terminal — add deposit verb for this item
+            var item = args.Target;
+            var terminal = terminalUid;
+
+            args.Verbs.Add(new UtilityVerb
+            {
+                Text = Loc.GetString("market-verb-deposit"),
+                Act = () => DepositItemIntoMarket(item, terminal, user),
+            });
+
+            break; // only add once
+        }
     }
 
     private void OnActivate(Entity<MarketTerminalComponent> ent,
@@ -291,11 +326,10 @@ public sealed class MarketSystem : EntitySystem
 
         // ── Deliver item to buyer ──────────────────────────────────────────
         var slotName = $"{ListingSlotPrefix}{listing.ListingId}";
-        if (_container.TryGetContainer(terminal.Owner, slotName, out var slot) &&
-            slot.ContainedEntities.Count > 0)
+        if (_container.TryGetContainer(terminal.Owner, slotName, out var container) &&
+            container is ContainerSlot buySlot && buySlot.ContainedEntity is { } storedItem)
         {
-            var storedItem = slot.ContainedEntities.First();
-            _container.Remove(storedItem, slot);
+            _container.Remove(storedItem, buySlot);
 
             // Try to put in buyer's hands, or at their feet
             if (!_hands.TryPickupAnyHand(buyer.Value, storedItem))
@@ -337,6 +371,39 @@ public sealed class MarketSystem : EntitySystem
     }
 
     // ── Deposit / Withdraw (player-private storage) ────────────────────────────
+
+    /// <summary>
+    /// Deposit an item into the player's market storage via right-click verb.
+    /// </summary>
+    private void DepositItemIntoMarket(EntityUid item, EntityUid terminal, EntityUid user)
+    {
+        if (!TryComp<ActorComponent>(user, out var actor))
+            return;
+
+        var userId = actor.PlayerSession.UserId.UserId;
+
+        // Find an unused slot index
+        var slotIdx = 0;
+        string slotName;
+        do
+        {
+            slotName = $"{DepositSlotPrefix}{userId}_{slotIdx}";
+            slotIdx++;
+        } while (_container.TryGetContainer(terminal, slotName, out _));
+
+        var slot = _container.EnsureContainer<ContainerSlot>(terminal, slotName);
+        if (!_container.Insert(item, slot))
+            return;
+
+        _log.Debug($"Market verb deposit: {actor.PlayerSession.Name} deposited {MetaData(item).EntityPrototype?.ID}");
+
+        // Refresh any open UI for this user
+        foreach (var openUser in _openMarketUis.ToList())
+        {
+            if (openUser == user && TryComp<MarketTerminalComponent>(terminal, out _))
+                RefreshMarketState((terminal, Comp<MarketTerminalComponent>(terminal)));
+        }
+    }
 
     private void OnDepositItem(Entity<MarketTerminalComponent> terminal, ref MarketDepositItemMessage msg)
     {
@@ -390,11 +457,11 @@ public sealed class MarketSystem : EntitySystem
         if (!msg.SlotKey.StartsWith($"{DepositSlotPrefix}{userId}_"))
             return;
 
-        if (!_container.TryGetContainer(terminal.Owner, msg.SlotKey, out var slot) ||
-            slot.ContainedEntities.Count == 0)
+        if (!_container.TryGetContainer(terminal.Owner, msg.SlotKey, out var container)
+            || container is not ContainerSlot slot
+            || slot.ContainedEntity is not { } item)
             return;
 
-        var item = slot.ContainedEntities.First();
         _container.Remove(item, slot);
 
         if (!_hands.TryPickupAnyHand(user.Value, item))
@@ -708,10 +775,10 @@ public sealed class MarketSystem : EntitySystem
                 var query = EntityQueryEnumerator<MarketTerminalComponent>();
                 while (query.MoveNext(out var uid, out _))
                 {
-                    if (_container.TryGetContainer(uid, slotName, out var slot))
+                    if (_container.TryGetContainer(uid, slotName, out var container) &&
+                        container is ContainerSlot purgeSlot && purgeSlot.ContainedEntity is { } purgeItem)
                     {
-                        foreach (var contained in slot.ContainedEntities.ToList())
-                            QueueDel(contained);
+                        QueueDel(purgeItem);
                     }
                 }
             }
@@ -862,31 +929,28 @@ public sealed class MarketSystem : EntitySystem
         var userId = actor.PlayerSession.UserId.UserId;
         var prefix = $"{DepositSlotPrefix}{userId}_";
 
-        // Enumerate all containers on the terminal matching this player's prefix
-        foreach (var container in _container.GetAllContainers(terminal.Owner))
+        // Try slots numbered 0..99 (reasonable max deposits per player)
+        for (var idx = 0; idx < 100; idx++)
         {
-            if (!container.ID.StartsWith(prefix))
+            var slotName = $"{DepositSlotPrefix}{userId}_{idx}";
+            if (!_container.TryGetContainer(terminal.Owner, slotName, out var container)
+                || container is not ContainerSlot slot
+                || slot.ContainedEntity is not { } item)
                 continue;
 
-            if (container is not ContainerSlot slot || slot.ContainedEntities.Count == 0)
-                continue;
+            var meta = MetaData(item);
+            var protoId = meta.EntityPrototype?.ID ?? "";
+            var protoName = meta.EntityPrototype?.Name ?? meta.EntityName;
+            var stackCount = TryComp<StackComponent>(item, out var stack) ? stack.Count : 0;
 
-            foreach (var item in slot.ContainedEntities)
+            entries.Add(new MarketDepositEntry
             {
-                var meta = MetaData(item);
-                var protoId = meta.EntityPrototype?.ID ?? "";
-                var protoName = meta.EntityPrototype?.Name ?? meta.EntityName;
-                var stackCount = TryComp<StackComponent>(item, out var stack) ? stack.Count : 0;
-
-                entries.Add(new MarketDepositEntry
-                {
-                    SlotKey = container.ID,
-                    ProtoId = protoId,
-                    ProtoName = protoName,
-                    StackCount = stackCount,
-                    Quantity = stackCount > 0 ? stackCount : 1,
-                });
-            }
+                SlotKey = slotName,
+                ProtoId = protoId,
+                ProtoName = protoName,
+                StackCount = stackCount,
+                Quantity = stackCount > 0 ? stackCount : 1,
+            });
         }
 
         return entries;
