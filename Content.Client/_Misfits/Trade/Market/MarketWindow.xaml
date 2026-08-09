@@ -18,7 +18,7 @@
         <!-- Tab bar -->
         <BoxContainer Name="TabBar" Orientation="Horizontal" SeparationOverride="2" Margin="0 2">
             <Button Name="TabExchangeBtn" Text="Market Exchange" Disabled="True" />
-            <Button Name="TabCreateBtn" Text="Create Order" />
+            <Button Name="TabCreateBtn" Text="Create Listing" />
             <Button Name="TabMyOrdersBtn" Text="My Orders &amp; Escrow" />
             <Button Name="TabActivityBtn" Text="Activity Feed" />
         </BoxContainer>
@@ -41,7 +41,7 @@
             </ScrollContainer>
         </BoxContainer>
 
-        <!-- Tab 1: Create Order -->
+        <!-- Tab 1: Create Listing -->
         <BoxContainer Name="TabCreate" Orientation="Vertical" SeparationOverride="6" Visible="False" VerticalExpand="True">
             <ScrollContainer VerticalExpand="True" HScrollEnabled="False">
                 <BoxContainer Orientation="Vertical" SeparationOverride="8" Margin="0 4">
@@ -52,8 +52,22 @@
 
                     <Control MinHeight="8" />
 
+                    <!-- Proto search -->
+                    <Label Text="Item Search" StyleClasses="LabelHeading" />
+                    <BoxContainer Orientation="Horizontal" SeparationOverride="8">
+                        <LineEdit Name="ProtoSearch" PlaceHolder="e.g. t51 or bars" HorizontalExpand="True" />
+                        <Button Name="ProtoSearchBtn" Text="Search" MinWidth="70" />
+                    </BoxContainer>
+                    <BoxContainer Name="ProtoResultsContainer" Orientation="Vertical" SeparationOverride="1" />
+
+                    <Control MinHeight="8" />
+
                     <!-- Order form -->
-                    <Label Text="New Order" StyleClasses="LabelHeading" />
+                    <Label Text="New Listing" StyleClasses="LabelHeading" />
+                    <BoxContainer Orientation="Horizontal" SeparationOverride="8">
+                        <Label Text="Item:" MinWidth="80" VerticalAlignment="Center" />
+                        <Label Name="SelectedProtoLabel" Text="(select from storage or search)" VerticalAlignment="Center" />
+                    </BoxContainer>
                     <BoxContainer Orientation="Horizontal" SeparationOverride="8">
                         <Label Text="Type:" MinWidth="80" VerticalAlignment="Center" />
                         <OptionButton Name="OrderTypeBtn" MinWidth="120" />
@@ -69,7 +83,7 @@
                         <LineEdit Name="OrderQty" PlaceHolder="1" MinWidth="60" />
                         <Label Name="OrderFeeLabel" Text="" VerticalAlignment="Center" />
                     </BoxContainer>
-                    <Button Name="SubmitOrderBtn" Text="PLACE ORDER" MinWidth="140" />
+                    <Button Name="SubmitOrderBtn" Text="PLACE LISTING" MinWidth="140" />
                 </BoxContainer>
             </ScrollContainer>
         </BoxContainer>

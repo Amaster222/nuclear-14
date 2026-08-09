@@ -1,14 +1,11 @@
 // #Cythisiax Add - Market terminal client BUI
 using Content.Shared._Misfits.Trade.Market;
-using Robust.Client.Player;
 using Robust.Client.UserInterface;
 
 namespace Content.Client._Misfits.Trade.Market;
 
 public sealed class MarketBoundUi(EntityUid owner, Enum uiKey) : BoundUserInterface(owner, uiKey)
 {
-    private readonly IPlayerManager _player = IoCManager.Resolve<IPlayerManager>();
-
     private MarketWindow? _window;
 
     protected override void Open()
@@ -18,9 +15,10 @@ public sealed class MarketBoundUi(EntityUid owner, Enum uiKey) : BoundUserInterf
         _window = new MarketWindow();
         _window.OnClose += Close;
         _window.OnListRequest += msg => SendMessage(msg);
-        _window.OnBuyRequest += (id, _) => { /* item detail select — future */ };
+        _window.OnBuyRequest += (id, _) => { };
         _window.OnClaim += orderId => SendMessage(new ClaimEscrowMessage(orderId));
         _window.OnCancel += orderId => SendMessage(new CancelOrderMessage(orderId));
+        _window.OnProtoSearch += query => SendMessage(new ProtoSearchMessage(query));
 
         _window.OpenCentered();
     }
@@ -32,7 +30,6 @@ public sealed class MarketBoundUi(EntityUid owner, Enum uiKey) : BoundUserInterf
         if (state is not MarketStateMessage marketState)
             return;
 
-        _window?.SetMarketName(marketState.MarketName);
         _window?.UpdateItemSummaries(marketState.ItemSummaries);
         _window?.UpdateMyOrders(marketState.MyOrders, marketState.MyCompletedOrders);
         _window?.UpdateFeed(marketState.Feed);
@@ -46,6 +43,13 @@ public sealed class MarketBoundUi(EntityUid owner, Enum uiKey) : BoundUserInterf
 
     private void OnBuyRequest(string listingId, int quantity) =>
         SendMessage(new CreateOrderMessage(listingId, quantity, "", 0, true));
+
+    protected override void ReceiveMessage(BoundUserInterfaceMessage message)
+    {
+        base.ReceiveMessage(message);
+        if (message is ProtoSearchResults results)
+            _window?.OnSearchResults(results.Results);
+    }
 
     protected override void Dispose(bool disposing)
     {

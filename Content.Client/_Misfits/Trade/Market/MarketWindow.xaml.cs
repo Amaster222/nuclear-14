@@ -14,6 +14,10 @@ public sealed partial class MarketWindow : DefaultWindow
     public event Action<string, int>? OnBuyRequest;
     public event Action<string>? OnClaim;
     public event Action<string>? OnCancel;
+    public event Action<string>? OnProtoSearch;
+
+    private string? _selectedProtoId;
+    private string? _selectedProtoName;
 
     public MarketWindow()
     {
@@ -36,6 +40,7 @@ public sealed partial class MarketWindow : DefaultWindow
 
         OrderPrice.OnTextChanged += _ => UpdateFeeLabel();
         SubmitOrderBtn.OnPressed += _ => SubmitOrder();
+        ProtoSearchBtn.OnPressed += _ => OnProtoSearch?.Invoke(ProtoSearch.Text.Trim());
     }
 
     private void SwitchTab(int i)
@@ -90,6 +95,18 @@ public sealed partial class MarketWindow : DefaultWindow
         {
             var row = new BoxContainer { Orientation = BoxContainer.LayoutOrientation.Horizontal, SeparationOverride = 8 };
             row.AddChild(new Label { Text = $"{e.ProtoName} x{e.Quantity}" + (e.StackCount > 0 ? $" ({e.StackCount})" : ""), HorizontalExpand = true, VerticalAlignment = VAlignment.Center });
+
+            var listBtn = new Button { Text = "List", MinWidth = 50 };
+            var protoId = e.ProtoId;
+            var protoName = e.ProtoName;
+            listBtn.OnPressed += _ =>
+            {
+                _selectedProtoId = protoId;
+                _selectedProtoName = protoName;
+                SelectedProtoLabel.Text = $"{protoName} ({protoId})";
+            };
+            row.AddChild(listBtn);
+
             var wBtn = new Button { Text = "Take", MinWidth = 50 };
             var s = e.SlotKey;
             wBtn.OnPressed += _ => onWithdraw?.Invoke(s);
@@ -145,12 +162,32 @@ public sealed partial class MarketWindow : DefaultWindow
         OrderFeeLabel.Text = $"Fee: {p / 10} {cur}";
     }
 
+    public void OnSearchResults(List<(string Id, string Name)> results)
+    {
+        ProtoResultsContainer.RemoveAllChildren();
+        foreach (var (id, name) in results)
+        {
+            var row = new BoxContainer { Orientation = BoxContainer.LayoutOrientation.Horizontal, SeparationOverride = 8 };
+            row.AddChild(new Label { Text = $"{name} ({id})", HorizontalExpand = true, VerticalAlignment = VAlignment.Center });
+            var sel = new Button { Text = "Select", MinWidth = 50 };
+            sel.OnPressed += _ =>
+            {
+                _selectedProtoId = id;
+                _selectedProtoName = name;
+                SelectedProtoLabel.Text = $"{name} ({id})";
+            };
+            row.AddChild(sel);
+            ProtoResultsContainer.AddChild(row);
+        }
+    }
+
     private void SubmitOrder()
     {
         var isBuy = (bool?)OrderTypeBtn.SelectedMetadata ?? false;
         var cur = (string?)OrderCurrencyBtn.SelectedMetadata ?? "Bottlecaps";
         if (!int.TryParse(OrderPrice.Text, out var price) || price <= 0) return;
         if (!int.TryParse(OrderQty.Text, out var qty) || qty <= 0) qty = 1;
-        OnListRequest?.Invoke(new CreateOrderMessage("", qty, cur, price, isBuy));
+        if (_selectedProtoId == null) return;
+        OnListRequest?.Invoke(new CreateOrderMessage(_selectedProtoId, qty, cur, price, isBuy));
     }
 }
