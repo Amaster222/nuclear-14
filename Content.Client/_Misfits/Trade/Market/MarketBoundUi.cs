@@ -17,8 +17,10 @@ public sealed class MarketBoundUi(EntityUid owner, Enum uiKey) : BoundUserInterf
 
         _window = new MarketWindow();
         _window.OnClose += Close;
-        _window.OnListRequest += msg => SendMessage(msg as CreateOrderMessage ?? new CreateOrderMessage("", 0, "", 0, false));
-        _window.OnBuyRequest += (id, qty) => SendMessage(new CreateOrderMessage("", qty, "", 0, true));
+        _window.OnListRequest += msg => SendMessage(msg);
+        _window.OnBuyRequest += (id, _) => { /* item detail select — future */ };
+        _window.OnClaim += orderId => SendMessage(new ClaimEscrowMessage(orderId));
+        _window.OnCancel += orderId => SendMessage(new CancelOrderMessage(orderId));
 
         _window.OpenCentered();
     }
@@ -32,7 +34,7 @@ public sealed class MarketBoundUi(EntityUid owner, Enum uiKey) : BoundUserInterf
 
         _window?.SetMarketName(marketState.MarketName);
         _window?.UpdateItemSummaries(marketState.ItemSummaries);
-        _window?.UpdateMyListings(marketState.MyListings);
+        _window?.UpdateMyOrders(marketState.MyOrders, marketState.MyCompletedOrders);
         _window?.UpdateFeed(marketState.Feed);
         _window?.UpdateDepositedItems(marketState.DepositedItems,
             slotKey => SendMessage(new MarketWithdrawItemMessage(slotKey)));
@@ -40,10 +42,10 @@ public sealed class MarketBoundUi(EntityUid owner, Enum uiKey) : BoundUserInterf
             marketState.Silver, marketState.Gold);
     }
 
-    private void OnListRequest(MarketListMessage msg) => SendMessage(msg);
+    private void OnListRequest(CreateOrderMessage msg) => SendMessage(msg);
 
     private void OnBuyRequest(string listingId, int quantity) =>
-        SendMessage(new MarketBuyMessage(listingId, quantity));
+        SendMessage(new CreateOrderMessage(listingId, quantity, "", 0, true));
 
     protected override void Dispose(bool disposing)
     {
