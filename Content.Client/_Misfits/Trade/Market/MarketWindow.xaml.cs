@@ -11,7 +11,7 @@ namespace Content.Client._Misfits.Trade.Market;
 public sealed partial class MarketWindow : DefaultWindow
 {
     public event Action? OnClose;
-    public event Action<MarketListMessage>? OnListRequest;
+    public event Action<CreateOrderMessage>? OnListRequest;
     public event Action<string, int>? OnBuyRequest;
 
     private readonly List<string> _currencyOptions = new() { "Bottlecaps", "NCRDollars", "Silver", "Gold", "Barter" };
@@ -172,12 +172,8 @@ public sealed partial class MarketWindow : DefaultWindow
         // (Full listing detail is Phase 5 graphs — this stub opens nothing)
     }
 
-    public void UpdateListings(List<MarketListingData> listings)
-    {
-        // Listings are now shown via item summaries; individual listing entries shown on demand
-    }
-
-    public void UpdateMyListings(List<MarketListingData> listings)
+    public void UpdateListings(List<MarketOrder> listings) { } // order book replaces flat listings
+    public void UpdateMyListings(List<MarketOrder> orders)
     {
         MyListingsContainer.RemoveAllChildren();
 

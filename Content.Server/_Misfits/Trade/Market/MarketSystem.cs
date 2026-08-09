@@ -1,4 +1,4 @@
-// #Cythisiax Add - Wendover Free Market server system
+// #Cythisiax Add - Wendover Free Market Exchange server system
 using System.Linq;
 using System.Threading.Tasks;
 using Content.Server.Database;
@@ -18,10 +18,6 @@ using Robust.Shared.Prototypes;
 
 namespace Content.Server._Misfits.Trade.Market;
 
-/// <summary>
-/// Server-side system for the Wendover Free Market Exchange.
-/// Order-book matching engine with escrow, deposit storage, and UI state.
-/// </summary>
 public sealed class MarketSystem : EntitySystem
 {
     [Dependency] private readonly IServerDbManager _db = default!;
@@ -34,52 +30,24 @@ public sealed class MarketSystem : EntitySystem
     [Dependency] private readonly ActorSystem _actor = default!;
 
     private ISawmill _log = default!;
-
-    // ── Order Book ─────────────────────────────────────────────────────────
-
-    /// <summary>All active orders keyed by OrderId (Guid string).</summary>
     private readonly Dictionary<string, MarketOrder> _activeOrders = new();
-
-    // ── Escrow ─────────────────────────────────────────────────────────────
-
-    /// <summary>Per-player escrowed currency: (PlayerId, CurrencyType) → amount.</summary>
     private readonly Dictionary<(Guid, string), int> _escrowCurrency = new();
-    /// <summary>Per-player escrowed items: (PlayerId, OrderId) → entity prototype for payout.</summary>
     private readonly Dictionary<(Guid, string), (string ProtoId, int Qty)> _escrowItems = new();
-
-    /// <summary>
-    /// Set of players who currently have the market UI open.
-    /// </summary>
     private readonly HashSet<EntityUid> _openMarketUis = new();
-
-    // Internal container prefix for per-listing item storage.
     private const string ListingSlotPrefix = "market_slot_";
-    // Player deposit storage container prefix.
-    private const string DepositSlotPrefix = "market_dep_";
-
-    // Purge timer — runs once per minute
     private float _purgeTimer;
-
-    // Activity feed — round-scoped, max 50 entries
     private readonly List<MarketFeedEntry> _activityFeed = new();
     private const int MaxFeedEntries = 50;
 
     public override void Initialize()
     {
         base.Initialize();
-
         _log = Logger.GetSawmill("market");
-
         SubscribeLocalEvent<MarketTerminalComponent, ActivateInWorldEvent>(OnActivate);
         SubscribeLocalEvent<MarketTerminalComponent, GetVerbsEvent<AlternativeVerb>>(OnGetVerbs);
         SubscribeLocalEvent<MarketTerminalComponent, BoundUIClosedEvent>(OnUiClosed);
-
-        // Global item verb: "Deposit to Market" when near a terminal
         SubscribeLocalEvent<GetVerbsEvent<UtilityVerb>>(OnItemVerb);
-
-        // Round lifecycle
         SubscribeLocalEvent<RoundStartedEvent>(OnRoundStarted);
-
         Subs.BuiEvents<MarketTerminalComponent>(MarketUiKey.Key, subs =>
         {
             subs.Event<CreateOrderMessage>(OnCreateOrder);
@@ -87,339 +55,58 @@ public sealed class MarketSystem : EntitySystem
             subs.Event<ClaimEscrowMessage>(OnClaimEscrow);
             subs.Event<MarketWithdrawItemMessage>(OnWithdrawItem);
         });
-
-        // Load active listings from DB on startup
-        LoadActiveListingsAsync();
     }
 
     // ── Interaction ───────────────────────────────────────────────────────────
 
-    private void OnGetVerbs(Entity<MarketTerminalComponent> ent,
-        ref GetVerbsEvent<AlternativeVerb> args)
+    private void OnGetVerbs(Entity<MarketTerminalComponent> ent, ref GetVerbsEvent<AlternativeVerb> args)
     {
-        if (!args.CanInteract || !args.CanAccess)
-            return;
-
+        if (!args.CanInteract || !args.CanAccess) return;
         var user = args.User;
-
-        args.Verbs.Add(new AlternativeVerb
-        {
-            Text = Loc.GetString("market-verb-open"),
-            Priority = 10,
-            Act = () => OpenMarketForPlayer(user, ent),
-        });
-
-        // "Open Market Storage" — opens the player's deposit storage grid
-        args.Verbs.Add(new AlternativeVerb
-        {
-            Text = Loc.GetString("market-verb-storage"),
-            Priority = 9,
-            Act = () => OpenDepositStorage(user, ent),
-        });
+        args.Verbs.Add(new AlternativeVerb { Text = Loc.GetString("market-verb-open"), Priority = 10, Act = () => OpenMarketForPlayer(user, ent) });
+        args.Verbs.Add(new AlternativeVerb { Text = Loc.GetString("market-verb-storage"), Priority = 9, Act = () => OpenDepositStorage(user, ent) });
     }
 
-    /// <summary>
-    /// Add "Deposit to Market" verb on items when the user is near a market terminal.
-    /// </summary>
     private void OnItemVerb(GetVerbsEvent<UtilityVerb> args)
     {
-        if (!args.CanInteract || !args.CanAccess || args.Target == args.User)
-            return;
-
+        if (!args.CanInteract || !args.CanAccess || args.Target == args.User) return;
         var user = args.User;
-
-        // Check if the user is near a market terminal
         var query = EntityQueryEnumerator<MarketTerminalComponent, TransformComponent>();
         while (query.MoveNext(out var terminalUid, out _, out var terminalXform))
         {
-            var userXform = Transform(user);
-            if (!terminalXform.Coordinates.InRange(EntityManager, userXform.Coordinates, 2f))
-                continue;
-
-            // Found a nearby terminal — add deposit verb for this item
-            var item = args.Target;
-            var terminal = terminalUid;
-
-            args.Verbs.Add(new UtilityVerb
-            {
-                Text = Loc.GetString("market-verb-deposit"),
-                Act = () => DepositItemIntoMarket(item, terminal, user),
-            });
-
-            break; // only add once
+            if (!terminalXform.Coordinates.InRange(EntityManager, Transform(user).Coordinates, 2f)) continue;
+            args.Verbs.Add(new UtilityVerb { Text = Loc.GetString("market-verb-deposit"), Act = () => DepositItemIntoMarket(args.Target, terminalUid, user) });
+            break;
         }
     }
 
-    private void OnActivate(Entity<MarketTerminalComponent> ent,
-        ref ActivateInWorldEvent args)
+    private void OnActivate(Entity<MarketTerminalComponent> ent, ref ActivateInWorldEvent args)
     {
-        if (args.Handled || !args.Complex)
-            return;
-
+        if (args.Handled || !args.Complex) return;
         OpenMarketForPlayer(args.User, ent);
         args.Handled = true;
     }
 
     private void OpenMarketForPlayer(EntityUid user, Entity<MarketTerminalComponent> terminal)
     {
-        if (!TryComp<ActorComponent>(user, out _))
-            return;
-
+        if (!TryComp<ActorComponent>(user, out _)) return;
         if (!_ui.IsUiOpen(terminal.Owner, MarketUiKey.Key, user))
             _ui.OpenUi(terminal.Owner, MarketUiKey.Key, user);
-
         _openMarketUis.Add(user);
-
         RefreshMarketState(terminal);
     }
 
-    private void OnUiClosed(Entity<MarketTerminalComponent> ent, ref BoundUIClosedEvent args)
-    {
+    private void OnUiClosed(Entity<MarketTerminalComponent> ent, ref BoundUIClosedEvent args) =>
         _openMarketUis.Remove(args.Actor);
-    }
 
-    // ── Deposit Storage (per-player grid) ──────────────────────────────────────
-
-    private EntityUid GetOrCreateDepositStorage(EntityUid terminal, EntityUid user)
-    {
-        // Get the user who sent the message
-        if (!TryComp<ActorComponent>(terminal, out var terminalActor))
-            return;
-
-        var session = terminalActor.PlayerSession;
-        var user = session.AttachedEntity;
-        if (user == null || user == EntityUid.Invalid)
-            return;
-
-        var userId = session.UserId;
-        var sellerCharName = session.Name;
-
-        // ── Validate: item exists in player's deposit storage ─────────────
-        var comp = terminal.Comp;
-        if (!comp.PlayerStorage.TryGetValue(userId.UserId, out var storageUid) || !Exists(storageUid)
-            || !TryComp<StorageComponent>(storageUid, out var storageComp))
-        {
-            _log.Debug($"List rejected: {sellerCharName} has no deposit storage");
-            return;
-        }
-
-        EntityUid itemEnt = EntityUid.Invalid;
-        foreach (var contained in storageComp.Container.ContainedEntities)
-        {
-            if (MetaData(contained).EntityPrototype?.ID == msg.PrototypeId)
-            {
-                itemEnt = contained;
-                break;
-            }
-        }
-
-        if (itemEnt == EntityUid.Invalid)
-        {
-            _log.Debug($"List rejected: {sellerCharName} doesn't have {msg.PrototypeId} in storage");
-            return;
-        }
-
-        // ── Validate: max 3 active listings per player ────────────────────
-        var myActive = _activeListings.Values
-            .Count(l => l.SellerPlayerId == userId.UserId && l.Status == "Active");
-        if (myActive >= 3)
-        {
-            _log.Debug($"List rejected: {sellerCharName} already has {myActive} active listings");
-            return;
-        }
-
-        // ── Validate: listing fee affordable ──────────────────────────────
-        var fee = CalculateFee(msg.Currency, msg.PricePerUnit);
-        if (fee > 0 && !TryDeductFee(user.Value, msg.Currency, fee))
-        {
-            _log.Debug($"List rejected: {sellerCharName} can't afford {fee} listing fee");
-            return;
-        }
-
-        // ── Create listing ────────────────────────────────────────────────
-        var listingId = Guid.NewGuid();
-        var now = DateTime.UtcNow;
-        var dbListing = new MarketListing
-        {
-            ListingId = listingId,
-            SellerPlayerId = userId.UserId,
-            SellerCharacterName = sellerCharName,
-            PrototypeId = msg.PrototypeId,
-            Quantity = msg.Quantity,
-            StackCount = msg.StackCount,
-            Currency = msg.Currency,
-            PricePerUnit = msg.PricePerUnit,
-            RequestedItemId = msg.RequestedItemId,
-            RequestedQuantity = msg.RequestedQuantity,
-            ListedAt = now,
-            ExpiresAt = now.AddDays(3),
-            Status = "Active",
-        };
-
-        // ── Move item from deposit storage to listing container ───────────
-        _container.Remove(itemEnt, storageComp.Container);
-
-        var slotName = $"{ListingSlotPrefix}{listingId}";
-        var slot = _container.EnsureContainer<ContainerSlot>(terminal.Owner, slotName);
-        if (!_container.Insert(itemEnt, slot))
-        {
-            _log.Error($"Failed to insert listed item {itemEnt} into container {slotName}");
-            return;
-        }
-
-        // ── Persist to DB ─────────────────────────────────────────────────
-        _activeListings[listingId.ToString()] = dbListing;
-        _ = _db.UpsertMarketListingAsync(dbListing);
-
-        _log.Info($"Market list: {sellerCharName} listed {msg.Quantity}x {msg.PrototypeId} " +
-                  $"for {msg.PricePerUnit} {msg.Currency} (fee {fee})");
-
-        // Push activity feed
-        PushFeed($"{sellerCharName} listed {msg.PrototypeId} x{msg.Quantity} for {msg.PricePerUnit} {msg.Currency}");
-
-        // Broadcast updated state to all open UIs
-        foreach (var openUser in _openMarketUis.ToList())
-        {
-            if (TryComp<MarketTerminalComponent>(terminal, out var _))
-                RefreshMarketState(terminal);
-        }
-    }
-
-    // ── Buy flow (Phase 3) ────────────────────────────────────────────────────
-
-    private void OnBuyMessage(Entity<MarketTerminalComponent> terminal, ref MarketBuyMessage msg)
-    {
-        // Get the buyer
-        if (!TryComp<ActorComponent>(terminal, out var terminalActor))
-            return;
-
-        var session = terminalActor.PlayerSession;
-        var buyer = session.AttachedEntity;
-        if (buyer == null || buyer == EntityUid.Invalid)
-            return;
-
-        var buyerId = session.UserId;
-        var buyerName = session.Name;
-
-        // Find the listing
-        if (!_activeListings.TryGetValue(msg.ListingId, out var listing) || listing.Status != "Active")
-        {
-            _log.Debug($"Buy rejected: listing {msg.ListingId} not found or not active");
-            return;
-        }
-
-        // Don't buy your own listing
-        if (listing.SellerPlayerId == buyerId.UserId)
-        {
-            _log.Debug($"Buy rejected: {buyerName} tried to buy own listing");
-            return;
-        }
-
-        // ── Handle payment ─────────────────────────────────────────────────
-        if (listing.Currency == "Barter")
-        {
-            // Validate buyer has the requested barter item
-            if (string.IsNullOrEmpty(listing.RequestedItemId))
-            {
-                _log.Debug($"Buy rejected: invalid barter listing {msg.ListingId}");
-                return;
-            }
-
-            if (!TryFindItemInPossession(buyer.Value, listing.RequestedItemId, out var barterItem))
-            {
-                _log.Debug($"Buy rejected: {buyerName} doesn't have {listing.RequestedItemId} for barter");
-                return;
-            }
-
-            // Consume the barter item
-            QueueDel(barterItem);
-        }
-        else
-        {
-            // Currency payment
-            var totalPrice = listing.PricePerUnit * msg.Quantity;
-            var fee = CalculateFee(listing.Currency, totalPrice);
-            var sellerProceeds = totalPrice - fee;
-
-            if (fee <= 0 && totalPrice > 0)
-                return; // invalid
-
-            // Deduct from buyer
-            if (!TryDeductFee(buyer.Value, listing.Currency, totalPrice))
-            {
-                _log.Debug($"Buy rejected: {buyerName} can't afford {totalPrice} {listing.Currency}");
-                return;
-            }
-
-            // Tax sink (the fee is already deducted from buyer; the "trashbin" is the server)
-            // 10% fee is just gone — not credited to anyone
-            _log.Info($"Market: {buyerName} bought {listing.PrototypeId} from {listing.SellerCharacterName} " +
-                      $"for {totalPrice} {listing.Currency} (fee {fee}, seller gets {sellerProceeds})");
-
-            // Credit seller's persistent balance (may be offline)
-            _ = CreditSellerAsync(listing.SellerPlayerId, listing.SellerCharacterName,
-                listing.Currency, sellerProceeds);
-        }
-
-        // ── Deliver item to buyer ──────────────────────────────────────────
-        var slotName = $"{ListingSlotPrefix}{listing.ListingId}";
-        if (_container.TryGetContainer(terminal.Owner, slotName, out var container) &&
-            container is ContainerSlot buySlot && buySlot.ContainedEntity is { } storedItem)
-        {
-            _container.Remove(storedItem, buySlot);
-
-            // Try to put in buyer's hands, or at their feet
-            if (!_hands.TryPickupAnyHand(buyer.Value, storedItem))
-            {
-                _xform.DropNextTo(storedItem, buyer.Value);
-            }
-        }
-
-        // ── Mark listing as sold ───────────────────────────────────────────
-        listing.Status = "Sold";
-        listing.SoldToCharacter = buyerName;
-        listing.SoldAt = DateTime.UtcNow;
-        listing.SoldItemTag = $"market-sold-{listing.ListingId}";
-
-        // Persist
-        _ = _db.UpsertMarketListingAsync(listing);
-        _ = _db.AddMarketSoldItemAsync(listing.SoldItemTag);
-        _ = _db.AddMarketSaleAsync(new MarketSale
-        {
-            ListingId = listing.ListingId,
-            ItemProto = listing.PrototypeId,
-            Price = listing.PricePerUnit * msg.Quantity,
-            Currency = listing.Currency,
-            SellerId = listing.SellerPlayerId,
-            SellerName = listing.SellerCharacterName,
-            BuyerId = buyerId.UserId,
-            BuyerName = buyerName,
-            SoldAt = listing.SoldAt ?? DateTime.UtcNow,
-        });
-
-        // Push activity feed
-        var priceDisplay = listing.Currency == "Barter"
-            ? $"for {listing.RequestedItemId ?? "?"}"
-            : $"for {listing.PricePerUnit * msg.Quantity} {listing.Currency}";
-        PushFeed($"{buyerName} bought {listing.PrototypeId} from {listing.SellerCharacterName} {priceDisplay}");
-
-        // Broadcast updated state
-        RefreshMarketState(terminal);
-    }
-
-    // ── Deposit Storage (per-player grid) ──────────────────────────────────────
+    // ── Deposit Storage ───────────────────────────────────────────────────────
 
     private EntityUid GetOrCreateDepositStorage(EntityUid terminal, EntityUid user)
     {
-        if (!TryComp<ActorComponent>(user, out var actor))
-            return EntityUid.Invalid;
-
+        if (!TryComp<ActorComponent>(user, out var actor)) return EntityUid.Invalid;
         var userId = actor.PlayerSession.UserId.UserId;
         var comp = Comp<MarketTerminalComponent>(terminal);
-
-        if (comp.PlayerStorage.TryGetValue(userId, out var existing) && Exists(existing))
-            return existing;
-
+        if (comp.PlayerStorage.TryGetValue(userId, out var existing) && Exists(existing)) return existing;
         var storage = Spawn("MarketDepositStorage", Transform(terminal).Coordinates);
         comp.PlayerStorage[userId] = storage;
         Dirty(terminal, comp);
@@ -428,867 +115,259 @@ public sealed class MarketSystem : EntitySystem
 
     private void OpenDepositStorage(EntityUid user, Entity<MarketTerminalComponent> terminal)
     {
-        if (!TryComp<ActorComponent>(user, out var actor))
-            return;
-
+        if (!TryComp<ActorComponent>(user, out var actor)) return;
         var storage = GetOrCreateDepositStorage(terminal.Owner, user);
-        if (storage == EntityUid.Invalid)
-            return;
-
+        if (storage == EntityUid.Invalid) return;
         _ui.OpenUi(storage, StorageComponent.StorageUiKey.Key, actor.PlayerSession);
     }
 
     private void DepositItemIntoMarket(EntityUid item, EntityUid terminal, EntityUid user)
     {
-        if (!TryComp<ActorComponent>(user, out var actor))
-            return;
-
+        if (!TryComp<ActorComponent>(user, out _)) return;
         var storage = GetOrCreateDepositStorage(terminal, user);
-        if (storage == EntityUid.Invalid || !TryComp<StorageComponent>(storage, out var storageComp))
-            return;
-
-        if (!_container.Insert(item, storageComp.Container))
-            return;
-
-        if (_openMarketUis.Contains(user))
-            RefreshMarketState((terminal, Comp<MarketTerminalComponent>(terminal)));
+        if (storage == EntityUid.Invalid || !TryComp<StorageComponent>(storage, out var sc)) return;
+        if (!_container.Insert(item, sc.Container)) return;
+        if (_openMarketUis.Contains(user)) RefreshMarketState((terminal, Comp<MarketTerminalComponent>(terminal)));
     }
 
     private void OnWithdrawItem(Entity<MarketTerminalComponent> terminal, ref MarketWithdrawItemMessage msg)
     {
         EntityUid? user = null;
-        foreach (var uid in _openMarketUis)
-        {
-            if (_ui.IsUiOpen(terminal.Owner, MarketUiKey.Key, uid))
-            { user = uid; break; }
-        }
-        if (user == null || !TryComp<ActorComponent>(user.Value, out var actor))
-            return;
-
-        var userId = actor.PlayerSession.UserId.UserId;
+        foreach (var uid in _openMarketUis) { if (_ui.IsUiOpen(terminal.Owner, MarketUiKey.Key, uid)) { user = uid; break; } }
+        if (user == null || !TryComp<ActorComponent>(user, out var actor)) return;
         var comp = terminal.Comp;
-        if (!comp.PlayerStorage.TryGetValue(userId, out var storage) || !Exists(storage)
-            || !TryComp<StorageComponent>(storage, out var storageComp))
-            return;
-
+        if (!comp.PlayerStorage.TryGetValue(actor.PlayerSession.UserId.UserId, out var storage) || !Exists(storage)
+            || !TryComp<StorageComponent>(storage, out var sc)) return;
         EntityUid? toRemove = null;
-        foreach (var contained in storageComp.Container.ContainedEntities)
-        {
-            toRemove = contained;
-            break;
-        }
+        foreach (var c in sc.Container.ContainedEntities) { toRemove = c; break; }
         if (toRemove == null) return;
-
-        _container.Remove(toRemove.Value, storageComp.Container);
-        if (!_hands.TryPickupAnyHand(user.Value, toRemove.Value))
-            _xform.DropNextTo(toRemove.Value, user.Value);
-
+        _container.Remove(toRemove.Value, sc.Container);
+        if (!_hands.TryPickupAnyHand(user, toRemove.Value)) _xform.DropNextTo(toRemove.Value, user);
         RefreshMarketState(terminal);
     }
 
     // ── Order Matching Engine ──────────────────────────────────────────────────
 
-    /// <summary>
-    /// Create a new buy or sell order. Runs the matching engine to fill immediately
-    /// if a crossing order exists. Unfilled remainder goes on the order book.
-    /// </summary>
     private void OnCreateOrder(Entity<MarketTerminalComponent> terminal, ref CreateOrderMessage msg)
     {
-        if (!TryGetSessionActor(terminal, out var session, out var user) || user == EntityUid.Invalid)
-            return;
-
+        if (!TryComp<ActorComponent>(terminal, out var actor)) return;
+        var session = actor.PlayerSession;
+        var user = session.AttachedEntity;
+        if (user == null || user == EntityUid.Invalid) return;
         var userId = session.UserId;
         var charName = session.Name;
         var orderId = Guid.NewGuid().ToString();
 
-        // ── Escrow validation ────────────────────────────────────────────
         if (msg.IsBuyOrder)
         {
             var totalCost = msg.Price * msg.Quantity;
-            var fee = totalCost / 10;
-            if (!TryDeductFee(user, msg.Currency, totalCost + fee))
-            {
-                _log.Debug($"Buy order rejected: {charName} can't afford {totalCost}+{fee} {msg.Currency}");
-                return;
-            }
-            // Escrow the total cost (fee is sunk, totalCost is held)
-            var escrowKey = (userId.UserId, orderId);
-            _escrowCurrency[escrowKey] = totalCost;
+            if (!TryDeductFee(user, msg.Currency, totalCost + totalCost / 10)) return;
+            _escrowCurrency[(userId.UserId, orderId)] = totalCost;
         }
-        else // Sell order
+        else
         {
-            // Item must be in deposit storage (escrowed already by deposit)
             var comp = terminal.Comp;
-            if (comp.PlayerStorage.TryGetValue(userId.UserId, out var storageUid) &&
-                Exists(storageUid) && TryComp<StorageComponent>(storageUid, out var storageComp))
-            {
-                EntityUid? item = null;
-                foreach (var c in storageComp.Container.ContainedEntities)
-                {
-                    if (MetaData(c).EntityPrototype?.ID == msg.PrototypeId)
-                    { item = c; break; }
-                }
-                if (item == null)
-                {
-                    _log.Debug($"Sell order rejected: {charName} doesn't have {msg.PrototypeId} in storage");
-                    return;
-                }
-                _container.Remove(item.Value, storageComp.Container);
-                var listingSlot = _container.EnsureContainer<ContainerSlot>(terminal.Owner,
-                    $"{ListingSlotPrefix}{orderId}");
-                _container.Insert(item.Value, listingSlot);
-                _escrowItems[(userId.UserId, orderId)] = (msg.PrototypeId, msg.Quantity);
-            }
-            else
-            {
-                _log.Debug($"Sell order rejected: {charName} has no deposit storage");
-                return;
-            }
+            if (!comp.PlayerStorage.TryGetValue(userId.UserId, out var storageUid) || !Exists(storageUid)
+                || !TryComp<StorageComponent>(storageUid, out var sc)) return;
+            EntityUid? item = null;
+            foreach (var c in sc.Container.ContainedEntities)
+                if (MetaData(c).EntityPrototype?.ID == msg.PrototypeId) { item = c; break; }
+            if (item == null) return;
+            _container.Remove(item.Value, sc.Container);
+            _container.Insert(item.Value, _container.EnsureContainer<ContainerSlot>(terminal.Owner, $"{ListingSlotPrefix}{orderId}"));
+            _escrowItems[(userId.UserId, orderId)] = (msg.PrototypeId, msg.Quantity);
         }
 
-        // ── Build the order ──────────────────────────────────────────────
         var protoName = _proto.TryIndex<EntityPrototype>(msg.PrototypeId, out var p) ? p.Name : msg.PrototypeId;
         var order = new MarketOrder
         {
-            OrderId = orderId,
-            PrototypeId = msg.PrototypeId,
-            PrototypeName = protoName,
-            Quantity = msg.Quantity,
-            Price = msg.Price,
-            Currency = msg.Currency,
-            IsBuyOrder = msg.IsBuyOrder,
-            OwnerName = charName,
-            OwnerId = userId.UserId,
-            CreatedAt = DateTime.UtcNow,
-            ExpiresAt = DateTime.UtcNow.AddDays(3),
+            OrderId = orderId, PrototypeId = msg.PrototypeId, PrototypeName = protoName,
+            Quantity = msg.Quantity, Price = msg.Price, Currency = msg.Currency,
+            IsBuyOrder = msg.IsBuyOrder, OwnerName = charName, OwnerId = userId.UserId,
+            CreatedAt = DateTime.UtcNow, ExpiresAt = DateTime.UtcNow.AddDays(3),
         };
 
-        // ── Run matching engine ───────────────────────────────────────────
         MatchOrder(order);
-
-        // ── Store in active book if not fully filled ─────────────────────
-        if (order.Status == "Active" && order.FulfilledQty < order.Quantity)
-            _activeOrders[orderId] = order;
-
-        if (order.FulfilledQty > 0)
-        {
-            PushFeed(msg.IsBuyOrder
-                ? $"{charName} bought {order.FulfilledQty}x {order.PrototypeId} @ {order.Price} {order.Currency}"
-                : $"{charName} sold {order.FulfilledQty}x {order.PrototypeId} @ {order.Price} {order.Currency}");
-        }
-
+        if (order.Status != "Fulfilled") _activeOrders[orderId] = order;
+        if (order.FulfilledQty > 0) PushFeed(msg.IsBuyOrder
+            ? $"{charName} bought {order.FulfilledQty}x {order.PrototypeId} @ {order.Price} {order.Currency}"
+            : $"{charName} sold {order.FulfilledQty}x {order.PrototypeId} @ {order.Price} {order.Currency}");
         RefreshMarketState(terminal);
     }
 
-    /// <summary>
-    /// Order matching engine. Takes a new order and matches it against the existing book.
-    /// Modifies the order's FulfilledQty and Status in-place.
-    /// </summary>
-    private void MatchOrder(MarketOrder newOrder)
+    private void MatchOrder(MarketOrder o) { if (o.IsBuyOrder) MatchBuy(o); else MatchSell(o); }
+
+    private void MatchBuy(MarketOrder buy)
     {
-        if (newOrder.IsBuyOrder)
-            MatchBuyOrder(newOrder);
-        else
-            MatchSellOrder(newOrder);
-    }
-
-    /// <summary>Match a new buy order against existing sell orders (asks).</summary>
-    private void MatchBuyOrder(MarketOrder buyOrder)
-    {
-        // Get all sell orders for the same prototype, with ask price ≤ bid price, sorted cheapest first
-        var matchingSells = _activeOrders.Values
-            .Where(o => o.Status == "Active" && !o.IsBuyOrder
-                && o.PrototypeId == buyOrder.PrototypeId
-                && o.Price <= buyOrder.Price)
-            .OrderBy(o => o.Price)
-            .ToList();
-
-        var remainingQty = buyOrder.Quantity;
-
-        foreach (var sell in matchingSells)
+        var sells = _activeOrders.Values
+            .Where(o => o.Status == "Active" && !o.IsBuyOrder && o.PrototypeId == buy.PrototypeId && o.Price <= buy.Price)
+            .OrderBy(o => o.Price).ToList();
+        var rem = buy.Quantity;
+        foreach (var s in sells)
         {
-            if (remainingQty <= 0) break;
-
-            var available = sell.Quantity - sell.FulfilledQty;
-            if (available <= 0) continue;
-
-            var fillQty = Math.Min(remainingQty, available);
-            var tradePrice = sell.Price; // use the ask price (seller's listed price)
-
-            // Execute the trade
-            sell.FulfilledQty += fillQty;
-            buyOrder.FulfilledQty += fillQty;
-            remainingQty -= fillQty;
-
-            // Credit seller (release escrowed item + credit currency)
-            var sellerProceeds = tradePrice * fillQty;
-            var sellerFee = sellerProceeds / 10;
-            _ = CreditSellerAsync(sell.OwnerId, sell.OwnerName, sell.Currency, sellerProceeds - sellerFee);
-
-            // Return escrowed currency to buyer for the filled portion
-            var buyerEscrowKey = (buyOrder.OwnerId, buyOrder.OrderId);
-            if (_escrowCurrency.TryGetValue(buyerEscrowKey, out var escrowed))
-            {
-                var refund = tradePrice * fillQty;
-                _escrowCurrency[buyerEscrowKey] = Math.Max(0, escrowed - refund);
-            }
-
-            if (sell.FulfilledQty >= sell.Quantity)
-                sell.Status = "Fulfilled";
+            if (rem <= 0) break;
+            var avail = s.Quantity - s.FulfilledQty;
+            if (avail <= 0) continue;
+            var fill = Math.Min(rem, avail);
+            s.FulfilledQty += fill; buy.FulfilledQty += fill; rem -= fill;
+            var proceeds = s.Price * fill;
+            _ = CreditSellerAsync(s.OwnerId, s.OwnerName, s.Currency, proceeds - proceeds / 10);
+            if (s.FulfilledQty >= s.Quantity) s.Status = "Fulfilled";
         }
-
-        if (buyOrder.FulfilledQty >= buyOrder.Quantity)
-            buyOrder.Status = "Fulfilled";
-        else
-            buyOrder.Status = "Active";
+        buy.Status = buy.FulfilledQty >= buy.Quantity ? "Fulfilled" : "Active";
     }
 
-    /// <summary>Match a new sell order against existing buy orders (bids).</summary>
-    private void MatchSellOrder(MarketOrder sellOrder)
+    private void MatchSell(MarketOrder sell)
     {
-        var matchingBuys = _activeOrders.Values
-            .Where(o => o.Status == "Active" && o.IsBuyOrder
-                && o.PrototypeId == sellOrder.PrototypeId
-                && o.Price >= sellOrder.Price)
-            .OrderByDescending(o => o.Price)
-            .ToList();
-
-        var remainingQty = sellOrder.Quantity;
-
-        foreach (var buy in matchingBuys)
+        var buys = _activeOrders.Values
+            .Where(o => o.Status == "Active" && o.IsBuyOrder && o.PrototypeId == sell.PrototypeId && o.Price >= sell.Price)
+            .OrderByDescending(o => o.Price).ToList();
+        var rem = sell.Quantity;
+        foreach (var b in buys)
         {
-            if (remainingQty <= 0) break;
-
-            var available = buy.Quantity - buy.FulfilledQty;
-            if (available <= 0) continue;
-
-            var fillQty = Math.Min(remainingQty, available);
-            var tradePrice = buy.Price; // use the bid price (buyer's offered price)
-
-            buy.FulfilledQty += fillQty;
-            sellOrder.FulfilledQty += fillQty;
-            remainingQty -= fillQty;
-
-            var sellerProceeds = tradePrice * fillQty;
-            var sellerFee = sellerProceeds / 10;
-            _ = CreditSellerAsync(sellOrder.OwnerId, sellOrder.OwnerName, sellOrder.Currency, sellerProceeds - sellerFee);
+            if (rem <= 0) break;
+            var avail = b.Quantity - b.FulfilledQty;
+            if (avail <= 0) continue;
+            var fill = Math.Min(rem, avail);
+            b.FulfilledQty += fill; sell.FulfilledQty += fill; rem -= fill;
+            _ = CreditSellerAsync(sell.OwnerId, sell.OwnerName, sell.Currency, b.Price * fill - (b.Price * fill) / 10);
+            if (b.FulfilledQty >= b.Quantity) b.Status = "Fulfilled";
         }
-
-        if (sellOrder.FulfilledQty >= sellOrder.Quantity)
-            sellOrder.Status = "Fulfilled";
-        else
-            sellOrder.Status = "Active";
+        sell.Status = sell.FulfilledQty >= sell.Quantity ? "Fulfilled" : "Active";
     }
 
-    /// <summary>Cancel an active order and release escrow.</summary>
     private void OnCancelOrder(Entity<MarketTerminalComponent> terminal, ref CancelOrderMessage msg)
     {
-        if (!TryGetSessionActor(terminal, out var session, out var user) || user == EntityUid.Invalid)
-            return;
-
-        if (!_activeOrders.TryGetValue(msg.OrderId, out var order) || order.Status != "Active")
-            return;
-
-        if (order.OwnerId != session.UserId.UserId) return;
-
-        order.Status = "Cancelled";
-        _activeOrders.Remove(msg.OrderId);
-
-        // Release escrow
+        if (!TryComp<ActorComponent>(terminal, out var actor)) return;
+        var user = actor.PlayerSession.AttachedEntity;
+        if (user == null || user == EntityUid.Invalid) return;
+        if (!_activeOrders.TryGetValue(msg.OrderId, out var order) || order.Status != "Active") return;
+        if (order.OwnerId != actor.PlayerSession.UserId.UserId) return;
+        order.Status = "Cancelled"; _activeOrders.Remove(msg.OrderId);
         if (order.IsBuyOrder)
         {
-            var escrowKey = (order.OwnerId, order.OrderId);
-            if (_escrowCurrency.TryGetValue(escrowKey, out var refund))
-            {
-                RefundCurrency(user, order.Currency, refund);
-                _escrowCurrency.Remove(escrowKey);
-            }
+            if (_escrowCurrency.TryGetValue((order.OwnerId, order.OrderId), out var refund))
+            { RefundCurrency(user, order.Currency, refund); _escrowCurrency.Remove((order.OwnerId, order.OrderId)); }
         }
         else
         {
-            // Return item from listing container to player
-            var slotName = $"{ListingSlotPrefix}{msg.OrderId}";
-            if (_container.TryGetContainer(terminal.Owner, slotName, out var container)
-                && container is ContainerSlot slot && slot.ContainedEntity is { } item)
-            {
-                _container.Remove(item, slot);
-                if (!_hands.TryPickupAnyHand(user, item))
-                    _xform.DropNextTo(item, user);
-            }
+            var sn = $"{ListingSlotPrefix}{msg.OrderId}";
+            if (_container.TryGetContainer(terminal.Owner, sn, out var c) && c is ContainerSlot slot && slot.ContainedEntity is { } item)
+            { _container.Remove(item, slot); if (!_hands.TryPickupAnyHand(user, item)) _xform.DropNextTo(item, user); }
         }
-
         RefreshMarketState(terminal);
     }
 
-    /// <summary>Claim fulfilled order proceeds (items for buy orders, currency for sell orders).</summary>
     private void OnClaimEscrow(Entity<MarketTerminalComponent> terminal, ref ClaimEscrowMessage msg)
     {
-        if (!TryGetSessionActor(terminal, out var session, out var user) || user == EntityUid.Invalid)
-            return;
-
-        // Check if this is a completed order belonging to the player
+        if (!TryComp<ActorComponent>(terminal, out var actor)) return;
+        var user = actor.PlayerSession.AttachedEntity;
+        if (user == null || user == EntityUid.Invalid) return;
         if (!_activeOrders.TryGetValue(msg.OrderId, out var order)) return;
-        if (order.OwnerId != session.UserId.UserId || order.Status != "Fulfilled") return;
-
+        if (order.OwnerId != actor.PlayerSession.UserId.UserId || order.Status != "Fulfilled") return;
         if (order.IsBuyOrder)
         {
-            // Deliver the purchased item
-            var slotName = $"{ListingSlotPrefix}{msg.OrderId}";
-            EntityUid? item = null;
-            if (_container.TryGetContainer(terminal.Owner, slotName, out var container)
-                && container is ContainerSlot slot && slot.ContainedEntity is { } stored)
-                item = stored;
-
-            if (item != null)
-            {
-                _container.Remove(item.Value, container!);
-                if (!_hands.TryPickupAnyHand(user, item.Value))
-                    _xform.DropNextTo(item.Value, user);
-            }
-            else
-            {
-                // Spawn from prototype as fallback
-                var spawned = Spawn(order.PrototypeId, Transform(user).Coordinates);
-                if (!_hands.TryPickupAnyHand(user, spawned))
-                    _xform.DropNextTo(spawned, user);
-            }
+            var sn = $"{ListingSlotPrefix}{msg.OrderId}";
+            if (_container.TryGetContainer(terminal.Owner, sn, out var c) && c is ContainerSlot slot && slot.ContainedEntity is { } item)
+            { _container.Remove(item, slot); if (!_hands.TryPickupAnyHand(user, item)) _xform.DropNextTo(item.Value, user); }
+            else { var s = Spawn(order.PrototypeId, Transform(user).Coordinates); if (!_hands.TryPickupAnyHand(user, s)) _xform.DropNextTo(s, user); }
         }
         else
         {
-            // Release currency from escrow
-            var escrowKey = (order.OwnerId, order.OrderId);
-            if (_escrowCurrency.TryGetValue(escrowKey, out var proceeds))
-            {
-                RefundCurrency(user, order.Currency, proceeds);
-                _escrowCurrency.Remove(escrowKey);
-            }
+            if (_escrowCurrency.TryGetValue((order.OwnerId, order.OrderId), out var proceeds))
+            { RefundCurrency(user, order.Currency, proceeds); _escrowCurrency.Remove((order.OwnerId, order.OrderId)); }
         }
-
-        order.Status = "Claimed";
-        RefreshMarketState(terminal);
+        order.Status = "Claimed"; RefreshMarketState(terminal);
     }
 
-    /// <summary>Refund currency to a player's persistent balance.</summary>
-    private void RefundCurrency(EntityUid user, string currency, int amount)
-    {
-        if (amount <= 0) return;
-        if (!TryComp<PersistentCurrencyComponent>(user, out var wallet)) return;
+    // ── Currency Helpers ──────────────────────────────────────────────────────
 
-        var curType = currency switch
-        {
-            "Bottlecaps" => CurrencyType.Bottlecaps,
-            "NCRDollars" => CurrencyType.NCRDollars,
-            "Silver" => CurrencyType.Silver,
-            "Gold" => CurrencyType.Gold,
-            _ => (CurrencyType?)null,
-        };
-        if (curType == null) return;
-
-        var balance = GetCurrencyBalance(wallet, curType.Value);
-        SetCurrencyBalance(wallet, curType.Value, balance + amount);
-        Dirty(user, wallet);
-    }
-
-    /// <summary>Get the session and attached entity from a BUI message.</summary>
-    private bool TryGetSessionActor(Entity<MarketTerminalComponent> terminal,
-        out ICommonSession session, out EntityUid user)
-    {
-        session = null!;
-        user = EntityUid.Invalid;
-
-        if (!TryComp<ActorComponent>(terminal, out var actor))
-            return false;
-
-        session = actor.PlayerSession;
-        var attached = session.AttachedEntity;
-        if (attached == null || attached == EntityUid.Invalid)
-            return false;
-
-        user = attached.Value;
-        return true;
-    }
-
-    // ── Helpers ───────────────────────────────────────────────────────────────
-
-    /// <summary>
-    /// Find an entity of the given prototype in the player's hands or named inventory containers.
-    /// </summary>
-    private bool TryFindItemInPossession(EntityUid user, string prototypeId, out EntityUid item)
-    {
-        item = EntityUid.Invalid;
-
-        // Check hands
-        foreach (var held in _hands.EnumerateHeld(user))
-        {
-            if (MetaData(held).EntityPrototype?.ID == prototypeId)
-            {
-                item = held;
-                return true;
-            }
-        }
-
-        // Check named inventory slots
-        var slotNames = new[] { "jumpsuit", "back", "pocket1", "pocket2", "outerClothing", "belt", "shoes", "gloves", "neck", "mask", "eyes", "ears", "head", "id" };
-        foreach (var slotName in slotNames)
-        {
-            if (_container.TryGetContainer(user, slotName, out var container))
-            {
-                foreach (var contained in container.ContainedEntities)
-                {
-                    if (MetaData(contained).EntityPrototype?.ID == prototypeId)
-                    {
-                        item = contained;
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
-
-    /// <summary>
-    /// Calculate the 10% listing/buy fee for a currency transaction, rounded down.
-    /// </summary>
-    private static int CalculateFee(string currency, int pricePerUnit)
-    {
-        if (currency == "Barter")
-            return 0;
-
-        return Math.Max(0, pricePerUnit / 10); // 10% rounded down (floor)
-    }
-
-    /// <summary>
-    /// Deduct the listing fee from the player's persistent balance.
-    /// Also supports paying from held currency stacks in future phases.
-    /// </summary>
     private bool TryDeductFee(EntityUid user, string currency, int amount)
     {
-        if (amount <= 0)
-            return true;
-
-        // Find the matching CurrencyType
-        var curType = currency switch
-        {
-            "Bottlecaps" => CurrencyType.Bottlecaps,
-            "NCRDollars" => CurrencyType.NCRDollars,
-            "Silver" => CurrencyType.Silver,
-            "Gold" => CurrencyType.Gold,
-            _ => (CurrencyType?)null,
-        };
-
-        if (curType == null)
-            return false;
-
-        if (!TryComp<PersistentCurrencyComponent>(user, out var wallet))
-            return false;
-
-        // Check balance
-        var balance = GetCurrencyBalance(wallet, curType.Value);
-        if (balance < amount)
-            return false;
-
-        // Deduct
-        SetCurrencyBalance(wallet, curType.Value, balance - amount);
-        Dirty(user, wallet);
-
-        // Save to DB (fire and forget)
-        if (wallet.UserId != null && wallet.CharacterName != null &&
-            Guid.TryParse(wallet.UserId, out var playerId))
-        {
-            _ = _db.UpsertCharacterCurrencyAsync(playerId, wallet.CharacterName,
-                wallet.Bottlecaps, wallet.NcrDollars, wallet.Silver, wallet.Gold);
-        }
-
+        if (amount <= 0) return true;
+        var ct = currency switch { "Bottlecaps" => CurrencyType.Bottlecaps, "NCRDollars" => CurrencyType.NCRDollars, "Silver" => CurrencyType.Silver, "Gold" => CurrencyType.Gold, _ => (CurrencyType?)null };
+        if (ct == null || !TryComp<PersistentCurrencyComponent>(user, out var w)) return false;
+        var bal = ct switch { CurrencyType.Bottlecaps => w.Bottlecaps, CurrencyType.NCRDollars => w.NcrDollars, CurrencyType.Silver => w.Silver, CurrencyType.Gold => w.Gold, _ => 0 };
+        if (bal < amount) return false;
+        switch (ct) { case CurrencyType.Bottlecaps: w.Bottlecaps -= amount; break; case CurrencyType.NCRDollars: w.NcrDollars -= amount; break; case CurrencyType.Silver: w.Silver -= amount; break; case CurrencyType.Gold: w.Gold -= amount; break; }
+        Dirty(user, w);
+        if (w.UserId != null && w.CharacterName != null && Guid.TryParse(w.UserId, out var pid))
+            _ = _db.UpsertCharacterCurrencyAsync(pid, w.CharacterName, w.Bottlecaps, w.NcrDollars, w.Silver, w.Gold);
         return true;
     }
 
-    private static int GetCurrencyBalance(PersistentCurrencyComponent wallet, CurrencyType type)
+    private void RefundCurrency(EntityUid user, string currency, int amount)
     {
-        return type switch
-        {
-            CurrencyType.Bottlecaps => wallet.Bottlecaps,
-            CurrencyType.NCRDollars => wallet.NcrDollars,
-            CurrencyType.Silver => wallet.Silver,
-            CurrencyType.Gold => wallet.Gold,
-            _ => 0,
-        };
+        if (amount <= 0 || !TryComp<PersistentCurrencyComponent>(user, out var w)) return;
+        switch (currency) { case "Bottlecaps": w.Bottlecaps += amount; break; case "NCRDollars": w.NcrDollars += amount; break; case "Silver": w.Silver += amount; break; case "Gold": w.Gold += amount; break; }
+        Dirty(user, w);
     }
 
-    private static void SetCurrencyBalance(PersistentCurrencyComponent wallet, CurrencyType type, int value)
+    private async Task CreditSellerAsync(Guid sellerId, string name, string currency, int amount)
     {
-        switch (type)
-        {
-            case CurrencyType.Bottlecaps: wallet.Bottlecaps = value; break;
-            case CurrencyType.NCRDollars: wallet.NcrDollars = value; break;
-            case CurrencyType.Silver: wallet.Silver = value; break;
-            case CurrencyType.Gold: wallet.Gold = value; break;
-        }
-    }
-
-    /// <summary>
-    /// Credit a seller's persistent balance after a sale. Handles offline sellers
-    /// by reading current balance from DB, adding proceeds, and upserting.
-    /// </summary>
-    private async Task CreditSellerAsync(Guid sellerId, string sellerCharName, string currency, int amount)
-    {
-        if (amount <= 0)
-            return;
-
+        if (amount <= 0) return;
         try
         {
-            var row = await _db.GetCharacterCurrencyAsync(sellerId, sellerCharName);
-            var caps = row?.Bottlecaps ?? 0;
-            var ncr = row?.NcrDollars ?? 0;
-            var silver = row?.Silver ?? 0;
-            var gold = row?.Gold ?? 0;
-
-            switch (currency)
-            {
-                case "Bottlecaps": caps += amount; break;
-                case "NCRDollars": ncr += amount; break;
-                case "Silver": silver += amount; break;
-                case "Gold": gold += amount; break;
-            }
-
-            await _db.UpsertCharacterCurrencyAsync(sellerId, sellerCharName, caps, ncr, silver, gold);
-
-            // Also update in-memory if seller is online
-            var query = EntityQueryEnumerator<PersistentCurrencyComponent>();
-            while (query.MoveNext(out var uid, out var wallet))
-            {
-                if (wallet.UserId == sellerId.ToString() && wallet.CharacterName == sellerCharName)
-                {
-                    SetCurrencyBalance(wallet, currency switch
-                    {
-                        "Bottlecaps" => CurrencyType.Bottlecaps,
-                        "NCRDollars" => CurrencyType.NCRDollars,
-                        "Silver" => CurrencyType.Silver,
-                        "Gold" => CurrencyType.Gold,
-                        _ => CurrencyType.Bottlecaps,
-                    }, currency switch
-                    {
-                        "Bottlecaps" => caps,
-                        "NCRDollars" => ncr,
-                        "Silver" => silver,
-                        "Gold" => gold,
-                        _ => caps,
-                    });
-                    Dirty(uid, wallet);
-                    break;
-                }
-            }
+            var row = await _db.GetCharacterCurrencyAsync(sellerId, name);
+            var caps = (row?.Bottlecaps ?? 0) + (currency == "Bottlecaps" ? amount : 0);
+            var ncr = (row?.NcrDollars ?? 0) + (currency == "NCRDollars" ? amount : 0);
+            var sil = (row?.Silver ?? 0) + (currency == "Silver" ? amount : 0);
+            var gld = (row?.Gold ?? 0) + (currency == "Gold" ? amount : 0);
+            await _db.UpsertCharacterCurrencyAsync(sellerId, name, caps, ncr, sil, gld);
         }
-        catch (Exception ex)
-        {
-            _log.Error($"Failed to credit seller {sellerCharName}: {ex}");
-        }
+        catch (Exception ex) { _log.Error($"CreditSellerAsync failed: {ex}"); }
     }
 
-    // ── Activity feed ──────────────────────────────────────────────────────────
+    // ── Feed & State ──────────────────────────────────────────────────────────
 
     private void PushFeed(string text)
     {
         _activityFeed.Insert(0, new MarketFeedEntry { Text = text, Time = DateTime.UtcNow });
-        if (_activityFeed.Count > MaxFeedEntries)
-            _activityFeed.RemoveAt(_activityFeed.Count - 1);
-    }
-
-    // ── State broadcast ───────────────────────────────────────────────────────
-
-    // ── Round lifecycle ────────────────────────────────────────────────────────
-
-    private async void LoadActiveListingsAsync()
-    {
-        try
-        {
-            var listings = await _db.GetActiveMarketListingsAsync();
-            foreach (var listing in listings)
-                _activeListings[listing.ListingId.ToString()] = listing;
-
-            _log.Info($"Loaded {_activeListings.Count} active market listings from DB.");
-        }
-        catch (Exception ex)
-        {
-            _log.Error($"Failed to load active market listings: {ex}");
-        }
-    }
-
-    private void OnRoundStarted(RoundStartedEvent args)
-    {
-        // Clear stale state from previous round
-        _activeListings.Clear();
-        _openMarketUis.Clear();
-        _activityFeed.Clear();
-
-        // Re-materialize stored items for active listings from DB
-        ReMaterializeListingsAsync();
-    }
-
-    private async void ReMaterializeListingsAsync()
-    {
-        try
-        {
-            var listings = await _db.GetActiveMarketListingsAsync();
-            _log.Info($"Re-materializing {listings.Count} market listings after round start.");
-
-            // Find a market terminal to store items in
-            var query = EntityQueryEnumerator<MarketTerminalComponent>();
-            EntityUid? terminal = null;
-            while (query.MoveNext(out var uid, out _))
-            {
-                terminal = uid;
-                break;
-            }
-
-            if (terminal == null)
-            {
-                _log.Warning("No market terminal found for re-materialization.");
-                return;
-            }
-
-            foreach (var listing in listings)
-            {
-                _activeListings[listing.ListingId.ToString()] = listing;
-
-                // Spawn the stored item from prototype and put it in a container
-                if (!_proto.HasIndex<EntityPrototype>(listing.PrototypeId))
-                {
-                    _log.Warning($"Market listing prototype '{listing.PrototypeId}' no longer exists — skipping.");
-                    continue;
-                }
-
-                var spawnCoords = Transform(terminal.Value).Coordinates;
-                var spawned = Spawn(listing.PrototypeId, spawnCoords);
-                if (listing.StackCount > 0 && TryComp<StackComponent>(spawned, out var stack))
-                    _stack.SetCount(spawned, listing.StackCount, stack);
-
-                var slotName = $"{ListingSlotPrefix}{listing.ListingId}";
-                var slot = _container.EnsureContainer<ContainerSlot>(terminal.Value, slotName);
-                if (!_container.Insert(spawned, slot))
-                {
-                    _log.Warning($"Failed to re-insert listing {listing.ListingId} item into container.");
-                    QueueDel(spawned);
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            _log.Error($"Failed to re-materialize market listings: {ex}");
-        }
-    }
-
-    // ── Update / purge ─────────────────────────────────────────────────────────
-
-    public override void Update(float frameTime)
-    {
-        base.Update(frameTime);
-
-        _purgeTimer += frameTime;
-        if (_purgeTimer >= 60f) // every 60 seconds
-        {
-            _purgeTimer = 0f;
-            PurgeExpiredListingsAsync();
-        }
-    }
-
-    private async void PurgeExpiredListingsAsync()
-    {
-        try
-        {
-            await _db.DeleteExpiredMarketListingsAsync();
-
-            // Remove purged listings from in-memory cache
-            var now = DateTime.UtcNow;
-            var purged = _activeListings.Values
-                .Where(l => l.Status == "Active" && l.ExpiresAt < now)
-                .ToList();
-
-            foreach (var listing in purged)
-            {
-                listing.Status = "Purged";
-
-                // Destroy the stored item
-                var slotName = $"{ListingSlotPrefix}{listing.ListingId}";
-                var query = EntityQueryEnumerator<MarketTerminalComponent>();
-                while (query.MoveNext(out var uid, out _))
-                {
-                    if (_container.TryGetContainer(uid, slotName, out var container) &&
-                        container is ContainerSlot purgeSlot && purgeSlot.ContainedEntity is { } purgeItem)
-                    {
-                        QueueDel(purgeItem);
-                    }
-                }
-            }
-
-            if (purged.Count > 0)
-                _log.Info($"Purged {purged.Count} expired market listings.");
-        }
-        catch (Exception ex)
-        {
-            _log.Error($"Failed to purge expired listings: {ex}");
-        }
+        if (_activityFeed.Count > MaxFeedEntries) _activityFeed.RemoveAt(_activityFeed.Count - 1);
     }
 
     private void RefreshMarketState(Entity<MarketTerminalComponent> terminal)
     {
         foreach (var user in _openMarketUis.ToList())
         {
-            if (!_ui.IsUiOpen(terminal.Owner, MarketUiKey.Key, user))
-                continue;
-
-            var state = BuildMarketState(terminal, user);
-            _ui.SetUiState(terminal.Owner, MarketUiKey.Key, state);
+            if (!_ui.IsUiOpen(terminal.Owner, MarketUiKey.Key, user)) continue;
+            _ui.SetUiState(terminal.Owner, MarketUiKey.Key, BuildState(terminal, user));
         }
     }
 
-    private MarketStateMessage BuildMarketState(Entity<MarketTerminalComponent> terminal, EntityUid user)
+    private MarketStateMessage BuildState(Entity<MarketTerminalComponent> terminal, EntityUid user)
     {
-        var active = _activeListings.Values.Where(l => l.Status == "Active").ToList();
-
-        var listingData = active.Select(l =>
+        var state = new MarketStateMessage { Feed = new List<MarketFeedEntry>(_activityFeed) };
+        if (TryComp<PersistentCurrencyComponent>(user, out var w))
+        { state.Bottlecaps = w.Bottlecaps; state.NcrDollars = w.NcrDollars; state.Silver = w.Silver; state.Gold = w.Gold; }
+        if (TryComp<ActorComponent>(user, out var actor))
         {
-            var name = _proto.TryIndex<EntityPrototype>(l.PrototypeId, out var proto)
-                ? proto.Name : l.PrototypeId;
-
-            return new MarketListingData
+            var uid = actor.PlayerSession.UserId.UserId;
+            state.MyOrders = _activeOrders.Values.Where(o => o.OwnerId == uid).ToList();
+            state.MyCompletedOrders = _activeOrders.Values.Where(o => o.OwnerId == uid && o.Status == "Fulfilled").ToList();
+            var comp = terminal.Comp;
+            if (comp.PlayerStorage.TryGetValue(uid, out var storage) && Exists(storage) && TryComp<StorageComponent>(storage, out var sc))
             {
-                ListingId = l.ListingId.ToString(),
-                SellerName = l.SellerCharacterName,
-                PrototypeId = l.PrototypeId,
-                PrototypeName = name,
-                Quantity = l.Quantity,
-                StackCount = l.StackCount,
-                Currency = l.Currency,
-                PricePerUnit = l.PricePerUnit,
-                RequestedItemId = l.RequestedItemId,
-                RequestedQuantity = l.RequestedQuantity,
-                ListedAt = l.ListedAt,
-                ExpiresAt = l.ExpiresAt,
-            };
-        }).ToList();
-
-        Guid? userId = null;
-        TryGetMarketPlayerInfo(user, out userId, out var charName);
-
-        var myListings = active
-            .Where(l => l.SellerPlayerId == userId)
-            .Select(l =>
-            {
-                var name = _proto.TryIndex<EntityPrototype>(l.PrototypeId, out var proto)
-                    ? proto.Name : l.PrototypeId;
-
-                return new MarketListingData
+                foreach (var item in sc.Container.ContainedEntities)
                 {
-                    ListingId = l.ListingId.ToString(),
-                    SellerName = l.SellerCharacterName,
-                    PrototypeId = l.PrototypeId,
-                    PrototypeName = name,
-                    Quantity = l.Quantity,
-                    StackCount = l.StackCount,
-                    Currency = l.Currency,
-                    PricePerUnit = l.PricePerUnit,
-                    RequestedItemId = l.RequestedItemId,
-                    RequestedQuantity = l.RequestedQuantity,
-                    ListedAt = l.ListedAt,
-                    ExpiresAt = l.ExpiresAt,
-                };
-            }).ToList();
-
-        var state = new MarketStateMessage
-        {
-            Listings = listingData,
-            MyListings = myListings,
-            Feed = new List<MarketFeedEntry>(_activityFeed),
-            ItemSummaries = BuildItemSummaries(active),
-            DepositedItems = BuildDepositedItems(terminal, user),
-        };
-
-        // Attach currency balances for the viewer
-        if (TryComp<PersistentCurrencyComponent>(user, out var wallet))
-        {
-            state.Bottlecaps = wallet.Bottlecaps;
-            state.NcrDollars = wallet.NcrDollars;
-            state.Silver = wallet.Silver;
-            state.Gold = wallet.Gold;
+                    var meta = MetaData(item);
+                    state.DepositedItems.Add(new MarketDepositEntry
+                    {
+                        SlotKey = meta.EntityPrototype?.ID ?? "", ProtoId = meta.EntityPrototype?.ID ?? "",
+                        ProtoName = meta.EntityPrototype?.Name ?? meta.EntityName,
+                        StackCount = TryComp<StackComponent>(item, out var stack) ? stack.Count : 0,
+                    });
+                }
+            }
         }
-
         return state;
     }
 
-    private bool TryGetMarketPlayerInfo(EntityUid user, out Guid? userId, out string? charName)
+    // ── Round lifecycle ───────────────────────────────────────────────────────
+
+    private void OnRoundStarted(RoundStartedEvent args)
     {
-        userId = null;
-        charName = null;
-
-        if (!TryComp<ActorComponent>(user, out var actor))
-            return false;
-
-        userId = actor.PlayerSession.UserId.UserId;
-        charName = actor.PlayerSession.Name;
-        return true;
-    }
-
-    private List<MarketItemSummary> BuildItemSummaries(List<MarketListing> active)
-    {
-        var groups = active
-            .GroupBy(l => l.PrototypeId)
-            .Select(g => new
-            {
-                ProtoId = g.Key,
-                Name = _proto.TryIndex<EntityPrototype>(g.Key, out var p) ? p.Name : g.Key,
-                Count = g.Count(),
-                Lowest = g.Where(l => l.Currency != "Barter").Select(l => l.PricePerUnit).DefaultIfEmpty(0).Min(),
-                Highest = g.Where(l => l.Currency != "Barter").Select(l => l.PricePerUnit).DefaultIfEmpty(0).Max(),
-                Currency = g.First().Currency,
-            })
-            .Select(g => new MarketItemSummary
-            {
-                PrototypeId = g.ProtoId,
-                PrototypeName = g.Name,
-                ListingCount = g.Count,
-                LowestPrice = g.Lowest,
-                HighestPrice = g.Highest,
-                Currency = g.Currency == "Barter" ? "Barter" : g.Currency,
-            })
-            .OrderByDescending(s => s.ListingCount)
-            .ToList();
-
-        return groups;
-    }
-
-    private List<MarketDepositEntry> BuildDepositedItems(Entity<MarketTerminalComponent> terminal, EntityUid user)
-    {
-        var entries = new List<MarketDepositEntry>();
-
-        if (!TryComp<ActorComponent>(user, out var actor))
-            return entries;
-
-        var userId = actor.PlayerSession.UserId.UserId;
-        var comp = terminal.Comp;
-
-        if (!comp.PlayerStorage.TryGetValue(userId, out var storage) || !Exists(storage)
-            || !TryComp<StorageComponent>(storage, out var storageComp))
-            return entries;
-
-        foreach (var item in storageComp.Container.ContainedEntities)
-        {
-            var meta = MetaData(item);
-            var protoId = meta.EntityPrototype?.ID ?? "";
-            var protoName = meta.EntityPrototype?.Name ?? meta.EntityName;
-            var stackCount = TryComp<StackComponent>(item, out var stack) ? stack.Count : 0;
-
-            entries.Add(new MarketDepositEntry
-            {
-                SlotKey = protoId,
-                ProtoId = protoId,
-                ProtoName = protoName,
-                StackCount = stackCount,
-                Quantity = stackCount > 0 ? stackCount : 1,
-            });
-        }
-
-        return entries;
+        _activeOrders.Clear(); _openMarketUis.Clear(); _activityFeed.Clear();
+        _escrowCurrency.Clear(); _escrowItems.Clear();
     }
 }
-
