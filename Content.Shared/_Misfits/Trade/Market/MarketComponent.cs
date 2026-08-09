@@ -58,6 +58,39 @@ public sealed class MarketListMessage(string prototypeId, int quantity, int stac
 }
 
 /// <summary>
+/// Sent from client to server: get what the player is holding for listing.
+/// </summary>
+[Serializable, NetSerializable]
+public sealed class MarketGetHeldItemMessage : BoundUserInterfaceMessage
+{
+}
+
+/// <summary>
+/// Sent from server to client: held item info for listing form.
+/// </summary>
+[Serializable, NetSerializable]
+public sealed class MarketHeldItemResponse(BoundUserInterfaceState? state = null) : BoundUserInterfaceState
+{
+    public string? ProtoId;
+    public string? ProtoName;
+    public int StackCount;
+}
+
+/// <summary>
+/// Per-item summary for the market overview (EVE-like).
+/// </summary>
+[Serializable, NetSerializable]
+public sealed class MarketItemSummary
+{
+    public string PrototypeId = string.Empty;
+    public string PrototypeName = string.Empty;
+    public int ListingCount;
+    public int LowestPrice;
+    public int HighestPrice;
+    public string Currency = string.Empty;
+}
+
+/// <summary>
 /// A single activity feed entry.
 /// </summary>
 [Serializable, NetSerializable]
@@ -86,6 +119,7 @@ public sealed class MarketStateMessage : BoundUserInterfaceState
     public List<MarketListingData> Listings = new();
     public List<MarketListingData> MyListings = new();
     public List<MarketFeedEntry> Feed = new(); // #Cythisiax Add - activity feed
+    public List<MarketItemSummary> ItemSummaries = new(); // #Cythisiax Add - EVE-like overview
     public string MarketName = "Wendover Free Market";
     // Currency balances for the viewing player
     public int Bottlecaps;

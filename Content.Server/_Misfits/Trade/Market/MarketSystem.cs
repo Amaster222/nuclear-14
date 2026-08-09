@@ -70,6 +70,7 @@ public sealed class MarketSystem : EntitySystem
         {
             subs.Event<MarketListMessage>(OnListMessage);
             subs.Event<MarketBuyMessage>(OnBuyMessage);
+            subs.Event<MarketGetHeldItemMessage>(OnGetHeldItem);
         });
 
         // Load active listings from DB on startup
@@ -331,7 +332,43 @@ public sealed class MarketSystem : EntitySystem
         // Broadcast updated state
         RefreshMarketState(terminal);
     }
+    // ── Held-item lookup ───────────────────────────────────────────────────────
 
+    private void OnGetHeldItem(Entity<MarketTerminalComponent> terminal, ref MarketGetHeldItemMessage msg)
+    {
+        if (!TryComp<ActorComponent>(terminal, out var terminalActor))
+            return;
+
+        var user = terminalActor.PlayerSession.AttachedEntity;
+        if (user == null || user == EntityUid.Invalid)
+            return;
+
+        // Check active hand
+        EntityUid? heldItem = null;
+        foreach (var held in _hands.EnumerateHeld(user.Value))
+        {
+            heldItem = held;
+            break; // first held item = active hand
+        }
+
+        if (heldItem == null)
+            return;
+
+        var meta = MetaData(heldItem.Value);
+        var protoId = meta.EntityPrototype?.ID;
+        var protoName = meta.EntityPrototype?.Name ?? meta.EntityName;
+        var stackCount = TryComp<StackComponent>(heldItem.Value, out var stack) ? stack.Count : 0;
+
+        var response = new MarketHeldItemResponse
+        {
+            ProtoId = protoId,
+            ProtoName = protoName,
+            StackCount = stackCount,
+        };
+
+        if (_ui.IsUiOpen(terminal.Owner, MarketUiKey.Key, user.Value))
+            _ui.SetUiState(terminal.Owner, MarketUiKey.Key, response);
+    }
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     /// <summary>
@@ -724,6 +761,7 @@ public sealed class MarketSystem : EntitySystem
             Listings = listingData,
             MyListings = myListings,
             Feed = new List<MarketFeedEntry>(_activityFeed),
+            ItemSummaries = BuildItemSummaries(active),
         };
 
         // Attach currency balances for the viewer
@@ -749,6 +787,34 @@ public sealed class MarketSystem : EntitySystem
         userId = actor.PlayerSession.UserId.UserId;
         charName = actor.PlayerSession.Name;
         return true;
+    }
+
+    private List<MarketItemSummary> BuildItemSummaries(List<MarketListing> active)
+    {
+        var groups = active
+            .GroupBy(l => l.PrototypeId)
+            .Select(g => new
+            {
+                ProtoId = g.Key,
+                Name = _proto.TryIndex<EntityPrototype>(g.Key, out var p) ? p.Name : g.Key,
+                Count = g.Count(),
+                Lowest = g.Where(l => l.Currency != "Barter").Select(l => l.PricePerUnit).DefaultIfEmpty(0).Min(),
+                Highest = g.Where(l => l.Currency != "Barter").Select(l => l.PricePerUnit).DefaultIfEmpty(0).Max(),
+                Currency = g.First().Currency,
+            })
+            .Select(g => new MarketItemSummary
+            {
+                PrototypeId = g.ProtoId,
+                PrototypeName = g.Name,
+                ListingCount = g.Count,
+                LowestPrice = g.Lowest,
+                HighestPrice = g.Highest,
+                Currency = g.Currency == "Barter" ? "Barter" : g.Currency,
+            })
+            .OrderByDescending(s => s.ListingCount)
+            .ToList();
+
+        return groups;
     }
 }
 
