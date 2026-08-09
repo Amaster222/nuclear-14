@@ -384,7 +384,11 @@ public sealed class PersistentCurrencySystem : EntitySystem
 
         try
         {
-            comp.Bottlecaps = await _db.GetCharacterCurrencyAsync(playerId, characterName);
+            var row = await _db.GetCharacterCurrencyAsync(playerId, characterName);
+            comp.Bottlecaps = row?.Bottlecaps ?? 0;
+            comp.NcrDollars = row?.NcrDollars ?? 0; // #Cythisiax Add
+            comp.Silver = row?.Silver ?? 0; // #Cythisiax Add
+            comp.Gold = row?.Gold ?? 0; // #Cythisiax Add
         }
         catch (Exception ex)
         {
@@ -410,7 +414,8 @@ public sealed class PersistentCurrencySystem : EntitySystem
         if (!Guid.TryParse(userId, out var playerId))
             return;
 
-        _db.UpsertCharacterCurrencyAsync(playerId, characterName, comp.Bottlecaps);
+        _db.UpsertCharacterCurrencyAsync(playerId, characterName, comp.Bottlecaps,
+            comp.NcrDollars, comp.Silver, comp.Gold); // #Cythisiax Add - multi-currency
     }
 
     // ── One-time JSON → database migration ─────────────────────────────────────
@@ -441,7 +446,7 @@ public sealed class PersistentCurrencySystem : EntitySystem
                 if (string.IsNullOrEmpty(record.UserId) || !Guid.TryParse(record.UserId, out var pid))
                     continue;
 
-                await _db.UpsertCharacterCurrencyAsync(pid, record.CharacterName, record.Bottlecaps);
+                await _db.UpsertCharacterCurrencyAsync(pid, record.CharacterName, record.Bottlecaps); // #Cythisiax - multi-currency migration (legacy records only have caps)
             }
 
             File.Move(jsonPath, jsonPath + ".migrated");
