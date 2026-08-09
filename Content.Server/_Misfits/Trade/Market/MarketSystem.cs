@@ -72,7 +72,6 @@ public sealed class MarketSystem : EntitySystem
         {
             subs.Event<MarketListMessage>(OnListMessage);
             subs.Event<MarketBuyMessage>(OnBuyMessage);
-            subs.Event<MarketGetHeldItemMessage>(OnGetHeldItem);
             subs.Event<MarketDepositItemMessage>(OnDepositItem);
             subs.Event<MarketWithdrawItemMessage>(OnWithdrawItem);
         });
@@ -335,43 +334,6 @@ public sealed class MarketSystem : EntitySystem
 
         // Broadcast updated state
         RefreshMarketState(terminal);
-    }
-    // ── Held-item lookup ───────────────────────────────────────────────────────
-
-    private void OnGetHeldItem(Entity<MarketTerminalComponent> terminal, ref MarketGetHeldItemMessage msg)
-    {
-        if (!TryComp<ActorComponent>(terminal, out var terminalActor))
-            return;
-
-        var user = terminalActor.PlayerSession.AttachedEntity;
-        if (user == null || user == EntityUid.Invalid)
-            return;
-
-        // Check active hand
-        EntityUid? heldItem = null;
-        foreach (var held in _hands.EnumerateHeld(user.Value))
-        {
-            heldItem = held;
-            break; // first held item = active hand
-        }
-
-        if (heldItem == null)
-            return;
-
-        var meta = MetaData(heldItem.Value);
-        var protoId = meta.EntityPrototype?.ID;
-        var protoName = meta.EntityPrototype?.Name ?? meta.EntityName;
-        var stackCount = TryComp<StackComponent>(heldItem.Value, out var stack) ? stack.Count : 0;
-
-        var response = new MarketHeldItemResponse
-        {
-            ProtoId = protoId,
-            ProtoName = protoName,
-            StackCount = stackCount,
-        };
-
-        if (_ui.IsUiOpen(terminal.Owner, MarketUiKey.Key, user.Value))
-            RaiseNetworkEvent(response, terminalActor.PlayerSession.Channel);
     }
 
     // ── Deposit / Withdraw (player-private storage) ────────────────────────────
@@ -770,12 +732,12 @@ public sealed class MarketSystem : EntitySystem
             if (!_ui.IsUiOpen(terminal.Owner, MarketUiKey.Key, user))
                 continue;
 
-            var state = BuildMarketState(user);
+            var state = BuildMarketState(terminal, user);
             _ui.SetUiState(terminal.Owner, MarketUiKey.Key, state);
         }
     }
 
-    private MarketStateMessage BuildMarketState(EntityUid user)
+    private MarketStateMessage BuildMarketState(Entity<MarketTerminalComponent> terminal, EntityUid user)
     {
         var active = _activeListings.Values.Where(l => l.Status == "Active").ToList();
 
