@@ -75,7 +75,6 @@ public sealed class MarketSystem : EntitySystem
         {
             subs.Event<MarketListMessage>(OnListMessage);
             subs.Event<MarketBuyMessage>(OnBuyMessage);
-            subs.Event<MarketDepositItemMessage>(OnDepositItem);
             subs.Event<MarketWithdrawItemMessage>(OnWithdrawItem);
         });
 
@@ -397,24 +396,31 @@ public sealed class MarketSystem : EntitySystem
 
         _log.Debug($"Market verb deposit: {actor.PlayerSession.Name} deposited {MetaData(item).EntityPrototype?.ID}");
 
-        // Refresh any open UI for this user
-        foreach (var openUser in _openMarketUis.ToList())
-        {
-            if (openUser == user && TryComp<MarketTerminalComponent>(terminal, out _))
-                RefreshMarketState((terminal, Comp<MarketTerminalComponent>(terminal)));
-        }
+        // Refresh any open market UIs for this player
+        if (_openMarketUis.Contains(user) && TryComp<MarketTerminalComponent>(terminal, out var termComp))
+            RefreshMarketState((terminal, termComp));
     }
 
     private void OnDepositItem(Entity<MarketTerminalComponent> terminal, ref MarketDepositItemMessage msg)
     {
-        if (!TryComp<ActorComponent>(terminal, out var terminalActor))
+        // Get the player who has the UI open (actor from BUI session)
+        EntityUid? user = null;
+        foreach (var uid in _openMarketUis)
+        {
+            if (_ui.IsUiOpen(terminal.Owner, MarketUiKey.Key, uid))
+            {
+                user = uid;
+                break;
+            }
+        }
+
+        if (user == null)
             return;
 
-        var user = terminalActor.PlayerSession.AttachedEntity;
-        if (user == null || user == EntityUid.Invalid)
+        if (!TryComp<ActorComponent>(user.Value, out var actor))
             return;
 
-        var userId = terminalActor.PlayerSession.UserId.UserId;
+        var userId = actor.PlayerSession.UserId.UserId;
 
         // Find an item in the player's active hand
         EntityUid? heldItem = null;

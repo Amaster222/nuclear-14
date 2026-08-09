@@ -40,10 +40,8 @@
                 <PanelContainer StyleClasses="PanelDark">
                     <BoxContainer Orientation="Vertical" SeparationOverride="6" Margin="8 6">
                         <Label Text="1. Your deposited items" StyleClasses="LabelHeading" />
-                        <BoxContainer Orientation="Horizontal" SeparationOverride="8">
-                            <Button Name="DepositHeldBtn" Text="Deposit Held Item" MinWidth="140" />
-                            <Label Text="Put items in storage first, then list from your pool." VerticalAlignment="Center" />
-                        </BoxContainer>
+                        <Label Text="Right-click an item in your inventory and select 'Deposit to Market' to store it here."
+                               StyleClasses="LabelSubText" Margin="0 2" />
                         <BoxContainer Name="DepositItemsContainer" Orientation="Vertical" SeparationOverride="2" />
                     </BoxContainer>
                 </PanelContainer>

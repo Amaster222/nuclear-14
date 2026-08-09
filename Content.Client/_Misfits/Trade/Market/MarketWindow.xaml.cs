@@ -13,7 +13,6 @@ public sealed partial class MarketWindow : DefaultWindow
     public event Action? OnClose;
     public event Action<MarketListMessage>? OnListRequest;
     public event Action<string, int>? OnBuyRequest;
-    public event Action? OnDepositItem;
 
     private readonly List<string> _currencyOptions = new() { "Bottlecaps", "NCRDollars", "Silver", "Gold", "Barter" };
     private string? _selectedDepositSlot;
@@ -47,9 +46,6 @@ public sealed partial class MarketWindow : DefaultWindow
         };
 
         ListPrice.OnTextChanged += _ => UpdateFeeLabel();
-
-        // Deposit button
-        DepositHeldBtn.OnPressed += _ => OnDepositItem?.Invoke();
 
         // Withdraw event is wired per-item in UpdateDepositedItems
 

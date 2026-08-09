@@ -19,7 +19,6 @@ public sealed class MarketBoundUi(EntityUid owner, Enum uiKey) : BoundUserInterf
         _window.OnClose += Close;
         _window.OnListRequest += OnListRequest;
         _window.OnBuyRequest += OnBuyRequest;
-        _window.OnDepositItem += () => SendMessage(new MarketDepositItemMessage());
 
         _window.OpenCentered();
     }
