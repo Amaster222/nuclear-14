@@ -54,6 +54,7 @@ public sealed class MarketSystem : EntitySystem
             subs.Event<CancelOrderMessage>(OnCancelOrder);
             subs.Event<ClaimEscrowMessage>(OnClaimEscrow);
             subs.Event<MarketWithdrawItemMessage>(OnWithdrawItem);
+            subs.Event<ProtoSearchMessage>(OnProtoSearch);
         });
     }
 
@@ -142,8 +143,39 @@ public sealed class MarketSystem : EntitySystem
         foreach (var c in sc.Container.ContainedEntities) { toRemove = c; break; }
         if (toRemove == null) return;
         _container.Remove(toRemove.Value, sc.Container);
-        if (!_hands.TryPickupAnyHand(user, toRemove.Value)) _xform.DropNextTo(toRemove.Value, user);
+        if (!_hands.TryPickupAnyHand(user.Value, toRemove.Value)) _xform.DropNextTo(toRemove.Value, user.Value);
         RefreshMarketState(terminal);
+    }
+
+    private void OnProtoSearch(Entity<MarketTerminalComponent> terminal, ref ProtoSearchMessage msg)
+    {
+        if (!TryComp<ActorComponent>(terminal, out var actor)) return;
+        if (string.IsNullOrWhiteSpace(msg.Query)) return;
+
+        var query = msg.Query.ToLowerInvariant();
+        var matches = new List<(string Id, string Name)>();
+
+        foreach (var proto in _proto.EnumeratePrototypes<EntityPrototype>())
+        {
+            // Only N14/Misfits items that players can pick up
+            var id = proto.ID.ToLowerInvariant();
+            if (!id.StartsWith("n14") && !id.StartsWith("misfits"))
+                continue;
+
+            var hasItem = proto.Components.ContainsKey("Item");
+            var hasClothing = proto.Components.ContainsKey("Clothing");
+            if (!hasItem && !hasClothing)
+                continue;
+
+            var name = proto.Name?.ToLowerInvariant() ?? "";
+            if (id.Contains(query) || name.Contains(query))
+            {
+                matches.Add((proto.ID, proto.Name ?? proto.ID));
+                if (matches.Count >= 20) break;
+            }
+        }
+
+        _ui.SendMessage(terminal, new ProtoSearchResults(matches));
     }
 
     // ── Order Matching Engine ──────────────────────────────────────────────────
@@ -153,7 +185,7 @@ public sealed class MarketSystem : EntitySystem
         if (!TryComp<ActorComponent>(terminal, out var actor)) return;
         var session = actor.PlayerSession;
         var user = session.AttachedEntity;
-        if (user == null || user == EntityUid.Invalid) return;
+        if (user == null || user == null || user == EntityUid.Invalid) return;
         var userId = session.UserId;
         var charName = session.Name;
         var orderId = Guid.NewGuid().ToString();
@@ -161,7 +193,7 @@ public sealed class MarketSystem : EntitySystem
         if (msg.IsBuyOrder)
         {
             var totalCost = msg.Price * msg.Quantity;
-            if (!TryDeductFee(user, msg.Currency, totalCost + totalCost / 10)) return;
+            if (!TryDeductFee(user.Value, msg.Currency, totalCost + totalCost / 10)) return;
             _escrowCurrency[(userId.UserId, orderId)] = totalCost;
         }
         else
@@ -240,20 +272,20 @@ public sealed class MarketSystem : EntitySystem
     {
         if (!TryComp<ActorComponent>(terminal, out var actor)) return;
         var user = actor.PlayerSession.AttachedEntity;
-        if (user == null || user == EntityUid.Invalid) return;
+        if (user == null || user == null || user == EntityUid.Invalid) return;
         if (!_activeOrders.TryGetValue(msg.OrderId, out var order) || order.Status != "Active") return;
         if (order.OwnerId != actor.PlayerSession.UserId.UserId) return;
         order.Status = "Cancelled"; _activeOrders.Remove(msg.OrderId);
         if (order.IsBuyOrder)
         {
             if (_escrowCurrency.TryGetValue((order.OwnerId, order.OrderId), out var refund))
-            { RefundCurrency(user, order.Currency, refund); _escrowCurrency.Remove((order.OwnerId, order.OrderId)); }
+            { RefundCurrency(user.Value, order.Currency, refund); _escrowCurrency.Remove((order.OwnerId, order.OrderId)); }
         }
         else
         {
             var sn = $"{ListingSlotPrefix}{msg.OrderId}";
             if (_container.TryGetContainer(terminal.Owner, sn, out var c) && c is ContainerSlot slot && slot.ContainedEntity is { } item)
-            { _container.Remove(item, slot); if (!_hands.TryPickupAnyHand(user, item)) _xform.DropNextTo(item, user); }
+            { _container.Remove(item, slot); if (!_hands.TryPickupAnyHand(user.Value, item)) _xform.DropNextTo(item, user.Value); }
         }
         RefreshMarketState(terminal);
     }
@@ -262,20 +294,20 @@ public sealed class MarketSystem : EntitySystem
     {
         if (!TryComp<ActorComponent>(terminal, out var actor)) return;
         var user = actor.PlayerSession.AttachedEntity;
-        if (user == null || user == EntityUid.Invalid) return;
+        if (user == null || user == null || user == EntityUid.Invalid) return;
         if (!_activeOrders.TryGetValue(msg.OrderId, out var order)) return;
         if (order.OwnerId != actor.PlayerSession.UserId.UserId || order.Status != "Fulfilled") return;
         if (order.IsBuyOrder)
         {
             var sn = $"{ListingSlotPrefix}{msg.OrderId}";
             if (_container.TryGetContainer(terminal.Owner, sn, out var c) && c is ContainerSlot slot && slot.ContainedEntity is { } item)
-            { _container.Remove(item, slot); if (!_hands.TryPickupAnyHand(user, item)) _xform.DropNextTo(item.Value, user); }
-            else { var s = Spawn(order.PrototypeId, Transform(user).Coordinates); if (!_hands.TryPickupAnyHand(user, s)) _xform.DropNextTo(s, user); }
+            { _container.Remove(item, slot); if (!_hands.TryPickupAnyHand(user.Value, item)) _xform.DropNextTo(item, user.Value); }
+            else { var s = Spawn(order.PrototypeId, Transform(user.Value).Coordinates); if (!_hands.TryPickupAnyHand(user.Value, s)) _xform.DropNextTo(s, user.Value); }
         }
         else
         {
             if (_escrowCurrency.TryGetValue((order.OwnerId, order.OrderId), out var proceeds))
-            { RefundCurrency(user, order.Currency, proceeds); _escrowCurrency.Remove((order.OwnerId, order.OrderId)); }
+            { RefundCurrency(user.Value, order.Currency, proceeds); _escrowCurrency.Remove((order.OwnerId, order.OrderId)); }
         }
         order.Status = "Claimed"; RefreshMarketState(terminal);
     }
