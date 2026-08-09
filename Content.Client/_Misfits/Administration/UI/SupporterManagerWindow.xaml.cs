@@ -25,11 +25,14 @@ public sealed partial class SupporterManagerWindow : FancyWindow
         AddButton.OnPressed += _ => TrySubmit();
         ClearFormButton.OnPressed += _ => ClearForm();
 
-        // #Cythisiax Added - populate Patreon tier dropdown
+        // #Cythisiax Added - populate Patreon tier dropdown.
+        // Must subscribe to OnItemSelected and call SelectId, otherwise the OptionButton's
+        // internal SelectedId/label never updates when an item is clicked (it only fires the event).
         TierEdit.AddItem("None", (int) SupporterTier.None);
         TierEdit.AddItem("Silver", (int) SupporterTier.Silver);
         TierEdit.AddItem("Gold", (int) SupporterTier.Gold);
         TierEdit.AddItem("Nuclear", (int) SupporterTier.Nuclear);
+        TierEdit.OnItemSelected += args => TierEdit.SelectId(args.Id);
         TierEdit.SelectId((int) SupporterTier.None);
     }
 
