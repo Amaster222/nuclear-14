@@ -45,6 +45,8 @@ public sealed class MarketSystem : EntitySystem
 
     // Internal container prefix for per-listing item storage.
     private const string ListingSlotPrefix = "market_slot_";
+    // Player deposit storage container prefix.
+    private const string DepositSlotPrefix = "market_dep_";
 
     // Purge timer — runs once per minute
     private float _purgeTimer;
@@ -71,6 +73,8 @@ public sealed class MarketSystem : EntitySystem
             subs.Event<MarketListMessage>(OnListMessage);
             subs.Event<MarketBuyMessage>(OnBuyMessage);
             subs.Event<MarketGetHeldItemMessage>(OnGetHeldItem);
+            subs.Event<MarketDepositItemMessage>(OnDepositItem);
+            subs.Event<MarketWithdrawItemMessage>(OnWithdrawItem);
         });
 
         // Load active listings from DB on startup
@@ -367,8 +371,76 @@ public sealed class MarketSystem : EntitySystem
         };
 
         if (_ui.IsUiOpen(terminal.Owner, MarketUiKey.Key, user.Value))
-            _ui.SetUiState(terminal.Owner, MarketUiKey.Key, response);
+            RaiseNetworkEvent(response, terminalActor.PlayerSession.Channel);
     }
+
+    // ── Deposit / Withdraw (player-private storage) ────────────────────────────
+
+    private void OnDepositItem(Entity<MarketTerminalComponent> terminal, ref MarketDepositItemMessage msg)
+    {
+        if (!TryComp<ActorComponent>(terminal, out var terminalActor))
+            return;
+
+        var user = terminalActor.PlayerSession.AttachedEntity;
+        if (user == null || user == EntityUid.Invalid)
+            return;
+
+        var userId = terminalActor.PlayerSession.UserId.UserId;
+
+        // Find an item in the player's active hand
+        EntityUid? heldItem = null;
+        foreach (var held in _hands.EnumerateHeld(user.Value))
+        {
+            heldItem = held;
+            break;
+        }
+
+        if (heldItem == null)
+            return;
+
+        // Create a deposit slot keyed to this player
+        var slotIdx = 0;
+        string slotName;
+        do
+        {
+            slotName = $"{DepositSlotPrefix}{userId}_{slotIdx}";
+            slotIdx++;
+        } while (_container.TryGetContainer(terminal.Owner, slotName, out _));
+
+        var slot = _container.EnsureContainer<ContainerSlot>(terminal.Owner, slotName);
+        if (!_container.Insert(heldItem.Value, slot))
+            return;
+
+        RefreshMarketState(terminal);
+    }
+
+    private void OnWithdrawItem(Entity<MarketTerminalComponent> terminal, ref MarketWithdrawItemMessage msg)
+    {
+        if (!TryComp<ActorComponent>(terminal, out var terminalActor))
+            return;
+
+        var user = terminalActor.PlayerSession.AttachedEntity;
+        if (user == null || user == EntityUid.Invalid)
+            return;
+
+        // Only allow withdrawing your own items
+        var userId = terminalActor.PlayerSession.UserId.UserId;
+        if (!msg.SlotKey.StartsWith($"{DepositSlotPrefix}{userId}_"))
+            return;
+
+        if (!_container.TryGetContainer(terminal.Owner, msg.SlotKey, out var slot) ||
+            slot.ContainedEntities.Count == 0)
+            return;
+
+        var item = slot.ContainedEntities.First();
+        _container.Remove(item, slot);
+
+        if (!_hands.TryPickupAnyHand(user.Value, item))
+            _xform.DropNextTo(item, user.Value);
+
+        RefreshMarketState(terminal);
+    }
+
     // ── Helpers ───────────────────────────────────────────────────────────────
 
     /// <summary>
@@ -762,6 +834,7 @@ public sealed class MarketSystem : EntitySystem
             MyListings = myListings,
             Feed = new List<MarketFeedEntry>(_activityFeed),
             ItemSummaries = BuildItemSummaries(active),
+            DepositedItems = BuildDepositedItems(terminal, user),
         };
 
         // Attach currency balances for the viewer
@@ -815,6 +888,46 @@ public sealed class MarketSystem : EntitySystem
             .ToList();
 
         return groups;
+    }
+
+    private List<MarketDepositEntry> BuildDepositedItems(Entity<MarketTerminalComponent> terminal, EntityUid user)
+    {
+        var entries = new List<MarketDepositEntry>();
+
+        if (!TryComp<ActorComponent>(user, out var actor))
+            return entries;
+
+        var userId = actor.PlayerSession.UserId.UserId;
+        var prefix = $"{DepositSlotPrefix}{userId}_";
+
+        // Enumerate all containers on the terminal matching this player's prefix
+        foreach (var container in _container.GetAllContainers(terminal.Owner))
+        {
+            if (!container.ID.StartsWith(prefix))
+                continue;
+
+            if (container is not ContainerSlot slot || slot.ContainedEntities.Count == 0)
+                continue;
+
+            foreach (var item in slot.ContainedEntities)
+            {
+                var meta = MetaData(item);
+                var protoId = meta.EntityPrototype?.ID ?? "";
+                var protoName = meta.EntityPrototype?.Name ?? meta.EntityName;
+                var stackCount = TryComp<StackComponent>(item, out var stack) ? stack.Count : 0;
+
+                entries.Add(new MarketDepositEntry
+                {
+                    SlotKey = container.ID,
+                    ProtoId = protoId,
+                    ProtoName = protoName,
+                    StackCount = stackCount,
+                    Quantity = stackCount > 0 ? stackCount : 1,
+                });
+            }
+        }
+
+        return entries;
     }
 }
 

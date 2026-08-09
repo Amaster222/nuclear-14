@@ -39,11 +39,12 @@
             <BoxContainer Orientation="Vertical" SeparationOverride="8">
                 <PanelContainer StyleClasses="PanelDark">
                     <BoxContainer Orientation="Vertical" SeparationOverride="6" Margin="8 6">
-                        <Label Text="1. Pick item from your hands" StyleClasses="LabelHeading" />
+                        <Label Text="1. Your deposited items" StyleClasses="LabelHeading" />
                         <BoxContainer Orientation="Horizontal" SeparationOverride="8">
-                            <Button Name="GetHeldItemBtn" Text="Use Held Item" MinWidth="140" />
-                            <Label Name="HeldItemLabel" Text="Nothing in hand" VerticalAlignment="Center" />
+                            <Button Name="DepositHeldBtn" Text="Deposit Held Item" MinWidth="140" />
+                            <Label Text="Put items in storage first, then list from your pool." VerticalAlignment="Center" />
                         </BoxContainer>
+                        <BoxContainer Name="DepositItemsContainer" Orientation="Vertical" SeparationOverride="2" />
                     </BoxContainer>
                 </PanelContainer>
 

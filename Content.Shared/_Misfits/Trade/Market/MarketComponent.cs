@@ -58,22 +58,44 @@ public sealed class MarketListMessage(string prototypeId, int quantity, int stac
 }
 
 /// <summary>
-/// Sent from client to server: get what the player is holding for listing.
+/// Sent from client to server: deposit held item into market storage.
 /// </summary>
 [Serializable, NetSerializable]
-public sealed class MarketGetHeldItemMessage : BoundUserInterfaceMessage
+public sealed class MarketDepositItemMessage : BoundUserInterfaceMessage
 {
+}
+
+/// <summary>
+/// Sent from client to server: withdraw an item from market storage.
+/// </summary>
+[Serializable, NetSerializable]
+public sealed class MarketWithdrawItemMessage(string slotKey) : BoundUserInterfaceMessage
+{
+    public string SlotKey = slotKey;
 }
 
 /// <summary>
 /// Sent from server to client: held item info for listing form.
 /// </summary>
 [Serializable, NetSerializable]
-public sealed class MarketHeldItemResponse(BoundUserInterfaceState? state = null) : BoundUserInterfaceState
+public sealed class MarketHeldItemResponse(string? protoId = null, string? protoName = null, int stackCount = 0) : BoundUserInterfaceMessage
 {
-    public string? ProtoId;
-    public string? ProtoName;
+    public string? ProtoId = protoId;
+    public string? ProtoName = protoName;
+    public int StackCount = stackCount;
+}
+
+/// <summary>
+/// A single item in the player's market deposit storage.
+/// </summary>
+[Serializable, NetSerializable]
+public sealed class MarketDepositEntry
+{
+    public string SlotKey = string.Empty;
+    public string ProtoId = string.Empty;
+    public string ProtoName = string.Empty;
     public int StackCount;
+    public int Quantity = 1;
 }
 
 /// <summary>
@@ -120,6 +142,7 @@ public sealed class MarketStateMessage : BoundUserInterfaceState
     public List<MarketListingData> MyListings = new();
     public List<MarketFeedEntry> Feed = new(); // #Cythisiax Add - activity feed
     public List<MarketItemSummary> ItemSummaries = new(); // #Cythisiax Add - EVE-like overview
+    public List<MarketDepositEntry> DepositedItems = new(); // #Cythisiax Add - player's deposit storage
     public string MarketName = "Wendover Free Market";
     // Currency balances for the viewing player
     public int Bottlecaps;

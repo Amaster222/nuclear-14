@@ -13,8 +13,10 @@ public sealed partial class MarketWindow : DefaultWindow
     public event Action? OnClose;
     public event Action<MarketListMessage>? OnListRequest;
     public event Action<string, int>? OnBuyRequest;
+    public event Action? OnDepositItem;
 
     private readonly List<string> _currencyOptions = new() { "Bottlecaps", "NCRDollars", "Silver", "Gold", "Barter" };
+    private string? _selectedDepositSlot;
 
     public MarketWindow()
     {
@@ -40,15 +42,66 @@ public sealed partial class MarketWindow : DefaultWindow
         {
             ListCurrency.SelectId(args.Id);
             var isBarter = (string?) ListCurrency.SelectedMetadata == "Barter";
-            BarterRow.Visible = isBarter;
-            BarterQtyRow.Visible = isBarter;
+            BarterPanel.Visible = isBarter;
             UpdateFeeLabel();
         };
 
         ListPrice.OnTextChanged += _ => UpdateFeeLabel();
 
+        // Deposit button
+        DepositHeldBtn.OnPressed += _ => OnDepositItem?.Invoke();
+
+        // Withdraw event is wired per-item in UpdateDepositedItems
+
         // List item submission
         ListSubmitBtn.OnPressed += _ => SubmitListing();
+    }
+
+    public void UpdateDepositedItems(List<MarketDepositEntry> items, Action<string>? onWithdraw)
+    {
+        DepositItemsContainer.RemoveAllChildren();
+
+        if (items.Count == 0)
+        {
+            DepositItemsContainer.AddChild(new Label
+            {
+                Text = "No items deposited. Hold an item and click 'Deposit Held Item'.",
+                StyleClasses = { "LabelSubText" },
+                Margin = new Thickness(4),
+            });
+            return;
+        }
+
+        foreach (var entry in items)
+        {
+            var row = new BoxContainer { Orientation = BoxContainer.LayoutOrientation.Horizontal, SeparationOverride = 8 };
+            var label = new Label
+            {
+                Text = $"{entry.ProtoName} x{entry.Quantity}" + (entry.StackCount > 0 ? $" ({entry.StackCount} stack)" : ""),
+                HorizontalExpand = true,
+                VerticalAlignment = VAlignment.Center,
+            };
+            row.AddChild(label);
+
+            var selectBtn = new Button { Text = "Select", MinWidth = 60 };
+            var slot = entry.SlotKey;
+            var protoId = entry.ProtoId;
+            var stackCount = entry.StackCount;
+            selectBtn.OnPressed += _ =>
+            {
+                _selectedDepositSlot = slot;
+                ListProtoId.Text = protoId;
+                ListStackCount.Text = stackCount > 0 ? stackCount.ToString() : "0";
+            };
+            row.AddChild(selectBtn);
+
+            var withdrawBtn = new Button { Text = "Take", MinWidth = 50 };
+            var wSlot = entry.SlotKey;
+            withdrawBtn.OnPressed += _ => onWithdraw?.Invoke(wSlot);
+            row.AddChild(withdrawBtn);
+
+            DepositItemsContainer.AddChild(row);
+        }
     }
 
     private void SwitchTab(int index)
@@ -64,10 +117,7 @@ public sealed partial class MarketWindow : DefaultWindow
         TabActivityBtn.Disabled = index == 3;
     }
 
-    public void SetMarketName(string name)
-    {
-        Title = name;
-    }
+    public void SetMarketName(string name) => Title = name;
 
     public void UpdateBalances(int caps, int ncr, int silver, int gold)
     {
@@ -77,27 +127,58 @@ public sealed partial class MarketWindow : DefaultWindow
         GoldLabel.Text = $"Gold: {gold}";
     }
 
-    public void UpdateListings(List<MarketListingData> listings)
-    {
-        MarketListContainer.RemoveAllChildren();
+    // ── EVE-like Item Overview tab ────────────────────────────────────────────
 
-        if (listings.Count == 0)
+    public void UpdateItemSummaries(List<MarketItemSummary> summaries)
+    {
+        MarketItemsContainer.RemoveAllChildren();
+
+        if (summaries.Count == 0)
         {
-            MarketListContainer.AddChild(new Label { Text = "No active listings." });
+            MarketItemsContainer.AddChild(new Label
+            {
+                Text = "No items listed on the market.",
+                StyleClasses = { "LabelSubText" },
+                Margin = new Thickness(4),
+            });
             return;
         }
 
-        foreach (var listing in listings)
+        // Header row
+        var header = new BoxContainer { Orientation = BoxContainer.LayoutOrientation.Horizontal, SeparationOverride = 8 };
+        header.AddChild(new Label { Text = "Item", MinWidth = 200, StyleClasses = { "LabelHeading" } });
+        header.AddChild(new Label { Text = "#", MinWidth = 40, StyleClasses = { "LabelHeading" } });
+        header.AddChild(new Label { Text = "Low", MinWidth = 50, StyleClasses = { "LabelHeading" } });
+        header.AddChild(new Label { Text = "High", MinWidth = 50, StyleClasses = { "LabelHeading" } });
+        header.AddChild(new Label { Text = "Curr.", MinWidth = 60, StyleClasses = { "LabelHeading" } });
+        MarketItemsContainer.AddChild(header);
+
+        foreach (var s in summaries)
         {
-            var box = new BoxContainer { Orientation = BoxContainer.LayoutOrientation.Horizontal, SeparationOverride = 8 };
-            var text = $"[{listing.Currency}] {listing.PrototypeName} x{listing.Quantity} — {listing.PricePerUnit}/ea — by {listing.SellerName}";
-            box.AddChild(new Label { Text = text, HorizontalExpand = true });
-            var buyBtn = new Button { Text = "Buy", MinWidth = 60 };
-            var listingId = listing.ListingId;
-            buyBtn.OnPressed += _ => OnBuyRequest?.Invoke(listingId, 1);
-            box.AddChild(buyBtn);
-            MarketListContainer.AddChild(box);
+            var row = new BoxContainer { Orientation = BoxContainer.LayoutOrientation.Horizontal, SeparationOverride = 8 };
+            row.AddChild(new Label { Text = s.PrototypeName, MinWidth = 200 });
+            row.AddChild(new Label { Text = s.ListingCount.ToString(), MinWidth = 40 });
+            row.AddChild(new Label { Text = s.LowestPrice > 0 ? s.LowestPrice.ToString() : "—", MinWidth = 50 });
+            row.AddChild(new Label { Text = s.HighestPrice > 0 ? s.HighestPrice.ToString() : "—", MinWidth = 50 });
+            row.AddChild(new Label { Text = s.Currency, MinWidth = 60 });
+
+            var expandBtn = new Button { Text = "View", MinWidth = 60 };
+            expandBtn.OnPressed += _ => ShowItemListings(s.PrototypeId);
+            row.AddChild(expandBtn);
+
+            MarketItemsContainer.AddChild(row);
         }
+    }
+
+    private void ShowItemListings(string prototypeId)
+    {
+        // Open a popup or switch context — for now, just filter the "Market" view
+        // (Full listing detail is Phase 5 graphs — this stub opens nothing)
+    }
+
+    public void UpdateListings(List<MarketListingData> listings)
+    {
+        // Listings are now shown via item summaries; individual listing entries shown on demand
     }
 
     public void UpdateMyListings(List<MarketListingData> listings)
@@ -106,14 +187,31 @@ public sealed partial class MarketWindow : DefaultWindow
 
         if (listings.Count == 0)
         {
-            MyListingsContainer.AddChild(new Label { Text = "You have no active listings." });
+            MyListingsContainer.AddChild(new Label
+            {
+                Text = "You have no active listings.",
+                StyleClasses = { "LabelSubText" },
+                Margin = new Thickness(4),
+            });
             return;
         }
 
         foreach (var listing in listings)
         {
-            var text = $"[{listing.Currency}] {listing.PrototypeName} x{listing.Quantity} — {listing.PricePerUnit}/ea — Expires: {listing.ExpiresAt:yyyy-MM-dd HH:mm}";
-            MyListingsContainer.AddChild(new Label { Text = text });
+            var panel = new PanelContainer { StyleClasses = { "PanelDark" }, Margin = new Thickness(0, 2) };
+            var box = new BoxContainer { Orientation = BoxContainer.LayoutOrientation.Vertical, Margin = new Thickness(6, 4) };
+            box.AddChild(new Label
+            {
+                Text = $"{listing.PrototypeName} x{listing.Quantity} — {listing.PricePerUnit}/ea {listing.Currency}",
+                StyleClasses = { "LabelHeading" },
+            });
+            box.AddChild(new Label
+            {
+                Text = $"Listed: {listing.ListedAt.ToLocalTime():yyyy-MM-dd HH:mm}  |  Expires: {listing.ExpiresAt.ToLocalTime():yyyy-MM-dd HH:mm}",
+                StyleClasses = { "LabelSubText" },
+            });
+            panel.AddChild(box);
+            MyListingsContainer.AddChild(panel);
         }
     }
 
@@ -123,14 +221,23 @@ public sealed partial class MarketWindow : DefaultWindow
 
         if (feed.Count == 0)
         {
-            FeedContainer.AddChild(new Label { Text = "No market activity yet." });
+            FeedContainer.AddChild(new Label
+            {
+                Text = "No market activity yet.",
+                StyleClasses = { "LabelSubText" },
+                Margin = new Thickness(4),
+            });
             return;
         }
 
         foreach (var entry in feed)
         {
             var timeStr = entry.Time.ToLocalTime().ToString("HH:mm");
-            FeedContainer.AddChild(new Label { Text = $"[{timeStr}] {entry.Text}" });
+            FeedContainer.AddChild(new Label
+            {
+                Text = $"[{timeStr}] {entry.Text}",
+                StyleClasses = { "LabelSubText" },
+            });
         }
     }
 
@@ -151,7 +258,7 @@ public sealed partial class MarketWindow : DefaultWindow
             return;
         }
 
-        var fee = price / 10; // 10% rounded down
+        var fee = price / 10;
         ListFeeLabel.Text = $"Fee: {fee} {currency}";
     }
 

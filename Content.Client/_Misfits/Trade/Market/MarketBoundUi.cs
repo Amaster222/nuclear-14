@@ -5,10 +5,6 @@ using Robust.Client.UserInterface;
 
 namespace Content.Client._Misfits.Trade.Market;
 
-/// <summary>
-/// Client-side bound user interface for the Wendover Free Market terminal.
-/// Opens a MarketWindow with Market / My Listings / Activity tabs.
-/// </summary>
 public sealed class MarketBoundUi(EntityUid owner, Enum uiKey) : BoundUserInterface(owner, uiKey)
 {
     private readonly IPlayerManager _player = IoCManager.Resolve<IPlayerManager>();
@@ -23,6 +19,7 @@ public sealed class MarketBoundUi(EntityUid owner, Enum uiKey) : BoundUserInterf
         _window.OnClose += Close;
         _window.OnListRequest += OnListRequest;
         _window.OnBuyRequest += OnBuyRequest;
+        _window.OnDepositItem += () => SendMessage(new MarketDepositItemMessage());
 
         _window.OpenCentered();
     }
@@ -35,22 +32,19 @@ public sealed class MarketBoundUi(EntityUid owner, Enum uiKey) : BoundUserInterf
             return;
 
         _window?.SetMarketName(marketState.MarketName);
-        _window?.UpdateListings(marketState.Listings);
+        _window?.UpdateItemSummaries(marketState.ItemSummaries);
         _window?.UpdateMyListings(marketState.MyListings);
         _window?.UpdateFeed(marketState.Feed);
+        _window?.UpdateDepositedItems(marketState.DepositedItems,
+            slotKey => SendMessage(new MarketWithdrawItemMessage(slotKey)));
         _window?.UpdateBalances(marketState.Bottlecaps, marketState.NcrDollars,
             marketState.Silver, marketState.Gold);
     }
 
-    private void OnListRequest(MarketListMessage msg)
-    {
-        SendMessage(msg);
-    }
+    private void OnListRequest(MarketListMessage msg) => SendMessage(msg);
 
-    private void OnBuyRequest(string listingId, int quantity)
-    {
+    private void OnBuyRequest(string listingId, int quantity) =>
         SendMessage(new MarketBuyMessage(listingId, quantity));
-    }
 
     protected override void Dispose(bool disposing)
     {
