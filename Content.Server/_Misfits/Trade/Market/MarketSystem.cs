@@ -19,8 +19,8 @@ using Robust.Shared.Prototypes;
 namespace Content.Server._Misfits.Trade.Market;
 
 /// <summary>
-/// Server-side system for the Wendover Free Market terminal.
-/// Handles listing, buying, storage, DB persistence, and UI state.
+/// Server-side system for the Wendover Free Market Exchange.
+/// Order-book matching engine with escrow, deposit storage, and UI state.
 /// </summary>
 public sealed class MarketSystem : EntitySystem
 {
@@ -35,9 +35,17 @@ public sealed class MarketSystem : EntitySystem
 
     private ISawmill _log = default!;
 
-    // In-memory cache of active listings keyed by ListingId (Guid string).
-    // Populated from DB on server start, synced on every mutation.
-    private readonly Dictionary<string, MarketListing> _activeListings = new();
+    // ── Order Book ─────────────────────────────────────────────────────────
+
+    /// <summary>All active orders keyed by OrderId (Guid string).</summary>
+    private readonly Dictionary<string, MarketOrder> _activeOrders = new();
+
+    // ── Escrow ─────────────────────────────────────────────────────────────
+
+    /// <summary>Per-player escrowed currency: (PlayerId, CurrencyType) → amount.</summary>
+    private readonly Dictionary<(Guid, string), int> _escrowCurrency = new();
+    /// <summary>Per-player escrowed items: (PlayerId, OrderId) → entity prototype for payout.</summary>
+    private readonly Dictionary<(Guid, string), (string ProtoId, int Qty)> _escrowItems = new();
 
     /// <summary>
     /// Set of players who currently have the market UI open.
@@ -74,8 +82,9 @@ public sealed class MarketSystem : EntitySystem
 
         Subs.BuiEvents<MarketTerminalComponent>(MarketUiKey.Key, subs =>
         {
-            subs.Event<MarketListMessage>(OnListMessage);
-            subs.Event<MarketBuyMessage>(OnBuyMessage);
+            subs.Event<CreateOrderMessage>(OnCreateOrder);
+            subs.Event<CancelOrderMessage>(OnCancelOrder);
+            subs.Event<ClaimEscrowMessage>(OnClaimEscrow);
             subs.Event<MarketWithdrawItemMessage>(OnWithdrawItem);
         });
 
@@ -169,9 +178,9 @@ public sealed class MarketSystem : EntitySystem
         _openMarketUis.Remove(args.Actor);
     }
 
-    // ── Listing flow (Phase 2) ────────────────────────────────────────────────
+    // ── Deposit Storage (per-player grid) ──────────────────────────────────────
 
-    private void OnListMessage(Entity<MarketTerminalComponent> terminal, ref MarketListMessage msg)
+    private EntityUid GetOrCreateDepositStorage(EntityUid terminal, EntityUid user)
     {
         // Get the user who sent the message
         if (!TryComp<ActorComponent>(terminal, out var terminalActor))
@@ -475,6 +484,328 @@ public sealed class MarketSystem : EntitySystem
             _xform.DropNextTo(toRemove.Value, user.Value);
 
         RefreshMarketState(terminal);
+    }
+
+    // ── Order Matching Engine ──────────────────────────────────────────────────
+
+    /// <summary>
+    /// Create a new buy or sell order. Runs the matching engine to fill immediately
+    /// if a crossing order exists. Unfilled remainder goes on the order book.
+    /// </summary>
+    private void OnCreateOrder(Entity<MarketTerminalComponent> terminal, ref CreateOrderMessage msg)
+    {
+        if (!TryGetSessionActor(terminal, out var session, out var user) || user == EntityUid.Invalid)
+            return;
+
+        var userId = session.UserId;
+        var charName = session.Name;
+        var orderId = Guid.NewGuid().ToString();
+
+        // ── Escrow validation ────────────────────────────────────────────
+        if (msg.IsBuyOrder)
+        {
+            var totalCost = msg.Price * msg.Quantity;
+            var fee = totalCost / 10;
+            if (!TryDeductFee(user, msg.Currency, totalCost + fee))
+            {
+                _log.Debug($"Buy order rejected: {charName} can't afford {totalCost}+{fee} {msg.Currency}");
+                return;
+            }
+            // Escrow the total cost (fee is sunk, totalCost is held)
+            var escrowKey = (userId.UserId, orderId);
+            _escrowCurrency[escrowKey] = totalCost;
+        }
+        else // Sell order
+        {
+            // Item must be in deposit storage (escrowed already by deposit)
+            var comp = terminal.Comp;
+            if (comp.PlayerStorage.TryGetValue(userId.UserId, out var storageUid) &&
+                Exists(storageUid) && TryComp<StorageComponent>(storageUid, out var storageComp))
+            {
+                EntityUid? item = null;
+                foreach (var c in storageComp.Container.ContainedEntities)
+                {
+                    if (MetaData(c).EntityPrototype?.ID == msg.PrototypeId)
+                    { item = c; break; }
+                }
+                if (item == null)
+                {
+                    _log.Debug($"Sell order rejected: {charName} doesn't have {msg.PrototypeId} in storage");
+                    return;
+                }
+                _container.Remove(item.Value, storageComp.Container);
+                var listingSlot = _container.EnsureContainer<ContainerSlot>(terminal.Owner,
+                    $"{ListingSlotPrefix}{orderId}");
+                _container.Insert(item.Value, listingSlot);
+                _escrowItems[(userId.UserId, orderId)] = (msg.PrototypeId, msg.Quantity);
+            }
+            else
+            {
+                _log.Debug($"Sell order rejected: {charName} has no deposit storage");
+                return;
+            }
+        }
+
+        // ── Build the order ──────────────────────────────────────────────
+        var protoName = _proto.TryIndex<EntityPrototype>(msg.PrototypeId, out var p) ? p.Name : msg.PrototypeId;
+        var order = new MarketOrder
+        {
+            OrderId = orderId,
+            PrototypeId = msg.PrototypeId,
+            PrototypeName = protoName,
+            Quantity = msg.Quantity,
+            Price = msg.Price,
+            Currency = msg.Currency,
+            IsBuyOrder = msg.IsBuyOrder,
+            OwnerName = charName,
+            OwnerId = userId.UserId,
+            CreatedAt = DateTime.UtcNow,
+            ExpiresAt = DateTime.UtcNow.AddDays(3),
+        };
+
+        // ── Run matching engine ───────────────────────────────────────────
+        MatchOrder(order);
+
+        // ── Store in active book if not fully filled ─────────────────────
+        if (order.Status == "Active" && order.FulfilledQty < order.Quantity)
+            _activeOrders[orderId] = order;
+
+        if (order.FulfilledQty > 0)
+        {
+            PushFeed(msg.IsBuyOrder
+                ? $"{charName} bought {order.FulfilledQty}x {order.PrototypeId} @ {order.Price} {order.Currency}"
+                : $"{charName} sold {order.FulfilledQty}x {order.PrototypeId} @ {order.Price} {order.Currency}");
+        }
+
+        RefreshMarketState(terminal);
+    }
+
+    /// <summary>
+    /// Order matching engine. Takes a new order and matches it against the existing book.
+    /// Modifies the order's FulfilledQty and Status in-place.
+    /// </summary>
+    private void MatchOrder(MarketOrder newOrder)
+    {
+        if (newOrder.IsBuyOrder)
+            MatchBuyOrder(newOrder);
+        else
+            MatchSellOrder(newOrder);
+    }
+
+    /// <summary>Match a new buy order against existing sell orders (asks).</summary>
+    private void MatchBuyOrder(MarketOrder buyOrder)
+    {
+        // Get all sell orders for the same prototype, with ask price ≤ bid price, sorted cheapest first
+        var matchingSells = _activeOrders.Values
+            .Where(o => o.Status == "Active" && !o.IsBuyOrder
+                && o.PrototypeId == buyOrder.PrototypeId
+                && o.Price <= buyOrder.Price)
+            .OrderBy(o => o.Price)
+            .ToList();
+
+        var remainingQty = buyOrder.Quantity;
+
+        foreach (var sell in matchingSells)
+        {
+            if (remainingQty <= 0) break;
+
+            var available = sell.Quantity - sell.FulfilledQty;
+            if (available <= 0) continue;
+
+            var fillQty = Math.Min(remainingQty, available);
+            var tradePrice = sell.Price; // use the ask price (seller's listed price)
+
+            // Execute the trade
+            sell.FulfilledQty += fillQty;
+            buyOrder.FulfilledQty += fillQty;
+            remainingQty -= fillQty;
+
+            // Credit seller (release escrowed item + credit currency)
+            var sellerProceeds = tradePrice * fillQty;
+            var sellerFee = sellerProceeds / 10;
+            _ = CreditSellerAsync(sell.OwnerId, sell.OwnerName, sell.Currency, sellerProceeds - sellerFee);
+
+            // Return escrowed currency to buyer for the filled portion
+            var buyerEscrowKey = (buyOrder.OwnerId, buyOrder.OrderId);
+            if (_escrowCurrency.TryGetValue(buyerEscrowKey, out var escrowed))
+            {
+                var refund = tradePrice * fillQty;
+                _escrowCurrency[buyerEscrowKey] = Math.Max(0, escrowed - refund);
+            }
+
+            if (sell.FulfilledQty >= sell.Quantity)
+                sell.Status = "Fulfilled";
+        }
+
+        if (buyOrder.FulfilledQty >= buyOrder.Quantity)
+            buyOrder.Status = "Fulfilled";
+        else
+            buyOrder.Status = "Active";
+    }
+
+    /// <summary>Match a new sell order against existing buy orders (bids).</summary>
+    private void MatchSellOrder(MarketOrder sellOrder)
+    {
+        var matchingBuys = _activeOrders.Values
+            .Where(o => o.Status == "Active" && o.IsBuyOrder
+                && o.PrototypeId == sellOrder.PrototypeId
+                && o.Price >= sellOrder.Price)
+            .OrderByDescending(o => o.Price)
+            .ToList();
+
+        var remainingQty = sellOrder.Quantity;
+
+        foreach (var buy in matchingBuys)
+        {
+            if (remainingQty <= 0) break;
+
+            var available = buy.Quantity - buy.FulfilledQty;
+            if (available <= 0) continue;
+
+            var fillQty = Math.Min(remainingQty, available);
+            var tradePrice = buy.Price; // use the bid price (buyer's offered price)
+
+            buy.FulfilledQty += fillQty;
+            sellOrder.FulfilledQty += fillQty;
+            remainingQty -= fillQty;
+
+            var sellerProceeds = tradePrice * fillQty;
+            var sellerFee = sellerProceeds / 10;
+            _ = CreditSellerAsync(sellOrder.OwnerId, sellOrder.OwnerName, sellOrder.Currency, sellerProceeds - sellerFee);
+        }
+
+        if (sellOrder.FulfilledQty >= sellOrder.Quantity)
+            sellOrder.Status = "Fulfilled";
+        else
+            sellOrder.Status = "Active";
+    }
+
+    /// <summary>Cancel an active order and release escrow.</summary>
+    private void OnCancelOrder(Entity<MarketTerminalComponent> terminal, ref CancelOrderMessage msg)
+    {
+        if (!TryGetSessionActor(terminal, out var session, out var user) || user == EntityUid.Invalid)
+            return;
+
+        if (!_activeOrders.TryGetValue(msg.OrderId, out var order) || order.Status != "Active")
+            return;
+
+        if (order.OwnerId != session.UserId.UserId) return;
+
+        order.Status = "Cancelled";
+        _activeOrders.Remove(msg.OrderId);
+
+        // Release escrow
+        if (order.IsBuyOrder)
+        {
+            var escrowKey = (order.OwnerId, order.OrderId);
+            if (_escrowCurrency.TryGetValue(escrowKey, out var refund))
+            {
+                RefundCurrency(user, order.Currency, refund);
+                _escrowCurrency.Remove(escrowKey);
+            }
+        }
+        else
+        {
+            // Return item from listing container to player
+            var slotName = $"{ListingSlotPrefix}{msg.OrderId}";
+            if (_container.TryGetContainer(terminal.Owner, slotName, out var container)
+                && container is ContainerSlot slot && slot.ContainedEntity is { } item)
+            {
+                _container.Remove(item, slot);
+                if (!_hands.TryPickupAnyHand(user, item))
+                    _xform.DropNextTo(item, user);
+            }
+        }
+
+        RefreshMarketState(terminal);
+    }
+
+    /// <summary>Claim fulfilled order proceeds (items for buy orders, currency for sell orders).</summary>
+    private void OnClaimEscrow(Entity<MarketTerminalComponent> terminal, ref ClaimEscrowMessage msg)
+    {
+        if (!TryGetSessionActor(terminal, out var session, out var user) || user == EntityUid.Invalid)
+            return;
+
+        // Check if this is a completed order belonging to the player
+        if (!_activeOrders.TryGetValue(msg.OrderId, out var order)) return;
+        if (order.OwnerId != session.UserId.UserId || order.Status != "Fulfilled") return;
+
+        if (order.IsBuyOrder)
+        {
+            // Deliver the purchased item
+            var slotName = $"{ListingSlotPrefix}{msg.OrderId}";
+            EntityUid? item = null;
+            if (_container.TryGetContainer(terminal.Owner, slotName, out var container)
+                && container is ContainerSlot slot && slot.ContainedEntity is { } stored)
+                item = stored;
+
+            if (item != null)
+            {
+                _container.Remove(item.Value, container!);
+                if (!_hands.TryPickupAnyHand(user, item.Value))
+                    _xform.DropNextTo(item.Value, user);
+            }
+            else
+            {
+                // Spawn from prototype as fallback
+                var spawned = Spawn(order.PrototypeId, Transform(user).Coordinates);
+                if (!_hands.TryPickupAnyHand(user, spawned))
+                    _xform.DropNextTo(spawned, user);
+            }
+        }
+        else
+        {
+            // Release currency from escrow
+            var escrowKey = (order.OwnerId, order.OrderId);
+            if (_escrowCurrency.TryGetValue(escrowKey, out var proceeds))
+            {
+                RefundCurrency(user, order.Currency, proceeds);
+                _escrowCurrency.Remove(escrowKey);
+            }
+        }
+
+        order.Status = "Claimed";
+        RefreshMarketState(terminal);
+    }
+
+    /// <summary>Refund currency to a player's persistent balance.</summary>
+    private void RefundCurrency(EntityUid user, string currency, int amount)
+    {
+        if (amount <= 0) return;
+        if (!TryComp<PersistentCurrencyComponent>(user, out var wallet)) return;
+
+        var curType = currency switch
+        {
+            "Bottlecaps" => CurrencyType.Bottlecaps,
+            "NCRDollars" => CurrencyType.NCRDollars,
+            "Silver" => CurrencyType.Silver,
+            "Gold" => CurrencyType.Gold,
+            _ => (CurrencyType?)null,
+        };
+        if (curType == null) return;
+
+        var balance = GetCurrencyBalance(wallet, curType.Value);
+        SetCurrencyBalance(wallet, curType.Value, balance + amount);
+        Dirty(user, wallet);
+    }
+
+    /// <summary>Get the session and attached entity from a BUI message.</summary>
+    private bool TryGetSessionActor(Entity<MarketTerminalComponent> terminal,
+        out ICommonSession session, out EntityUid user)
+    {
+        session = null!;
+        user = EntityUid.Invalid;
+
+        if (!TryComp<ActorComponent>(terminal, out var actor))
+            return false;
+
+        session = actor.PlayerSession;
+        var attached = session.AttachedEntity;
+        if (attached == null || attached == EntityUid.Invalid)
+            return false;
+
+        user = attached.Value;
+        return true;
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────

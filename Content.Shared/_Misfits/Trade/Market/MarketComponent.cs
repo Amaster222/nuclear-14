@@ -1,99 +1,80 @@
-// #Cythisiax Add - Free market terminal component (shared)
+// #Cythisiax Add - Wendover Free Market Exchange (order-book system)
 using Robust.Shared.GameStates;
 using Robust.Shared.Serialization;
 
 namespace Content.Shared._Misfits.Trade.Market;
 
-/// <summary>
-/// Marker component for the Wendover Free Market terminal.
-/// Interaction is handled by MarketSystem (server) and MarketBoundUi (client).
-/// Tracks per-player deposit storage entities.
-/// </summary>
+// ── Component ─────────────────────────────────────────────────────────────────
+
 [RegisterComponent, NetworkedComponent]
 public sealed partial class MarketTerminalComponent : Component
 {
-    /// <summary>
-    /// Per-player deposit storage entities, keyed by user GUID.
-    /// </summary>
     [DataField]
     public Dictionary<Guid, EntityUid> PlayerStorage = new();
 }
 
-/// <summary>
-/// UI key for the market terminal BUI.
-/// </summary>
-[Serializable, NetSerializable]
-public enum MarketUiKey : byte
-{
-    Key
-}
+// ── UI Key ────────────────────────────────────────────────────────────────────
 
-/// <summary>
-/// A single listing's data, sent from server to client.
-/// </summary>
 [Serializable, NetSerializable]
-public sealed class MarketListingData
+public enum MarketUiKey : byte { Key }
+
+// ── Core Data Types ───────────────────────────────────────────────────────────
+
+/// <summary>An individual order on the market book.</summary>
+[Serializable, NetSerializable]
+public sealed class MarketOrder
 {
-    public string ListingId = string.Empty;
-    public string SellerName = string.Empty;
+    public string OrderId = string.Empty;
     public string PrototypeId = string.Empty;
     public string PrototypeName = string.Empty;
-    public int Quantity = 1;
-    public int StackCount;
+    public int Quantity;
+    public int Price;
     public string Currency = string.Empty;
-    public int PricePerUnit;
-    public string? RequestedItemId;
-    public int RequestedQuantity;
-    public DateTime ListedAt;
+    public bool IsBuyOrder;
+    public string OwnerName = string.Empty;
+    public Guid OwnerId;
+    public DateTime CreatedAt;
     public DateTime ExpiresAt;
+    public string Status = "Active"; // Active, Fulfilled, Cancelled, Expired
+    public int FulfilledQty;
 }
 
-/// <summary>
-/// Sent from client to server: request to list an item.
-/// </summary>
+/// <summary>Grouped order-book entry for a single item prototype (bid/ask depth).</summary>
 [Serializable, NetSerializable]
-public sealed class MarketListMessage(string prototypeId, int quantity, int stackCount, string currency, int pricePerUnit, string? requestedItemId = null, int requestedQuantity = 0) : BoundUserInterfaceMessage
+public sealed class OrderBookEntry
 {
-    public string PrototypeId = prototypeId;
-    public int Quantity = quantity;
-    public int StackCount = stackCount;
-    public string Currency = currency;
-    public int PricePerUnit = pricePerUnit;
-    public string? RequestedItemId = requestedItemId;
-    public int RequestedQuantity = requestedQuantity;
+    public string PrototypeId = string.Empty;
+    public string PrototypeName = string.Empty;
+    public List<MarketOrder> SellOrders = new();  // asks — ascending price
+    public List<MarketOrder> BuyOrders = new();    // bids — descending price
+    public int BestAsk => SellOrders.Count > 0 ? SellOrders[0].Price : 0;
+    public int BestBid => BuyOrders.Count > 0 ? BuyOrders[0].Price : 0;
+    public int Spread => BestAsk > 0 && BestBid > 0 ? BestAsk - BestBid : 0;
+    public int Volume24h;
 }
 
-/// <summary>
-/// Sent from client to server: deposit held item into market storage.
-/// </summary>
+/// <summary>Per-item summary row for the item directory.</summary>
 [Serializable, NetSerializable]
-public sealed class MarketDepositItemMessage : BoundUserInterfaceMessage
+public sealed class MarketItemSummary
 {
+    public string PrototypeId = string.Empty;
+    public string PrototypeName = string.Empty;
+    public int OrderCount;
+    public int BestAsk;
+    public int BestBid;
+    public int Spread;
+    public string Currency = string.Empty;
 }
 
-/// <summary>
-/// Sent from client to server: withdraw an item from market storage.
-/// </summary>
+/// <summary>Activity feed entry.</summary>
 [Serializable, NetSerializable]
-public sealed class MarketWithdrawItemMessage(string slotKey) : BoundUserInterfaceMessage
+public sealed class MarketFeedEntry
 {
-    public string SlotKey = slotKey;
+    public string Text = string.Empty;
+    public DateTime Time;
 }
 
-/// <summary>
-/// Sent from server to client: held item info for listing form.
-/// </summary>
-[Serializable, NetSerializable]
-public sealed class MarketHeldItemResponse(string? protoId = null, string? protoName = null, int stackCount = 0) : BoundUserInterfaceMessage
-{
-    public string? ProtoId = protoId;
-    public string? ProtoName = protoName;
-    public int StackCount = stackCount;
-}
-
-/// <summary>
-/// A single item in the player's market deposit storage.
-/// </summary>
+/// <summary>Deposit storage item.</summary>
 [Serializable, NetSerializable]
 public sealed class MarketDepositEntry
 {
@@ -104,55 +85,81 @@ public sealed class MarketDepositEntry
     public int Quantity = 1;
 }
 
-/// <summary>
-/// Per-item summary for the market overview (EVE-like).
-/// </summary>
-[Serializable, NetSerializable]
-public sealed class MarketItemSummary
-{
-    public string PrototypeId = string.Empty;
-    public string PrototypeName = string.Empty;
-    public int ListingCount;
-    public int LowestPrice;
-    public int HighestPrice;
-    public string Currency = string.Empty;
-}
+// ── Client → Server Messages ──────────────────────────────────────────────────
 
-/// <summary>
-/// A single activity feed entry.
-/// </summary>
+/// <summary>Create a new buy or sell order.</summary>
 [Serializable, NetSerializable]
-public sealed class MarketFeedEntry
+public sealed class CreateOrderMessage(
+    string prototypeId, int quantity, string currency, int price,
+    bool isBuyOrder, string? requestedItemId = null, int requestedQuantity = 0)
+    : BoundUserInterfaceMessage
 {
-    public string Text = string.Empty;
-    public DateTime Time;
-}
-
-/// <summary>
-/// Sent from client to server: buy a listing.
-/// </summary>
-[Serializable, NetSerializable]
-public sealed class MarketBuyMessage(string listingId, int quantity) : BoundUserInterfaceMessage
-{
-    public string ListingId = listingId;
+    public string PrototypeId = prototypeId;
     public int Quantity = quantity;
+    public string Currency = currency;
+    public int Price = price;
+    public bool IsBuyOrder = isBuyOrder;
+    public string? RequestedItemId = requestedItemId;
+    public int RequestedQuantity = requestedQuantity;
 }
 
-/// <summary>
-/// Sent from server to client: full market state snapshot.
-/// </summary>
+/// <summary>Cancel an active order.</summary>
+[Serializable, NetSerializable]
+public sealed class CancelOrderMessage(string orderId) : BoundUserInterfaceMessage
+{
+    public string OrderId = orderId;
+}
+
+/// <summary>Claim escrowed items/currency from a fulfilled order.</summary>
+[Serializable, NetSerializable]
+public sealed class ClaimEscrowMessage(string orderId) : BoundUserInterfaceMessage
+{
+    public string OrderId = orderId;
+}
+
+/// <summary>Deposit held item into personal market storage.</summary>
+[Serializable, NetSerializable]
+public sealed class MarketDepositItemMessage : BoundUserInterfaceMessage { }
+
+/// <summary>Withdraw from personal market storage.</summary>
+[Serializable, NetSerializable]
+public sealed class MarketWithdrawItemMessage(string slotKey) : BoundUserInterfaceMessage
+{
+    public string SlotKey = slotKey;
+}
+
+// ── Server → Client State ─────────────────────────────────────────────────────
+
+/// <summary>Full market state snapshot for the viewing player.</summary>
 [Serializable, NetSerializable]
 public sealed class MarketStateMessage : BoundUserInterfaceState
 {
-    public List<MarketListingData> Listings = new();
-    public List<MarketListingData> MyListings = new();
-    public List<MarketFeedEntry> Feed = new(); // #Cythisiax Add - activity feed
-    public List<MarketItemSummary> ItemSummaries = new(); // #Cythisiax Add - EVE-like overview
-    public List<MarketDepositEntry> DepositedItems = new(); // #Cythisiax Add - player's deposit storage
-    public string MarketName = "Wendover Free Market";
-    // Currency balances for the viewing player
+    // Item directory (grouped by prototype)
+    public List<MarketItemSummary> ItemSummaries = new();
+    // Full order book for the selected item
+    public OrderBookEntry? SelectedOrderBook;
+    // Player's own active orders
+    public List<MarketOrder> MyOrders = new();
+    // Player's escrowed items ready to claim
+    public List<MarketOrder> MyCompletedOrders = new();
+    // Activity feed
+    public List<MarketFeedEntry> Feed = new();
+    // Player's deposit storage
+    public List<MarketDepositEntry> DepositedItems = new();
+    // Currency balances
     public int Bottlecaps;
     public int NcrDollars;
     public int Silver;
     public int Gold;
+    // Currently selected prototype (for order book detail)
+    public string SelectedProtoId = string.Empty;
+
+    public string MarketName = "Wendover Free Market Exchange";
+}
+
+/// <summary>Sent when the player selects an item in the directory — returns full order book.</summary>
+[Serializable, NetSerializable]
+public sealed class OrderBookState : BoundUserInterfaceState
+{
+    public OrderBookEntry? Book;
 }
