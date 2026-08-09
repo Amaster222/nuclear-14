@@ -592,6 +592,27 @@ namespace Content.Client.Lobby.UI
 
             #endregion SPECIAL
 
+            #region Traits
+            // #Misfits Change - Perks tab moved to directly after SPECIAL (before Jobs)
+
+            // Set up the traits tab
+            TraitsTab.Orphan();
+            CTabContainer.AddTab(TraitsTab, Loc.GetString("humanoid-profile-editor-traits-tab"));
+            _traitPreferences = new List<TraitPreferenceSelector>();
+
+            // Show/Hide the traits tab if they ever get enabled/disabled
+            var traitsEnabled = cfgManager.GetCVar(CCVars.GameTraitsEnabled);
+            CTabContainer.SetTabVisible(TraitsTab, traitsEnabled);
+            cfgManager.OnValueChanged(CCVars.GameTraitsEnabled,
+                enabled => CTabContainer.SetTabVisible(TraitsTab, enabled));
+
+            TraitsShowUnusableButton.OnToggled += args => UpdateTraits(args.Pressed);
+            TraitsRemoveUnusableButton.OnPressed += _ => TryRemoveUnusableTraits();
+
+            UpdateTraits(false);
+
+            #endregion
+
             #region Jobs
 
             Jobs.Orphan();
@@ -641,31 +662,12 @@ namespace Content.Client.Lobby.UI
             #endregion Jobs
 
             #region Antags
+            // #Misfits Change - Antags tab removed from character setup (AddTab commented out so no tab renders)
 
             Antags.Orphan();
-            CTabContainer.AddTab(Antags, Loc.GetString("humanoid-profile-editor-antags-tab"));
+            // CTabContainer.AddTab(Antags, Loc.GetString("humanoid-profile-editor-antags-tab"));
 
             #endregion Antags
-
-            #region Traits
-
-            // Set up the traits tab
-            TraitsTab.Orphan();
-            CTabContainer.AddTab(TraitsTab, Loc.GetString("humanoid-profile-editor-traits-tab"));
-            _traitPreferences = new List<TraitPreferenceSelector>();
-
-            // Show/Hide the traits tab if they ever get enabled/disabled
-            var traitsEnabled = cfgManager.GetCVar(CCVars.GameTraitsEnabled);
-            CTabContainer.SetTabVisible(TraitsTab, traitsEnabled);
-            cfgManager.OnValueChanged(CCVars.GameTraitsEnabled,
-                enabled => CTabContainer.SetTabVisible(TraitsTab, enabled));
-
-            TraitsShowUnusableButton.OnToggled += args => UpdateTraits(args.Pressed);
-            TraitsRemoveUnusableButton.OnPressed += _ => TryRemoveUnusableTraits();
-
-            UpdateTraits(false);
-
-            #endregion
 
             #region Loadouts
 
