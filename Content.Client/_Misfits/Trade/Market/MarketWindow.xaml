@@ -71,10 +71,7 @@
 
         <!-- Activity tab -->
         <ScrollContainer Name="TabActivityContent" Visible="False" HScrollEnabled="False" VerticalExpand="True" Margin="8 4 8 8">
-            <BoxContainer Orientation="Vertical">
-                <Label Text="Market activity feed will appear here." />
-                <Label Text="(Phase 5 — feed &amp; graphs)" StyleClasses="LabelSecondaryColor" />
-            </BoxContainer>
+            <BoxContainer Name="FeedContainer" Orientation="Vertical" />
         </ScrollContainer>
     </BoxContainer>
 </controls:DefaultWindow>

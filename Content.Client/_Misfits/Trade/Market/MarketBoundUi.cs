@@ -37,6 +37,7 @@ public sealed class MarketBoundUi(EntityUid owner, Enum uiKey) : BoundUserInterf
         _window?.SetMarketName(marketState.MarketName);
         _window?.UpdateListings(marketState.Listings);
         _window?.UpdateMyListings(marketState.MyListings);
+        _window?.UpdateFeed(marketState.Feed);
         _window?.UpdateBalances(marketState.Bottlecaps, marketState.NcrDollars,
             marketState.Silver, marketState.Gold);
     }

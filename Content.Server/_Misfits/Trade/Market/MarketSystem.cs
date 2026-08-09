@@ -198,6 +198,9 @@ public sealed class MarketSystem : EntitySystem
         _log.Info($"Market list: {sellerCharName} listed {msg.Quantity}x {msg.PrototypeId} " +
                   $"for {msg.PricePerUnit} {msg.Currency} (fee {fee})");
 
+        // Push activity feed
+        PushFeed($"{sellerCharName} listed {msg.PrototypeId} x{msg.Quantity} for {msg.PricePerUnit} {msg.Currency}");
+
         // Broadcast updated state to all open UIs
         foreach (var openUser in _openMarketUis.ToList())
         {
@@ -318,6 +321,12 @@ public sealed class MarketSystem : EntitySystem
             BuyerName = buyerName,
             SoldAt = listing.SoldAt ?? DateTime.UtcNow,
         });
+
+        // Push activity feed
+        var priceDisplay = listing.Currency == "Barter"
+            ? $"for {listing.RequestedItemId ?? "?"}"
+            : $"for {listing.PricePerUnit * msg.Quantity} {listing.Currency}";
+        PushFeed($"{buyerName} bought {listing.PrototypeId} from {listing.SellerCharacterName} {priceDisplay}");
 
         // Broadcast updated state
         RefreshMarketState(terminal);
@@ -500,6 +509,15 @@ public sealed class MarketSystem : EntitySystem
         }
     }
 
+    // ── Activity feed ──────────────────────────────────────────────────────────
+
+    private void PushFeed(string text)
+    {
+        _activityFeed.Insert(0, new MarketFeedEntry { Text = text, Time = DateTime.UtcNow });
+        if (_activityFeed.Count > MaxFeedEntries)
+            _activityFeed.RemoveAt(_activityFeed.Count - 1);
+    }
+
     // ── State broadcast ───────────────────────────────────────────────────────
 
     // ── Round lifecycle ────────────────────────────────────────────────────────
@@ -522,9 +540,10 @@ public sealed class MarketSystem : EntitySystem
 
     private void OnRoundStarted(RoundStartedEvent args)
     {
-        // Clear stale containers from previous round
+        // Clear stale state from previous round
         _activeListings.Clear();
         _openMarketUis.Clear();
+        _activityFeed.Clear();
 
         // Re-materialize stored items for active listings from DB
         ReMaterializeListingsAsync();
@@ -704,6 +723,7 @@ public sealed class MarketSystem : EntitySystem
         {
             Listings = listingData,
             MyListings = myListings,
+            Feed = new List<MarketFeedEntry>(_activityFeed),
         };
 
         // Attach currency balances for the viewer

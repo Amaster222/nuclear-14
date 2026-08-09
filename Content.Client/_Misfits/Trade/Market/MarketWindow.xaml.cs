@@ -117,6 +117,23 @@ public sealed partial class MarketWindow : DefaultWindow
         }
     }
 
+    public void UpdateFeed(List<MarketFeedEntry> feed)
+    {
+        FeedContainer.RemoveAllChildren();
+
+        if (feed.Count == 0)
+        {
+            FeedContainer.AddChild(new Label { Text = "No market activity yet." });
+            return;
+        }
+
+        foreach (var entry in feed)
+        {
+            var timeStr = entry.Time.ToLocalTime().ToString("HH:mm");
+            FeedContainer.AddChild(new Label { Text = $"[{timeStr}] {entry.Text}" });
+        }
+    }
+
     private void UpdateFeeLabel()
     {
         var currency = (string?) ListCurrency.SelectedMetadata;

@@ -1528,6 +1528,8 @@ namespace Content.Server.Database
 
             builder.UseNpgsql(connectionString);
             SetupLogging(builder);
+            // #Cythisiax Add - Suppress pending model changes warning for hand-written migrations
+            builder.ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
             return (builder.Options, connectionString);
         }
 
@@ -1565,6 +1567,8 @@ namespace Content.Server.Database
                 var builder = new DbContextOptionsBuilder<SqliteServerDbContext>();
                 builder.UseSqlite(getConnection());
                 SetupLogging(builder);
+                // #Cythisiax Add - Suppress pending model changes warning for hand-written migrations
+                builder.ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
                 return builder.Options;
             };
         }
