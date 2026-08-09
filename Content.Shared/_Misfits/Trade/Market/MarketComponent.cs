@@ -128,6 +128,20 @@ public sealed class MarketWithdrawItemMessage(string slotKey) : BoundUserInterfa
     public string SlotKey = slotKey;
 }
 
+/// <summary>Search entity prototypes by partial name match.</summary>
+[Serializable, NetSerializable]
+public sealed class ProtoSearchMessage(string query) : BoundUserInterfaceMessage
+{
+    public string Query = query;
+}
+
+/// <summary>Sent from server to client: proto search results.</summary>
+[Serializable, NetSerializable]
+public sealed class ProtoSearchResults(List<(string Id, string Name)> results) : BoundUserInterfaceMessage
+{
+    public List<(string Id, string Name)> Results = results;
+}
+
 // ── Server → Client State ─────────────────────────────────────────────────────
 
 /// <summary>Full market state snapshot for the viewing player.</summary>
