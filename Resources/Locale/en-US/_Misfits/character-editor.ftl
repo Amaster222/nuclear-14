@@ -9,6 +9,10 @@ tts-voice-name-bob = Bob
 # Traits points label (used in humanoid profile editor)
 humanoid-profile-editor-traits-points-label = Traits: {$points}/{$max}
 
+# #Cythisiax Add - Pets tab has its own separate point pool (independent from perk points)
+humanoid-profile-editor-pets-points-label = Pets: {$points}/{$max}
+humanoid-profile-editor-pets-caps-label = Large: {$large} / Medium: {$medium} / Small: {$small} | Max {$total} Pets
+
 # Minimum players requirement message
 character-minPlayers-requirement = Minimum {$min} players required
 
