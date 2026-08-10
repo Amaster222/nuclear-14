@@ -62,19 +62,27 @@ public sealed partial class ScalingViewport
 
         var savedEye = _viewport.Eye;
 
-        // Pass 1: render the below map with clear to black
+        // Pass 1: render the below map with a plain eye so the upper sky layer
+        // cannot blank it out through FOV / lighting state.
         var belowCoords = new MapCoordinates(eye.Position.Position, belowMC.MapId);
-        _viewport.Eye = new Robust.Shared.Graphics.Eye
-        {
-            Position = belowCoords,
-            Rotation = eye.Rotation,
-            Scale = eye.Scale,
-            DrawFov = eye.DrawFov,
-            DrawLight = eye.DrawLight,
-            Offset = eye.Offset,
-        };
+        _viewport.Eye = CloneEye(eye, belowCoords, drawFov: false, drawLight: false);
         _viewport.ClearColor = Color.Black;
         _viewport.Render();
+
+        // #Cythisiax Add - empty sky layers should behave like a fogged observation layer,
+        // not a hard black/space clear that erases the lower map.
+        if (!HasRenderableGrids(mapUid))
+        {
+            if (_mzBlurBuffer != null)
+            {
+                _clyde.BlurRenderTarget(_viewport, _viewport.RenderTarget, _mzBlurBuffer, eye, 10f);
+            }
+
+            _viewport.Eye = savedEye;
+            _viewport.ClearColor = Color.Black;
+            _mzSkipNormalRender = true;
+            return;
+        }
 
         // Pass 2: render the current map on top without clearing.
         // Empty tiles on the current map don't draw, so below pass shows through.
@@ -85,5 +93,31 @@ public sealed partial class ScalingViewport
         // Restore normal clear for next frame
         _viewport.ClearColor = Color.Black;
         _mzSkipNormalRender = true;
+    }
+
+    private static Robust.Shared.Graphics.Eye CloneEye(IEye source, MapCoordinates position, bool drawFov, bool drawLight)
+    {
+        return new Robust.Shared.Graphics.Eye
+        {
+            Position = position,
+            Rotation = source.Rotation,
+            Scale = source.Scale,
+            Zoom = source.Zoom,
+            Offset = source.Offset,
+            DrawFov = drawFov,
+            DrawLight = drawLight,
+        };
+    }
+
+    private bool HasRenderableGrids(EntityUid mapUid)
+    {
+        var query = _mzEntMan.EntityQueryEnumerator<TransformComponent, MapGridComponent>();
+        while (query.MoveNext(out _, out var xform, out _))
+        {
+            if (xform.MapUid == mapUid)
+                return true;
+        }
+
+        return false;
     }
 }
