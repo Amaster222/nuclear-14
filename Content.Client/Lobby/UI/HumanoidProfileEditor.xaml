@@ -189,7 +189,22 @@
                         StyleClasses="OpenLeft" />
                 </BoxContainer>
 
-                <ui:NeoTabContainer Name="TraitsTabs" VerticalExpand="True" SeparatorMargin="0" />
+                <ScrollContainer HorizontalExpand="True" HScrollEnabled="True" VerticalExpand="True" VScrollEnabled="True">
+                    <prefUi:TalentTreeView Name="TalentTree" Access="Public" HorizontalExpand="True" VerticalExpand="True" Margin="0 0 12 0" />
+                </ScrollContainer>
+            </BoxContainer>
+            <!-- #Misfits Add - PETS tab: pet/mount traits in their own top-level tab.
+                 #Cythisiax Edited - pets now have their own separate point pool (independent from
+                 perk points) and render as a talent tree grouped into Small / Medium / Large nodes,
+                 with caps of 1 large, 2 medium, 3 small, and 3 total pets. -->
+            <BoxContainer Name="PetsTab" HorizontalExpand="True" Orientation="Vertical" Margin="10">
+                <Label Name="PetPointsLabel" HorizontalAlignment="Stretch" Align="Center" />
+                <ProgressBar Name="PetPointsBar" MaxValue="1" Value="1" MaxHeight="8" Margin="0 5" />
+                <Label Name="PetCapsLabel" HorizontalAlignment="Stretch" Align="Center" FontColorOverride="#808080" Margin="0 0 0 5" />
+
+                <ScrollContainer HorizontalExpand="True" HScrollEnabled="True" VerticalExpand="True" VScrollEnabled="True">
+                    <prefUi:TalentTreeView Name="PetsTalentTree" Access="Public" HorizontalExpand="True" VerticalExpand="True" Margin="0 0 12 0" />
+                </ScrollContainer>
             </BoxContainer>
             <BoxContainer Name="LoadoutsTab" HorizontalExpand="True" Orientation="Vertical" Margin="10">
                 <Label Name="LoadoutPointsLabel" HorizontalAlignment="Stretch" Align="Center" />
