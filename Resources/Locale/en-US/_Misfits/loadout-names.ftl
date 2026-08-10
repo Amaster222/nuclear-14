@@ -202,6 +202,8 @@ loadout-name-ClothingNeckCrucifixColor = crucifix (colorable)
 
 # Belt
 loadout-name-N14LoadoutBeltUtility = utility belt
+loadout-name-MisfitsLoadoutSquireWebbingBlack = black squire webbing
+loadout-name-MisfitsLoadoutSquireWebbingBrown = brown squire webbing
 
 # Masks
 loadout-name-ClothingMaskGasMinerVault = miner gas mask
@@ -498,6 +500,12 @@ loadout-name-MisfitsLoadoutOuterDeadHorsesLightArmor = dead horses light armor
 loadout-name-MisfitsLoadoutOuterSorrowsArmor = sorrows armor
 loadout-name-MisfitsLoadoutOuterRustwalkersArmor = rustwalkers armor
 loadout-name-MisfitsLoadoutOuterRustwalkersLightArmor = rustwalkers light armor
+loadout-name-LoadoutN14ClothingOuterCaliforniaGirlVetRangerRiotArmor = california girl riot armor
+loadout-name-LoadoutN14ClothingOuterTheDevoutVetRangerRiotArmor = the devout riot armor
+loadout-name-LoadoutN14ClothingOuterDemoExpertVetRangerRiotArmor = demo expert riot armor
+loadout-name-LoadoutN14ClothingOuterCanOpenerVetRangerRiotArmor = can opener riot armor
+
+
 
 # Misfits Add - Headgear loadout names
 loadout-name-LoadoutN14ClothingHatSaltRunnerMask = Salt Runner mask
@@ -510,6 +518,10 @@ loadout-name-N14ClothingHeadHatPressHelmet = press helmet
 loadout-name-N14ClothingHeadHatPrewarMilitaryHelmet = pre-war military helmet
 loadout-name-LoadoutN14ClothingHeadFourLeafRangerHelmet = Four Leaf ranger helmet
 loadout-name-LoadoutN14ClothingHeadHighlandRangerHelmet = Highland ranger helmet
+loadout-name-LoadoutN14ClothingHeadHardCaseRangerHelmet = hard case ranger helmet
+loadout-name-LoadoutN14ClothingHeadDemoExpertRangerHelmet = demo expert ranger helmet
+loadout-name-LoadoutN14ClothingHeadTheDevoutRangerHelmet = the devout ranger helmet
+loadout-name-LoadoutN14ClothingHeadCanOpenerRangerHelmet = can opener ranger helmet
 
 # Misfits Add - Neckwear loadout names
 loadout-name-LoadoutN14ClothingNeckRangerDuster = ranger duster
@@ -721,6 +733,7 @@ loadout-name-N14LoadoutUniversalMaskGreenMask = green mask
 loadout-name-N14LoadoutUniversalMaskOrangeMask = orange mask
 loadout-name-N14LoadoutUniversalMaskPatriotMask = patriot mask
 loadout-name-N14LoadoutUniversalMaskRedMask = red mask
+loadout-name-LoadoutN14ClothingHatTheDevoutMask = the devout riot gas mask
 
 # Neck
 loadout-name-N14LoadoutUniversalNeckCloakBrotherhoodWashington = Brotherhood of Steel cloak

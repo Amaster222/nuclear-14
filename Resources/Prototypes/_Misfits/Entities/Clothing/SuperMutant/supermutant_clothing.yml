@@ -145,7 +145,6 @@
         Blunt: 0.70
         Slash: 0.70
         Piercing: 0.75
-        Heat: 0.85 # #Misfits Add - energy protection, one tier weaker than ballistic; scrap plate sheds bullets better than beams
 
 # --- Gladiator Boots ---
 - type: entity
@@ -182,7 +181,6 @@
         Blunt: 0.80
         Slash: 0.80
         Piercing: 0.85
-        Heat: 0.90 # #Misfits Add - energy protection, one tier weaker than ballistic; scrap plate sheds bullets better than beams
 
 # #Misfits Add - Ranger armor for the Supermutant Ranger job.
 # Tagged SupermutantWearable so only supermutants can equip it in Outerclothing slot.
@@ -205,18 +203,17 @@
         Blunt: 0.75
         Slash: 0.75
         Piercing: 0.70
-        Heat: 0.80 # #Misfits Add - energy protection, one tier weaker than ballistic; scrap plate sheds bullets better than beams
 
 - type: entity
   parent: ClothingSuperMutantRangerArmor
-  id: ClothingSuperMutantYazovRangerArmor
+  id: ClothingSuperMutantCustomizedCombatArmor
   name: customized combat armor
   description: A set of salvaged Knight armor along with a leg guard of what seems to be power armor.
   components:
   - type: Sprite
-    sprite: _Misfits/Clothing/SuperMutant/yazov_armor.rsi
+    sprite: _Misfits/Clothing/SuperMutant/customized_combat_armor.rsi
   - type: Clothing
-    sprite: _Misfits/Clothing/SuperMutant/yazov_armor.rsi
+    sprite: _Misfits/Clothing/SuperMutant/customized_combat_armor.rsi
   - type: Tag
     tags:
     - SuperMutantWearable
@@ -240,32 +237,31 @@
         Blunt: 0.85
         Slash: 0.85
         Piercing: 0.80
-        Heat: 0.85 # #Misfits Add - energy protection, one tier weaker than ballistic; scrap plate sheds bullets better than beams
 
 - type: entity
   parent: ClothingSuperMutantRangerHat
-  id: ClothingSuperMutantYazovHat
+  id: ClothingSuperMutantRangerHatAlt
   name: supermutant ranger cowboy hat
   description: An XXXXL ranger hat made to fit even the biggest of people.
   components:
   - type: Sprite
-    sprite: _Misfits/Clothing/SuperMutant/yazov_hat.rsi
+    sprite: _Misfits/Clothing/SuperMutant/ranger_hat_alt.rsi
   - type: Clothing
-    sprite: _Misfits/Clothing/SuperMutant/yazov_hat.rsi
+    sprite: _Misfits/Clothing/SuperMutant/ranger_hat_alt.rsi
   - type: Tag
     tags:
     - SuperMutantWearable
 
 - type: entity
   parent: ClothingSuperMutantNeckTrinket
-  id: ClothingSuperMutantYazovDuster
-  name: supermutant customized duster.
+  id: ClothingSuperMutantCustomDuster
+  name: supermutant customized duster
   description: An XXXL ranger duster with customized pieces of armor on it.
   components:
   - type: Sprite
-    sprite: _Misfits/Clothing/SuperMutant/yazov_duster.rsi
+    sprite: _Misfits/Clothing/SuperMutant/customized_duster.rsi
   - type: Clothing
-    sprite: _Misfits/Clothing/SuperMutant/yazov_duster.rsi
+    sprite: _Misfits/Clothing/SuperMutant/customized_duster.rsi
   - type: Tag
     tags:
     - SuperMutantWearable
@@ -273,7 +269,7 @@
 - type: entity
   parent: ClothingShoesBase
   id: ClothingSuperMutantLeatherBoots
-  name: super mutant leather boots
+  name: supermutant leather boots
   description: Oversized boots fashioned from thick hides, sized for a super mutant's feet.
   components:
   - type: Sprite
@@ -285,15 +281,15 @@
     - SuperMutantWearable
 
 - type: entity
-  parent: SupermutantFollowerGloves
+  parent: ClothingHandsBase
   id: SupermutantBlackGloves
-  name: Supermutant Black Gloves
+  name: supermutant black gloves
   description: Gigantic gloves intended for supermutants to use in the field.
   components:
   - type: Sprite
-    sprite: _Misfits/Clothing/SuperMutant/yazov_gloves.rsi
+    sprite: _Misfits/Clothing/SuperMutant/black_gloves.rsi
   - type: Clothing
-    sprite: _Misfits/Clothing/SuperMutant/yazov_gloves.rsi
+    sprite: _Misfits/Clothing/SuperMutant/black_gloves.rsi
   - type: Tag
     tags:
     - SuperMutantWearable
@@ -317,12 +313,11 @@
         Blunt: 0.85
         Slash: 0.85
         Piercing: 0.80
-        Heat: 0.85 # #Misfits Add - energy protection, one tier weaker than ballistic; scrap plate sheds bullets better than beams
 
 - type: entity
   parent: ClothingMaskBase
   id: ClothingSuperRangerGasmask
-  name: Super Mutant Ranger Gasmask
+  name: supermutant ranger gasmask
   description: A larger Ranger gasmask fitted for a supermutant
   components:
   - type: Sprite
@@ -337,14 +332,14 @@
 
 - type: entity
   parent: ClothingSuperRangerGasmask
-  id: ClothingSuperMutantYazovGasmask
-  name: Super Mutant Ranger Gasmask
+  id: ClothingSuperMutantRangerGasmaskAlt
+  name: supermutant ranger gasmask
   description: A larger Ranger gasmask fitted for a supermutant, this one has yellow lenses.
   components:
   - type: Sprite
-    sprite: _Misfits/Clothing/SuperMutant/yazov_gasmask.rsi
+    sprite: _Misfits/Clothing/SuperMutant/ranger_gasmask_alt.rsi
   - type: Clothing
-    sprite: _Misfits/Clothing/SuperMutant/yazov_gasmask.rsi
+    sprite: _Misfits/Clothing/SuperMutant/ranger_gasmask_alt.rsi
 
 # #Misfits Add - Ranger armor for the playable Supermutant Ranger job variant.
 # Tagged SuperMutantWearable so only supermutants can equip it in outerClothing slot.
@@ -383,7 +378,6 @@
         Blunt: 0.75
         Slash: 0.75
         Piercing: 0.70
-        Heat: 0.80 # #Misfits Add - energy protection, one tier weaker than ballistic; scrap plate sheds bullets better than beams
 
 - type: entity
   parent: ClothingHeadBase
@@ -404,7 +398,6 @@
         Blunt: 0.85
         Slash: 0.85
         Piercing: 0.80
-        Heat: 0.85 # #Misfits Add - energy protection, one tier weaker than ballistic; scrap plate sheds bullets better than beams
 
 # #Misfits Add - Extra supermutant outer outfit (outfit C) — spawnable standalone wearable.
 - type: entity
@@ -504,7 +497,6 @@
       coefficients:
         Blunt: 0.75
         Slash: 0.75
-        Heat: 0.80 # #Misfits Add - energy protection, one tier weaker than the Blunt/Slash value as there is no Piercing here
 
 # #Misfits Add - Supermutant Tribal Gloves
 - type: entity
@@ -583,7 +575,6 @@
         Blunt: 0.85
         Slash: 0.85
         Piercing: 0.80
-        Heat: 0.85 # #Misfits Add - energy protection, one tier weaker than ballistic; scrap plate sheds bullets better than beams
 
   # Fancy suits for fancy people
 
@@ -650,7 +641,6 @@
         Blunt: 0.75
         Slash: 0.75
         Piercing: 0.70
-        Heat: 0.80 # #Misfits Add - energy protection, one tier weaker than ballistic; scrap plate sheds bullets better than beams
 
 # Scavenged Armor Set
 
@@ -673,7 +663,6 @@
         Blunt: 0.70
         Slash: 0.70
         Piercing: 0.75
-        Heat: 0.85 # #Misfits Add - energy protection, one tier weaker than ballistic; scrap plate sheds bullets better than beams
 
 - type: entity
   parent: ClothingShoesBase
@@ -708,7 +697,6 @@
         Blunt: 0.80
         Slash: 0.80
         Piercing: 0.85
-        Heat: 0.90 # #Misfits Add - energy protection, one tier weaker than ballistic; scrap plate sheds bullets better than beams
 
 - type: entity
   parent: ClothingHandsBase
