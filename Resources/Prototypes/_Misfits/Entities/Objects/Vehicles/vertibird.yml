@@ -42,3 +42,50 @@
           collection: MetalBreak
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
+
+- type: entity
+  parent: BaseVehicle
+  id: N14VehicleVertibird
+  name: vertibird
+  description: A heavy tilt-rotor aircraft rigged for short-range wasteland flight.
+  suffix: Flyable, Wendover
+  components:
+  - type: Vertibird
+    mapConfigId: Wendover
+  - type: Vehicle
+    engineRunning: true
+    renderOver: None
+  - type: MZPhysics
+    bounciness: 0.05
+  - type: Sprite
+    sprite: _Misfits/N14/Objects/Vehicles/vertibird.rsi
+    state: vertibird
+    drawdepth: Mobs
+    noRot: false
+    offset: 0, 1.8
+    scale: 0.6, 0.6
+  - type: Strap
+    buckleOffset: 0, 1.4
+    rotation: -90
+    whitelist:
+      requireAll: true
+      components:
+      - HumanoidAppearance
+      - VertibirdPilotPerk
+  - type: MovementSpeedModifier
+    acceleration: 0
+    friction: 5
+    baseWalkSpeed: 0
+    baseSprintSpeed: 0
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-1.6,-0.6,1.6,0.6"
+        density: 100
+        mask:
+        - MachineMask
+        layer:
+        - MidImpassable
+        - LowImpassable

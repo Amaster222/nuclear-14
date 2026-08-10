@@ -1,0 +1,12 @@
+# #Misfits Add - Flyable vertibird pilot action.
+- type: entity
+  id: ActionVertibirdTakeOff
+  name: vertibird flight controls
+  description: Toggle vertibird takeoff or landing.
+  components:
+  - type: InstantAction
+    useDelay: 1
+    icon:
+      sprite: _Misfits/N14/Objects/Vehicles/vertibird.rsi
+      state: vertibird
+    event: !type:VertibirdFlightActionEvent
