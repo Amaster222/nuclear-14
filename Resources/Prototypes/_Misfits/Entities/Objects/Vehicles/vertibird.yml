@@ -52,6 +52,13 @@
   components:
   - type: Vertibird
     mapConfigId: Wendover
+    hoverAltitude: 0.35
+    verticalSpeed: 0.25
+    thrustAcceleration: 6
+    reverseAcceleration: 2
+    maxFlightSpeed: 12
+    flightDrag: 0.75
+    turnSpeedDegrees: 90
   - type: Vehicle
     engineRunning: true
     renderOver: None

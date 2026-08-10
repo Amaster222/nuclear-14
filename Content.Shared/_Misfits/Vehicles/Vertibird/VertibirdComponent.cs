@@ -1,4 +1,5 @@
 // #Misfits Add - Flyable vertibird POC state and pilot action wiring.
+using System.Numerics;
 using Content.Shared.Actions;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
@@ -25,6 +26,24 @@ public sealed partial class VertibirdComponent : Component
 
     [DataField]
     public float VerticalSpeed = 0.25f;
+
+    [DataField]
+    public float ThrustAcceleration = 6f;
+
+    [DataField]
+    public float ReverseAcceleration = 2f;
+
+    [DataField]
+    public float MaxFlightSpeed = 12f;
+
+    [DataField]
+    public float FlightDrag = 0.75f;
+
+    [DataField]
+    public float TurnSpeedDegrees = 90f;
+
+    [DataField, AutoNetworkedField]
+    public Vector2 DriftVelocity = Vector2.Zero;
 
     [DataField]
     public string MapConfigId = "Wendover";
