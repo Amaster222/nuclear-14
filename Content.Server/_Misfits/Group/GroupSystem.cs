@@ -19,7 +19,7 @@ namespace Content.Server._Misfits.Group;
 
 /// <summary>
 /// Manages ephemeral player groups. Groups are lost on round restart.
-/// Max 8 members, invite expires after 60 seconds.
+/// Max 20 members, invite expires after 60 seconds.
 /// Only the leader can invite/kick; any member can leave.
 /// Leadership transfers to the oldest remaining member when the leader leaves.
 /// </summary>
@@ -28,7 +28,7 @@ public sealed class GroupSystem : EntitySystem
     [Dependency] private readonly IPlayerManager _playerManager = default!;
     [Dependency] private readonly IGameTiming    _timing        = default!;
 
-    private const int MaxGroupSize = 8;
+    private const int MaxGroupSize = 20;
     private static readonly TimeSpan InviteExpiry       = TimeSpan.FromSeconds(60);
     private const float OverlayBroadcastInterval = 2.0f;
 
@@ -149,6 +149,32 @@ public sealed class GroupSystem : EntitySystem
             return null;
 
         return group.RallyPoint;
+    }
+
+    /// <summary>Returns snapshots for all active groups, used by the raid panel to target formed groups.</summary>
+    public List<GroupRaidTargetInfo> GetRaidTargets()
+    {
+        var targets = new List<GroupRaidTargetInfo>();
+        foreach (var (groupId, group) in _groups)
+        {
+            targets.Add(new GroupRaidTargetInfo(groupId, group.Name, BuildMembers(group)));
+        }
+
+        targets.Sort((a, b) => string.Compare(a.GroupName, b.GroupName, StringComparison.Ordinal));
+        return targets;
+    }
+
+    /// <summary>Looks up a single group snapshot for raid targeting / peer-approval routing.</summary>
+    public bool TryGetRaidTargetInfo(int groupId, out GroupRaidTargetInfo info)
+    {
+        if (_groups.TryGetValue(groupId, out var group))
+        {
+            info = new GroupRaidTargetInfo(groupId, group.Name, BuildMembers(group));
+            return true;
+        }
+
+        info = default;
+        return false;
     }
 
     // ── Overlay broadcast ─────────────────────────────────────────────────

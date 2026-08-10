@@ -116,6 +116,9 @@ public sealed class GroupStateUpdateEvent : EntityEventArgs
 [Serializable, NetSerializable]
 public readonly record struct GroupMemberInfo(NetEntity Entity, string Name, GroupMemberRole Role);
 
+/// <summary>Server-side snapshot of a group for raid targeting / decision routing.</summary>
+public readonly record struct GroupRaidTargetInfo(int GroupId, string GroupName, List<GroupMemberInfo> Members);
+
 /// <summary>
 /// Periodic overlay update: maps group member NetEntities to their display names.
 /// Sent every 2 seconds to members who have overlay enabled.
