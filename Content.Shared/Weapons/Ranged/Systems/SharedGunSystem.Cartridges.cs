@@ -89,7 +89,7 @@ public abstract partial class SharedGunSystem
             // removing physicsComp on same tick ent is spawned
             // doesnt cause issues from doing this in any other case
             RemCompDeferred<PhysicsComponent>(uid);
-            StripCartComps(uid);
+            StripCartCompsShared(uid);
             return;
         }
 
@@ -110,6 +110,8 @@ public abstract partial class SharedGunSystem
         Angle ejectAngle = args.EjectAngle.Value;
         ejectAngle += 3.7f; // 212 degrees; casings should eject slightly to the right and behind of a gun
         ThrowingSystem.TryThrow(uid, ejectAngle.ToVec() + args.VectRng, 5f);
+        // testing how to make visual lag less. Mostly fiddling WIP
+        FlagPredicted(uid);
     }
 
     /// <summary>

@@ -107,7 +107,7 @@ public abstract partial class SharedGunSystem
         if (TryTakeChamberEntity(uid, out var chamberEnt))
         {
             /// Misfit change: <code> if (_netManager.IsServer){ } </code>
-            /// prediction handled inside EjectCartridge now
+            /// prediction handled inside EjectCartridge
             EjectCartridge(chamberEnt.Value);
         }
 

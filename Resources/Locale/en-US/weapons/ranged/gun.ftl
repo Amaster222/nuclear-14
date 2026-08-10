@@ -50,4 +50,4 @@ gun-revolver-spun = Spun
 gun-speedloader-empty = Speedloader empty
 
 # Misfit: gun refactoring. Later on this might need to accomodate for diff types of guns
-gun-general-empty = Empty
+gun-general-empty = {$entName}'s Empty
