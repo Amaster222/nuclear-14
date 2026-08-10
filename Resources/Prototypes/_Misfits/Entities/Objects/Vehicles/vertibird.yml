@@ -44,7 +44,7 @@
         acts: [ "Destruction" ]
 
 - type: entity
-  parent: BaseVehicle
+  parent: BaseStructureDynamic
   id: N14VehicleVertibird
   name: vertibird
   description: A heavy tilt-rotor aircraft rigged for short-range wasteland flight.
@@ -52,6 +52,7 @@
   components:
   - type: Vertibird
     mapConfigId: Wendover
+    startupDuration: 35
     hoverAltitude: 0.85
     verticalSpeed: 0.75
     thrustAcceleration: 6
@@ -59,12 +60,21 @@
     maxFlightSpeed: 12
     flightDrag: 0.75
     turnSpeedDegrees: 90
-  - type: Vehicle
-    engineRunning: true
-    requiredHands: 0
-    renderOver: North, NorthEast, East, SouthEast, South, SouthWest, West, NorthWest
   - type: MZPhysics
     bounciness: 0.05
+  - type: Appearance
+  - type: InputMover
+  - type: MobMover
+  - type: CanMoveInAir
+  - type: MovementAlwaysTouching
+  - type: NoRotateOnMove
+  - type: InteractionOutline
+  - type: UserInterface
+    interfaces:
+      enum.VertibirdUiKey.Key:
+        type: VertibirdBoundUserInterface
+  - type: ActivatableUI
+    key: enum.VertibirdUiKey.Key
   - type: Sprite
     sprite: _Misfits/N14/Objects/Vehicles/vertibird.rsi
     state: vertibird
@@ -74,13 +84,14 @@
     scale: 0.6, 0.6
   - type: Strap
     position: Stand
+    size: 900
     buckleOffset: 0, 2.65
     rotation: 0
+    buckleOnInteractHand: false
     whitelist:
       requireAll: true
       components:
       - HumanoidAppearance
-      - VertibirdPilotPerk
   - type: MovementSpeedModifier
     acceleration: 0
     friction: 5
@@ -98,3 +109,17 @@
         layer:
         - MidImpassable
         - LowImpassable
+  - type: Damageable
+    damageContainer: Inorganic
+    damageModifierSet: Metallic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 250
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: MetalBreak
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]

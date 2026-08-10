@@ -1,26 +1,53 @@
 // #Misfits Add - Server-side flyable vertibird POC.
 using System.Numerics;
+using Content.Server.Chat.Systems;
 using Content.Shared._Misfits.Vehicles.Vertibird;
 using Content.Shared._MultiZ.Core.Components;
 using Content.Server._MultiZ.Core;
 using Content.Shared.Actions;
+using Content.Shared.Buckle;
 using Content.Shared.Buckle.Components;
+using Content.Shared.Chat;
+using Content.Shared.IdentityManagement;
 using Content.Shared.Interaction;
 using Content.Shared.Interaction.Components;
 using Content.Shared.Movement.Components;
+using Content.Shared.Movement.Events;
 using Content.Shared.Movement.Systems;
 using Content.Shared.Popups;
+using Content.Shared.Stealth;
+using Content.Shared.Stealth.Components;
+using Content.Shared.UserInterface;
+using Robust.Shared.Audio.Systems;
+using Robust.Shared.Timing;
+using Robust.Server.GameObjects;
 
 namespace Content.Server._Misfits.Vehicles.Vertibird;
 
 public sealed partial class VertibirdSystem : EntitySystem
 {
+    private static readonly string[] StartupProgressEmotes =
+    [
+        "vertibird-rp-startup-switches",
+        "vertibird-rp-startup-avionics",
+        "vertibird-rp-startup-rotors",
+        "vertibird-rp-startup-throttle",
+    ];
+
     [Dependency] private SharedActionsSystem _actions = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
+    [Dependency] private SharedBuckleSystem _buckle = default!;
+    [Dependency] private ChatSystem _chat = default!;
+    [Dependency] private IGameTiming _timing = default!;
     [Dependency] private MZSystem _multiZ = default!;
     [Dependency] private SharedInteractionSystem _interaction = default!;
     [Dependency] private SharedMoverController _mover = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private SharedStealthSystem _stealth = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
+    [Dependency] private UserInterfaceSystem _ui = default!;
+
+    private readonly Dictionary<EntityUid, int> _pendingSeatSelections = new();
 
     public override void Initialize()
     {
@@ -34,6 +61,10 @@ public sealed partial class VertibirdSystem : EntitySystem
         SubscribeLocalEvent<VertibirdComponent, VertibirdLandActionEvent>(OnLandAction);
         SubscribeLocalEvent<VertibirdComponent, VertibirdMoveUpActionEvent>(OnMoveUpAction);
         SubscribeLocalEvent<VertibirdComponent, VertibirdMoveDownActionEvent>(OnMoveDownAction);
+        SubscribeLocalEvent<VertibirdComponent, MoveInputEvent>(OnMoveInput);
+        SubscribeLocalEvent<VertibirdComponent, ComponentShutdown>(OnShutdown);
+        SubscribeLocalEvent<VertibirdComponent, AfterActivatableUIOpenEvent>(OnAfterUiOpen);
+        SubscribeLocalEvent<VertibirdComponent, VertibirdSelectSeatMessage>(OnSelectSeat);
     }
 
     public override void Update(float frameTime)
@@ -45,6 +76,9 @@ public sealed partial class VertibirdSystem : EntitySystem
         {
             switch (vertibird.State)
             {
+                case VertibirdFlightState.Starting:
+                    UpdateStartup((uid, vertibird));
+                    break;
                 case VertibirdFlightState.TakingOff:
                     UpdateTakeoff(uid, vertibird, mzPhysics, frameTime);
                     break;
@@ -61,26 +95,48 @@ public sealed partial class VertibirdSystem : EntitySystem
 
     private void OnStrapAttempt(Entity<VertibirdComponent> ent, ref StrapAttemptEvent args)
     {
-        var pilot = args.Buckle.Owner;
-        if (HasComp<VertibirdPilotPerkComponent>(pilot))
-            return;
+        var occupant = args.Buckle.Owner;
 
-        args.Cancelled = true;
-        _popup.PopupEntity(Loc.GetString("vertibird-pilot-required"), ent, pilot);
+        if (!_pendingSeatSelections.TryGetValue(occupant, out var seatIndex))
+        {
+            args.Cancelled = true;
+            _popup.PopupEntity(Loc.GetString("vertibird-use-seat-manifest"), ent, occupant);
+            return;
+        }
+
+        if (!IsValidSeat(seatIndex) || ent.Comp.SeatOccupants[seatIndex] != null)
+        {
+            args.Cancelled = true;
+            return;
+        }
+
+        if (seatIndex == 0 && !HasComp<VertibirdPilotPerkComponent>(occupant))
+        {
+            args.Cancelled = true;
+            _popup.PopupEntity(Loc.GetString("vertibird-pilot-required"), ent, occupant);
+        }
     }
 
     private void OnStrapped(Entity<VertibirdComponent> ent, ref StrappedEvent args)
     {
-        var pilot = args.Buckle.Owner;
-        if (!HasComp<VertibirdPilotPerkComponent>(pilot))
+        var occupant = args.Buckle.Owner;
+        if (!_pendingSeatSelections.Remove(occupant, out var seatIndex) || !IsValidSeat(seatIndex))
             return;
 
-        ent.Comp.Pilot = pilot;
+        ent.Comp.SeatOccupants[seatIndex] = occupant;
+        HideOccupant(occupant);
+
+        if (seatIndex == 0)
+        {
+            ent.Comp.Pilot = occupant;
+            _interaction.SetRelay(occupant, ent.Owner, EnsureComp<InteractionRelayComponent>(occupant));
+            ApplyPilotRelay(occupant, ent.Owner);
+            AddPilotActions(occupant, ent);
+        }
+
         EnsureComp<InputMoverComponent>(ent.Owner);
-        _mover.SetRelay(pilot, ent.Owner);
-        _interaction.SetRelay(pilot, ent.Owner, EnsureComp<InteractionRelayComponent>(pilot));
-        AddPilotActions(pilot, ent);
         Dirty(ent);
+        UpdateUi(ent);
     }
 
     private void OnUnstrapAttempt(Entity<VertibirdComponent> ent, ref UnstrapAttemptEvent args)
@@ -100,12 +156,29 @@ public sealed partial class VertibirdSystem : EntitySystem
     private void OnUnstrapped(Entity<VertibirdComponent> ent, ref UnstrappedEvent args)
     {
         if (ent.Comp.Pilot != args.Buckle.Owner)
+        {
+            var seat = GetSeatIndex(ent.Comp, args.Buckle.Owner);
+            if (seat != null)
+                ent.Comp.SeatOccupants[seat.Value] = null;
+
+            UnhideOccupant(args.Buckle.Owner);
+            Dirty(ent);
+            UpdateUi(ent);
             return;
+        }
 
         RemovePilotAction(args.Buckle.Owner, ent.Comp);
         RemovePilotRelay(args.Buckle.Owner, ent.Owner);
         ent.Comp.Pilot = null;
+        ent.Comp.FlightMoveButtons = MoveButtons.None;
+
+        var pilotSeat = GetSeatIndex(ent.Comp, args.Buckle.Owner);
+        if (pilotSeat != null)
+            ent.Comp.SeatOccupants[pilotSeat.Value] = null;
+
+        UnhideOccupant(args.Buckle.Owner);
         Dirty(ent);
+        UpdateUi(ent);
     }
 
     private void OnFlightAction(Entity<VertibirdComponent> ent, ref VertibirdFlightActionEvent args)
@@ -141,6 +214,11 @@ public sealed partial class VertibirdSystem : EntitySystem
             StartLanding(ent);
             args.Handled = true;
         }
+        else if (ent.Comp.State == VertibirdFlightState.Starting)
+        {
+            CancelStartup(ent);
+            args.Handled = true;
+        }
     }
 
     private void OnMoveUpAction(Entity<VertibirdComponent> ent, ref VertibirdMoveUpActionEvent args)
@@ -171,7 +249,70 @@ public sealed partial class VertibirdSystem : EntitySystem
         return false;
     }
 
+    private void OnMoveInput(Entity<VertibirdComponent> ent, ref MoveInputEvent args)
+    {
+        ent.Comp.FlightMoveButtons = args.Entity.Comp.HeldMoveButtons;
+    }
+
     private void StartTakeoff(Entity<VertibirdComponent> ent)
+    {
+        ent.Comp.State = VertibirdFlightState.Starting;
+        ent.Comp.StartupStartedAt = _timing.CurTime;
+        ent.Comp.StartupFinishedAt = _timing.CurTime + TimeSpan.FromSeconds(ent.Comp.StartupDuration);
+        ent.Comp.StartupEmoteIndex = 0;
+        ent.Comp.DriftVelocity = Vector2.Zero;
+        ent.Comp.FlightMoveButtons = MoveButtons.None;
+        ent.Comp.StartupSoundStream = _audio.Stop(ent.Comp.StartupSoundStream);
+
+        if (ent.Comp.StartupSound != null)
+            ent.Comp.StartupSoundStream = _audio.PlayPvs(ent.Comp.StartupSound, ent.Owner)?.Entity;
+
+        SendVertibirdEmote(ent.Owner, "vertibird-rp-startup");
+        Dirty(ent);
+        UpdateUi(ent);
+    }
+
+    private void CancelStartup(Entity<VertibirdComponent> ent)
+    {
+        ent.Comp.StartupSoundStream = _audio.Stop(ent.Comp.StartupSoundStream);
+        ent.Comp.State = VertibirdFlightState.Grounded;
+        ent.Comp.StartupStartedAt = TimeSpan.Zero;
+        ent.Comp.StartupFinishedAt = TimeSpan.Zero;
+        ent.Comp.StartupEmoteIndex = 0;
+        ent.Comp.DriftVelocity = Vector2.Zero;
+        ent.Comp.FlightMoveButtons = MoveButtons.None;
+        Dirty(ent);
+        UpdateUi(ent);
+    }
+
+    private void UpdateStartup(Entity<VertibirdComponent> ent)
+    {
+        SendStartupProgressEmotes(ent);
+
+        if (_timing.CurTime < ent.Comp.StartupFinishedAt)
+            return;
+
+        StartTakeoffLift(ent);
+    }
+
+    private void SendStartupProgressEmotes(Entity<VertibirdComponent> ent)
+    {
+        if (ent.Comp.StartupStartedAt == TimeSpan.Zero || ent.Comp.StartupDuration <= 0f)
+            return;
+
+        var startupElapsed = (_timing.CurTime - ent.Comp.StartupStartedAt).TotalSeconds;
+        var emoteInterval = ent.Comp.StartupDuration / (StartupProgressEmotes.Length + 1);
+
+        while (ent.Comp.StartupEmoteIndex < StartupProgressEmotes.Length &&
+               startupElapsed >= emoteInterval * (ent.Comp.StartupEmoteIndex + 1))
+        {
+            SendVertibirdEmote(ent.Owner, StartupProgressEmotes[ent.Comp.StartupEmoteIndex]);
+            ent.Comp.StartupEmoteIndex++;
+            Dirty(ent);
+        }
+    }
+
+    private void StartTakeoffLift(Entity<VertibirdComponent> ent)
     {
         if (!TryComp<MZPhysicsComponent>(ent, out var mzPhysics))
             return;
@@ -181,9 +322,16 @@ public sealed partial class VertibirdSystem : EntitySystem
 
         mzPhysics.Velocity = 0f;
         ent.Comp.State = VertibirdFlightState.TakingOff;
+        ent.Comp.StartupStartedAt = TimeSpan.Zero;
+        ent.Comp.StartupFinishedAt = TimeSpan.Zero;
+        ent.Comp.StartupEmoteIndex = 0;
+        ent.Comp.StartupSoundStream = _audio.Stop(ent.Comp.StartupSoundStream);
         ent.Comp.DriftVelocity = Vector2.Zero;
+        ent.Comp.FlightMoveButtons = MoveButtons.None;
+        SendVertibirdEmote(ent.Owner, "vertibird-rp-takeoff");
         Dirty(ent);
         _multiZ.WakeZPhysics((ent.Owner, mzPhysics));
+        UpdateUi(ent);
     }
 
     private void StartLanding(Entity<VertibirdComponent> ent)
@@ -191,11 +339,19 @@ public sealed partial class VertibirdSystem : EntitySystem
         if (!TryComp<MZPhysicsComponent>(ent, out var mzPhysics))
             return;
 
+        ent.Comp.StartupSoundStream = _audio.Stop(ent.Comp.StartupSoundStream);
+        StopFlightLoop(ent.Comp);
+
+        if (ent.Comp.LandingSound != null)
+            _audio.PlayPvs(ent.Comp.LandingSound, ent.Owner);
+
         mzPhysics.Velocity = 0f;
         ent.Comp.State = VertibirdFlightState.Landing;
         ent.Comp.DriftVelocity = Vector2.Zero;
+        ent.Comp.FlightMoveButtons = MoveButtons.None;
         Dirty(ent);
         _multiZ.WakeZPhysics((ent.Owner, mzPhysics));
+        UpdateUi(ent);
     }
 
     private void UpdateTakeoff(EntityUid uid, VertibirdComponent vertibird, MZPhysicsComponent mzPhysics, float frameTime)
@@ -208,7 +364,11 @@ public sealed partial class VertibirdSystem : EntitySystem
             return;
 
         vertibird.State = VertibirdFlightState.Cruising;
+        if (vertibird.Pilot is { } pilot)
+            ApplyPilotRelay(pilot, uid);
+        StartFlightLoop(uid, vertibird);
         Dirty(uid, vertibird);
+        UpdateUi((uid, vertibird));
     }
 
     private void UpdateLanding(EntityUid uid, VertibirdComponent vertibird, MZPhysicsComponent mzPhysics, float frameTime)
@@ -223,8 +383,12 @@ public sealed partial class VertibirdSystem : EntitySystem
             return;
 
         vertibird.State = VertibirdFlightState.Grounded;
+        StopFlightLoop(vertibird);
+        SendVertibirdEmote(uid, "vertibird-rp-landing");
+        vertibird.FlightMoveButtons = MoveButtons.None;
         Dirty(uid, vertibird);
         RemComp<MZFallingComponent>(uid);
+        UpdateUi((uid, vertibird));
     }
 
     private void HoldHover(EntityUid uid, VertibirdComponent vertibird, MZPhysicsComponent mzPhysics)
@@ -235,10 +399,11 @@ public sealed partial class VertibirdSystem : EntitySystem
 
     private void UpdateCruising(EntityUid uid, VertibirdComponent vertibird, TransformComponent xform, float frameTime)
     {
-        if (!TryComp<InputMoverComponent>(uid, out var input))
-            return;
+        var rawButtons = vertibird.FlightMoveButtons;
+        if (rawButtons == MoveButtons.None && TryComp<InputMoverComponent>(uid, out var input))
+            rawButtons = input.HeldMoveButtons;
 
-        var buttons = SharedMoverController.GetNormalizedMovement(input.HeldMoveButtons);
+        var buttons = SharedMoverController.GetNormalizedMovement(rawButtons);
         var rotation = _transform.GetWorldRotation(xform);
         var turn = 0f;
 
@@ -292,12 +457,186 @@ public sealed partial class VertibirdSystem : EntitySystem
         if (!moved)
             return false;
 
-        mzPhysics.LocalPosition = ent.Comp.HoverAltitude;
+        mzPhysics.LocalPosition = offset > 0
+            ? 0.05f
+            : 0.95f;
         mzPhysics.Velocity = 0f;
         ent.Comp.DriftVelocity = Vector2.Zero;
+        SendVertibirdEmote(ent.Owner, offset > 0 ? "vertibird-rp-z-up" : "vertibird-rp-z-down");
         Dirty(ent);
         _multiZ.WakeZPhysics((ent.Owner, mzPhysics));
         return true;
+    }
+
+    private void StartFlightLoop(EntityUid uid, VertibirdComponent vertibird)
+    {
+        if (vertibird.FlightSoundStream != null || vertibird.FlightLoopSound == null)
+            return;
+
+        vertibird.FlightSoundStream = _audio.PlayPvs(vertibird.FlightLoopSound, uid)?.Entity;
+    }
+
+    private void StopFlightLoop(VertibirdComponent vertibird)
+    {
+        vertibird.FlightSoundStream = _audio.Stop(vertibird.FlightSoundStream);
+    }
+
+    private void OnShutdown(Entity<VertibirdComponent> ent, ref ComponentShutdown args)
+    {
+        ent.Comp.StartupSoundStream = _audio.Stop(ent.Comp.StartupSoundStream);
+        StopFlightLoop(ent.Comp);
+
+        foreach (var occupant in ent.Comp.SeatOccupants)
+        {
+            if (occupant != null)
+                UnhideOccupant(occupant.Value);
+        }
+    }
+
+    private void OnAfterUiOpen(Entity<VertibirdComponent> ent, ref AfterActivatableUIOpenEvent args)
+    {
+        UpdateUi(ent);
+    }
+
+    private void OnSelectSeat(Entity<VertibirdComponent> ent, ref VertibirdSelectSeatMessage args)
+    {
+        var user = args.Actor;
+        var seatIndex = args.SeatIndex;
+
+        if (!IsValidSeat(seatIndex))
+            return;
+
+        if (ent.Comp.State != VertibirdFlightState.Grounded)
+        {
+            _popup.PopupEntity(Loc.GetString("vertibird-seat-airborne-blocked"), ent, user);
+            return;
+        }
+
+        if (ent.Comp.SeatOccupants[seatIndex] != null)
+            return;
+
+        if (seatIndex == 0 && !HasComp<VertibirdPilotPerkComponent>(user))
+        {
+            _popup.PopupEntity(Loc.GetString("vertibird-pilot-required"), ent, user);
+            return;
+        }
+
+        var currentSeat = GetSeatIndex(ent.Comp, user);
+        if (currentSeat != null)
+        {
+            ent.Comp.SeatOccupants[currentSeat.Value] = null;
+            ent.Comp.SeatOccupants[seatIndex] = user;
+
+            if (currentSeat.Value == 0)
+            {
+                RemovePilotAction(user, ent.Comp);
+                RemovePilotRelay(user, ent.Owner);
+                ent.Comp.Pilot = null;
+            }
+
+            if (seatIndex == 0)
+            {
+                ent.Comp.Pilot = user;
+                _interaction.SetRelay(user, ent.Owner, EnsureComp<InteractionRelayComponent>(user));
+                ApplyPilotRelay(user, ent.Owner);
+                AddPilotActions(user, ent);
+            }
+
+            Dirty(ent);
+            UpdateUi(ent);
+            return;
+        }
+
+        _pendingSeatSelections[user] = seatIndex;
+        if (!_buckle.TryBuckle(user, user, ent.Owner))
+            _pendingSeatSelections.Remove(user);
+
+        UpdateUi(ent);
+    }
+
+    private void HideOccupant(EntityUid occupant)
+    {
+        if (HasComp<VertibirdHiddenOccupantComponent>(occupant))
+            return;
+
+        var hidden = EnsureComp<VertibirdHiddenOccupantComponent>(occupant);
+        hidden.HadStealth = TryComp<StealthComponent>(occupant, out var stealth);
+        hidden.PreviousVisibility = hidden.HadStealth && stealth != null
+            ? _stealth.GetVisibility(occupant, stealth)
+            : 1f;
+
+        stealth ??= EnsureComp<StealthComponent>(occupant);
+        _stealth.SetVisibility(occupant, -1f, stealth);
+    }
+
+    private void UnhideOccupant(EntityUid occupant)
+    {
+        if (!TryComp<VertibirdHiddenOccupantComponent>(occupant, out var hidden))
+            return;
+
+        if (hidden.HadStealth)
+        {
+            if (TryComp<StealthComponent>(occupant, out var stealth))
+                _stealth.SetVisibility(occupant, hidden.PreviousVisibility, stealth);
+        }
+        else
+        {
+            RemComp<StealthComponent>(occupant);
+        }
+
+        RemComp<VertibirdHiddenOccupantComponent>(occupant);
+    }
+
+    private void ApplyPilotRelay(EntityUid pilot, EntityUid vertibird)
+    {
+        _mover.SetRelay(pilot, vertibird);
+    }
+
+    private static bool IsValidSeat(int seatIndex)
+    {
+        return seatIndex is >= 0 and < 9;
+    }
+
+    private static int? GetSeatIndex(VertibirdComponent vertibird, EntityUid occupant)
+    {
+        for (var i = 0; i < vertibird.SeatOccupants.Length; i++)
+        {
+            if (vertibird.SeatOccupants[i] == occupant)
+                return i;
+        }
+
+        return null;
+    }
+
+    private void UpdateUi(Entity<VertibirdComponent> ent)
+    {
+        _ui.SetUiState(ent.Owner, VertibirdUiKey.Key, BuildUiState(ent.Comp));
+    }
+
+    private VertibirdSeatBoundUserInterfaceState BuildUiState(VertibirdComponent vertibird)
+    {
+        var seats = new VertibirdSeatUiState[vertibird.SeatOccupants.Length];
+        for (var i = 0; i < seats.Length; i++)
+        {
+            var occupant = vertibird.SeatOccupants[i];
+            seats[i] = new VertibirdSeatUiState(
+                i,
+                i == 0 ? Loc.GetString("vertibird-seat-pilot") : Loc.GetString("vertibird-seat-passenger", ("number", i)),
+                occupant == null ? null : Identity.Name(occupant.Value, EntityManager),
+                i == 0);
+        }
+
+        return new VertibirdSeatBoundUserInterfaceState(vertibird.State, seats);
+    }
+
+    private void SendVertibirdEmote(EntityUid vertibird, string locId)
+    {
+        _chat.TrySendInGameICMessage(
+            vertibird,
+            Loc.GetString(locId),
+            InGameICChatType.Emote,
+            ChatTransmitRange.Normal,
+            ignoreActionBlocker: true);
     }
 
     private void AddPilotActions(EntityUid pilot, Entity<VertibirdComponent> ent)

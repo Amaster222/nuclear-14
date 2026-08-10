@@ -1,8 +1,11 @@
 // #Misfits Add - Flyable vertibird POC state and pilot action wiring.
 using System.Numerics;
 using Content.Shared.Actions;
+using Content.Shared.Movement.Systems;
+using Robust.Shared.Audio;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Serialization;
 
 namespace Content.Shared._Misfits.Vehicles.Vertibird;
 
@@ -14,6 +17,9 @@ public sealed partial class VertibirdComponent : Component
 
     [DataField, AutoNetworkedField]
     public EntityUid? Pilot;
+
+    [ViewVariables]
+    public EntityUid?[] SeatOccupants = new EntityUid?[9];
 
     [DataField, AutoNetworkedField]
     public EntityUid? FlightActionEntity;
@@ -40,6 +46,31 @@ public sealed partial class VertibirdComponent : Component
     public EntProtoId MoveDownAction = "ActionVertibirdMoveDown";
 
     [DataField]
+    public float StartupDuration = 35f;
+
+    public TimeSpan StartupStartedAt = TimeSpan.Zero;
+
+    public TimeSpan StartupFinishedAt = TimeSpan.Zero;
+
+    public int StartupEmoteIndex;
+
+    [DataField]
+    public SoundSpecifier? StartupSound = new SoundPathSpecifier("/Audio/_Misfits/N14/Vehicles/vertibird_start.ogg",
+        AudioParams.Default.WithVolume(-1f).WithMaxDistance(18f));
+
+    [DataField]
+    public SoundSpecifier? FlightLoopSound = new SoundPathSpecifier("/Audio/_Misfits/N14/Vehicles/vertibird_loop.ogg",
+        AudioParams.Default.WithLoop(true).WithVolume(-2f).WithMaxDistance(18f));
+
+    [DataField]
+    public SoundSpecifier? LandingSound = new SoundPathSpecifier("/Audio/_Misfits/N14/Vehicles/vertibird_stop.ogg",
+        AudioParams.Default.WithVolume(-1f).WithMaxDistance(18f));
+
+    public EntityUid? StartupSoundStream;
+
+    public EntityUid? FlightSoundStream;
+
+    [DataField]
     public float HoverAltitude = 0.85f;
 
     [DataField]
@@ -63,13 +94,60 @@ public sealed partial class VertibirdComponent : Component
     [DataField, AutoNetworkedField]
     public Vector2 DriftVelocity = Vector2.Zero;
 
+    [ViewVariables]
+    public MoveButtons FlightMoveButtons = MoveButtons.None;
+
     [DataField]
     public string MapConfigId = "Wendover";
+}
+
+[RegisterComponent]
+public sealed partial class VertibirdHiddenOccupantComponent : Component
+{
+    [DataField]
+    public bool HadStealth;
+
+    [DataField]
+    public float PreviousVisibility = 1f;
+}
+
+[Serializable, NetSerializable]
+public enum VertibirdUiKey : byte
+{
+    Key,
+}
+
+[Serializable, NetSerializable]
+public sealed class VertibirdSeatBoundUserInterfaceState : BoundUserInterfaceState
+{
+    public readonly VertibirdFlightState FlightState;
+    public readonly VertibirdSeatUiState[] Seats;
+
+    public VertibirdSeatBoundUserInterfaceState(VertibirdFlightState flightState, VertibirdSeatUiState[] seats)
+    {
+        FlightState = flightState;
+        Seats = seats;
+    }
+}
+
+[Serializable, NetSerializable]
+public readonly record struct VertibirdSeatUiState(int Index, string Name, string? OccupantName, bool RequiresPilotPerk);
+
+[Serializable, NetSerializable]
+public sealed class VertibirdSelectSeatMessage : BoundUserInterfaceMessage
+{
+    public readonly int SeatIndex;
+
+    public VertibirdSelectSeatMessage(int seatIndex)
+    {
+        SeatIndex = seatIndex;
+    }
 }
 
 public enum VertibirdFlightState : byte
 {
     Grounded,
+    Starting,
     TakingOff,
     Cruising,
     Landing,
