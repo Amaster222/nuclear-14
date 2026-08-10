@@ -26,13 +26,16 @@ public sealed class MZClientSystem : MZSharedSystem
     [Dependency] private readonly SharedTransformSystem _transform = default!;
 
     private MZBlurOverlay _blurOverlay = default!;
+    private MZSkyPlayerOverlay _skyPlayerOverlay = default!;
 
     public override void Initialize()
     {
         base.Initialize();
 
         _blurOverlay = new MZBlurOverlay();
+        _skyPlayerOverlay = new MZSkyPlayerOverlay();
         _overlayManager.AddOverlay(_blurOverlay);
+        _overlayManager.AddOverlay(_skyPlayerOverlay);
     }
 
     public override void Shutdown()
@@ -40,6 +43,7 @@ public sealed class MZClientSystem : MZSharedSystem
         base.Shutdown();
 
         _overlayManager.RemoveOverlay(_blurOverlay);
+        _overlayManager.RemoveOverlay(_skyPlayerOverlay);
     }
 
     public override void FrameUpdate(float frameTime)

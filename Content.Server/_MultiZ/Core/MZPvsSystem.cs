@@ -4,13 +4,15 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Content.Server._Misfits.GameStates;
 using Content.Shared._MultiZ;
 using Content.Shared._MultiZ.Core.Components;
 using Content.Shared._MultiZ.Core.EntitySystems;
+using Robust.Server.GameObjects;
 using Robust.Shared.Enums;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Configuration;
+using Robust.Shared.Map;
+using Robust.Shared.Map.Components;
 using Robust.Shared.Player;
 
 namespace Content.Server._MultiZ.Core;
@@ -22,10 +24,11 @@ namespace Content.Server._MultiZ.Core;
 public sealed partial class MZPvsSystem : MZSharedSystem
 {
     [Dependency] private IConfigurationManager _cfg = default!;
-    [Dependency] private MisfitsPvsSystem _pvs = default!;
+    [Dependency] private SharedTransformSystem _transform = default!;
+    [Dependency] private ViewSubscriberSystem _viewSubscriber = default!;
 
     private readonly HashSet<ICommonSession> _trackedSessions = new();
-    private readonly Dictionary<ICommonSession, HashSet<EntityUid>> _activeOverrides = new();
+    private readonly Dictionary<ICommonSession, EntityUid> _lowerViewRelays = new();
 
     private float _probeAccumulator;
 
@@ -92,54 +95,54 @@ public sealed partial class MZPvsSystem : MZSharedSystem
             return;
         }
 
-        var desired = new HashSet<EntityUid> { mapUid };
+        if (HasRenderableGrids(mapUid) ||
+            !TryMapDown((mapUid, zMap), out var belowMap) ||
+            !TryComp<MapComponent>(belowMap.Value.Owner, out var belowMapComp))
+        {
+            ClearSession(session);
+            return;
+        }
 
-        if (TryMapUp((mapUid, zMap), out var aboveMap))
-            desired.Add(aboveMap.Value.Owner);
+        var playerPos = _transform.GetMapCoordinates(xform).Position;
+        var relayCoords = new MapCoordinates(playerPos, belowMapComp.MapId);
 
-        if (TryMapDown((mapUid, zMap), out var belowMap))
-            desired.Add(belowMap.Value.Owner);
-
-        ApplySessionOverrides(session, desired);
+        EnsureLowerViewRelay(session, relayCoords);
     }
 
-    private void ApplySessionOverrides(ICommonSession session, HashSet<EntityUid> desired)
+    private void EnsureLowerViewRelay(ICommonSession session, MapCoordinates coordinates)
     {
-        if (!_activeOverrides.TryGetValue(session, out var current))
+        if (_lowerViewRelays.TryGetValue(session, out var relay) &&
+            !TerminatingOrDeleted(relay))
         {
-            current = new HashSet<EntityUid>();
-            _activeOverrides[session] = current;
+            _transform.SetMapCoordinates(relay, coordinates);
+            return;
         }
 
-        foreach (var uid in current.ToArray())
-        {
-            if (desired.Contains(uid))
-                continue;
-
-            _pvs.RemoveSessionOverride(uid, session);
-            current.Remove(uid);
-        }
-
-        foreach (var uid in desired)
-        {
-            if (!current.Add(uid))
-                continue;
-
-            _pvs.AddSessionOverride(uid, session);
-        }
+        relay = Spawn(null, coordinates);
+        _lowerViewRelays[session] = relay;
+        _viewSubscriber.AddViewSubscriber(relay, session);
     }
 
     private void ClearSession(ICommonSession session)
     {
-        if (!_activeOverrides.TryGetValue(session, out var current))
+        if (!_lowerViewRelays.Remove(session, out var relay))
             return;
 
-        foreach (var uid in current)
+        _viewSubscriber.RemoveViewSubscriber(relay, session);
+
+        if (!TerminatingOrDeleted(relay))
+            QueueDel(relay);
+    }
+
+    private bool HasRenderableGrids(EntityUid mapUid)
+    {
+        var query = EntityQueryEnumerator<TransformComponent, MapGridComponent>();
+        while (query.MoveNext(out _, out var xform, out _))
         {
-            _pvs.RemoveSessionOverride(uid, session);
+            if (xform.MapUid == mapUid)
+                return true;
         }
 
-        current.Clear();
-        _activeOverrides.Remove(session);
+        return false;
     }
 }

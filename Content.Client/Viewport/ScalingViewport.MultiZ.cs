@@ -54,6 +54,11 @@ public sealed partial class ScalingViewport
         var zSystem = _mzEntMan.System<MZSharedSystem>();
         var eye = _eye;
 
+        // Only empty sky/observation layers should replace the normal viewport
+        // render with a lower-level pass. Normal maps need the stock render path.
+        if (HasRenderableGrids(mapUid))
+            return;
+
         if (!zSystem.TryMapDown((mapUid, zMap), out var belowMap))
             return;
 
@@ -65,32 +70,18 @@ public sealed partial class ScalingViewport
         // Pass 1: render the below map with a plain eye so the upper sky layer
         // cannot blank it out through FOV / lighting state.
         var belowCoords = new MapCoordinates(eye.Position.Position, belowMC.MapId);
-        _viewport.Eye = CloneEye(eye, belowCoords, drawFov: false, drawLight: false);
+        _viewport.Eye = CloneEye(eye, belowCoords, drawFov: false, drawLight: true);
         _viewport.ClearColor = Color.Black;
         _viewport.Render();
 
         // #Cythisiax Add - empty sky layers should behave like a fogged observation layer,
         // not a hard black/space clear that erases the lower map.
-        if (!HasRenderableGrids(mapUid))
+        if (_mzBlurBuffer != null)
         {
-            if (_mzBlurBuffer != null)
-            {
-                _clyde.BlurRenderTarget(_viewport, _viewport.RenderTarget, _mzBlurBuffer, eye, 10f);
-            }
-
-            _viewport.Eye = savedEye;
-            _viewport.ClearColor = Color.Black;
-            _mzSkipNormalRender = true;
-            return;
+            _clyde.BlurRenderTarget(_viewport, _viewport.RenderTarget, _mzBlurBuffer, eye, 10f);
         }
 
-        // Pass 2: render the current map on top without clearing.
-        // Empty tiles on the current map don't draw, so below pass shows through.
         _viewport.Eye = savedEye;
-        _viewport.ClearColor = null;
-        _viewport.Render();
-
-        // Restore normal clear for next frame
         _viewport.ClearColor = Color.Black;
         _mzSkipNormalRender = true;
     }
