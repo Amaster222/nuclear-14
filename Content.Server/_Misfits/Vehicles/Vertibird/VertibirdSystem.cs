@@ -9,8 +9,6 @@ using Content.Shared.Buckle;
 using Content.Shared.Buckle.Components;
 using Content.Shared.Chat;
 using Content.Shared.IdentityManagement;
-using Content.Shared.Interaction;
-using Content.Shared.Interaction.Components;
 using Content.Shared.Movement.Components;
 using Content.Shared.Movement.Events;
 using Content.Shared.Movement.Systems;
@@ -40,7 +38,6 @@ public sealed partial class VertibirdSystem : EntitySystem
     [Dependency] private ChatSystem _chat = default!;
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private MZSystem _multiZ = default!;
-    [Dependency] private SharedInteractionSystem _interaction = default!;
     [Dependency] private SharedMoverController _mover = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private SharedStealthSystem _stealth = default!;
@@ -129,12 +126,10 @@ public sealed partial class VertibirdSystem : EntitySystem
         if (seatIndex == 0)
         {
             ent.Comp.Pilot = occupant;
-            _interaction.SetRelay(occupant, ent.Owner, EnsureComp<InteractionRelayComponent>(occupant));
             ApplyPilotRelay(occupant, ent.Owner);
             AddPilotActions(occupant, ent);
         }
 
-        EnsureComp<InputMoverComponent>(ent.Owner);
         Dirty(ent);
         UpdateUi(ent);
     }
@@ -237,6 +232,11 @@ public sealed partial class VertibirdSystem : EntitySystem
         args.Handled = TryMoveZ(ent, -1);
     }
 
+    private void OnMoveInput(Entity<VertibirdComponent> ent, ref MoveInputEvent args)
+    {
+        ent.Comp.FlightMoveButtons = args.Entity.Comp.HeldMoveButtons;
+    }
+
     private bool CanUsePilotAction(Entity<VertibirdComponent> ent, EntityUid performer)
     {
         if (ent.Comp.Pilot != performer)
@@ -247,11 +247,6 @@ public sealed partial class VertibirdSystem : EntitySystem
 
         _popup.PopupEntity(Loc.GetString("vertibird-pilot-required"), ent, performer);
         return false;
-    }
-
-    private void OnMoveInput(Entity<VertibirdComponent> ent, ref MoveInputEvent args)
-    {
-        ent.Comp.FlightMoveButtons = args.Entity.Comp.HeldMoveButtons;
     }
 
     private void StartTakeoff(Entity<VertibirdComponent> ent)
@@ -400,8 +395,12 @@ public sealed partial class VertibirdSystem : EntitySystem
     private void UpdateCruising(EntityUid uid, VertibirdComponent vertibird, TransformComponent xform, float frameTime)
     {
         var rawButtons = vertibird.FlightMoveButtons;
-        if (rawButtons == MoveButtons.None && TryComp<InputMoverComponent>(uid, out var input))
-            rawButtons = input.HeldMoveButtons;
+        if (rawButtons == MoveButtons.None &&
+            vertibird.Pilot is { } pilot &&
+            TryComp<InputMoverComponent>(pilot, out var pilotInput))
+        {
+            rawButtons = pilotInput.HeldMoveButtons;
+        }
 
         var buttons = SharedMoverController.GetNormalizedMovement(rawButtons);
         var rotation = _transform.GetWorldRotation(xform);
@@ -530,15 +529,12 @@ public sealed partial class VertibirdSystem : EntitySystem
             if (currentSeat.Value == 0)
             {
                 RemovePilotAction(user, ent.Comp);
-                RemovePilotRelay(user, ent.Owner);
                 ent.Comp.Pilot = null;
             }
 
             if (seatIndex == 0)
             {
                 ent.Comp.Pilot = user;
-                _interaction.SetRelay(user, ent.Owner, EnsureComp<InteractionRelayComponent>(user));
-                ApplyPilotRelay(user, ent.Owner);
                 AddPilotActions(user, ent);
             }
 
@@ -587,11 +583,6 @@ public sealed partial class VertibirdSystem : EntitySystem
         RemComp<VertibirdHiddenOccupantComponent>(occupant);
     }
 
-    private void ApplyPilotRelay(EntityUid pilot, EntityUid vertibird)
-    {
-        _mover.SetRelay(pilot, vertibird);
-    }
-
     private static bool IsValidSeat(int seatIndex)
     {
         return seatIndex is >= 0 and < 9;
@@ -611,6 +602,12 @@ public sealed partial class VertibirdSystem : EntitySystem
     private void UpdateUi(Entity<VertibirdComponent> ent)
     {
         _ui.SetUiState(ent.Owner, VertibirdUiKey.Key, BuildUiState(ent.Comp));
+    }
+
+    private void ApplyPilotRelay(EntityUid pilot, EntityUid vertibird)
+    {
+        EnsureComp<InputMoverComponent>(vertibird);
+        _mover.SetRelay(pilot, vertibird);
     }
 
     private VertibirdSeatBoundUserInterfaceState BuildUiState(VertibirdComponent vertibird)
@@ -639,6 +636,12 @@ public sealed partial class VertibirdSystem : EntitySystem
             ignoreActionBlocker: true);
     }
 
+    private void RemovePilotRelay(EntityUid pilot, EntityUid vertibird)
+    {
+        if (TryComp<RelayInputMoverComponent>(pilot, out var relay) && relay.RelayEntity == vertibird)
+            RemComp<RelayInputMoverComponent>(pilot);
+    }
+
     private void AddPilotActions(EntityUid pilot, Entity<VertibirdComponent> ent)
     {
         _actions.AddAction(pilot, ref ent.Comp.FlightActionEntity, ent.Comp.FlightAction, ent.Owner);
@@ -659,12 +662,4 @@ public sealed partial class VertibirdSystem : EntitySystem
         vertibird.MoveDownActionEntity = null;
     }
 
-    private void RemovePilotRelay(EntityUid pilot, EntityUid vertibird)
-    {
-        if (TryComp<RelayInputMoverComponent>(pilot, out var relay) && relay.RelayEntity == vertibird)
-            RemComp<RelayInputMoverComponent>(pilot);
-
-        if (TryComp<InteractionRelayComponent>(pilot, out var interactionRelay) && interactionRelay.RelayEntity == vertibird)
-            RemComp<InteractionRelayComponent>(pilot);
-    }
 }

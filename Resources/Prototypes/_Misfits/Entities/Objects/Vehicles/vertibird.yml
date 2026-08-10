@@ -64,10 +64,6 @@
     bounciness: 0.05
   - type: Appearance
   - type: InputMover
-  - type: MobMover
-  - type: CanMoveInAir
-  - type: MovementAlwaysTouching
-  - type: NoRotateOnMove
   - type: InteractionOutline
   - type: UserInterface
     interfaces:
