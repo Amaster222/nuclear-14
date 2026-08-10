@@ -516,6 +516,18 @@ public sealed class WastelandMapSystem : EntitySystem
             var label = Name(member);
             buffer.Add(new WastelandMapTrackedBlip(pos.X, pos.Y, label, WastelandMapTrackedBlipKind.PipBoyGroupMember));
         }
+
+        var rallyPoint = _groupSystem.GetGroupRallyPoint(actor);
+        if (rallyPoint.HasValue &&
+            rallyPoint.Value.MapId == mapId &&
+            bounds.Contains(rallyPoint.Value.Position))
+        {
+            buffer.Add(new WastelandMapTrackedBlip(
+                rallyPoint.Value.Position.X,
+                rallyPoint.Value.Position.Y,
+                "RALLY",
+                WastelandMapTrackedBlipKind.GroupRallyPoint));
+        }
     }
 
     private void AppendTribalHuntTargetBlips(List<WastelandMapTrackedBlip> buffer, MapId mapId, Box2 bounds)

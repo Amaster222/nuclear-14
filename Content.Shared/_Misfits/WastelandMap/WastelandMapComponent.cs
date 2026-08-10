@@ -34,6 +34,7 @@ public enum WastelandMapTrackedBlipKind : byte
     // #Misfits Add - PipBoy Hub contact/group blips for wasteland map integration
     PipBoyContact,    // PipBoy contact sharing location — cyan circle
     PipBoyGroupMember, // PipBoy group member with map tracking — teal triangle
+    GroupRallyPoint,   // Shared group rally point — amber diamond
     TribalHuntTarget, // Active tribal hunt Deathclaw target
     // #Misfits Add - Followers of the Apocalypse dead body blip
     DeadBody,          // deceased player-controlled entity shown on Followers tac-map
