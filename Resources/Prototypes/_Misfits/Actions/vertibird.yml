@@ -1,12 +1,60 @@
 # #Misfits Add - Flyable vertibird pilot action.
 - type: entity
   id: ActionVertibirdTakeOff
-  name: vertibird flight controls
-  description: Toggle vertibird takeoff or landing.
+  name: take off
+  description: Lift the vertibird into flight.
+  categories: [ HideSpawnMenu ]
   components:
   - type: InstantAction
+    itemIconStyle: NoItem
+    checkCanInteract: false
     useDelay: 1
     icon:
-      sprite: _Misfits/N14/Objects/Vehicles/vertibird.rsi
-      state: vertibird
+      sprite: Interface/Actions/flight.rsi
+      state: flight_on
     event: !type:VertibirdFlightActionEvent
+
+- type: entity
+  id: ActionVertibirdLand
+  name: land
+  description: Bring the vertibird down to the current level.
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: InstantAction
+    itemIconStyle: NoItem
+    checkCanInteract: false
+    useDelay: 1
+    icon:
+      sprite: Interface/Actions/flight.rsi
+      state: flight_off
+    event: !type:VertibirdLandActionEvent
+
+- type: entity
+  id: ActionVertibirdMoveUp
+  name: ascend z-level
+  description: Move the airborne vertibird to the z-level above.
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: InstantAction
+    itemIconStyle: NoItem
+    checkCanInteract: false
+    useDelay: 1
+    icon:
+      sprite: _MultiZ/Actions/misc.rsi
+      state: z_up
+    event: !type:VertibirdMoveUpActionEvent
+
+- type: entity
+  id: ActionVertibirdMoveDown
+  name: descend z-level
+  description: Move the airborne vertibird to the z-level below.
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: InstantAction
+    itemIconStyle: NoItem
+    checkCanInteract: false
+    useDelay: 1
+    icon:
+      sprite: _MultiZ/Actions/misc.rsi
+      state: z_down
+    event: !type:VertibirdMoveDownActionEvent

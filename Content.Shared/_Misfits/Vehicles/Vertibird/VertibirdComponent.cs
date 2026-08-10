@@ -18,14 +18,32 @@ public sealed partial class VertibirdComponent : Component
     [DataField, AutoNetworkedField]
     public EntityUid? FlightActionEntity;
 
+    [DataField, AutoNetworkedField]
+    public EntityUid? LandActionEntity;
+
+    [DataField, AutoNetworkedField]
+    public EntityUid? MoveUpActionEntity;
+
+    [DataField, AutoNetworkedField]
+    public EntityUid? MoveDownActionEntity;
+
     [DataField]
     public EntProtoId FlightAction = "ActionVertibirdTakeOff";
 
     [DataField]
-    public float HoverAltitude = 0.35f;
+    public EntProtoId LandAction = "ActionVertibirdLand";
 
     [DataField]
-    public float VerticalSpeed = 0.25f;
+    public EntProtoId MoveUpAction = "ActionVertibirdMoveUp";
+
+    [DataField]
+    public EntProtoId MoveDownAction = "ActionVertibirdMoveDown";
+
+    [DataField]
+    public float HoverAltitude = 0.85f;
+
+    [DataField]
+    public float VerticalSpeed = 0.75f;
 
     [DataField]
     public float ThrustAcceleration = 6f;
@@ -58,3 +76,9 @@ public enum VertibirdFlightState : byte
 }
 
 public sealed partial class VertibirdFlightActionEvent : InstantActionEvent;
+
+public sealed partial class VertibirdLandActionEvent : InstantActionEvent;
+
+public sealed partial class VertibirdMoveUpActionEvent : InstantActionEvent;
+
+public sealed partial class VertibirdMoveDownActionEvent : InstantActionEvent;

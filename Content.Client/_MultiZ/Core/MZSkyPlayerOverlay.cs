@@ -1,6 +1,7 @@
 // Origin: misfits-14 _MultiZ
 // #Cythisiax Add - visible player marker while viewing from empty sky layers
 
+using System.Numerics;
 using Content.Shared._MultiZ;
 using Content.Shared._MultiZ.Core.Components;
 using Content.Shared._MultiZ.Core.EntitySystems;

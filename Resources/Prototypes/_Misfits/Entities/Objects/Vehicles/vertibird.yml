@@ -52,8 +52,8 @@
   components:
   - type: Vertibird
     mapConfigId: Wendover
-    hoverAltitude: 0.35
-    verticalSpeed: 0.25
+    hoverAltitude: 0.85
+    verticalSpeed: 0.75
     thrustAcceleration: 6
     reverseAcceleration: 2
     maxFlightSpeed: 12
@@ -61,7 +61,8 @@
     turnSpeedDegrees: 90
   - type: Vehicle
     engineRunning: true
-    renderOver: None
+    requiredHands: 0
+    renderOver: North, NorthEast, East, SouthEast, South, SouthWest, West, NorthWest
   - type: MZPhysics
     bounciness: 0.05
   - type: Sprite
@@ -72,8 +73,9 @@
     offset: 0, 1.8
     scale: 0.6, 0.6
   - type: Strap
-    buckleOffset: 0, 1.4
-    rotation: -90
+    position: Stand
+    buckleOffset: 0, 2.65
+    rotation: 0
     whitelist:
       requireAll: true
       components:
