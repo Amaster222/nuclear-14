@@ -54,6 +54,7 @@ humanoid-profile-editor-antag-preference-yes-button = Yes
 humanoid-profile-editor-antag-preference-no-button = No
 
 humanoid-profile-editor-traits-tab = Perks
+humanoid-profile-editor-pets-tab = Pets
 humanoid-profile-editor-traits-header = You have {$points ->
     [1] 1 point
     *[other] {$points} points

@@ -176,8 +176,9 @@ namespace Content.Client.Lobby.UI
         private DepartmentUICategory _jobUICategory = DepartmentUICategory.Wasteland;
 
         private Dictionary<Button, ConfirmationData> _confirmationData = new();
-        private List<TraitPreferenceSelector> _traitPreferences = new();
         private int _traitCount;
+        private readonly HashSet<string> _usableTraitIds = new();
+        private readonly Dictionary<string, string> _traitCategoryRoots = new();
         private HashSet<LoadoutPreferenceSelector> _patreonLoadoutPreferences = new(); // #Cythisiax Add - Patreon supporter loadouts
         private HashSet<LoadoutPreferenceSelector> _loadoutPreferences = new();
         private BoxContainer? _specialTab;
@@ -598,7 +599,6 @@ namespace Content.Client.Lobby.UI
             // Set up the traits tab
             TraitsTab.Orphan();
             CTabContainer.AddTab(TraitsTab, Loc.GetString("humanoid-profile-editor-traits-tab"));
-            _traitPreferences = new List<TraitPreferenceSelector>();
 
             // Show/Hide the traits tab if they ever get enabled/disabled
             var traitsEnabled = cfgManager.GetCVar(CCVars.GameTraitsEnabled);
@@ -606,8 +606,20 @@ namespace Content.Client.Lobby.UI
             cfgManager.OnValueChanged(CCVars.GameTraitsEnabled,
                 enabled => CTabContainer.SetTabVisible(TraitsTab, enabled));
 
+            // #Misfits Add - PETS tab: pet/mount traits get their own top-level tab.
+            PetsTab.Orphan();
+            CTabContainer.AddTab(PetsTab, Loc.GetString("humanoid-profile-editor-pets-tab"));
+            CTabContainer.SetTabVisible(PetsTab, traitsEnabled);
+            cfgManager.OnValueChanged(CCVars.GameTraitsEnabled,
+                enabled => CTabContainer.SetTabVisible(PetsTab, enabled));
+
+            // #Cythisiax Added - wire the pets talent tree to the separate pets point/cap system.
+            PetsTalentTree.NodePressed += OnPetsTreeNodePressed;
+
             TraitsShowUnusableButton.OnToggled += args => UpdateTraits(args.Pressed);
             TraitsRemoveUnusableButton.OnPressed += _ => TryRemoveUnusableTraits();
+
+            TalentTree.NodePressed += OnTalentTreeNodePressed;
 
             UpdateTraits(false);
 
@@ -1101,7 +1113,6 @@ namespace Content.Client.Lobby.UI
             }
 
             SetPreviewRotation(_previewRotation);
-            TraitsTabs.UpdateTabMerging();
             LoadoutsTabs.UpdateTabMerging();
         }
 
@@ -3101,34 +3112,62 @@ namespace Content.Client.Lobby.UI
 
         private void UpdateTraitPreferences()
         {
+            var ownedIds = Profile?.TraitPreferences ?? new HashSet<string>();
+            var ownedSet = new HashSet<string>(ownedIds);
+
+            // #Cythisiax Edited - pets use their own separate point pool and size caps; only
+            // non-pet perks are charged against the standard trait/perk budget and slot count.
             var points = _cfgManager.GetCVar(CCVars.GameTraitsDefaultPoints);
+            var petPoints = _cfgManager.GetCVar(CCVars.GamePetsDefaultPoints);
+            int petSmall = 0, petMedium = 0, petLarge = 0, petTotal = 0;
             _traitCount = 0;
 
-            foreach (var preferenceSelector in _traitPreferences)
+            foreach (var traitId in ownedIds)
             {
-                var traitId = preferenceSelector.Trait.ID;
-                var preference = Profile?.TraitPreferences.Contains(traitId) ?? false;
-
-                preferenceSelector.Preference = preference;
-
-                if (!preference)
+                if (!_prototypeManager.TryIndex<TraitPrototype>(traitId, out var trait))
                     continue;
 
-                points += preferenceSelector.Trait.Points;
+                if (PetTraitHelpers.IsPet(trait))
+                {
+                    petPoints += trait.Points;
+                    petTotal++;
+                    switch (PetTraitHelpers.GetPetSize(trait))
+                    {
+                        case PetTraitHelpers.SizeSmall: petSmall++; break;
+                        case PetTraitHelpers.SizeMedium: petMedium++; break;
+                        case PetTraitHelpers.SizeLarge: petLarge++; break;
+                    }
+                    continue;
+                }
+
+                points += trait.Points;
                 _traitCount += 1;
             }
+
+            // Sync the tree node states (perks + pets).
+            TalentTree.RefreshStates(ownedSet, _usableTraitIds);
+            PetsTalentTree.RefreshStates(ownedSet, _usableTraitIds);
 
             TraitPointsBar.Value = points;
             TraitPointsLabel.Text = Loc.GetString("humanoid-profile-editor-traits-header",
                 ("points", points), ("traits", _traitCount),
                 ("maxTraits", _cfgManager.GetCVar(CCVars.GameTraitsMax)));
 
+            // #Cythisiax Added - update the separate pets point pool + size cap display.
+            var petBudget = _cfgManager.GetCVar(CCVars.GamePetsDefaultPoints);
+            PetPointsBar.MaxValue = petBudget;
+            PetPointsBar.Value = petPoints;
+            PetPointsLabel.Text = Loc.GetString("humanoid-profile-editor-pets-points-label",
+                ("points", petPoints), ("max", petBudget));
+            PetCapsLabel.Text = Loc.GetString("humanoid-profile-editor-pets-caps-label",
+                ("large", _cfgManager.GetCVar(CCVars.GamePetsMaxLarge)),
+                ("medium", _cfgManager.GetCVar(CCVars.GamePetsMaxMedium)),
+                ("small", _cfgManager.GetCVar(CCVars.GamePetsMaxSmall)),
+                ("total", _cfgManager.GetCVar(CCVars.GamePetsMaxTotal)));
+
             // Set the remove unusable button's label to have the correct amount of unusable traits
             TraitsRemoveUnusableButton.Text = Loc.GetString("humanoid-profile-editor-traits-remove-unusable-button",
-                ("count", _traits
-                    .Where(t => _traitPreferences
-                        .Where(tps => tps.Preference).Select(tps => tps.Trait).Contains(t.Key))
-                    .Count(t => !t.Value)));
+                ("count", _traits.Count(kv => !kv.Value && ownedSet.Contains(kv.Key.ID))));
             AdminUIHelpers.RemoveConfirm(TraitsRemoveUnusableButton, _confirmationData);
 
             SetDirty();
@@ -3149,18 +3188,31 @@ namespace Content.Client.Lobby.UI
             TraitPointsBar.MaxValue = points;
             TraitPointsBar.Value = points;
 
+            // #Cythisiax Added - reset the separate pets point pool display too.
+            var petBudget = _cfgManager.GetCVar(CCVars.GamePetsDefaultPoints);
+            PetPointsLabel.Text = Loc.GetString("humanoid-profile-editor-pets-points-label", ("points", petBudget), ("max", petBudget));
+            PetPointsBar.MaxValue = petBudget;
+            PetPointsBar.Value = petBudget;
+            PetCapsLabel.Text = Loc.GetString("humanoid-profile-editor-pets-caps-label",
+                ("large", _cfgManager.GetCVar(CCVars.GamePetsMaxLarge)),
+                ("medium", _cfgManager.GetCVar(CCVars.GamePetsMaxMedium)),
+                ("small", _cfgManager.GetCVar(CCVars.GamePetsMaxSmall)),
+                ("total", _cfgManager.GetCVar(CCVars.GamePetsMaxTotal)));
+
             // Reset the whole UI and delete caches
             if (reload)
             {
-                foreach (var tab in TraitsTabs.Tabs)
-                    TraitsTabs.RemoveTab(tab);
-                _traitPreferences.Clear();
+                _traits.Clear();
             }
 
 
             // Get the highest priority job to use for trait filtering
             var highJob = _controller.GetPreferredJob(Profile ?? HumanoidCharacterProfile.DefaultWithSpecies());
 
+            // #Cythisiax Edited - build the category-root map up front so the species filter below
+            // can compare against ROOT categories. This lets a species that allows "Pets" keep
+            // allowing the new pet size subcategories (PetsSmall / PetsMedium / PetsLarge).
+            BuildTraitCategoryRoots();
             _traits.Clear();
             foreach (var trait in _prototypeManager.EnumeratePrototypes<TraitPrototype>())
             {
@@ -3186,234 +3238,208 @@ namespace Content.Client.Lobby.UI
                 {
                     var currentSpecies = _prototypeManager.Index<SpeciesPrototype>(Profile.Species);
                     if (currentSpecies.AllowedTraitCategories != null
-                        && !currentSpecies.AllowedTraitCategories.Contains(trait.Category))
+                        && !currentSpecies.AllowedTraitCategories.Contains(GetRootTraitCategory(trait.Category)))
                         continue;
                 }
 
                 _traits.Add(trait, usable);
-
-                if (_traitPreferences.FindIndex(lps => lps.Trait.ID == trait.ID) is not (not -1 and var i))
-                    continue;
-
-                var selector = _traitPreferences[i];
-                selector.Valid = usable;
-                selector.ShowUnusable = showUnusable.Value;
             }
 
             if (_traits.Count == 0)
             {
-                TraitsTabs.AddTab(new Label { Text = Loc.GetString("humanoid-profile-editor-traits-no-traits") },
-                    Loc.GetString("trait-category-Uncategorized"));
+                TalentTree.SetTrees(new List<TreeBranch>());
+                PetsTalentTree.SetTrees(new List<TreeBranch>());
                 return;
             }
 
 
-            var uncategorized = TraitsTabs.Contents.FirstOrDefault(c => c.Name == "Uncategorized");
-            if (uncategorized == null)
-            {
-                uncategorized = new BoxContainer
-                {
-                    Name = "Uncategorized",
-                    Orientation = LayoutOrientation.Vertical,
-                    HorizontalExpand = true,
-                    VerticalExpand = true,
-                    // I hate ScrollContainers
-                    Children =
-                    {
-                        new ScrollContainer
-                        {
-                            HScrollEnabled = false,
-                            HorizontalExpand = true,
-                            VerticalExpand = true,
-                            Children =
-                            {
-                                new BoxContainer
-                                {
-                                    Orientation = LayoutOrientation.Vertical,
-                                    HorizontalExpand = true,
-                                    VerticalExpand = true,
-                                },
-                            },
-                        },
-                    },
-                };
+            // #Misfits Add - build the talent tree (one menu) and the PETS tree instead of
+            // the old per-category sub-tabs.
+            _usableTraitIds.Clear();
+            foreach (var (trait, usable) in _traits)
+                if (usable)
+                    _usableTraitIds.Add(trait.ID);
 
-                TraitsTabs.AddTab(uncategorized, Loc.GetString("trait-category-Uncategorized"));
-            }
+            var branches = new Dictionary<string, List<TreePerk>>();
+            var petsBranches = new Dictionary<string, List<TreePerk>>();
 
-            // Create a Dictionary/tree of categories and subcategories
-            var cats = CreateTree(_prototypeManager.EnumeratePrototypes<TraitCategoryPrototype>()
-                .Where(c => c.Root)
-                .OrderBy(c => Loc.GetString($"trait-category-{c.ID}"))
-                .ToList());
-            var categories = new Dictionary<string, object>();
-            foreach (var (key, value) in cats)
-                categories.Add(key, value);
-
-            // Create the UI elements for the category tree
-            CreateCategoryUI(categories, TraitsTabs);
-
-            // Fill categories with traits
             foreach (var (trait, usable) in _traits
                 .OrderBy(l => -l.Key.Points)
                 .ThenBy(l => l.Key.ID)
                 .ThenBy(l => Loc.GetString($"trait-name-{l.Key.ID}")))
             {
-                if (_traitPreferences.Select(lps => lps.Trait.ID).Contains(trait.ID))
+                var root = GetRootTraitCategory(trait.Category);
+
+                var sb = new System.Text.StringBuilder();
+                var desc = Loc.GetString($"trait-description-{trait.ID}");
+                if (!string.IsNullOrEmpty(desc) && desc != $"trait-description-{trait.ID}")
+                    sb.Append(desc);
+
+                _characterRequirementsSystem.CheckRequirementsValid(
+                    trait.Requirements, highJob, Profile ?? HumanoidCharacterProfile.DefaultWithSpecies(),
+                    _requirements.GetRawPlayTimeTrackers(), _requirements.IsWhitelisted(), trait,
+                    _entManager, _prototypeManager, _cfgManager, _sponsorMan, out var reasons);
+                foreach (var reason in reasons)
+                    sb.Append('\n').Append(reason);
+
+                var perk = new TreePerk(
+                    trait.ID,
+                    Loc.GetString($"trait-name-{trait.ID}"),
+                    trait.Points,
+                    trait.Tier,
+                    GetPrerequisiteTrait(trait),
+                    sb.Length > 0 ? sb.ToString() : null);
+
+                // #Cythisiax Edited - pets render as a talent tree grouped by size subcategory
+                // (PetsSmall / PetsMedium / PetsLarge) on their own Pets tab.
+                if (root == PetTraitHelpers.PetsRootCategory)
                 {
-                    var first = _traitPreferences.First(lps => lps.Trait.ID == trait.ID);
-                    first.Valid = usable;
-                    first.ShowUnusable = showUnusable.Value;
+                    if (!petsBranches.TryGetValue(trait.Category, out var petList))
+                        petsBranches[trait.Category] = petList = new List<TreePerk>();
+                    petList.Add(perk);
                     continue;
                 }
 
-                var selector = new TraitPreferenceSelector(
-                    trait, highJob, Profile ?? HumanoidCharacterProfile.DefaultWithSpecies(),
-                    _entManager, _prototypeManager, _cfgManager, _characterRequirementsSystem, _requirements, _sponsorMan); // Forge-Change
-                selector.Valid = usable;
-                selector.ShowUnusable = showUnusable.Value;
-                AddSelector(selector);
-
-                // Look for an existing category tab
-                var match = FindCategory(trait.Category, TraitsTabs);
-
-                // If there is no category put it in Uncategorized (this shouldn't happen)
-                (match ?? uncategorized).Children.First().Children.First().AddChild(selector);
+                if (!branches.TryGetValue(root, out var list))
+                    branches[root] = list = new List<TreePerk>();
+                list.Add(perk);
             }
 
-            // Hide any empty tabs
-            HideEmptyTabs(_prototypeManager.EnumeratePrototypes<TraitCategoryPrototype>().ToList());
+            var petsTreeBranches = new List<TreeBranch>();
+            foreach (var (petRoot, perks) in petsBranches.OrderBy(b => b.Key))
+            {
+                petsTreeBranches.Add(new TreeBranch(
+                    Loc.GetString($"trait-category-{petRoot}"),
+                    perks.OrderBy(p => p.Tier).ToList()));
+            }
+            PetsTalentTree.SetTrees(petsTreeBranches);
+
+            var treeBranches = new List<TreeBranch>();
+            foreach (var (root, perks) in branches.OrderBy(b => b.Key))
+            {
+                treeBranches.Add(new TreeBranch(
+                    Loc.GetString($"trait-category-{root}"),
+                    perks.OrderBy(p => p.Tier).ToList()));
+            }
+
+            TalentTree.SetTrees(treeBranches);
+            TalentTree.RefreshStates(
+                new HashSet<string>(Profile?.TraitPreferences ?? new HashSet<string>()), _usableTraitIds);
+            PetsTalentTree.RefreshStates(
+                new HashSet<string>(Profile?.TraitPreferences ?? new HashSet<string>()), _usableTraitIds);
 
             UpdateTraitPreferences();
             return;
-
-
-            void CreateCategoryUI(Dictionary<string, object> tree, NeoTabContainer parent)
-            {
-                foreach (var (key, value) in tree)
-                {
-                    // If the category's container exists already, ignore it
-                    if (parent.Contents.Any(c => c.Name == key))
-                        continue;
-
-                    // If the value is a list of TraitPrototypes, create a final tab for them
-                    if (value is List<TraitPrototype>)
-                    {
-                        var category = new BoxContainer
-                        {
-                            Name = key,
-                            Orientation = LayoutOrientation.Vertical,
-                            HorizontalExpand = true,
-                            VerticalExpand = true,
-                            Children =
-                            {
-                                new ScrollContainer
-                                {
-                                    HScrollEnabled = false,
-                                    HorizontalExpand = true,
-                                    VerticalExpand = true,
-                                    Children =
-                                    {
-                                        new BoxContainer
-                                        {
-                                            Orientation = LayoutOrientation.Vertical,
-                                            HorizontalExpand = true,
-                                            VerticalExpand = true,
-                                        },
-                                    },
-                                },
-                            },
-                        };
-
-                        parent.AddTab(category, Loc.GetString($"trait-category-{key}"));
-                    }
-                    // If the value is a dictionary, create a new tab for it and recursively call this function to fill it
-                    else
-                    {
-                        var category = new NeoTabContainer
-                        {
-                            Name = key,
-                            HorizontalExpand = true,
-                            VerticalExpand = true,
-                            SeparatorMargin = new Thickness(0),
-                        };
-
-                        parent.AddTab(category, Loc.GetString($"trait-category-{key}"));
-                        CreateCategoryUI((Dictionary<string, object>) value, category);
-                    }
-                }
-            }
-
-            void AddSelector(TraitPreferenceSelector selector)
-            {
-                _traitPreferences.Add(selector);
-                selector.PreferenceChanged += preference =>
-                {
-                    // Make sure they have enough trait points
-                    preference = CheckPoints(preference ? selector.Trait.Points : -selector.Trait.Points, preference);
-                    // Make sure they have enough trait slots
-                    preference = preference ? _traitCount < _cfgManager.GetCVar(CCVars.GameTraitsMax) : preference;
-
-                    // Update Preferences
-                    Profile = Profile?.WithTraitPreference(selector.Trait.ID, preference);
-                    IsDirty = true;
-                    UpdateTraitPreferences();
-                    SetProfile(Profile, CharacterSlot);
-                };
-            }
-
-            bool CheckPoints(int points, bool preference)
-            {
-                var temp = TraitPointsBar.Value + points;
-                return preference ? !(temp < 0) : temp < 0;
-            }
         }
 
         #endregion
 
         #region Functions
 
-        private Dictionary<string, object> CreateTree(List<TraitCategoryPrototype> cats)
+        // #Misfits Add - talent tree helpers.
+        private void BuildTraitCategoryRoots()
         {
-            var tree = new Dictionary<string, object>();
-            foreach (var category in cats)
+            _traitCategoryRoots.Clear();
+            foreach (var root in _prototypeManager.EnumeratePrototypes<TraitCategoryPrototype>().Where(c => c.Root))
             {
-                // If the category is already in the tree, ignore it
-                if (tree.ContainsKey(category.ID))
-                    continue;
-
-                // Categories don't have a Parent field, so we need to instead check the SubCategories of every Category
-                var subCategories = category.SubCategories.Where(subCategory => !tree.ContainsKey(subCategory)).ToList();
-                // If there are no subcategories, add a loadout spot to the dictionary
-                if (subCategories.Count == 0)
+                void Walk(TraitCategoryPrototype category)
                 {
-                    tree.Add(category.ID, new List<TraitPrototype>());
-                    continue;
+                    _traitCategoryRoots[category.ID] = root.ID;
+                    foreach (var sub in category.SubCategories)
+                    {
+                        if (_prototypeManager.TryIndex<TraitCategoryPrototype>(sub, out var subCat))
+                            Walk(subCat);
+                    }
                 }
-
-                // If there are subcategories, we need to add them to the dictionary as well
-                var subCategoryTree = CreateTree(subCategories.Select(c => _prototypeManager.Index(c)).ToList());
-                tree.Add(category.ID, subCategoryTree);
+                Walk(root);
             }
-
-            return tree;
         }
 
-        private void HideEmptyTabs(List<TraitCategoryPrototype> cats)
-        {
-            foreach (var tab in cats.Select(category => FindCategory(category.ID, TraitsTabs)))
-            {
-                // If it's empty, hide it
-                if (tab != null)
-                    ((NeoTabContainer) tab.Parent!.Parent!.Parent!.Parent!).SetTabVisible(tab, tab.Children.First().Children.First().Children.Any());
+        private string GetRootTraitCategory(string categoryId)
+            => _traitCategoryRoots.GetValueOrDefault(categoryId, categoryId);
 
-                // If it has a parent tab container, hide it if it's empty
-                if (tab?.Parent?.Parent is NeoTabContainer parent)
+        private string? GetPrerequisiteTrait(TraitPrototype trait)
+        {
+            foreach (var req in trait.Requirements)
+            {
+                if (req is CharacterTraitRequirement { Inverted: false } ctr && ctr.Traits.Count > 0)
+                    return ctr.Traits[0].ToString();
+            }
+            return null;
+        }
+
+        private void OnTalentTreeNodePressed(string traitId, bool owned)
+        {
+            if (!_prototypeManager.TryIndex<TraitPrototype>(traitId, out var trait))
+                return;
+
+            var points = owned ? trait.Points : -trait.Points;
+            if (owned && TraitPointsBar.Value + points < 0)
+                owned = false;
+            if (owned && _traitCount >= _cfgManager.GetCVar(CCVars.GameTraitsMax))
+                owned = false;
+
+            Profile = Profile?.WithTraitPreference(traitId, owned);
+            IsDirty = true;
+            UpdateTraitPreferences();
+            SetProfile(Profile, CharacterSlot);
+        }
+
+        // #Cythisiax Added - pets are paid for out of their own point pool with separate size
+        // caps (1 large / 2 medium / 3 small / 3 total). Toggling a pet that would break any of
+        // these is rejected and the node snaps back to unowned.
+        private void OnPetsTreeNodePressed(string traitId, bool owned)
+        {
+            if (!_prototypeManager.TryIndex<TraitPrototype>(traitId, out var trait))
+                return;
+
+            if (owned && !CanSelectPet(trait))
+                owned = false;
+
+            Profile = Profile?.WithTraitPreference(traitId, owned);
+            IsDirty = true;
+            UpdateTraitPreferences();
+            SetProfile(Profile, CharacterSlot);
+        }
+
+        private bool CanSelectPet(TraitPrototype pet)
+        {
+            var petMaxSmall = _cfgManager.GetCVar(CCVars.GamePetsMaxSmall);
+            var petMaxMedium = _cfgManager.GetCVar(CCVars.GamePetsMaxMedium);
+            var petMaxLarge = _cfgManager.GetCVar(CCVars.GamePetsMaxLarge);
+            var petMaxTotal = _cfgManager.GetCVar(CCVars.GamePetsMaxTotal);
+
+            var petPoints = _cfgManager.GetCVar(CCVars.GamePetsDefaultPoints) + pet.Points;
+            int small = 0, medium = 0, large = 0, total = 1;
+            foreach (var traitId in Profile?.TraitPreferences ?? new HashSet<string>())
+            {
+                if (traitId == pet.ID)
+                    continue;
+                if (!_prototypeManager.TryIndex<TraitPrototype>(traitId, out var trait) || !PetTraitHelpers.IsPet(trait))
+                    continue;
+
+                petPoints += trait.Points;
+                total++;
+                switch (PetTraitHelpers.GetPetSize(trait))
                 {
-                    var parentCats = parent.Contents.Select(c => _prototypeManager.Index<TraitCategoryPrototype>(c.Name!)).ToList();
-                    HideEmptyTabs(parentCats);
+                    case PetTraitHelpers.SizeSmall: small++; break;
+                    case PetTraitHelpers.SizeMedium: medium++; break;
+                    case PetTraitHelpers.SizeLarge: large++; break;
                 }
             }
+
+            switch (PetTraitHelpers.GetPetSize(pet))
+            {
+                case PetTraitHelpers.SizeSmall: small++; break;
+                case PetTraitHelpers.SizeMedium: medium++; break;
+                case PetTraitHelpers.SizeLarge: large++; break;
+            }
+
+            return petPoints >= 0
+                && small <= petMaxSmall
+                && medium <= petMaxMedium
+                && large <= petMaxLarge
+                && total <= petMaxTotal;
         }
 
         private void TryRemoveUnusableTraits()
@@ -3436,17 +3462,26 @@ namespace Content.Client.Lobby.UI
 
             var max = _cfgManager.GetCVar(CCVars.GameTraitsMax);
             var points = _cfgManager.GetCVar(CCVars.GameTraitsDefaultPoints);
+            var perkCount = 0;
             foreach (var trait in Profile.TraitPreferences
                 .Select(t => _prototypeManager.Index<TraitPrototype>(t))
                 .OrderByDescending(t => t?.Points))
             {
-                if (points + trait!.Points < 0 || Profile.TraitPreferences.Count > max)
+                if (trait == null)
+                    continue;
+
+                // #Cythisiax Edited - pets run on their own point pool + caps; only prune perks here.
+                if (PetTraitHelpers.IsPet(trait))
+                    continue;
+
+                if (points + trait.Points < 0 || perkCount >= max)
                 {
                     Profile = Profile.WithTraitPreference(trait.ID, false);
                 }
                 else
                 {
                     points += trait.Points;
+                    perkCount++;
                 }
             }
         }
