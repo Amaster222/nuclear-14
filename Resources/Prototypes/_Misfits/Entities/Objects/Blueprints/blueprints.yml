@@ -170,6 +170,8 @@
     - N14BPNCRArmorRangerHelmetOld
     # #Misfits Add - Added Field Ranger sidegrade recipe
     - N14BPNCRArmorRangerFieldArmor
+    # #Misfits Add - Added Recruit Ranger sidegrade recipe
+    - N14BPNCRArmorRangerFlakVest
 
 - type: entity
   parent: N14BlueprintBase
