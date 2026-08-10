@@ -38,6 +38,9 @@ public sealed class MarketSystem : EntitySystem
     private float _purgeTimer;
     private readonly List<MarketFeedEntry> _activityFeed = new();
     private const int MaxFeedEntries = 50;
+    // #Cythisiax Add - Search results are tracked per player so one buyer's
+    // search does not overwrite another player's UI state.
+    private readonly Dictionary<Guid, (string Query, List<(string Id, string Name)> Results)> _searchResultsByUser = new();
 
     public override void Initialize()
     {
@@ -48,6 +51,10 @@ public sealed class MarketSystem : EntitySystem
         SubscribeLocalEvent<MarketTerminalComponent, BoundUIClosedEvent>(OnUiClosed);
         SubscribeLocalEvent<GetVerbsEvent<UtilityVerb>>(OnItemVerb);
         SubscribeLocalEvent<RoundStartedEvent>(OnRoundStarted);
+        // Refresh market UIs when deposit storage contents change (grid drag-drop)
+        SubscribeLocalEvent<EntInsertedIntoContainerMessage>(OnDepositContainerChanged);
+        SubscribeLocalEvent<EntRemovedFromContainerMessage>(OnDepositContainerChanged);
+        SubscribeLocalEvent<StackComponent, StackCountChangedEvent>(OnStackCountChanged);
         Subs.BuiEvents<MarketTerminalComponent>(MarketUiKey.Key, subs =>
         {
             subs.Event<CreateOrderMessage>(OnCreateOrder);
@@ -100,6 +107,63 @@ public sealed class MarketSystem : EntitySystem
     private void OnUiClosed(Entity<MarketTerminalComponent> ent, ref BoundUIClosedEvent args) =>
         _openMarketUis.Remove(args.Actor);
 
+    /// <summary>
+    /// When a deposit storage container changes (grid drag-drop), refresh that player's market UI.
+    /// </summary>
+    private void OnDepositContainerChanged(EntInsertedIntoContainerMessage ev)
+    {
+        var containerEntity = ev.Container.Owner;
+        var terminalQuery = EntityQueryEnumerator<MarketTerminalComponent>();
+        while (terminalQuery.MoveNext(out var terminalUid, out var comp))
+        {
+            foreach (var (playerId, storage) in comp.PlayerStorage)
+            {
+                if (storage != containerEntity) continue;
+                RefreshMarketState((terminalUid, comp));
+                return;
+            }
+        }
+    }
+
+    private void OnDepositContainerChanged(EntRemovedFromContainerMessage ev)
+    {
+        var containerEntity = ev.Container.Owner;
+        var terminalQuery = EntityQueryEnumerator<MarketTerminalComponent>();
+        while (terminalQuery.MoveNext(out var terminalUid, out var comp))
+        {
+            foreach (var (playerId, storage) in comp.PlayerStorage)
+            {
+                if (storage != containerEntity) continue;
+                RefreshMarketState((terminalUid, comp));
+                return;
+            }
+        }
+    }
+
+    private void OnStackCountChanged(Entity<StackComponent> ent, ref StackCountChangedEvent args)
+    {
+        if (_openMarketUis.Count == 0)
+            return;
+
+        // #Cythisiax Add - Only refresh when a stack changes inside market storage.
+        if (!_container.TryGetContainingContainer((ent.Owner, null, null), out var container))
+            return;
+
+        var containerEntity = container.Owner;
+        var terminalQuery = EntityQueryEnumerator<MarketTerminalComponent>();
+        while (terminalQuery.MoveNext(out var terminalUid, out var comp))
+        {
+            foreach (var (_, storage) in comp.PlayerStorage)
+            {
+                if (storage != containerEntity)
+                    continue;
+
+                RefreshMarketState((terminalUid, comp));
+                return;
+            }
+        }
+    }
+
     // ── Deposit Storage ───────────────────────────────────────────────────────
 
     private EntityUid GetOrCreateDepositStorage(EntityUid terminal, EntityUid user)
@@ -133,23 +197,37 @@ public sealed class MarketSystem : EntitySystem
 
     private void OnWithdrawItem(Entity<MarketTerminalComponent> terminal, ref MarketWithdrawItemMessage msg)
     {
-        EntityUid? user = null;
-        foreach (var uid in _openMarketUis) { if (_ui.IsUiOpen(terminal.Owner, MarketUiKey.Key, uid)) { user = uid; break; } }
-        if (user == null || !TryComp<ActorComponent>(user, out var actor)) return;
+        if (!TryComp<ActorComponent>(msg.Actor, out var actor))
+            return;
+
+        var user = msg.Actor;
         var comp = terminal.Comp;
         if (!comp.PlayerStorage.TryGetValue(actor.PlayerSession.UserId.UserId, out var storage) || !Exists(storage)
             || !TryComp<StorageComponent>(storage, out var sc)) return;
         EntityUid? toRemove = null;
-        foreach (var c in sc.Container.ContainedEntities) { toRemove = c; break; }
-        if (toRemove == null) return;
+        foreach (var c in sc.Container.ContainedEntities)
+        {
+            if (c.ToString() != msg.SlotKey)
+                continue;
+
+            toRemove = c;
+            break;
+        }
+
+        if (toRemove == null)
+            return;
+
         _container.Remove(toRemove.Value, sc.Container);
-        if (!_hands.TryPickupAnyHand(user.Value, toRemove.Value)) _xform.DropNextTo(toRemove.Value, user.Value);
+        if (!_hands.TryPickupAnyHand(user, toRemove.Value))
+            _xform.DropNextTo(toRemove.Value, user);
         RefreshMarketState(terminal);
     }
 
     private void OnProtoSearch(Entity<MarketTerminalComponent> terminal, ref ProtoSearchMessage msg)
     {
-        if (!TryComp<ActorComponent>(terminal, out var actor)) return;
+        if (!TryComp<ActorComponent>(msg.Actor, out var actor))
+            return;
+
         if (string.IsNullOrWhiteSpace(msg.Query)) return;
 
         var query = msg.Query.ToLowerInvariant();
@@ -175,14 +253,18 @@ public sealed class MarketSystem : EntitySystem
             }
         }
 
-        _ui.SendMessage(terminal, new ProtoSearchResults(matches));
+        // #Cythisiax Add - Store search results per player instead of globally.
+        _searchResultsByUser[actor.PlayerSession.UserId.UserId] = (msg.Query, matches);
+        RefreshMarketState(terminal);
     }
 
     // ── Order Matching Engine ──────────────────────────────────────────────────
 
     private void OnCreateOrder(Entity<MarketTerminalComponent> terminal, ref CreateOrderMessage msg)
     {
-        if (!TryComp<ActorComponent>(terminal, out var actor)) return;
+        if (!TryComp<ActorComponent>(msg.Actor, out var actor))
+            return;
+
         var session = actor.PlayerSession;
         var user = session.AttachedEntity;
         if (user == null || user == null || user == EntityUid.Invalid) return;
@@ -270,7 +352,9 @@ public sealed class MarketSystem : EntitySystem
 
     private void OnCancelOrder(Entity<MarketTerminalComponent> terminal, ref CancelOrderMessage msg)
     {
-        if (!TryComp<ActorComponent>(terminal, out var actor)) return;
+        if (!TryComp<ActorComponent>(msg.Actor, out var actor))
+            return;
+
         var user = actor.PlayerSession.AttachedEntity;
         if (user == null || user == null || user == EntityUid.Invalid) return;
         if (!_activeOrders.TryGetValue(msg.OrderId, out var order) || order.Status != "Active") return;
@@ -292,7 +376,9 @@ public sealed class MarketSystem : EntitySystem
 
     private void OnClaimEscrow(Entity<MarketTerminalComponent> terminal, ref ClaimEscrowMessage msg)
     {
-        if (!TryComp<ActorComponent>(terminal, out var actor)) return;
+        if (!TryComp<ActorComponent>(msg.Actor, out var actor))
+            return;
+
         var user = actor.PlayerSession.AttachedEntity;
         if (user == null || user == null || user == EntityUid.Invalid) return;
         if (!_activeOrders.TryGetValue(msg.OrderId, out var order)) return;
@@ -377,21 +463,31 @@ public sealed class MarketSystem : EntitySystem
             var uid = actor.PlayerSession.UserId.UserId;
             state.MyOrders = _activeOrders.Values.Where(o => o.OwnerId == uid).ToList();
             state.MyCompletedOrders = _activeOrders.Values.Where(o => o.OwnerId == uid && o.Status == "Fulfilled").ToList();
+            if (_searchResultsByUser.TryGetValue(uid, out var search))
+            {
+                state.LastSearchQuery = search.Query;
+                state.SearchResults = new List<(string, string)>(search.Results);
+            }
             var comp = terminal.Comp;
-            if (comp.PlayerStorage.TryGetValue(uid, out var storage) && Exists(storage) && TryComp<StorageComponent>(storage, out var sc))
+            if (comp.PlayerStorage.TryGetValue(uid, out var storage) && Exists(storage)
+                && TryComp<StorageComponent>(storage, out var sc) && sc.Container != null)
             {
                 foreach (var item in sc.Container.ContainedEntities)
                 {
                     var meta = MetaData(item);
                     state.DepositedItems.Add(new MarketDepositEntry
                     {
-                        SlotKey = meta.EntityPrototype?.ID ?? "", ProtoId = meta.EntityPrototype?.ID ?? "",
+                        SlotKey = item.ToString(),
+                        // #Cythisiax Add - Slot key is the exact entity id so withdraw
+                        // can target the right entry inside multi-item market storage.
+                        ProtoId = meta.EntityPrototype?.ID ?? "",
                         ProtoName = meta.EntityPrototype?.Name ?? meta.EntityName,
                         StackCount = TryComp<StackComponent>(item, out var stack) ? stack.Count : 0,
                     });
                 }
             }
         }
+        state.MarketName = "Wendover Free Market Exchange";
         return state;
     }
 
@@ -401,5 +497,6 @@ public sealed class MarketSystem : EntitySystem
     {
         _activeOrders.Clear(); _openMarketUis.Clear(); _activityFeed.Clear();
         _escrowCurrency.Clear(); _escrowItems.Clear();
+        _searchResultsByUser.Clear();
     }
 }

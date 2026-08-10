@@ -19,6 +19,7 @@ public sealed class MarketBoundUi(EntityUid owner, Enum uiKey) : BoundUserInterf
         _window.OnClaim += orderId => SendMessage(new ClaimEscrowMessage(orderId));
         _window.OnCancel += orderId => SendMessage(new CancelOrderMessage(orderId));
         _window.OnProtoSearch += query => SendMessage(new ProtoSearchMessage(query));
+        _window.OnBarterSearch += query => SendMessage(new ProtoSearchMessage(query));
 
         _window.OpenCentered();
     }
@@ -30,6 +31,8 @@ public sealed class MarketBoundUi(EntityUid owner, Enum uiKey) : BoundUserInterf
         if (state is not MarketStateMessage marketState)
             return;
 
+        // #Cythisiax Add - Keep the title in sync with the server state.
+        _window?.SetMarketName(marketState.MarketName);
         _window?.UpdateItemSummaries(marketState.ItemSummaries);
         _window?.UpdateMyOrders(marketState.MyOrders, marketState.MyCompletedOrders);
         _window?.UpdateFeed(marketState.Feed);
@@ -37,19 +40,13 @@ public sealed class MarketBoundUi(EntityUid owner, Enum uiKey) : BoundUserInterf
             slotKey => SendMessage(new MarketWithdrawItemMessage(slotKey)));
         _window?.UpdateBalances(marketState.Bottlecaps, marketState.NcrDollars,
             marketState.Silver, marketState.Gold);
+        _window?.OnSearchResults(marketState.SearchResults);
     }
 
     private void OnListRequest(CreateOrderMessage msg) => SendMessage(msg);
 
     private void OnBuyRequest(string listingId, int quantity) =>
         SendMessage(new CreateOrderMessage(listingId, quantity, "", 0, true));
-
-    protected override void ReceiveMessage(BoundUserInterfaceMessage message)
-    {
-        base.ReceiveMessage(message);
-        if (message is ProtoSearchResults results)
-            _window?.OnSearchResults(results.Results);
-    }
 
     protected override void Dispose(bool disposing)
     {

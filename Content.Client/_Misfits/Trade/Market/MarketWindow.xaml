@@ -2,12 +2,12 @@
 <DefaultWindow
     xmlns="https://spacestation14.io"
     SetSize="1020 620"
-    Title="Wendover Free Market Exchange">
+    Title="{Loc 'market-window-title'}">
     <BoxContainer Orientation="Vertical" Margin="6" SeparationOverride="4">
 
         <!-- Header: balances -->
         <BoxContainer Orientation="Horizontal" SeparationOverride="12">
-            <Label Text="Wendover Free Market Exchange" StyleClasses="LabelHeading" />
+            <Label Text="{Loc 'market-window-heading'}" StyleClasses="LabelHeading" />
             <Control HorizontalExpand="True" />
             <Label Name="CapsLabel" Text="Caps: 0" />
             <Label Name="NcrLabel" Text="NCR: 0" />
@@ -17,17 +17,23 @@
 
         <!-- Tab bar -->
         <BoxContainer Name="TabBar" Orientation="Horizontal" SeparationOverride="2" Margin="0 2">
-            <Button Name="TabExchangeBtn" Text="Market Exchange" Disabled="True" />
-            <Button Name="TabCreateBtn" Text="Create Listing" />
-            <Button Name="TabMyOrdersBtn" Text="My Orders &amp; Escrow" />
-            <Button Name="TabActivityBtn" Text="Activity Feed" />
+            <Button Name="TabExchangeBtn" Text="{Loc 'market-tab-exchange'}" Disabled="True" />
+            <Button Name="TabCreateBtn" Text="{Loc 'market-tab-create'}" />
+            <Button Name="TabMyOrdersBtn" Text="{Loc 'market-tab-my-orders'}" />
+            <Button Name="TabActivityBtn" Text="{Loc 'market-tab-activity'}" />
         </BoxContainer>
 
         <!-- Tab 0: Market Exchange -->
         <BoxContainer Name="TabExchange" Orientation="Horizontal" SeparationOverride="4" VerticalExpand="True">
-            <!-- Left: Item Directory -->
+            <!-- Left: Item Directory + Search -->
             <ScrollContainer MinWidth="260" VerticalExpand="True" HScrollEnabled="False">
-                <BoxContainer Name="ItemDirectory" Orientation="Vertical" SeparationOverride="1" />
+                <BoxContainer Orientation="Vertical" SeparationOverride="4">
+                    <BoxContainer Orientation="Horizontal" SeparationOverride="4">
+                        <LineEdit Name="ProtoSearch" PlaceHolder="Search items..." HorizontalExpand="True" />
+                        <Button Name="ProtoSearchBtn" Text="Go" MinWidth="40" />
+                    </BoxContainer>
+                    <BoxContainer Name="ItemDirectory" Orientation="Vertical" SeparationOverride="1" />
+                </BoxContainer>
             </ScrollContainer>
             <!-- Center: Order Book -->
             <ScrollContainer HorizontalExpand="True" VerticalExpand="True" HScrollEnabled="False">
@@ -49,16 +55,6 @@
                     <Label Text="Your Market Storage" StyleClasses="LabelHeading" />
                     <Label Text="Right-click items near the terminal and select 'Deposit to Market' to store them here." StyleClasses="LabelSubText" />
                     <BoxContainer Name="DepositItemsContainer" Orientation="Vertical" SeparationOverride="2" />
-
-                    <Control MinHeight="8" />
-
-                    <!-- Proto search -->
-                    <Label Text="Item Search" StyleClasses="LabelHeading" />
-                    <BoxContainer Orientation="Horizontal" SeparationOverride="8">
-                        <LineEdit Name="ProtoSearch" PlaceHolder="e.g. t51 or bars" HorizontalExpand="True" />
-                        <Button Name="ProtoSearchBtn" Text="Search" MinWidth="70" />
-                    </BoxContainer>
-                    <BoxContainer Name="ProtoResultsContainer" Orientation="Vertical" SeparationOverride="1" />
 
                     <Control MinHeight="8" />
 
@@ -84,11 +80,22 @@
                         <Label Name="OrderFeeLabel" Text="" VerticalAlignment="Center" />
                     </BoxContainer>
                     <Button Name="SubmitOrderBtn" Text="PLACE LISTING" MinWidth="140" />
+
+                    <!-- Barter item search (visible when Barter selected) -->
+                    <BoxContainer Name="BarterSearchBox" Orientation="Vertical" SeparationOverride="4" Visible="False">
+                        <Label Text="{Loc 'market-barter-request-heading'}" StyleClasses="LabelHeading" />
+                        <BoxContainer Orientation="Horizontal" SeparationOverride="4">
+                            <LineEdit Name="BarterSearch" PlaceHolder="e.g. antiseptic" HorizontalExpand="True" />
+                            <Button Name="BarterSearchBtn" Text="Search" MinWidth="60" />
+                        </BoxContainer>
+                        <BoxContainer Name="BarterResultsContainer" Orientation="Vertical" SeparationOverride="1" />
+                        <Label Name="SelectedBarterLabel" Text="{Loc 'market-barter-request-none'}" StyleClasses="LabelSubText" />
+                    </BoxContainer>
                 </BoxContainer>
             </ScrollContainer>
         </BoxContainer>
 
-        <!-- Tab 2: My Orders & Escrow -->
+        <!-- Tab 2: My Orders & Listings -->
         <BoxContainer Name="TabMyOrders" Orientation="Vertical" SeparationOverride="4" Visible="False" VerticalExpand="True">
             <Label Text="Active Orders" StyleClasses="LabelHeading" />
             <ScrollContainer VerticalExpand="True" HScrollEnabled="False">

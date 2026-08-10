@@ -167,6 +167,9 @@ public sealed class MarketStateMessage : BoundUserInterfaceState
     public int Gold;
     // Currently selected prototype (for order book detail)
     public string SelectedProtoId = string.Empty;
+    public string SelectedProtoName = string.Empty;
+    public string LastSearchQuery = string.Empty;
+    public List<(string Id, string Name)> SearchResults = new();
 
     public string MarketName = "Wendover Free Market Exchange";
 }
