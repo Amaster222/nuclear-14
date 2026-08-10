@@ -1,7 +1,7 @@
 # #Misfits Add - Vertibird pilot perk for flyable vertibird access.
 - type: trait
   id: N14VertibirdPilotPerk
-  category: Physical
+  category: Mental
   points: -10
   functions:
     - !type:TraitAddComponent
