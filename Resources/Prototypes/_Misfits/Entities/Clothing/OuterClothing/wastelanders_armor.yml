@@ -338,3 +338,64 @@
         Heat: 0.78
   - type: ExplosionResistance
     damageCoefficient: 0.92
+
+- type: entity
+  parent: N14FalloutArmorBase
+  id: M14ClothingOuterWesternWayfarerArmor
+  name: western wayfarer salvaged armor
+  description: A set of scrap and banded metal armor forged by the Wayfarer tribe, due to it's lightweight and unrestrictive nature,  it's used by scouts and agile hunters. A torn cloak hangs around its neck, protecting the user from the harsh desert sands.
+  components:
+  - type: Sprite
+    sprite: _Misfits/Clothing/OuterClothing/Armor/westernwayfarerarmor.rsi
+  - type: Clothing
+    sprite: _Misfits/Clothing/OuterClothing/Armor/westernwayfarerarmor.rsi
+  - type: Armor
+    modifiers:
+      coefficients:
+        Blunt: 0.88
+        Slash: 0.80
+        Piercing: 0.82
+        Heat: 0.78
+  - type: ExplosionResistance
+    damageCoefficient: 0.92
+
+#Technically should be considered heavy armor but drip was needed. If it ever becomes a 'heavy' armor then put the stats to this one and Warden Plate to heavy armors.
+- type: entity
+  parent: N14FalloutArmorBase
+  id: M14ClothingOuterWesternWayfarerHeavyArmor
+  name: western wayfarer heavy armor
+  description: A Suit of armor crafted by Tribals using pieces of scrap metals and the armor of fallen foes, a bighorner's skull sits on the right pauldron along with bighorner fur lining the collar of the leather bound chest. Along the leather straps adoring it are multiple bone charms with odd markings on them.
+  components:
+  - type: Sprite
+    sprite: _Misfits/Clothing/OuterClothing/Armor/westernwayfarerheavyarmor.rsi
+  - type: Clothing
+    sprite: _Misfits/Clothing/OuterClothing/Armor/westernwayfarerheavyarmor.rsi
+  - type: Armor
+    modifiers:
+      coefficients:
+        Blunt: 0.88
+        Slash: 0.80
+        Piercing: 0.82
+        Heat: 0.78
+  - type: ExplosionResistance
+    damageCoefficient: 0.92
+
+- type: entity
+  parent: N14FalloutArmorBase
+  id: M14ClothingOuterWardenPlate
+  name: warden plate
+  description: Thick metal breastplate with a decorative skull on the shoulder.
+  components:
+  - type: Sprite
+    sprite: _Misfits/Clothing/OuterClothing/Armor/wardenplate.rsi
+  - type: Clothing
+    sprite: _Misfits/Clothing/OuterClothing/Armor/wardenplate.rsi
+  - type: Armor
+    modifiers:
+      coefficients:
+        Blunt: 0.88
+        Slash: 0.80
+        Piercing: 0.82
+        Heat: 0.78
+  - type: ExplosionResistance
+    damageCoefficient: 0.92
