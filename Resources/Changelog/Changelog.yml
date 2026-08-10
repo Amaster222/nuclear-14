@@ -9798,3 +9798,20 @@ Entries:
   id: 6303
   time: '2026-08-07T21:34:27.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1135
+- author: IdiocityInc
+  changes:
+    - type: Add
+      message: NCR Commissar Sabre
+    - type: Add
+      message: NCR Commissar Gas mask
+    - type: Add
+      message: NCR Commissar Breastplate
+    - type: Add
+      message: NCR Commissar Hat
+    - type: Add
+      message: NCR Commissar Jacket
+    - type: Add
+      message: NCR Commissar Kit to LT kits
+  id: 6304
+  time: '2026-08-10T00:02:02.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1136
