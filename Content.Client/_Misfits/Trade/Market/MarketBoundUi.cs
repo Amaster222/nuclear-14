@@ -15,7 +15,7 @@ public sealed class MarketBoundUi(EntityUid owner, Enum uiKey) : BoundUserInterf
         _window = new MarketWindow();
         _window.OnClose += Close;
         _window.OnListRequest += msg => SendMessage(msg);
-        _window.OnBuyRequest += (id, _) => { };
+        _window.OnBuyRequest += (id, _) => SendMessage(new SelectOrderBookMessage(id));
         _window.OnClaim += orderId => SendMessage(new ClaimEscrowMessage(orderId));
         _window.OnCancel += orderId => SendMessage(new CancelOrderMessage(orderId));
         _window.OnProtoSearch += query => SendMessage(new ProtoSearchMessage(query));
@@ -34,19 +34,24 @@ public sealed class MarketBoundUi(EntityUid owner, Enum uiKey) : BoundUserInterf
         // #Cythisiax Add - Keep the title in sync with the server state.
         _window?.SetMarketName(marketState.MarketName);
         _window?.UpdateItemSummaries(marketState.ItemSummaries);
+        _window?.UpdateOrderBook(marketState.SelectedOrderBook);
         _window?.UpdateMyOrders(marketState.MyOrders, marketState.MyCompletedOrders);
         _window?.UpdateFeed(marketState.Feed);
         _window?.UpdateDepositedItems(marketState.DepositedItems,
             slotKey => SendMessage(new MarketWithdrawItemMessage(slotKey)));
-        _window?.UpdateBalances(marketState.Bottlecaps, marketState.NcrDollars,
-            marketState.Silver, marketState.Gold);
+        _window?.UpdateBalances(marketState.Bottlecaps, marketState.NcrDollars);
         _window?.OnSearchResults(marketState.SearchResults);
     }
 
-    private void OnListRequest(CreateOrderMessage msg) => SendMessage(msg);
+    protected override void ReceiveMessage(BoundUserInterfaceMessage message)
+    {
+        base.ReceiveMessage(message);
 
-    private void OnBuyRequest(string listingId, int quantity) =>
-        SendMessage(new CreateOrderMessage(listingId, quantity, "", 0, true));
+        if (message is not ProtoSearchResults results)
+            return;
+
+        _window?.OnSearchResults(results.Results);
+    }
 
     protected override void Dispose(bool disposing)
     {

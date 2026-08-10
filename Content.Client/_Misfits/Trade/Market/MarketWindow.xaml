@@ -11,8 +11,6 @@
             <Control HorizontalExpand="True" />
             <Label Name="CapsLabel" Text="Caps: 0" />
             <Label Name="NcrLabel" Text="NCR: 0" />
-            <Label Name="SilverLabel" Text="Silver: 0" />
-            <Label Name="GoldLabel" Text="Gold: 0" />
         </BoxContainer>
 
         <!-- Tab bar -->

@@ -135,6 +135,13 @@ public sealed class ProtoSearchMessage(string query) : BoundUserInterfaceMessage
     public string Query = query;
 }
 
+/// <summary>Select a prototype to view its market book.</summary>
+[Serializable, NetSerializable]
+public sealed class SelectOrderBookMessage(string prototypeId) : BoundUserInterfaceMessage
+{
+    public string PrototypeId = prototypeId;
+}
+
 /// <summary>Sent from server to client: proto search results.</summary>
 [Serializable, NetSerializable]
 public sealed class ProtoSearchResults(List<(string Id, string Name)> results) : BoundUserInterfaceMessage
@@ -163,8 +170,6 @@ public sealed class MarketStateMessage : BoundUserInterfaceState
     // Currency balances
     public int Bottlecaps;
     public int NcrDollars;
-    public int Silver;
-    public int Gold;
     // Currently selected prototype (for order book detail)
     public string SelectedProtoId = string.Empty;
     public string SelectedProtoName = string.Empty;

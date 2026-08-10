@@ -36,7 +36,7 @@ public sealed partial class MarketWindow : DefaultWindow
         OrderTypeBtn.SelectId(0);
         OrderTypeBtn.OnItemSelected += args => OrderTypeBtn.SelectId(args.Id);
 
-        foreach (var c in new[] { "Bottlecaps", "NCRDollars", "Silver", "Gold", "Barter" })
+        foreach (var c in new[] { "Bottlecaps", "NCRDollars", "Barter" })
         {
             OrderCurrencyBtn.AddItem(c);
             OrderCurrencyBtn.SetItemMetadata(OrderCurrencyBtn.ItemCount - 1, c);
@@ -75,12 +75,10 @@ public sealed partial class MarketWindow : DefaultWindow
         TabActivity.Visible = i == 3; TabActivityBtn.Disabled = i == 3;
     }
 
-    public void UpdateBalances(int caps, int ncr, int silver, int gold)
+    public void UpdateBalances(int caps, int ncr)
     {
         CapsLabel.Text = $"Caps: {caps}";
         NcrLabel.Text = $"NCR: {ncr}";
-        SilverLabel.Text = $"Silver: {silver}";
-        GoldLabel.Text = $"Gold: {gold}";
     }
 
     public void UpdateItemSummaries(List<MarketItemSummary> summaries)
@@ -104,6 +102,61 @@ public sealed partial class MarketWindow : DefaultWindow
             btn.OnPressed += _ => OnBuyRequest?.Invoke(s.PrototypeId, 0);
             row.AddChild(btn);
             ItemDirectory.AddChild(row);
+        }
+    }
+
+    public void UpdateOrderBook(OrderBookEntry? book)
+    {
+        OrderBookContainer.RemoveAllChildren();
+        DetailContainer.RemoveAllChildren();
+
+        if (book == null)
+        {
+            OrderBookContainer.AddChild(new Label { Text = "No active orders for this item.", StyleClasses = { "LabelSubText" }, Margin = new Thickness(4) });
+            DetailContainer.AddChild(new Label { Text = "Select an item to view order book.", StyleClasses = { "LabelSubText" }, Margin = new Thickness(4) });
+            return;
+        }
+
+        DetailContainer.AddChild(new Label { Text = book.PrototypeName, StyleClasses = { "LabelHeading" } });
+        DetailContainer.AddChild(new Label { Text = book.PrototypeId, StyleClasses = { "LabelSubText" } });
+        DetailContainer.AddChild(new Label { Text = $"Best ask: {(book.BestAsk > 0 ? book.BestAsk.ToString() : "-")}  |  Best bid: {(book.BestBid > 0 ? book.BestBid.ToString() : "-")}  |  Spread: {(book.Spread > 0 ? book.Spread.ToString() : "-")}", StyleClasses = { "LabelSubText" } });
+
+        OrderBookContainer.AddChild(new Label { Text = $"{book.PrototypeName} Order Book", StyleClasses = { "LabelHeading" }, Margin = new Thickness(0, 0, 0, 4) });
+
+        var sellHeader = new BoxContainer { Orientation = BoxContainer.LayoutOrientation.Horizontal, SeparationOverride = 4 };
+        sellHeader.AddChild(new Label { Text = "Sells", MinWidth = 120, StyleClasses = { "LabelSubText" } });
+        sellHeader.AddChild(new Label { Text = "Qty", MinWidth = 40, StyleClasses = { "LabelSubText" } });
+        sellHeader.AddChild(new Label { Text = "Price", MinWidth = 60, StyleClasses = { "LabelSubText" } });
+        sellHeader.AddChild(new Label { Text = "Currency", MinWidth = 80, StyleClasses = { "LabelSubText" } });
+        OrderBookContainer.AddChild(sellHeader);
+
+        foreach (var o in book.SellOrders)
+        {
+            var row = new BoxContainer { Orientation = BoxContainer.LayoutOrientation.Horizontal, SeparationOverride = 4 };
+            row.AddChild(new Label { Text = o.OwnerName, MinWidth = 120 });
+            row.AddChild(new Label { Text = (o.Quantity - o.FulfilledQty).ToString(), MinWidth = 40 });
+            row.AddChild(new Label { Text = o.Price.ToString(), MinWidth = 60 });
+            row.AddChild(new Label { Text = o.Currency, MinWidth = 80 });
+            OrderBookContainer.AddChild(row);
+        }
+
+        OrderBookContainer.AddChild(new Control { MinHeight = 4 });
+
+        var buyHeader = new BoxContainer { Orientation = BoxContainer.LayoutOrientation.Horizontal, SeparationOverride = 4 };
+        buyHeader.AddChild(new Label { Text = "Buys", MinWidth = 120, StyleClasses = { "LabelSubText" } });
+        buyHeader.AddChild(new Label { Text = "Qty", MinWidth = 40, StyleClasses = { "LabelSubText" } });
+        buyHeader.AddChild(new Label { Text = "Price", MinWidth = 60, StyleClasses = { "LabelSubText" } });
+        buyHeader.AddChild(new Label { Text = "Currency", MinWidth = 80, StyleClasses = { "LabelSubText" } });
+        OrderBookContainer.AddChild(buyHeader);
+
+        foreach (var o in book.BuyOrders)
+        {
+            var row = new BoxContainer { Orientation = BoxContainer.LayoutOrientation.Horizontal, SeparationOverride = 4 };
+            row.AddChild(new Label { Text = o.OwnerName, MinWidth = 120 });
+            row.AddChild(new Label { Text = (o.Quantity - o.FulfilledQty).ToString(), MinWidth = 40 });
+            row.AddChild(new Label { Text = o.Price.ToString(), MinWidth = 60 });
+            row.AddChild(new Label { Text = o.Currency, MinWidth = 80 });
+            OrderBookContainer.AddChild(row);
         }
     }
 
