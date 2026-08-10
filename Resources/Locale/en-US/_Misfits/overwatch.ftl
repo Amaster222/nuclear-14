@@ -36,6 +36,9 @@ overwatch-monitor-title = PERSONNEL MONITOR
 overwatch-monitor-title-vault = VAULT PERSONNEL MONITOR
 overwatch-monitor-title-bos = BROTHERHOOD PERSONNEL MONITOR
 overwatch-monitor-title-ncr = NCR PERSONNEL MONITOR
+# #Misfits Add - titles for faction-specific Overwatch monitors on the Ranger/Enclave tacmaps
+overwatch-monitor-title-ncr-rangers = NCR RANGER PERSONNEL MONITOR
+overwatch-monitor-title-enclave = ENCLAVE PERSONNEL MONITOR
 overwatch-category-command = COMMAND
 overwatch-category-security = SECURITY
 overwatch-category-medical = MEDICAL

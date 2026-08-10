@@ -120,6 +120,13 @@
     mapConfigId: Wendover
     mapTitle: Rangers Tactical Map
     tacticalFeed: NCR
+  # #Misfits Fix - Override the BOS OverwatchConsole inherited from N14BrotherhoodTacticalmap
+  # so this map's Overwatch tab only tracks NCR Rangers (IdCardNCRRanger), NOT Brotherhood
+  # members and NOT the whole NCR. The child component replaces the parent's trackedTags.
+  - type: OverwatchConsole
+    monitorTitle: overwatch-monitor-title-ncr-rangers
+    trackedTags:
+    - IdCardNCRRanger
   - type: AccessReader
     access: [["NCRRanger"]]
   - type: ActivatableUIRequiresAccess
@@ -148,6 +155,13 @@
     mapConfigId: Wendover
     mapTitle: Rangers Tactical Map
     tacticalFeed: NCR
+  # #Misfits Fix - Override the BOS OverwatchConsole inherited from N14BrotherhoodTacticalmapBroken
+  # so this map's Overwatch tab only tracks NCR Rangers (IdCardNCRRanger), NOT Brotherhood
+  # members and NOT the whole NCR. The child component replaces the parent's trackedTags.
+  - type: OverwatchConsole
+    monitorTitle: overwatch-monitor-title-ncr-rangers
+    trackedTags:
+    - IdCardNCRRanger
   - type: AccessReader
     access: [["NCRRanger"]]
   - type: ActivatableUIRequiresAccess
