@@ -239,6 +239,14 @@ public sealed class MarketSystem : EntitySystem
         foreach (var proto in _proto.EnumeratePrototypes<EntityPrototype>())
         {
             var id = proto.ID.ToLowerInvariant();
+            if (!id.StartsWith("n14") && !id.StartsWith("misfits"))
+                continue;
+
+            var hasItem = proto.Components.ContainsKey("Item");
+            var hasClothing = proto.Components.ContainsKey("Clothing");
+            if (!hasItem && !hasClothing)
+                continue;
+
             var rawName = proto.Name ?? string.Empty;
             var displayName = rawName;
             if (!string.IsNullOrWhiteSpace(rawName) && Loc.TryGetString(rawName, out var localized))
