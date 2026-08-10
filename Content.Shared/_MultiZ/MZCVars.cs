@@ -56,6 +56,13 @@ public sealed partial class MZCVars : CVars
         CVarDef.Create("multi_z.blur_strength", 1.0f, CVar.CLIENTONLY | CVar.ARCHIVE);
 
     /// <summary>
+    /// Zoom multiplier used when rendering the lower map from an empty sky/observation layer.
+    /// Values above 1 show more ground and make the lower level read as farther away.
+    /// </summary>
+    public static readonly CVarDef<float> SkyAltitudeZoom =
+        CVarDef.Create("multi_z.sky_altitude_zoom", 1.18f, CVar.CLIENTONLY | CVar.ARCHIVE);
+
+    /// <summary>
     /// Enable cross-Z-level audio propagation.
     /// </summary>
     public static readonly CVarDef<bool> CrossZAudio =

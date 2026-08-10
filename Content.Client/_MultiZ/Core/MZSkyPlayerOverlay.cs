@@ -59,12 +59,10 @@ public sealed class MZSkyPlayerOverlay : Overlay
 
         var worldPos = _entMan.System<SharedTransformSystem>().GetWorldPosition(xform);
         var screenPos = args.ViewportControl.WorldToScreen(worldPos);
-        var scale = args.Viewport.Eye?.Zoom ?? Vector2.One;
-
         args.ScreenHandle.DrawEntity(
             player.Value,
             screenPos,
-            scale,
+            Vector2.One,
             null,
             args.Viewport.Eye?.Rotation ?? default,
             sprite: sprite,

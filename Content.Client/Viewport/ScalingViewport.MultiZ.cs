@@ -70,7 +70,8 @@ public sealed partial class ScalingViewport
         // Pass 1: render the below map with a plain eye so the upper sky layer
         // cannot blank it out through FOV / lighting state.
         var belowCoords = new MapCoordinates(eye.Position.Position, belowMC.MapId);
-        _viewport.Eye = CloneEye(eye, belowCoords, drawFov: false, drawLight: true);
+        var altitudeZoom = MathF.Max(_mzCfg.GetCVar(MZCVars.SkyAltitudeZoom), 1f);
+        _viewport.Eye = CloneEye(eye, belowCoords, drawFov: false, drawLight: true, zoomMultiplier: altitudeZoom);
         _viewport.ClearColor = Color.Black;
         _viewport.Render();
 
@@ -86,14 +87,19 @@ public sealed partial class ScalingViewport
         _mzSkipNormalRender = true;
     }
 
-    private static Robust.Shared.Graphics.Eye CloneEye(IEye source, MapCoordinates position, bool drawFov, bool drawLight)
+    private static Robust.Shared.Graphics.Eye CloneEye(
+        IEye source,
+        MapCoordinates position,
+        bool drawFov,
+        bool drawLight,
+        float zoomMultiplier = 1f)
     {
         return new Robust.Shared.Graphics.Eye
         {
             Position = position,
             Rotation = source.Rotation,
             Scale = source.Scale,
-            Zoom = source.Zoom,
+            Zoom = source.Zoom * zoomMultiplier,
             Offset = source.Offset,
             DrawFov = drawFov,
             DrawLight = drawLight,
