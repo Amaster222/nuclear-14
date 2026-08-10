@@ -175,7 +175,7 @@
 # The flood of various & mixed pet traits shall begin here
 - type: trait
   id: N14PetRoach
-  category: Pets # #Misfits Change - moved from Mental to Pets tab; removed inter-pet exclusion to allow stacking
+  category: PetsSmall # #Cythisiax Edited - pet size subcategory; #Misfits Change - moved from Mental to Pets tab; removed inter-pet exclusion to allow stacking
   points: -3
   requirements:
     - !type:CharacterDepartmentRequirement
@@ -191,7 +191,7 @@
 
 - type: trait
   id: N14PetPigrat
-  category: Pets # #Misfits Change - moved from Mental to Pets tab; removed inter-pet exclusion to allow stacking
+  category: PetsSmall # #Cythisiax Edited - pet size subcategory; #Misfits Change - moved from Mental to Pets tab; removed inter-pet exclusion to allow stacking
   points: -4
   requirements:
     - !type:CharacterDepartmentRequirement
@@ -230,7 +230,7 @@
 # All the eyebots shall be here.
 - type: trait
   id: N14PetEyebot
-  category: Pets # #Misfits Change - moved from Mental to Pets tab; removed inter-pet exclusion to allow stacking
+  category: PetsMedium # #Cythisiax Edited - pet size subcategory; #Misfits Change - moved from Mental to Pets tab; removed inter-pet exclusion to allow stacking
   points: -6
   requirements:
     - !type:CharacterDepartmentRequirement
@@ -245,7 +245,7 @@
 
 - type: trait
   id: N14PetEyebotMBoS
-  category: Pets # #Misfits Change - moved from Mental to Pets tab; removed inter-pet exclusion to allow stacking
+  category: PetsMedium # #Cythisiax Edited - pet size subcategory; #Misfits Change - moved from Mental to Pets tab; removed inter-pet exclusion to allow stacking
   points: -6
   requirements:
     - !type:CharacterDepartmentRequirement
@@ -283,7 +283,7 @@
 # All the dog pet traits because every faction that has turrets needs their own variant
 - type: trait
   id: N14PetDog
-  category: Pets # #Misfits Change - moved from Mental to Pets tab; removed inter-pet exclusion to allow stacking
+  category: PetsMedium # #Cythisiax Edited - pet size subcategory; #Misfits Change - moved from Mental to Pets tab; removed inter-pet exclusion to allow stacking
   points: -6
   requirements:
     - !type:CharacterOverallTimeRequirement
@@ -301,7 +301,7 @@
 
 - type: trait
   id: N14PetDogMBoS
-  category: Pets # #Misfits Change - moved from Mental to Pets tab; removed inter-pet exclusion to allow stacking
+  category: PetsMedium # #Cythisiax Edited - pet size subcategory; #Misfits Change - moved from Mental to Pets tab; removed inter-pet exclusion to allow stacking
   points: -6
   requirements:
     - !type:CharacterOverallTimeRequirement
@@ -366,7 +366,7 @@
 
 - type: trait
   id: N14PetDogNCR
-  category: Pets # #Misfits Change - moved from Mental to Pets tab
+  category: PetsMedium # #Cythisiax Edited - pet size subcategory; #Misfits Change - moved from Mental to Pets tab
   points: -6
   requirements:
     - !type:CharacterOverallTimeRequirement
@@ -382,7 +382,7 @@
 
 - type: trait
   id: N14PetDogNCRK9Medical
-  category: Pets # #Misfits Change - moved from Mental to Pets tab
+  category: PetsMedium # #Cythisiax Edited - pet size subcategory; #Misfits Change - moved from Mental to Pets tab
   points: -6
   requirements:
     - !type:CharacterOverallTimeRequirement
