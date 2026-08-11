@@ -186,6 +186,7 @@
     selectedMode: SemiAuto
     availableModes:
     - SemiAuto
+    - FullAuto #Misfits Change — added full-auto mode for borg laser
   - type: FollowDistance
     backStrength: 5
 
