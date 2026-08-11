@@ -78,8 +78,8 @@ undecided-loadout-category-engi-demo-description =
     Includes 1 NCR shotgun belt, 1 9mm SMG, 3 9mm SMG magazines,
     1 short shotgun, 1 box of 12 gauge shells,
     1 mechanical toolbox, 3 C4 charge, 1 ripper,
-    1 C ration MRE, 1 stimpak,
-    1 RadAway blood bag, 1 gauze pack
+    1 C ration MRE, 1 stimpak, 1 heavy metal shield
+    1 RadAway blood bag and 1 gauze pack
 
 undecided-loadout-category-engi-breach-name = Engineer Breacher Kit
 undecided-loadout-category-engi-breach-description =

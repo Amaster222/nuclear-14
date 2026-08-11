@@ -300,7 +300,7 @@
   name: captain field officer kit
   parent: KitBase
   id: KitNCR_CaptainServiceRifle
-  description: A crate containing field officer gear for an NCR captain who favors the service rifle on the front line.
+  description: A crate containing field officer gear for an NCR captain who favors the marksman carbine on the front line.
   components:
   - type: Sprite
     state: rifleman
@@ -309,9 +309,9 @@
   - type: SpawnItemsOnUse
     items:
       - id: ClothingBeltNCR
-      - id: N14WeaponRifle556ServiceScoped
-      - id: Magazine556Rifle
-        amount: 6
+      - id: N14WeaponRifle762Marksman
+      - id: N14Magazine762Rifle
+        amount: 4
       - id: N14WeaponPistol9mm
       - id: N14MagazinePistol9mm
         amount: 3

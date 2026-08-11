@@ -120,17 +120,6 @@
     sprite: _Nuclear14/Clothing/Belt/ncrshotgunner.rsi
   - type: Clothing
     sprite: _Nuclear14/Clothing/Belt/ncrshotgunner.rsi
-  - type: Storage
-    whitelist:
-      tags:
-        - Wrenchh
-        - Welder
-        - Screwdriver
-        - Wirecutter
-        - Crowbar 
-  - components: 
-        - BallisticAmmoProvider
-        - CartridgeAmmo
 
 - type: entity
   parent: N14ClothingBeltStorageBase
