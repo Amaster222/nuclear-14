@@ -106,15 +106,9 @@ public abstract partial class SharedGunSystem
 
         if (TryTakeChamberEntity(uid, out var chamberEnt))
         {
-            if (_netManager.IsServer)
-            {
-                EjectCartridge(chamberEnt.Value);
-            }
-            else
-            {
-                // Similar to below just due to prediction.
-                _xform.DetachEntity(chamberEnt.Value, Transform(chamberEnt.Value));
-            }
+            /// Misfit change: <code> if (_netManager.IsServer){ } </code>
+            /// prediction handled inside EjectCartridge
+            EjectCartridge(chamberEnt.Value);
         }
 
         if (!CycleCartridge(uid, component, user))
@@ -176,19 +170,9 @@ public abstract partial class SharedGunSystem
         {
             if (TryTakeChamberEntity(uid, out var chambered))
             {
-                if (_netManager.IsServer)
-                {
-                    EjectCartridge(chambered.Value);
-                }
-                else
-                {
-                    // Prediction moment
-                    // The problem is client will dump the cartridge on the ground and the new server state
-                    // won't correspond due to randomness so looks weird
-                    // but we also need to always take it from the chamber or else ammocount won't be correct.
-                    _xform.DetachParentToNull(chambered.Value, Transform(chambered.Value));
-                }
-
+                // Misfit removed: if (_netManager.IsServer)
+                //                 prediction handled in EjectCartridge
+                EjectCartridge(chambered.Value);
                 UpdateAmmoCount(uid);
             }
 

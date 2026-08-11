@@ -1,4 +1,3 @@
-using System.Linq;
 using Content.Shared.DoAfter;
 using Content.Shared.Examine;
 using Content.Shared.Interaction;
@@ -10,12 +9,21 @@ using Content.Shared.Weapons.Ranged.Events;
 
 namespace Content.Shared.Weapons.Ranged.Systems;
 /// <summary>
-/// This file has all of the event handlers for <see cref="BallisticAmmoProviderComponent"/>
-/// showing the general flow and logic of what it does. The main work is done in TakeAmmoEvent
-/// since everything circulates on when/how ammo is taken out/put in a container defined by the comp
+/// Things with <see cref="BallisticAmmoProviderComponent"/> should be for anything that
+/// needs gun logic related to containing and ejecting ammo (loading mags, cycling ect..)
+/// Mostly includes ammo boxes, but also goes for bows, specific guns, ect...
 ///
-/// This is used by things that dont use mags and act as a 'container' themselves
-/// ie... bows, launchers, some guns ect...
+/// Main implementation and events are listed for that listed here
+/// showing the general flow and logic of what it does.
+/// Main work is done in <see cref="TakeAmmoEvent"/> which actually updates comps, spawns ammo, ect...
+/// Guess you can view everything here as a wrapper for TakeAmmoEvent lol
+///
+/// Things are generally ordered by order of event calls.
+/// ie...(example stuff not real but generally shows how events chain into eachother)
+///     InteractBefore  -->  Interact    -->  InteractAfter
+///             |               |                  |
+///     OnPreGunInteract    OnGunInteract --> OnGunAfterInteract
+///
 /// </summary>
 public abstract partial class SharedGunSystem
 {
@@ -39,66 +47,73 @@ public abstract partial class SharedGunSystem
 
 
     }
-    // pressing z on in hand item
-    private void OnBallisticUse(EntityUid uid, BallisticAmmoProviderComponent component, UseInHandEvent args)
+
+    /// pressing z with in hand item
+    private void OnBallisticUse(EntityUid giverUid, BallisticAmmoProviderComponent comp, UseInHandEvent args)
     {
-        if (args.Handled || !component.Cycleable)
+        if (args.Handled || !comp.Cycleable)
             return;
 
-        ManualCycle(uid, component, _xform.GetMapCoordinates(uid), args.User);
+        ManualCycle(giverUid, comp, args.User);
         args.Handled = true;
     }
-
     /// <summary>
-    /// Corrects bad yaml and sets appearance data on Map init
+    /// Cycling specific to ballisticAmmoProviders
+    /// Manual in that it is player triggered
     /// </summary>
-    /// <remarks>
-    /// visualizer handled by system described in <see cref="UpdateBallisticAppearance"/>
-    /// So shouldnt have something like genericvisualizer in yaml
-    /// </remarks>
-    private void OnBallisticInit(EntityUid uid, BallisticAmmoProviderComponent comp, ComponentInit args)
+    private void ManualCycle(EntityUid giverUid, BallisticAmmoProviderComponent comp, EntityUid user, GunComponent? gunComp = null)
     {
-#if !RELEASE
-        DebugInfo(uid, comp);
-#endif
-        EnsureCorrect(uid, comp);
-        UpdateBallisticAppearance(uid, comp);
-        Dirty(uid, comp);
+        // TODO MISFIT: make firerate thing tied to cycling event when i feel like it. seperation of responibilities
+        // Reset shotting for cycling
+        if (Resolve(giverUid, ref gunComp, false) &&
+            gunComp is { FireRateModified: > 0f })
+        {
+            gunComp.NextFire = Timing.CurTime + TimeSpan.FromSeconds(1 / gunComp.FireRateModified);
+        }
+
+        Audio.PlayPredicted(comp.SoundRack, giverUid, user);
+        _popup.PopupPredicted(
+        Loc.GetString(comp.AmmoCount == 0 ?
+        "gun-ballistic-cycled-empty" : "gun-ballistic-cycled")
+        , giverUid, user);
+
+        var cartridge = Cycle(giverUid, comp, user);
+        // null check
+        if (cartridge.TryFirstOrNull(out var ent)) EjectCartRNG(ent.Value.Item1!.Value, comp.AmmoCount,
+                                                                GetNetEntity(giverUid).Id);
     }
-    /// Same as above ^^
-    private void OnBallisticMapInit(EntityUid uid, BallisticAmmoProviderComponent comp, MapInitEvent args) => OnBallisticInit(uid, comp, new ComponentInit());
 
     /// <summary>
     /// Usually first event triggered when clicking on ent with something
     /// Just check if used ent is speedloader or bullet via whitelist and comp
     /// Only marks as handled if reciever is full
     /// </summary>
-    /// <param name="recieverUID">UID of clicked on ent. Also stored as args.Target</param>
+    /// <param name="recieverUid">UID of clicked on ent. Also stored as args.Target</param>
     /// <param name="recieverComp">known comp that listened for event</param>
     /// <param name="args">event args with info like user, and ent used to click on target</param>
-    private void OnBallisticInteractUsing(EntityUid recieverUID, BallisticAmmoProviderComponent recieverComp, InteractUsingEvent args)
+    private void OnBallisticInteractUsing(EntityUid recieverUid, BallisticAmmoProviderComponent recieverComp, InteractUsingEvent args)
     {
-        //
         if (args.Handled || _whitelistSystem.IsWhitelistFailOrNull(recieverComp.Whitelist, args.Used))
             return;
+        args.Handled = true;
         // reciever is full so doesnt matter what used ent is for useAfter event
-        // special interactions can go into BeforeUseInHandEvent event
+        // special interactions should rely on BeforeUseInHandEvent event
         if (!(recieverComp.Capacity - recieverComp.AmmoCount is int emptySlots and > 0))
         {
-            args.Handled = true;
-            _popup.PopupPredicted(Loc.GetString("gun-ballistic-transfer-target-full", ("entity", MetaData(recieverUID).EntityName)), recieverUID, args.User);
+            _popup.PopupPredicted(Loc.GetString("gun-ballistic-transfer-target-full", ("entity", MetaData(recieverUid).EntityName)), recieverUid, args.User);
             return;
         }
+
         // ent has whitelist but doesnt pass method to instantly insert more than 1 ammo
         if (!CanInstantFill(args.User)) emptySlots = 1;
-        StartAmmoSwap(emptySlots, args.Used, recieverComp, recieverUID, args.User);
 
-        args.Handled = true;
-        Audio.PlayPredicted(recieverComp.SoundInsert, recieverUID, args.User);
+        if (!TryAmmoInsert(emptySlots, args.Used, recieverComp, recieverUid, args.User))
+        {
+            _popup.PopupPredicted(Loc.GetString("gun-general-empty", ("entName", args.Used)), args.Used, args.User);
+            return;
+        }
+        Audio.PlayPredicted(recieverComp.SoundInsert, recieverUid, args.User);
 
-        UpdateAmmoCount(recieverUID);
-        UpdateBallisticAppearance(recieverUID, recieverComp);
-        Dirty(recieverUID, recieverComp);
     }
 
     /// <summary>
@@ -114,16 +129,12 @@ public abstract partial class SharedGunSystem
     // TODO MISFIT: throw exeception on init if doesnt have whitelist or Tags to avoid null checks later on
     private void OnBallisticAfterInteract(EntityUid giverUID, BallisticAmmoProviderComponent giverComp, AfterInteractEvent args)
     {
-        // TODO MISFIT: maybe as a code exercise see how to make this more readable
+
         if (args.Handled || !giverComp.MayTransfer || Deleted(args.Target) ||
-
-            !TryComp<BallisticAmmoProviderComponent>(args.Target, out var targetComp) ||
-
-            targetComp.Whitelist?.Tags is null || giverComp.Whitelist?.Tags is null ||
-
-            PopupCancels(targetComp, args.Target.Value, targetComp.Whitelist.Tags,
-                         giverComp, giverUID, giverComp.Whitelist.Tags,
-                                                            args.User))
+            !TryComp<BallisticAmmoProviderComponent>(args.Target, out var recieverComp) ||
+            PopupCancelsWhitelist(recieverComp, args.Target.Value,
+                         giverComp, giverUID, args.User,
+                         giverComp.Whitelist?.Tags, recieverComp.Whitelist?.Tags))
         {
             return;
         }
@@ -152,17 +163,14 @@ public abstract partial class SharedGunSystem
     /// <remarks/>
     private void OnBallisticAmmoFillDoAfter(EntityUid giverUID, BallisticAmmoProviderComponent giverComp, AmmoFillDoAfterEvent args)
     {
-        // Deleted already checks for null
-        // but I do it here to tell compiler within scope that it isnt null
-        // to stop repetitive null checking
-        if (Deleted(args.Target) ||
-            !TryComp<BallisticAmmoProviderComponent>(args.Target.Value, out var targetComp))
+        if (Deleted(args.Target) || !TryComp<BallisticAmmoProviderComponent>(args.Target.Value, out var recieverComp))
             return;
 
-        StartAmmoSwap(1, giverUID, targetComp, args.Target.Value, args.User);
 
-        args.Repeat = targetComp.AmmoCount < targetComp.Capacity // target has room for more ammo
-                   && giverComp.AmmoCount > 0;                   // giver still has ammo left
+
+        args.Repeat = PopupCancels(recieverComp, args.Target.Value, giverComp, giverUID, args.User) ||
+                      TryAmmoInsert(1, giverUID, recieverComp, args.Target.Value, args.User);
+
     }
 
     /// <summary>
@@ -176,7 +184,7 @@ public abstract partial class SharedGunSystem
         {
             Text = Loc.GetString("gun-ballistic-cycle"),
             Disabled = component.AmmoCount == 0,
-            Act = () => ManualCycle(uid, component, _xform.GetMapCoordinates(uid), args.User),
+            Act = () => ManualCycle(uid, component, args.User),
         });
     }
 
@@ -190,33 +198,20 @@ public abstract partial class SharedGunSystem
     }
 
     /// <summary>
-    /// How Ballistics does cycling. We call take ammo, but since nothing is taking it we just remove it from
-    /// ballistics container that it WAS parented to(so has same coords as parent)
-    /// Creates and raises GunCycledEvent
-    /// </summary>
-    /// <param name="uid">Gun or thing we are cycling</param>
-    /// <param name="comp">comp of uid</param>
-    /// <param name="user">user who triggered the event</param>
-    /// <remarks>
-    ///
-    /// <remarks/>
-
-    /// <summary>
     /// listening Comp supplies args with ammo data
     /// </summary>
-    private void OnBallisticAmmoCount(EntityUid uid, BallisticAmmoProviderComponent component, ref GetAmmoCountEvent args)
+    private void OnBallisticAmmoCount(EntityUid uid, BallisticAmmoProviderComponent comp, ref GetAmmoCountEvent args)
     {
-        args.Count = component.AmmoCount;
-        args.Capacity = component.Capacity;
+        args.Count = comp.AmmoCount;
+        args.Capacity = comp.Capacity;
     }
     /// <summary>
     /// Updates and initializes appearence data on server side
     /// </summary>
     /// <remarks>
-    /// alot of uids with BallisticComp also have MagazineVisualsComp(only exposed to client GunSystem)
-    /// Which uses custom logic to update appearence depending on ammo capacity and current ammo amount
-    /// basically as ammo gets lower/higher a level adjusts corresponding to a sprite.
-    /// So we dont need to or should define appearance data in yaml to let the system do its thing
+    /// uids with BallisticComp also have MagazineVisualsComp(code in client GunSystem)
+    /// is it sprite logic where current ammoCount/ammoMax is proportional to a level. Each level corresponds to a sprite
+    /// So if u wanna do sprite stuff in yaml or here keep that in mind. Simpler to let the system do its thang
     /// <see cref="GunSystem.MagazineVisuals.cs"/>
     ///</remarks>
     public void UpdateBallisticAppearance(EntityUid uid, BallisticAmmoProviderComponent comp)
@@ -229,44 +224,70 @@ public abstract partial class SharedGunSystem
     }
 
     /// <summary>
+    /// Attempt to insert ammo into recieverUID with known BallisticComp
+    ///
+    /// </summary>
+    /// <param name="ammoAmount">Ammo we TRY to take from giverUID. Though not guaranteed(ie. not enough ammo, or other mechanic ect)</param>
+    /// <param name="giverUID">UID who we take ammo from(should have comps that listen to event)</param>
+    /// <param name="recieverComp">Comp that recieves taken ammo and is updated</param>
+    /// <param name="recieverUid">UID with comp that recieves taken ammo and is updated</param>
+    /// <param name="user"> user that caused event(ie. player interacting with ammo box)</param>
+    private bool TryAmmoInsert(int ammoAmount,
+                            EntityUid giverUID,
+                            BallisticAmmoProviderComponent recieverComp, EntityUid recieverUid,
+                            EntityUid user)
+    {
+        var ammo = DoTakeAmmo(ammoAmount, giverUID, user);
+        if (ammo.Count == 0) return false;
+        DoAmmoInsert(ammo, recieverComp, recieverUid);
+        return true;
+    }
+    /// <summary>
     /// How Ballistic comps handle takeAmmo event.
-    /// Any already spawned ammo is removed first, then we spawn ammo,
+    /// Any already spawned ammo is removed first, then we spawn ammo if needed,
     /// decreasing amount of unspawned ammo
     /// </summary>
     /// <remarks>
-    /// Side effects: giverComp.UnspawnedCount is decreased by ammo that had to be spawned and
-    ///               already spawned ammo is removed from container
+    /// Side effects: 1. giverComp.UnspawnedCount is decreased by ammo that had to be spawned
+    ///               2. already spawned ammo is removed from container(gun, ammobox ect)
+    ///               3. spawned ammo is dropped in closest valid parent of giverUID
     /// <remarks/>
+
+    // TODO: rework takeammo event so it only worries about taking(spawning and such) not position logic
     private void OnBallisticTakeAmmo(EntityUid giverUID, BallisticAmmoProviderComponent giverComp, TakeAmmoEvent args)
     {
-        //var rng = new System.Random();
+        if (giverComp.AmmoCount == 0) return;
+        // Transfrom data we apply to all spawned ammo
+        var giverXform = (giverUID, Transform(giverUID));
+        var giverRotation = _xform.GetWorldRotation(giverXform.Item2);
 
+        // loop math
         int ammoToSpawn = Math.Max(0, args.Shots - giverComp.Container.Count);
         ammoToSpawn = Math.Min(giverComp.AmmoCount, ammoToSpawn);
         int ammoToRemove = Math.Min(giverComp.Container.Count, args.Shots - ammoToSpawn);
 
-        var ammo = giverComp.Container.ContainedEntities.Take(ammoToRemove);
+        var alreadySpawnedAmmo = giverComp.Container.ContainedEntities;
+        int toRemCount = alreadySpawnedAmmo.Count - ammoToRemove;
         giverComp.UnspawnedCount -= ammoToSpawn;
 
-        foreach (var shot in ammo)
+        for (int i = alreadySpawnedAmmo.Count - 1; i >= toRemCount; i--)
         {
-            args.Ammo.Add((shot, EnsureShootable(shot)));
-            Containers.Remove(shot, giverComp.Container);
+            args.Ammo.Add((alreadySpawnedAmmo[i], EnsureShootable(alreadySpawnedAmmo[i])));
+            Containers.Remove(alreadySpawnedAmmo[i], giverComp.Container);
         }
-
 
         for (int i = 0; i < ammoToSpawn; i++)
         {
-            var spawnedAmmo = PredictedSpawnAtPosition(giverComp.Proto, args.Coordinates);
+            var spawnedAmmo = Spawn(giverComp.Proto);
+            PlaceNextToRot((spawnedAmmo, Transform(spawnedAmmo)), giverXform, giverRotation);
             args.Ammo.Add((spawnedAmmo, EnsureShootable(spawnedAmmo)));
-
-            RandomVector(args.Rng, GetNetEntity(giverUID), spawnedAmmo, giverComp.AmmoCount, Transform(spawnedAmmo).Coordinates.Position);
         }
 
         Dirty(giverUID, giverComp);
         UpdateBallisticAppearance(giverUID, giverComp);
         UpdateAmmoCount(giverUID);
     }
+
 
 }
 
