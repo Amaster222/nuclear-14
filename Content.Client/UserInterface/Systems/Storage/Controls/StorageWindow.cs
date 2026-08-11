@@ -395,14 +395,14 @@ public sealed class StorageWindow : BaseWindow
         draggingGhost.OnPiecePressed += OnPiecePressed;
         draggingGhost.OnPieceUnpressed += OnPieceUnpressed;
         _pieces[draggingGhost.Entity] = (location, draggingGhost);
-        draggingGhost.Location = location;
+        draggingGhost.InsertLoc = location;
         var controlIndex = GetGridIndex(draggingGhost);
         _controlGrid[controlIndex].AddChild(draggingGhost);
     }
 
     private int GetGridIndex(ItemGridPiece piece)
     {
-        return piece.Location.Position.X + piece.Location.Position.Y * _pieceGrid.Columns;
+        return piece.InsertLoc.Position.X + piece.InsertLoc.Position.Y * _pieceGrid.Columns;
     }
 
     public void FlagDirty()
@@ -428,7 +428,8 @@ public sealed class StorageWindow : BaseWindow
 
         if (storageComp.Grid.Count == 0)
             return;
-
+        // so fucking dumb TODO make not shit
+        var ItemSys = _entity.System<SharedItemSystem>();
         var boundingGrid = storageComp.Grid.GetBoundingBox();
         var size = _emptyTexture!.Size * 2;
         _contained.Clear();
@@ -465,12 +466,12 @@ public sealed class StorageWindow : BaseWindow
             {
                 if (data.Loc.Equals(updated))
                 {
-                    DebugTools.Assert(data.Control.Location == updated);
+                    DebugTools.Assert(data.Control.InsertLoc == updated);
                     continue;
                 }
 
                 // Update
-                data.Control.Location = updated;
+                data.Control.InsertLoc = updated;
                 var index = GetGridIndex(data.Control);
                 data.Control.Orphan();
                 _controlGrid[index].AddChild(data.Control);
@@ -498,7 +499,8 @@ public sealed class StorageWindow : BaseWindow
 
             if (_entity.TryGetComponent<ItemComponent>(ent, out var itemEntComponent))
             {
-                var gridPiece = new ItemGridPiece((ent, itemEntComponent), loc, _entity)
+                var shape = ItemSys.GetItemShape((ent, itemEntComponent));
+                var gridPiece = new ItemGridPiece((ent, itemEntComponent), loc, shape, _entity)
                 {
                     MinSize = size,
                     Marked = _contained.IndexOf(ent) switch
@@ -575,7 +577,7 @@ public sealed class StorageWindow : BaseWindow
         if (_storageController.IsDragging && _storageController.DraggingGhost is { } dragging)
         {
             currentEnt = dragging.Entity;
-            currentLocation = dragging.Location;
+            currentLocation = dragging.InsertLoc;
         }
         else if (handsSystem.GetActiveHandEntity() is { } handEntity &&
                  storageSystem.CanInsert(StorageEntity.Value, handEntity, out _, storageComp: storageComponent, ignoreLocation: true))
@@ -673,7 +675,7 @@ public sealed class StorageWindow : BaseWindow
 
         if (StorageEntity != null)
             origin = _entity.GetComponent<StorageComponent>(StorageEntity.Value).Grid.GetBoundingBox().BottomLeft;
-        // (16,16)*2 = (32,32)
+        // (16,16)*2 = (32,32) TODO: Make this not based on emptytexture size wtf so shit
         var textureSize = (Vector2) _emptyTexture!.Size * 2;
         //
         var position = ((UserInterfaceManager.MousePositionScaled.Position
@@ -682,6 +684,17 @@ public sealed class StorageWindow : BaseWindow
                          + textureSize / 2f)
                         / textureSize).Floored() + origin;
         return position;
+    }
+    public Vector2 MouseToGridFloat()
+    {
+        // UIscale is Real pixels / Virtual . So every fake pixel for every real
+        // only do dis by virtual
+        // todo: rewrite color thing too
+        var textureSize = _backgroundGrid.Children[0].Size;
+        var posInPixels = UserInterfaceManager.MousePositionScaled.Position - _backgroundGrid.GlobalPixelPosition / Root!.UIScale;
+        var posPixelToGrid = posInPixels / textureSize;
+
+        return posPixelToGrid;
     }
 
     public bool TryGetBackgroundCell(int x, int y, [NotNullWhen(true)] out Control? cell)
