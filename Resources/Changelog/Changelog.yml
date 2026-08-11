@@ -9843,3 +9843,13 @@ Entries:
   id: 6307
   time: '2026-08-11T01:13:41.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1142
+- author: cythisjax
+  changes:
+    - type: Fix
+      message: >-
+        server and client desync for null exception on suicide & delimbing with
+        SelfAware perk that was local to player who did this, affecting all
+        others around them
+  id: 6308
+  time: '2026-08-11T15:07:07.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1145
