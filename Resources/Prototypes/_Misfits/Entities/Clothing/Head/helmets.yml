@@ -95,6 +95,12 @@
     sprite: _Misfits/Clothing/Head/ahphelmet.rsi
   - type: Clothing
     sprite: _Misfits/Clothing/Head/ahphelmet.rsi
+  - type: Armor
+    modifiers:
+      coefficients:
+        Blunt: 0.95
+        Slash: 0.95
+        Piercing: 0.95
 
 - type: entity
   parent: ClothingHeadBase
@@ -106,3 +112,9 @@
     sprite: _Misfits/Clothing/Head/khanhorned.rsi
   - type: Clothing
     sprite: _Misfits/Clothing/Head/khanhorned.rsi
+  - type: Armor
+    modifiers:
+      coefficients:
+        Blunt: 0.95
+        Slash: 0.95
+        Piercing: 0.95
