@@ -1,6 +1,6 @@
 # Super Mutant base mob entity.
 # Full humanoid species with hands, inventory, and clothing support.
-# Tripled health thresholds (300 crit / 500 dead), 50% damage reduction,
+# Doubled health thresholds (200 crit / 400 dead), 50% damage reduction,
 # immune to radiation and stamina damage. Uses supermutant inventory template
 # restricting body-worn slots to SuperMutantWearable-tagged clothing only.
 
@@ -92,34 +92,30 @@
   - type: Damageable
     damageContainer: Biological
     damageModifierSet: SuperMutant
-  # Misfits Change - long stride beats the human sprint of 4.5, so they can close to melee
-  # instead of being walked away from indefinitely.
   - type: MovementSpeedModifier
-    baseWalkSpeed: 2.5
-    baseSprintSpeed: 4.8
+    baseWalkSpeed: 2.0
+    baseSprintSpeed: 3.5
   - type: MobThresholds
     thresholds:
       0: Alive
-      300: Critical
-      500: Dead
+      200: Critical
+      400: Dead
   - type: Stamina
     critThreshold: 1000 # 10x human
     decay: 30   # 10x recovery
   # Misfits Change - radiation is absorbed as healing fuel rather than damage.
   # healFactor 0.1 (default) ≈ 2× super stimpack rate in a moderate rad zone (~50 rads/sec).
-  # healCap scaled to SM health: 450 = 90% of 500 dead threshold (vs 90 = 90% of 100 crit for humans).
+  # healCap scaled to SM health: 360 = 90% of 400 dead threshold (vs 90 = 90% of 100 crit for humans).
   - type: RadiationReceiver
   - type: RadiationHealing
-    healCap: 450
+    healCap: 360
   # Misfits Change - base fist damage 15 (2x Oni modifier brings effective damage to 30).
-  # range 1.8 matches the super mutant NPCs; long arms reach further than a human's 1.5.
   - type: MeleeWeapon
     soundHit:
       collection: Punch
     angle: 30
     animation: WeaponArcFist
     attackRate: 1
-    range: 1.8
     damage:
       types:
         Blunt: 15
