@@ -137,13 +137,7 @@
   components:
   - type: PowerArmorIntegrity
     brokenBleedthroughRatio: 1.0  # #Misfits Add - when broken, only armor coefficients apply
-    disableServosLock: true       # #Misfits Add - no servo-lock speed debuff when armor breaks
-    # #Misfits Tweak - 200, down from 500. Effective HP is (maxIntegrity + wearer crit) / combined
-    # coefficient, and a super mutant's own 0.5 resistance applies before the integrity split, so
-    # this pool soaks twice what it would on a human. At 500 the suit came to 2406 effective HP,
-    # double a T-51 knight. 200 brings it to ~1500, still the toughest thing on the field but no
-    # longer in a class of its own. Matches the "less durable then a normal X-01" flavour above.
-    maxIntegrity: 200
+    maxIntegrity: 500 # #Misfits Tweak: By Bill, 500 durability.
   - type: Sprite
     sprite: _Misfits/Clothing/OuterClothing/PowerArmor/Mutant_PA.rsi
   - type: Clothing
