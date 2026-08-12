@@ -72,6 +72,10 @@ public sealed class RaidRequestClientSystem : EntitySystem
     public override void Shutdown()
     {
         base.Shutdown();
+        // #Misfits Change /Fix/: Initialize registers "raid" but nothing ever removed it, so the
+        // second client to start in one process threw "Command already registered: raid". Harmless
+        // in a normal game, where the client starts once, but it breaks integration test runs.
+        _conHost.UnregisterCommand("raid");
         _window?.Close();
         _window = null;
         _peerWindow?.Close();
