@@ -9860,3 +9860,10 @@ Entries:
   id: 6309
   time: '2026-08-12T04:03:55.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1738
+- author: Superspheres
+  changes:
+    - type: Tweak
+      message: Changes the borg laser module to select fire.
+  id: 6310
+  time: '2026-08-12T15:00:04.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1144
