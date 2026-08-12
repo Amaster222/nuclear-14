@@ -9867,3 +9867,14 @@ Entries:
   id: 6310
   time: '2026-08-12T15:00:04.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1144
+- author: Marabout
+  changes:
+    - type: Tweak
+      message: NCR's CO service rifle kit with a marksman carbine
+    - type: Tweak
+      message: NCR's Engineers kits are now more specialized and useful.
+    - type: Tweak
+      message: Ripper's structural damaged buffed from 8 to 18
+  id: 6311
+  time: '2026-08-12T15:04:41.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1146
