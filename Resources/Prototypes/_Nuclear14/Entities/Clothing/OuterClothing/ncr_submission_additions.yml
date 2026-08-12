@@ -41,6 +41,8 @@
     sprite: _Nuclear14/Clothing/OuterClothing/Armor/falloutncrengineer.rsi
   - type: Clothing
     sprite: _Nuclear14/Clothing/OuterClothing/Armor/falloutncrengineer.rsi
+  - type: ExplosionResistance
+    damageCoefficient: 0.60
 
 - type: entity
   parent: N14ClothingOuterNCRCombatArmor
