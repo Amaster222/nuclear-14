@@ -32,6 +32,8 @@ public sealed class WastelandMapBoundUserInterface : BoundUserInterface
         _window.OnClearAnnotations += () => SendMessage(new WastelandMapClearAnnotationsMessage());
         _window.OnOverwatchAction += (type, targetNumber) =>
             SendMessage(new OverwatchConsoleMessage(type, targetNumber));
+        _window.OnCommunicationsAction += (target, revoke) =>
+            SendMessage(new WastelandMapCommunicationsMessage(target, revoke));
     }
 
     protected override void UpdateState(BoundUserInterfaceState state)
@@ -45,6 +47,7 @@ public sealed class WastelandMapBoundUserInterface : BoundUserInterface
         var texturePath = new ResPath(mapState.MapTexturePath);
         _window?.SetMap(mapState.MapTitle, texturePath, bounds, mapState.TrackedBlips, mapState.SharedAnnotations, mapState.CompactHud);
         _window?.UpdateOverwatch(mapState.Overwatch, ResolveOverwatchEye(mapState.Overwatch));
+        _window?.UpdateCommunications(mapState.Communications);
     }
 
     private IEye? ResolveOverwatchEye(OverwatchConsoleState? state)
