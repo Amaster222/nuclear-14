@@ -62,7 +62,7 @@
 - type: entity
   id: N14MechPowerArmorT45
   parent: BasePowerArmorMech
-  name: T-45 Power Armor Exosuit
+  name: T-45 Power Armor Suit
   description: An exosuit refit built around the plating of a T-45 Power Armor Suit.
   components:
   - type: Sprite
@@ -96,7 +96,7 @@
 - type: entity
   id: N14MechPowerArmorT51
   parent: BasePowerArmorMech
-  name: T-51 Power Armor Exosuit
+  name: T-51 Power Armor Suit
   description: An exosuit refit built around the plating of a T-51 Power Armor Suit.
   components:
   - type: Sprite
@@ -132,7 +132,7 @@
 - type: entity
   id: N14MechPowerArmorMutantX01
   parent: BasePowerArmorMech
-  name: Experimental X-01 Power Armor Exosuit
+  name: Experimental X-01 Power Armor Suit
   description: An exosuit refit built around the plating of an experimental X-01 Power Armor Suit.
   components:
   - type: Sprite
@@ -168,7 +168,7 @@
 - type: entity
   id: N14MechPowerArmorT60
   parent: BasePowerArmorMech
-  name: T-60 Power Armor Exosuit
+  name: T-60 Power Armor Suit
   description: An exosuit refit built around the plating of a T-60 Power Armor Suit.
   components:
   - type: Sprite
@@ -204,7 +204,7 @@
 - type: entity
   id: N14MechPowerArmorT60BOS
   parent: BasePowerArmorMech
-  name: T-60 Power Armor Exosuit
+  name: T-60 Power Armor Suit
   description: An exosuit refit built around the plating of a Brotherhood of Steel maintained T-60 Power Armor Suit.
   components:
   - type: Sprite
@@ -240,7 +240,7 @@
 - type: entity
   id: N14MechPowerArmorT60Tesla
   parent: BasePowerArmorMech
-  name: T-60 Tesla Power Armor Exosuit
+  name: T-60 Tesla Power Armor Suit
   description: An exosuit refit built around the plating of a T-60 Tesla Power Armor Suit.
   components:
   - type: Sprite
@@ -276,7 +276,7 @@
 - type: entity
   id: N14MechPowerArmorX01
   parent: BasePowerArmorMech
-  name: X-01 Power Armor Exosuit
+  name: X-01 Power Armor Suit
   description: An exosuit refit built around the plating of an X-01 Power Armor Suit.
   components:
   - type: Sprite
@@ -312,7 +312,7 @@
 - type: entity
   id: N14MechPowerArmorX02
   parent: BasePowerArmorMech
-  name: X-02 Power Armor Exosuit
+  name: X-02 Power Armor Suit
   description: An exosuit refit built around the plating of an X-02 Power Armor Suit.
   components:
   - type: Sprite
@@ -348,7 +348,7 @@
 - type: entity
   id: N14MechPowerArmorHellfire
   parent: BasePowerArmorMech
-  name: Hellfire Power Armor Exosuit
+  name: Hellfire Power Armor Suit
   description: An exosuit refit built around the plating of a Hellfire Power Armor Suit.
   components:
   - type: Sprite
@@ -384,7 +384,7 @@
 - type: entity
   id: N14MechPowerArmorMidwest
   parent: BasePowerArmorMech
-  name: Midwest Power Armor Exosuit
+  name: Midwest Power Armor Suit
   description: An exosuit refit built around the plating of a Midwest Brotherhood Power Armor Suit.
   components:
   - type: Sprite
@@ -420,7 +420,7 @@
 - type: entity
   id: N14MechPowerArmorMidwestCommander
   parent: BasePowerArmorMech
-  name: Midwest Commander Power Armor Exosuit
+  name: Midwest Commander Power Armor Suit
   description: An exosuit refit built around the plating of a Midwest Commander Brotherhood Power Armor Suit.
   components:
   - type: Sprite
@@ -456,7 +456,7 @@
 - type: entity
   id: N14MechPowerArmorT51BC
   parent: BasePowerArmorMech
-  name: T-51bc Paladin Commander Power Armor Exosuit
+  name: T-51bc Paladin Commander Power Armor Suit
   description: An exosuit refit built around the plating of a T-51bc Paladin Commander Power Armor Suit.
   components:
   - type: Sprite
@@ -492,7 +492,7 @@
 - type: entity
   id: N14MechPowerArmorCanadianShield
   parent: BasePowerArmorMech
-  name: 'T-51bc "The Canadian Shield" Exosuit'
+  name: 'T-51bc "The Canadian Shield" Power Armor Suit'
   description: An exosuit refit built around the plating of a T-51bc Power Armor Suit, modified by Canadian resistance fighters before the bombs dropped.
   components:
   - type: Sprite
@@ -528,7 +528,7 @@
 - type: entity
   id: N14MechPowerArmorWashT51
   parent: BasePowerArmorMech
-  name: Modified T-51 Power Armor Exosuit
+  name: Modified T-51 Power Armor Suit
   description: An exosuit refit built around the plating of a T-51 Power Armor Suit, from the Washington Chapter of the Brotherhood of Steel.
   components:
   - type: Sprite
@@ -564,7 +564,7 @@
 - type: entity
   id: N14MechPowerArmorWashT51Elite
   parent: BasePowerArmorMech
-  name: T-51b Power Armor Exosuit
+  name: T-51b Power Armor Suit
   description: An exosuit refit built around the plating of a T-51b Power Armor Suit, from the Washington Chapter of the Brotherhood of Steel.
   components:
   - type: Sprite
@@ -600,7 +600,7 @@
 - type: entity
   id: N14MechPowerArmorTribalAPA
   parent: BasePowerArmorMech
-  name: Tribal Advanced Power Armor Exosuit
+  name: Tribal Advanced Power Armor Suit
   description: An exosuit refit built around the plating of a tribal modified Power Armor Suit.
   components:
   - type: Sprite
@@ -636,7 +636,7 @@
 - type: entity
   id: N14MechPowerArmorHellfireAPA
   parent: BasePowerArmorMech
-  name: Hellfire Advanced Power Armor Exosuit
+  name: Hellfire Advanced Power Armor Suit
   description: An exosuit refit built around the plating of a Hellfire Advanced Power Armor Suit.
   components:
   - type: Sprite
