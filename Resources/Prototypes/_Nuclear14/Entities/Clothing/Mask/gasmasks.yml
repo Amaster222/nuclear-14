@@ -21,7 +21,6 @@
     priceMultiplier: 0.5
   - type: Tag
     tags:
-    - HidesHair
     - HidesBeard
 
 - type: entity

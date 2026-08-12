@@ -984,6 +984,7 @@
   - type: Blueprint
     recipes:
     - N14BPVaultAmmoPlasmaCartridge
+    - N14BPVaultAmmoElectronChargePack
     # #Misfits Change - MFC recipe removed; consolidated to single generic cell at T2
 
 # =====================================================================

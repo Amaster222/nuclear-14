@@ -390,6 +390,20 @@
     ScrapElectronic: 100
     Lead: 600
 
+- type: latheRecipe
+  id: N14BPVaultAmmoElectronChargePack
+  result: N14ElectronChargePack
+  category: N14BlueprintVaultAmmoT4
+  completetime: 4
+  requiresBlueprint: true
+  availableFaction:
+  - Vault
+  materials:
+    Glass: 100
+    Circuitry: 100
+    ScrapElectronic: 100
+    Lead: 100
+
 # #Misfits Removed - MFC recipe commented out; consolidated to single generic cell at T2
 # - type: latheRecipe
 #   id: N14BPVaultAmmoPowerCellAdvanced
