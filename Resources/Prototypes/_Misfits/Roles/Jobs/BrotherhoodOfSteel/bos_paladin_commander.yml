@@ -1,0 +1,62 @@
+# #Cythisiax Added - "Paladin Commander" personal-whitelist BoS role.
+# Single-player whitelist posting (ckey: southernsaint) that mirrors the Head Paladin
+# loadout but wears the Midwest Commander power armor instead of the T-51b.
+
+- type: job
+  id: BoSPaladinCommander
+  setPreference: true
+  whitelisted: true # #Cythisiax Added - requires an explicit job whitelist entry (jobwhitelistadd southernsaint BoSPaladinCommander)
+  hideWithoutJobWhitelist: true # #Cythisiax Added - hidden from the job picker unless whitelisted for this job
+  jobWhitelistBypassesRoleTimers: true
+  weight: 111
+  showBorder: true
+  canBeAntag: false
+  name: job-name-bos-paladin-commander
+  overwatchCategory: OverwatchBosPaladin
+  description: job-description-bos-paladin-commander
+  playTimeTracker: BoSPaladinCommander
+  requirements:
+    - !type:CharacterSpeciesRequirement
+      species:
+      - Human
+  startingGear: BoSPaladinCommanderGear
+  alwaysUseSpawner: true
+  requireAdminNotify: true
+  icon: "JobIconBosMCommander"
+  supervisors: job-supervisors-bos-paladin-commander
+  accessGroups:
+  - BOSHeadPaladin
+  special:
+  - !type:AddComponentSpecial
+    components:
+      - type: NpcFactionMember
+        factions:
+          - BrotherhoodOfSteel
+      - type: PowerArmorProficiency
+      - type: LanguageKnowledge
+        speaks:
+        - English
+        understands:
+        - English
+        - N14BrotherBeep
+
+# #Cythisiax Added - Head Paladin kit with the Midwest Commander armor swapped in for the T-51b.
+- type: startingGear
+  id: BoSPaladinCommanderGear
+  equipment:
+    jumpsuit: N14ClothingUniformBosRecon
+    back: N14ClothingBackpackMilitary
+    shoes: N14ClothingBootsLeatherFilled
+    head: N14ClothingPaladinBeret
+    outerClothing: N14ClothingOuterPowerArmorMidwestCommander # #Cythisiax Added - replaces Head Paladin's T-51b
+    hands: N14ClothingHandsGlovesCombat
+    pocket1: BoSBrotherhoodHeadPaladinKits
+    id: N14HeadPaladin_PipBoy
+    ears: N14ClothingHeadsetBrotherhoodOfSteel
+    belt: N14ClothingBeltBoSWebbing
+  storage:
+    back:
+    - N14BoxPlasticFilledMilitary
+
+- type: playTimeTracker
+  id: BoSPaladinCommander

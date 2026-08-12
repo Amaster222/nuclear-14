@@ -56,6 +56,18 @@
   - EnclaveRecruit       # #Misfits Add - hidden job for per-round recruitment playtime tracking
   - SuperMutantEnclave
 
+# #Cythisiax Added - Brotherhood of Steel personal whitelist department.
+# Single-player whitelist postings styled after the Brotherhood faction so they
+# appear attached to the BoS in the Whitelist tab.
+- type: department
+  id: BoSPersonalWhitelist
+  description: department-BoSPersonalWhitelist-description
+  color: "#3B72BF" # Brotherhood of Steel blue
+  weight: -103
+  uiCategory: Whitelist
+  roles:
+  - BoSPaladinCommander # Paladin Commander | _Misfits/Roles/Jobs/BrotherhoodOfSteel/bos_paladin_commander.yml
+
 # #Misfits Add — Caesar's Legion department. Groups all Legion roles for the
 # character-creation screen and for department-based requirements/lookups.
 # #Misfits Fix: Commented out — canonical definition now lives in
