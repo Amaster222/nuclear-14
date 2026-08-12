@@ -1,8 +1,8 @@
 - type: entity
   parent: ClothingOuterHardsuitBase
   id: N14ClothingOuterPowerArmorT45
-  name: T-45 Power Armor Suit
-  description: An old suit of T-45 Power Armor. It's amazing these still exist.
+  name: T-45 Power Armor
+  description: An old suit of T-45 power armor. It's amazing these still exist, given how many have been mangled and destroyed in combat both before and after the bombs dropped.
   components:
   - type: N14PowerArmor # #Misfits Change Add: Marks this and all child power armor variants. Used by CarryingSystem to block non-PA users from picking up PA wearers.
   - type: N14BosBackpackSlot # #Misfits Add: All power armor gets an extra backpack slot — fusion core occupies the normal back slot
@@ -97,7 +97,7 @@
 - type: entity
   parent: N14ClothingOuterPowerArmorT45
   id: N14ClothingOuterPowerArmorT51
-  name: T-51 Power Armor Suit
+  name: T-51 Power Armor
   description: An old T-51 Power Armor suit. Before the world ended, these were the pride of the US military, and proved essential against the People's Liberation Army.
   components:
   - type: PowerArmorIntegrity
@@ -132,8 +132,8 @@
 - type: entity
   parent: N14ClothingOuterPowerArmorT45
   id: MisfitsEnclavePowerArmor
-  name: Experimental X-01 Power Armor Suit
-  description: A set of X-01 Power Armor made to fit a Supermutant, In exchange its less durable then a normal X-01
+  name: Experimental X-01 Power Armor
+  description: A set of X-01 power armor made to fit a supermutant, the extensive modifications have left it less durable than a standard set of X-01.
   components:
   - type: PowerArmorIntegrity
     brokenBleedthroughRatio: 1.0  # #Misfits Add - when broken, only armor coefficients apply
@@ -173,8 +173,8 @@
 - type: entity
   parent: N14ClothingOuterPowerArmorT45
   id: MisfitsT45ClothingOuterPowerArmorBoS
-  name: T-45 Power Armor Suit [Bos]
-  description: An old suit of T-45 Power Armor. It's amazing these still exist.
+  name: T-45 Power Armor [Bos]
+  description: An old suit of T-45 power armor. It's amazing these still exist, given how many have been mangled and destroyed in combat both before and after the bombs dropped.
   components:
   - type: PowerArmorIntegrity
     brokenBleedthroughRatio: 1.0  # #Misfits Add - when broken, only armor coefficients apply
@@ -206,7 +206,7 @@
 - type: entity
   parent: N14ClothingOuterPowerArmorT51
   id: N14ClothingOuterPowerArmorT60
-  name: T-60 Power Armor Suit
+  name: T-60 Power Armor
   description: An old T-60 Power Armor suit. It was used by the US military in the last few months before the bombs dropped, and was considered a replacement for the T-45.
   components:
   - type: PowerArmorIntegrity
@@ -242,7 +242,7 @@
 - type: entity
   parent: N14ClothingOuterPowerArmorT60
   id: N14ClothingOuterPowerArmorT60BOS
-  name: T-60 Power Armor Suit
+  name: T-60 Power Armor
   description: An old T-60 Power Armor suit from the Brotherhood of Steel. It has a tactical map feed built into the heads-up display, and looks well maintained.
   components:
   - type: ToggleableClothing
@@ -255,8 +255,8 @@
 - type: entity
   parent: N14ClothingOuterPowerArmorT60
   id: N14ClothingOuterPowerArmorT60Tesla
-  name: T-60 Tesla Power Armor Suit
-  description: A suit of T-60 Power Armor, equipped with tesla coils. Believe it or not they do well at protecting you from energy weapons.
+  name: T-60 Tesla Power Armor
+  description: A suit of T-60 power armor, with tesla coils mounted on the pauldrons, forearms, and the back of the suit. An experimental post-war modification recovered from the east, it is particularly resistant to energy weapons.
   components:
   - type: Sprite
     sprite: _Nuclear14/Clothing/OuterClothing/PowerArmor/t60tesla.rsi
@@ -283,8 +283,8 @@
 - type: entity
   parent: N14ClothingOuterPowerArmorT45
   id: N14ClothingOuterPowerArmorAdvanced1
-  name: X-01 power armor
-  description: The standard issue Power Armor model for Enclave troopers. It offers an advanced sensors suite and improved defensive capabilities compared to standard pre-war models.
+  name: X-01 Power Armor
+  description: The standard issue model of power armor for Enclave infantry personnel. It offers an advanced sensors suite and improved defensive capabilities compared to standard pre-war models.
   components:
   - type: PowerArmorIntegrity
     brokenBleedthroughRatio: 1.0  # #Misfits Add - when broken, only armor coefficients apply
@@ -327,8 +327,8 @@
 - type: entity
   parent: N14ClothingOuterPowerArmorAdvanced1
   id: N14ClothingOuterPowerArmorAdvanced2
-  name: X-02 power armor
-  description: The next generation in Power Armor technology. X-02 is a more lightweight, sleek design than the X-01, offering the wearer unparalleled mobility.
+  name: X-02 Power Armor
+  description: The next generation in power armor technology. The X-02 is a more lightweight and sleek design than the X-01, offering the wearer unparalleled mobility compared to its alternatives.
   components:
   - type: PowerArmorIntegrity
     brokenBleedthroughRatio: 1.0  # #Misfits Add - when broken, only armor coefficients apply
@@ -385,8 +385,8 @@
 - type: entity
   parent: N14ClothingOuterPowerArmorAdvanced2
   id: N14ClothingOuterPowerArmorAdvanced2Hellfire
-  name: Hellfire Power Armor Suit
-  description: A deep black suit of Enclave-manufactured heavy power armor based on pre-war designs such as the T-51 and improving off of data gathered by post-war designs such as the X-01. Most commonly fielded on the East Coast, no suit rivals its strength.
+  name: Hellfire Power Armor
+  description: A deep black suit of Enclave-manufactured heavy power armor based on pre-war designs such as the T-51, and improving off of data gathered by post-war designs such as the X-01. Most commonly fielded on the East Coast, no suit can rival its strength.
   components:
   - type: PowerArmorIntegrity
     maxIntegrity: 620 # #Misfits Tweak: Hellfire durability.
@@ -428,7 +428,7 @@
 - type: entity
   parent: N14ClothingOuterPowerArmorT45
   id: N14ClothingOuterPowerArmorRaider
-  name: Raider Power Armor Suit
+  name: Raider Power Armor
   description: An old T-45 Power Armor suit. It shows signs of rust and aesthetic spikes for pure intimidation. It has not been properly maintained, but is still functional.
   components:
   - type: PowerArmorIntegrity
@@ -472,8 +472,8 @@
 - type: entity
   parent: N14ClothingOuterPowerArmorT45 # #Misfits Add - Midwest PA are loadout options for Paladins/Senior Paladins/Head Paladins. Each parents off of the PA that role usually gets - they're drip, identical statwise.
   id: N14ClothingOuterPowerArmorMidwest
-  name: Midwest Power Armor Suit
-  description: A unknown model of power armor manufactured by the Brotherhood of Steel. It supports a lighter plating than the normal but is more ergonomic, allowing easier movement.
+  name: Midwest Power Armor
+  description: An unknown model of power armor manufactured by the Brotherhood of Steel. It supports a lighter plating than power armor usually maintains but is more ergonomic as a result, allowing easier movement.
   components:
   - type: Sprite
     sprite: _Nuclear14/Clothing/OuterClothing/PowerArmor/midwest.rsi
@@ -491,8 +491,8 @@
 - type: entity
   parent: N14ClothingOuterPowerArmorT60 # #Misfits Add - Midwest PA are loadout options for Paladins/Senior Paladins/Head Paladins. Each parents off of the PA that role usually gets - they're drip, identical statwise.
   id: N14ClothingOuterPowerArmorMidwestSilver
-  name: Midwest Silver Power Armor Suit
-  description: A unknown model of power armor manufactured by the Brotherhood of Steel. It has a chain.
+  name: Midwest Silver Power Armor
+  description: An unknown model of power armor manufactured by the Brotherhood of Steel. It has a chain that likely serves some ceremonial purpose, and is decorated in bright silver paint.
   components:
   - type: Sprite
     sprite: _Misfits/Clothing/OuterClothing/PowerArmor/midwest_silver_pa.rsi
@@ -510,8 +510,8 @@
 - type: entity
   parent: N14ClothingOuterPowerArmorWashT51Elite # #Misfits Add - Midwest PA are loadout options for Paladins/Senior Paladins/Head Paladins. Each parents off of the PA that role usually gets - they're drip, identical statwise.
   id: N14ClothingOuterPowerArmorMidwestCommander
-  name: Midwest Commander Power Armor Suit
-  description: A unknown model of power armor manufactured by the Brotherhood of Steel. This modified version is commonly used by high-ranking Brotherhood of Steel Paladins.
+  name: Midwest Commander Power Armor
+  description: An unknown model of power armor manufactured by the Brotherhood of Steel. This modified version is commonly used by high-ranking Brotherhood of Steel Paladins, and is a highly coveted reward.
   components:
   - type: Sprite
     sprite: _Nuclear14/Clothing/OuterClothing/PowerArmor/midwestcommander.rsi
@@ -527,8 +527,8 @@
 - type: entity
   parent: N14ClothingOuterPowerArmorT45
   id: N14ClothingOuterPowerArmorT51BC
-  name: T-51bc Paladin Commander Suit
-  description: The pinnacle of pre-war technology appropriated by the Brotherhood of Steel. Commonly worn by Paladin Commanders.
+  name: T-51bc Paladin Commander Power Armor
+  description: The pinnacle of pre-war technology, heroically appropriated by the Brotherhood of Steel. Commonly worn by Paladin Commanders, to have earned this armor is proof one has done their service, tenfold.
   components:
   - type: PowerArmorIntegrity
     brokenBleedthroughRatio: 1.0  # #Misfits Add - when broken, only armor coefficients apply
@@ -582,8 +582,8 @@
 - type: entity
   parent: N14ClothingOuterPowerArmorT45
   id: N14ClothingOuterPowerArmorT45NCR
-  name: NCR T-45 Salvaged Power Armor Suit
-  description: Originally existing as T-45d power armor, it was recovered by and repurposed for use within the NCR.
+  name: NCR T-45 Salvaged Power Armor
+  description: Originally existing as T-45d power armor that was recovered by the NCR and repurposed for use within their armed forces, with its internal servos removed this heavy suit of metal is moved by pure muscle.
   components:
   - type: PowerArmorIntegrity
     brokenBleedthroughRatio: 1.0  # #Misfits Add - when broken, only armor coefficients apply
@@ -625,8 +625,8 @@
 - type: entity
   parent: N14ClothingOuterPowerArmorT51
   id: N14ClothingOuterPowerArmorT51Canadian
-  name: T-51bc "The Canadian Shield" Power Armor Suit
-  description: The pinnacle of pre-war technology, appropriated by the RCMP.
+  name: T-51bc "The Canadian Shield" Power Armor
+  description: The pinnacle of pre-war technology used to brutalize Canadian rebels during the northern occupation, this set was liberated by the locals and modified to be used against their American oppressors.
   components:
   - type: Sprite
     sprite: _Nuclear14/Clothing/OuterClothing/PowerArmor/canadianshield.rsi
@@ -653,8 +653,8 @@
 - type: entity
   parent: N14ClothingOuterPowerArmorT45
   id: N14ClothingOuterPowerArmorWashT51
-  name: Modified T-51 Power Armor Suit
-  description: A modified set of T-51 power armor, it seems to have some slight upgrades over the pre-war model and is in the colours of the Washington Brotherhood.
+  name: Modified T-51 Power Armor
+  description: A modified set of T-51 power armor, it seems to have some slight upgrades over the pre-war model and is in the colours of the Washington Brotherhood. These suits bring a feeling of terror to those local to Seattle.
   components:
   - type: PowerArmorIntegrity
     brokenBleedthroughRatio: 1.0  # #Misfits Add - when broken, only armor coefficients apply
@@ -706,8 +706,8 @@
 - type: entity
   parent: N14ClothingOuterPowerArmorWashT51
   id: N14ClothingOuterPowerArmorWashT51Elite
-  name: T-51b Power Armor Suit #Misfits Tweak: Renamed from "elite T-51" to lore-accurate T-51b designation
-  description: A pinnacle of pre-war military engineering, the T-51b was standard issue for front-line infantry units during the Sino-American conflict. This suit's fusion-powered servos and composite plating have withstood the test of time.
+  name: T-51b Power Armor #Misfits Tweak: Renamed from "elite T-51" to lore-accurate T-51b designation
+  description: The pinnacle of pre-war military engineering, the T-51b was standard issue for front-line infantry units during the Sino-American conflict. This suit's fusion-powered servos and composite plating have withstood the test of time.
   components:
   - type: PowerArmorIntegrity
     brokenBleedthroughRatio: 1.0  # #Misfits Add - when broken, only armor coefficients apply
