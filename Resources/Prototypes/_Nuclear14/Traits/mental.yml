@@ -66,6 +66,7 @@
         #- BoSWashingtonKnight
         #- BoSWashingtonInitiate
         - BoSMidPaladinCommander
+        - BoSPaladinCommander # #Cythisiax Added - personal-whitelist Paladin Commander is a combat role
         - BoSMidPaladin
         - BoSMidKnight
         - BoSMidSquire

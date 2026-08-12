@@ -51,7 +51,7 @@
     outerClothing: N14ClothingOuterPowerArmorMidwestCommander # #Cythisiax Added - replaces Head Paladin's T-51b
     hands: N14ClothingHandsGlovesCombat
     pocket1: BoSBrotherhoodHeadPaladinKits
-    id: N14HeadPaladin_PipBoy
+    id: N14PaladinCommander_PipBoy # #Cythisiax Edited - dedicated Paladin Commander Pip-Boy (shows correct holotag job)
     ears: N14ClothingHeadsetBrotherhoodOfSteel
     belt: N14ClothingBeltBoSWebbing
   storage:

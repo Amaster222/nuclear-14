@@ -47,6 +47,7 @@
     communicationsJobs:
     - BoSWestElderCommander
     - BoSMidPaladinCommander
+    - BoSPaladinCommander # #Cythisiax Added - personal-whitelist Paladin Commander TacMap comms
     - BoSHeadKnight
     - BoSWestScribe
   - type: OverwatchConsole
