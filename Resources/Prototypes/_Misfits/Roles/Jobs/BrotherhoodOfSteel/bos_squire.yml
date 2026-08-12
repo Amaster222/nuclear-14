@@ -41,7 +41,7 @@
     back: MisfitsClothingBackpackSquire # #Misfits Add - Squire Bag starting back item
     shoes: N14ClothingBootsLeatherFilled
     head: N14ClothingHeadHatBanganeBoS
-    outerClothing: MisfitsBoSSquireArmor # #Misfits Tweak: T2 armor (0.85/0.80) — Squires are still in training, lighter protection than Knights
+    outerClothing: MisfitsBoSSquireArmor # #Misfits Tweak: T3 armor (0.80/0.75) — Squires sit between Initiate (T2) and Knight (T4)
     pocket1: BoSBrotherhoodSquireKits
     id: N14IDBrotherhoodOfSteelHolotagSquire
     ears: N14ClothingHeadsetBrotherhoodOfSteel

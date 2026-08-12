@@ -1971,7 +1971,9 @@ namespace Content.Client.Lobby.UI
             CTabContainer.SetTabVisible(MarkingsTab, !restricted);
 
             // #Misfits Change: hide traits tab only if restricted AND no allowed categories
-            var showTraits = !restricted || species.AllowedTraitCategories is { Count: > 0 };
+            var showTraits = !restricted
+                || species.AllowedTraitCategories is { Count: > 0 }
+                || species.AllowedTraits is { Count: > 0 }; // #Cythisiax Added - per-trait whitelist also shows the tab
             CTabContainer.SetTabVisible(TraitsTab, showTraits);
 
             // #Misfits Change: hide loadouts tab only if restricted AND no allowed categories
@@ -3237,9 +3239,17 @@ namespace Content.Client.Lobby.UI
                 if (Profile != null)
                 {
                     var currentSpecies = _prototypeManager.Index<SpeciesPrototype>(Profile.Species);
-                    if (currentSpecies.AllowedTraitCategories != null
+                    // #Cythisiax Added - per-trait whitelist overrides category filtering
+                    if (currentSpecies.AllowedTraits is { Count: > 0 })
+                    {
+                        if (!currentSpecies.AllowedTraits.Contains(trait.ID))
+                            continue;
+                    }
+                    else if (currentSpecies.AllowedTraitCategories != null
                         && !currentSpecies.AllowedTraitCategories.Contains(GetRootTraitCategory(trait.Category)))
+                    {
                         continue;
+                    }
                 }
 
                 _traits.Add(trait, usable);

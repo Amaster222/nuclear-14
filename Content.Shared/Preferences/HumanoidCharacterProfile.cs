@@ -600,9 +600,18 @@ public sealed partial class HumanoidCharacterProfile : ICharacterProfile
         // players can select traits on a human, switch species to assaultron in char setup,
         // and have those traits carry over.
         if (speciesPrototype.RestrictedCustomization
-            && speciesPrototype.AllowedTraitCategories is not { Count: > 0 })
+            && speciesPrototype.AllowedTraitCategories is not { Count: > 0 }
+            && speciesPrototype.AllowedTraits is not { Count: > 0 }) // #Cythisiax Edited - also honor per-trait whitelist
         {
             traits.Clear();
+        }
+        // #Cythisiax Added - per-trait whitelist (exact IDs) takes precedence over categories,
+        // so a restricted species can allow a single specific perk (e.g. Mr Handy + Italian Accent).
+        else if (speciesPrototype.AllowedTraits is { Count: > 0 })
+        {
+            traits = traits
+                .Where(t => speciesPrototype.AllowedTraits.Contains(t))
+                .ToList();
         }
         else if (speciesPrototype.AllowedTraitCategories is { Count: > 0 })
         {
