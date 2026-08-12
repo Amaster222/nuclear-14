@@ -232,6 +232,10 @@ public sealed class UndergroundExpeditionMapGenerator : EntitySystem
                 forceCarve: p.Theme == UndergroundTheme.Sewer,
                 overrideChance: envMods.WaterChannelChanceOverride);
 
+        // Phase C5: validate the structural plan before painting or spawning entities.
+        // This keeps generation failures deterministic and cheap to diagnose.
+        ValidateGeneratedLayout(cellMap, rooms, doorways, profile, p, W, H);
+
         // Phase D: tile every cell (including background; required for atmos sealing)
         // #Misfits Add - WFC-style per-room tile map with primary/accent/edge and neighbor smoothing
         var roomTileMap = BuildRoomTileMapWFC(rooms, profile, cellMap, rng, W, H);
@@ -362,8 +366,26 @@ public sealed class UndergroundExpeditionMapGenerator : EntitySystem
             {
                 var (rw, rh) = GetRoomDimensionsFromProfile(profile, anchorType, rng);
                 if (rw > W - 6 || rh > H - 6) continue;
-                int x = rng.Next(3, W - rw - 3);
-                int y = rng.Next(3, H - rh - 3);
+
+                var targetRole = GetZoneRoleForRoomType(anchorType, profile.Theme);
+                var matchingZones = zones.Where(z => z.Role == targetRole).ToList();
+                int x;
+                int y;
+                if (matchingZones.Count > 0)
+                {
+                    var zone = matchingZones[rng.Next(matchingZones.Count)];
+                    int maxX = zone.X + zone.W - rw;
+                    int maxY = zone.Y + zone.H - rh;
+                    if (maxX < zone.X || maxY < zone.Y) continue;
+                    x = rng.Next(zone.X, maxX + 1);
+                    y = rng.Next(zone.Y, maxY + 1);
+                }
+                else
+                {
+                    x = rng.Next(3, W - rw - 3);
+                    y = rng.Next(3, H - rh - 3);
+                }
+
                 var cand = new RoomDef { X = x, Y = y, W = rw, H = rh, RoomType = anchorType };
                 if (rooms.Any(r => r.Overlaps(cand, 2))) continue;
                 rooms.Add(cand);
@@ -412,7 +434,7 @@ public sealed class UndergroundExpeditionMapGenerator : EntitySystem
                         var cand = new RoomDef { X = x, Y = y, W = rw, H = rh, RoomType = roomType };
                         if (rooms.Any(r => r.Overlaps(cand, 2))) continue;
 
-                        int score = ScorePlacement(x + rw / 2, y + rh / 2, roomType, rooms, profile, W, H);
+                        int score = ScorePlacement(x + rw / 2, y + rh / 2, roomType, rooms, profile, zones, W, H);
                         if (score > bestScore || (score == bestScore && rng.Next(2) == 0))
                         {
                             bestScore = score;
@@ -431,7 +453,7 @@ public sealed class UndergroundExpeditionMapGenerator : EntitySystem
                     var cand = new RoomDef { X = x, Y = y, W = rw, H = rh, RoomType = roomType };
                     if (rooms.Any(r => r.Overlaps(cand, 2))) continue;
 
-                    int score = ScorePlacement(x + rw / 2, y + rh / 2, roomType, rooms, profile, W, H);
+                    int score = ScorePlacement(x + rw / 2, y + rh / 2, roomType, rooms, profile, zones, W, H);
                     if (score > bestScore || (score == bestScore && rng.Next(2) == 0))
                     {
                         bestScore = score;
@@ -510,35 +532,75 @@ public sealed class UndergroundExpeditionMapGenerator : EntitySystem
     }
 
     /// <summary>
-    /// Scores a candidate placement by checking adjacency preferences/exclusions
-    /// against already-placed rooms within Chebyshev distance 12.
-    /// Returns positive for good fits, negative for conflicts, 0 for neutral.
+    /// Scores a candidate placement using spatial role, depth, adjacency, and
+    /// duplicate-spacing terms. Hard validity remains the caller's responsibility.
     /// </summary>
-    // #Misfits Change - Replaced ScoreAdjacency: Chebyshev distance 12, +2 pref / -3 exclusion weights
+    // #Misfits Change - Semantic placement scoring for zone/depth-aware room identity
     private static int ScorePlacement(
         int cx, int cy, RoomType roomType,
-        List<RoomDef> placed, ThemeProfile profile, int W, int H)
+        List<RoomDef> placed, ThemeProfile profile, List<MapZone> zones, int W, int H)
     {
         var def = profile.GetRoomDef(roomType);
         if (def == null) return 0;
 
         int score = 0;
+        var targetRole = GetZoneRoleForRoomType(roomType, profile.Theme);
+        MapZone? candidateZone = null;
+        foreach (var zone in zones)
+        {
+            if (cx >= zone.X && cx < zone.X + zone.W &&
+                cy >= zone.Y && cy < zone.Y + zone.H)
+            {
+                candidateZone = zone;
+                break;
+            }
+        }
+
+        if (candidateZone.HasValue)
+        {
+            var zone = candidateZone.Value;
+            int roleDistance = Math.Abs((int) zone.Role - (int) targetRole);
+            score += roleDistance == 0 ? 8 : -roleDistance * 3;
+
+            // Zone depth is a stronger signal than enum order when the 3x3
+            // partition cannot represent every role at a given hub count.
+            int desiredDepth = (int) targetRole;
+            score -= Math.Abs(zone.DepthFromHub - desiredDepth) * 2;
+        }
+        else
+        {
+            score -= 8;
+        }
+
+        var hubs = placed.Where(r => r.RoomType == RoomType.FactionHub).ToList();
+        if (hubs.Count > 0)
+        {
+            int nearestHubDistance = hubs.Min(hub =>
+            {
+                var (hx, hy) = hub.Center;
+                return Math.Max(Math.Abs(cx - hx), Math.Abs(cy - hy));
+            });
+
+            int maxDistance = Math.Max(W, H);
+            int normalizedDepth = nearestHubDistance * 4 / Math.Max(1, maxDistance);
+            score -= Math.Abs(normalizedDepth - (int) targetRole) * 2;
+        }
 
         foreach (var room in placed)
         {
-            // Skip hub/central — they don't participate in adjacency logic
-            if (room.RoomType == RoomType.FactionHub || room.RoomType == RoomType.Central) continue;
-
             var (rx, ry) = room.Center;
             // Chebyshev distance: max of axis deltas
             int dist = Math.Max(Math.Abs(cx - rx), Math.Abs(cy - ry));
-            if (dist > 12) continue;
+            if (dist > 16) continue;
 
             if (def.AdjacencyPreferences.Contains(room.RoomType))
-                score += 2;
+                score += dist <= 8 ? 3 : 1;
 
             if (def.AdjacencyExclusions.Contains(room.RoomType))
-                score -= 3;
+                score -= dist <= 8 ? 5 : 2;
+
+            if (room.RoomType == roomType)
+                score -= dist <= 8 ? 4 : 2;
         }
 
         return score;
@@ -1309,6 +1371,143 @@ public sealed class UndergroundExpeditionMapGenerator : EntitySystem
 
         foreach (var cell in toRemove)
             doorways.Remove(cell);
+    }
+
+    // =========================================================================
+    // Phase C5 — Structural Generation Validation
+    // =========================================================================
+
+    /// <summary>
+    /// Validates the generated data model before tile and entity work begins.
+    /// This deliberately operates only on CellType[,] and room metadata so a
+    /// failed layout can be reproduced from its seed without querying entities.
+    /// </summary>
+    private void ValidateGeneratedLayout(
+        CellType[,] cellMap,
+        List<RoomDef> rooms,
+        HashSet<(int, int)> doorways,
+        ThemeProfile profile,
+        UndergroundGenParams p,
+        int W,
+        int H)
+    {
+        var hubs = rooms.Where(r => r.RoomType == RoomType.FactionHub).ToList();
+        var walkable = new HashSet<(int x, int y)>();
+        var queue = new Queue<(int x, int y)>();
+
+        // Start at the first hub. A central room is a useful diagnostic fallback
+        // for malformed test parameters that request zero faction hubs.
+        RoomDef? startRoom = hubs.FirstOrDefault()
+                             ?? rooms.FirstOrDefault(r => r.RoomType == RoomType.Central);
+        if (startRoom != null)
+        {
+            var start = startRoom.Center;
+            if (IsTraversableAt(cellMap, start.cx, start.cy, W, H))
+            {
+                queue.Enqueue(start);
+                walkable.Add(start);
+            }
+        }
+
+        while (queue.Count > 0)
+        {
+            var (x, y) = queue.Dequeue();
+            TryReach(cellMap, x + 1, y, W, H, walkable, queue);
+            TryReach(cellMap, x - 1, y, W, H, walkable, queue);
+            TryReach(cellMap, x, y + 1, W, H, walkable, queue);
+            TryReach(cellMap, x, y - 1, W, H, walkable, queue);
+        }
+
+        var missingAnchors = new List<RoomType>();
+        foreach (var anchor in profile.MandatoryAnchors)
+        {
+            if (!rooms.Any(r => r.RoomType == anchor))
+                missingAnchors.Add(anchor);
+        }
+
+        var unreachableRooms = new List<RoomType>();
+        foreach (var room in rooms)
+        {
+            var center = room.Center;
+            if (!walkable.Contains(center))
+                unreachableRooms.Add(room.RoomType);
+        }
+
+        int roomCells = 0;
+        int hubCells = 0;
+        int corridorCells = 0;
+        int platformCells = 0;
+        int waterCells = 0;
+        for (int x = 0; x < W; x++)
+        for (int y = 0; y < H; y++)
+        {
+            switch (cellMap[x, y])
+            {
+                case CellType.Room:
+                    roomCells++;
+                    break;
+                case CellType.FactionHub:
+                    hubCells++;
+                    break;
+                case CellType.Corridor:
+                    corridorCells++;
+                    break;
+                case CellType.Platform:
+                    platformCells++;
+                    break;
+                case CellType.WaterChannel:
+                    waterCells++;
+                    break;
+            }
+        }
+
+        var roomCounts = rooms
+            .GroupBy(r => r.RoomType)
+            .OrderBy(g => g.Key.ToString())
+            .Select(g => $"{g.Key}={g.Count()}");
+
+        Log.Info($"[N14 ProcGen] theme={p.Theme} seed={p.Seed} size={W}x{H} " +
+                 $"rooms={rooms.Count} hubs={hubs.Count} doorways={doorways.Count} walkable={walkable.Count} " +
+                 $"roomCells={roomCells} hubCells={hubCells} corridorCells={corridorCells} " +
+                 $"platformCells={platformCells} waterCells={waterCells} " +
+                 $"types=[{string.Join(", ", roomCounts)}]");
+
+        if (startRoom == null)
+        {
+            Log.Warning($"[N14 ProcGen] seed={p.Seed} has no hub or central-room validation start.");
+        }
+
+        if (!rooms.Any(r => r.RoomType == RoomType.Central))
+        {
+            Log.Warning($"[N14 ProcGen] theme={p.Theme} seed={p.Seed} has no central room.");
+        }
+
+        if (missingAnchors.Count > 0)
+        {
+            Log.Warning($"[N14 ProcGen] theme={p.Theme} seed={p.Seed} missing mandatory rooms: " +
+                        string.Join(", ", missingAnchors));
+        }
+
+        if (unreachableRooms.Count > 0)
+        {
+            Log.Warning($"[N14 ProcGen] theme={p.Theme} seed={p.Seed} unreachable room centers: " +
+                        string.Join(", ", unreachableRooms));
+        }
+    }
+
+    private static void TryReach(
+        CellType[,] cellMap,
+        int x,
+        int y,
+        int W,
+        int H,
+        HashSet<(int x, int y)> reached,
+        Queue<(int x, int y)> queue)
+    {
+        if (!IsTraversableAt(cellMap, x, y, W, H) || !reached.Add((x, y)))
+            return;
+
+        queue.Enqueue((x, y));
     }
 
     // =========================================================================
@@ -2319,7 +2518,7 @@ public sealed class UndergroundExpeditionMapGenerator : EntitySystem
     private static bool IsTraversableAt(CellType[,] cellMap, int x, int y, int W, int H)
     {
         if (x < 0 || x >= W || y < 0 || y >= H) return false;
-        return cellMap[x, y] is CellType.Room or CellType.FactionHub or CellType.Corridor;
+        return cellMap[x, y] is CellType.Room or CellType.FactionHub or CellType.Corridor or CellType.Platform;
     }
 
     private static bool InBounds(int x, int y, int W, int H) =>
