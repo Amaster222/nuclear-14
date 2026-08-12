@@ -466,7 +466,8 @@ loadout-name-Magazine762AmmoShort = 7.62 short magazine
 loadout-name-Magazine762Rifle = 7.62 rifle magazine
 loadout-name-ClipMagazine308Rifle = .308 rifle clip
 loadout-name-MagazineBox10mm = 10mm ammo box
-loadout-name-MagazineBox12 = 12-gauge ammo box
+# Cythisiax Fixed - MagazineBox12 is the 12.7mm box (was mislabeled as 12-gauge)
+loadout-name-MagazineBox12 = 12.7mm ammo box
 loadout-name-MagazineBox12gauge = 12-gauge ammo box
 loadout-name-MagazineBox20gauge = 20-gauge ammo box
 loadout-name-MagazineBox22 = .22 ammo box

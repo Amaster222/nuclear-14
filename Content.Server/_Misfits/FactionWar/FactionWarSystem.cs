@@ -545,8 +545,9 @@ public sealed class FactionWarSystem : EntitySystem
         if (elapsed < WarCooldownAfterRoundStart)
         {
             var remaining = WarCooldownAfterRoundStart - elapsed;
+            // #Cythisiax Fixed - message said 30 minutes but the cooldown is 60 (WarCooldownAfterRoundStart)
             SendResult(player, false,
-                $"War declarations are locked for the first 30 minutes. {remaining.Minutes}m {remaining.Seconds}s remaining.");
+                $"War declarations are locked for the first 60 minutes. {remaining.Minutes}m {remaining.Seconds}s remaining.");
             return;
         }
 
