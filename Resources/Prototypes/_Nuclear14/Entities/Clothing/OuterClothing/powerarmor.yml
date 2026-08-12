@@ -207,7 +207,7 @@
   parent: N14ClothingOuterPowerArmorT51
   id: N14ClothingOuterPowerArmorT60
   name: T-60 Power Armor
-  description: An old T-60 Power Armor suit. It was used by the US military in the last few months before the bombs dropped, and was considered a replacement for the T-45.
+  description: An old T-60 power armor suit. It was used by the US military in the last few months before the bombs dropped, and was considered a replacement for the T-45.
   components:
   - type: PowerArmorIntegrity
     brokenBleedthroughRatio: 1.0  # #Misfits Add - when broken, only armor coefficients apply
@@ -243,7 +243,7 @@
   parent: N14ClothingOuterPowerArmorT60
   id: N14ClothingOuterPowerArmorT60BOS
   name: T-60 Power Armor
-  description: An old T-60 Power Armor suit from the Brotherhood of Steel. It has a tactical map feed built into the heads-up display, and looks well maintained.
+  description: An old T-60 power armor suit from the Brotherhood of Steel. It has a tactical map feed built into the heads-up display, and looks well maintained.
   components:
   - type: ToggleableClothing
     clothingPrototypes:
