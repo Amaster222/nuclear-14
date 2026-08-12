@@ -858,14 +858,6 @@ public sealed partial class ChatSystem : SharedChatSystem
             if (HasComp<DeafComponent>(listener) && channel != ChatChannel.Emotes && channel != ChatChannel.LOOC)
                 continue;
 
-            // #Misfits Add - Room occlusion: if the listener is beyond the clear range and has no line
-            // of sight to the speaker (separated by walls), they cannot hear/read the message.
-            // Within VoiceOccludedRange you can always hear (through thin walls nearby).
-            if (data.Range > VoiceOccludedRange
-                && !_interactionSystem.InRangeUnobstructed(source, listener, VoiceRange, Shared.Physics.CollisionGroup.Opaque))
-                continue;
-
-
             // If the channel does not support languages, or the entity can understand the message, send the original message, otherwise send the obfuscated version
             if (channel == ChatChannel.LOOC || channel == ChatChannel.Emotes || _language.CanUnderstand(listener, language.ID))
             {
