@@ -272,7 +272,6 @@
         maxDistance: 6
   - type: Sprite
     sprite: _Nuclear14/Mobs/Robots/mrhandyclaw.rsi
-  - type: SyncSprite
     layers:
     - state: icon
       map: ["movement"]
@@ -284,6 +283,7 @@
       shader: unshaded
       map: ["light"]
       visible: false
+  - type: SyncSprite
   - type: SpriteMovement
     movementLayers:
       movement:

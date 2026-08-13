@@ -106,7 +106,6 @@
     species: RobotMrHandy
   - type: Sprite
     sprite: _Nuclear14/Mobs/Robots/mrhandyclaw.rsi
-  - type: SyncSprite
     layers:
     - state: icon
       map: ["enum.DamageStateVisualLayers.Base", "movement"]
@@ -118,6 +117,7 @@
       shader: unshaded
       map: ["light"]
       visible: false
+  - type: SyncSprite
   - type: SpriteMovement
     movementLayers:
       movement:
@@ -319,7 +319,6 @@
     species: RobotMrGutsy
   - type: Sprite
     sprite: _Nuclear14/Mobs/Robots/mrhandygutsy.rsi
-  - type: SyncSprite
     layers:
     - state: icon
       map: ["enum.DamageStateVisualLayers.Base", "movement"]
@@ -331,6 +330,7 @@
       shader: unshaded
       map: ["light"]
       visible: false
+  - type: SyncSprite
   - type: SpriteMovement
     movementLayers:
       movement:

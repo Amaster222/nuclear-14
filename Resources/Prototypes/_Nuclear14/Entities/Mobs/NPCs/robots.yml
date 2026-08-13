@@ -578,7 +578,6 @@
         Pierce: 5
   - type: Sprite
     sprite: _Nuclear14/Mobs/Robots/mrhandyclaw.rsi
-  - type: SyncSprite
     layers:
     - state: icon
       map: ["movement"]
@@ -590,6 +589,7 @@
       shader: unshaded
       map: ["light"]
       visible: false
+  - type: SyncSprite
   - type: SpriteMovement
     movementLayers:
       movement:
@@ -814,7 +814,6 @@
     baseSprintSpeed : 4
   - type: Sprite
     sprite: _Nuclear14/Mobs/Robots/mrhandygutsy.rsi
-  - type: SyncSprite
     layers:
     - state: icon
       map: ["movement"]
@@ -826,6 +825,7 @@
       shader: unshaded
       map: ["light"]
       visible: false
+  - type: SyncSprite
   # - type: GhostRole
     # prob: 1
     # makeSentient: true
