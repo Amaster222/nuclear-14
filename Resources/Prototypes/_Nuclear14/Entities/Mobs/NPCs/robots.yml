@@ -578,6 +578,7 @@
         Pierce: 5
   - type: Sprite
     sprite: _Nuclear14/Mobs/Robots/mrhandyclaw.rsi
+  - type: SyncSprite
     layers:
     - state: icon
       map: ["movement"]
@@ -813,6 +814,7 @@
     baseSprintSpeed : 4
   - type: Sprite
     sprite: _Nuclear14/Mobs/Robots/mrhandygutsy.rsi
+  - type: SyncSprite
     layers:
     - state: icon
       map: ["movement"]
