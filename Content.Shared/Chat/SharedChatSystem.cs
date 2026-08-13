@@ -39,7 +39,6 @@ public abstract class SharedChatSystem : EntitySystem
     public const int VoiceRange = 10; // how far voice goes in world units
     public const int WhisperClearRange = 2; // how far whisper goes while still being understandable, in world units
     public const int WhisperMuffledRange = 5; // how far whisper goes at all, in world units
-    public const int VoiceOccludedRange = 4; // #Misfits Add - range within which voice is always clear even without line of sight (through walls)
 
     [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!;
