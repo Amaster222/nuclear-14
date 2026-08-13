@@ -20,13 +20,8 @@ namespace Content.Server._Misfits.Expeditions;
 /// Supports three themes: Vault (pre-war concrete), Sewer (brick tunnels + dirty water),
 /// Metro (abandoned subway infrastructure).
 ///
-/// Generation pipeline:
-///   Phase A  — Room placement (faction hubs → central → standard rooms, theme-sized)
-///   Phase B  — Corridor carving (minimum spanning tree, 2-tile-wide L-shaped)
-///   Phase B5 — Doorway marking (corridor cells adjacent to room interior)
-///   Phase C  — Sewer water-channel carving (Sewer theme only)
-///   Phase D  — Tile painting (ALL cells tiled; background uses FloorAsteroidSand)
-///   Phase E  — Entity spawning (WallRock fill, slanted room walls, doors, furniture, mobs)
+/// Generation pipeline covers room placement, corridor carving, doorway marking,
+/// water-channel carving, tile painting, and entity spawning.
 /// </summary>
 public sealed class UndergroundExpeditionMapGenerator : EntitySystem
 {
@@ -206,42 +201,32 @@ public sealed class UndergroundExpeditionMapGenerator : EntitySystem
 
         var envMods = UndergroundThemeProfiles.MergeModifiers(selectedStates);
 
-        // Phase A: place rooms
         var cellMap = new CellType[W, H];
         var rooms   = new List<RoomDef>();
 
         PlaceFactionHubs(cellMap, rooms, p, rng, W, H);
         PlaceCentralRoom(cellMap, rooms, p, rng, W, H);
 
-        // Phase A.5: BSP zone division — restrict room types to spatially meaningful zones
         var zones = PartitionMapIntoZones(W, H, p.HubCount, rng);
         PlaceStandardRooms(cellMap, rooms, p, profile, rng, W, H, zones);
 
-        // Phase B: 2-tile-wide MST corridors + profile-driven branch/loop passes
         CarveCorridors(cellMap, rooms, profile, rng, W, H);
 
-        // Phase B5: identify corridor→room threshold cells — get door entities in Phase E
         var doorways = MarkDoorways(cellMap, W, H);
 
-        // #Misfits Add - Phase B6: System 5 door validation — remove structurally invalid doorways
         ValidateDoors(doorways, cellMap, rooms, W, H);
 
-        // Phase C: sewer water channels (Sewer theme always; other themes if Flooded state overrides)
         if (p.Theme == UndergroundTheme.Sewer || envMods.WaterChannelChanceOverride > 0)
             CarveSewerWaterChannels(cellMap, rng, W, H,
                 forceCarve: p.Theme == UndergroundTheme.Sewer,
                 overrideChance: envMods.WaterChannelChanceOverride);
 
-        // Phase C5: validate the structural plan before painting or spawning entities.
-        // This keeps generation failures deterministic and cheap to diagnose.
         ValidateGeneratedLayout(cellMap, rooms, doorways, profile, p, W, H);
 
-        // Phase D: tile every cell (including background; required for atmos sealing)
         // #Misfits Add - WFC-style per-room tile map with primary/accent/edge and neighbor smoothing
         var roomTileMap = BuildRoomTileMapWFC(rooms, profile, cellMap, rng, W, H);
         PaintTiles(cellMap, gridUid, grid, profile, envMods, rng, W, H, roomTileMap);
 
-        // Phase E: spawn all entities
         SpawnEntities(cellMap, rooms, doorways, gridUid, grid, profile, envMods, p.DifficultyTier, rng, W, H);
 
         // #Misfits Fix - Return hub positions so the system can place exits and spawn players correctly
@@ -252,7 +237,7 @@ public sealed class UndergroundExpeditionMapGenerator : EntitySystem
     }
 
     // =========================================================================
-    // Phase A — Room Placement
+    // Room placement
     // =========================================================================
 
     private static void PlaceFactionHubs(
@@ -750,7 +735,7 @@ public sealed class UndergroundExpeditionMapGenerator : EntitySystem
     }
 
     // =========================================================================
-    // Phase A.5 — BSP Zone Division
+    // Zone division
     // =========================================================================
 
     /// <summary>
@@ -1097,7 +1082,7 @@ public sealed class UndergroundExpeditionMapGenerator : EntitySystem
     }
 
     // =========================================================================
-    // Phase B — Corridor Carving (minimum spanning tree, 2-tile-wide)
+    // Corridor carving (minimum spanning tree, 2-tile-wide)
     // =========================================================================
 
     // #Misfits Change - CarveCorridors now accepts ThemeProfile for branch/loop post-passes
@@ -1205,12 +1190,12 @@ public sealed class UndergroundExpeditionMapGenerator : EntitySystem
     }
 
     // =========================================================================
-    // Phase B5 — Doorway Marking
+    // Doorway marking
     // =========================================================================
 
     /// <summary>
     /// Returns the set of corridor cells that sit directly on the room/corridor boundary.
-    /// These cells receive door entities instead of wall entities in Phase E.
+    /// These cells receive door entities instead of wall entities.
     /// With 2-tile corridors this naturally creates double doors at each entry.
     /// </summary>
     // #Misfits Fix - Cluster adjacent doorway candidates, keep max 2 per cluster
@@ -1294,7 +1279,7 @@ public sealed class UndergroundExpeditionMapGenerator : EntitySystem
     }
 
     // =========================================================================
-    // Phase B6 — System 5: Door Validation
+    // Door validation
     // =========================================================================
 
     // #Misfits Add - System 5: validates doorway cells against structural constraints
@@ -1374,7 +1359,7 @@ public sealed class UndergroundExpeditionMapGenerator : EntitySystem
     }
 
     // =========================================================================
-    // Phase C5 — Structural Generation Validation
+    // Structural generation validation
     // =========================================================================
 
     /// <summary>
@@ -1511,7 +1496,7 @@ public sealed class UndergroundExpeditionMapGenerator : EntitySystem
     }
 
     // =========================================================================
-    // Phase C — Sewer Water Channels
+    // Sewer water channels
     // =========================================================================
 
     // #Misfits Change - 3-wide sewer channels: catwalk | water | catwalk (was 2-wide double water)
@@ -1558,7 +1543,7 @@ public sealed class UndergroundExpeditionMapGenerator : EntitySystem
     }
 
     // =========================================================================
-    // Phase D — Tile Painting
+    // Tile painting
     // =========================================================================
 
     // #Misfits Change - PaintTiles driven by ThemeProfile.TilePalette + WFC room tile map + env state rubble
@@ -1707,7 +1692,7 @@ public sealed class UndergroundExpeditionMapGenerator : EntitySystem
     */
 
     // =========================================================================
-    // Phase E — Entity Spawning
+    // Entity spawning
     // =========================================================================
 
     // #Misfits Change - SpawnEntities now driven by ThemeProfile + EnvironmentalStateModifiers
@@ -2049,6 +2034,13 @@ public sealed class UndergroundExpeditionMapGenerator : EntitySystem
         var wallTiles         = FindWallTilesInRoom(room, cellMap, W, H);
         var wallAdjacentTiles = FindWallAdjacentFloorTiles(room, cellMap, W, H);
 
+        if (room.RoomType is not (RoomType.VaultKitchen or RoomType.VaultOverseer or RoomType.MetroCommand))
+        {
+            itemCount -= ComposeRoomIdentity(room, gridUid, grid, wallTiles, wallAdjacentTiles,
+                                             occupiedTiles, placedEntities, rng, cellMap, W, H);
+            itemCount = Math.Max(0, itemCount);
+        }
+
         // ══════════════════════════════════════════════════════════════════════
         // RULE E — Office composition: mandatory desk + chair + terminal
         // ══════════════════════════════════════════════════════════════════════
@@ -2258,6 +2250,68 @@ public sealed class UndergroundExpeditionMapGenerator : EntitySystem
                 break;
             }
         }
+    }
+
+    /// <summary>
+    /// Places a compact, deterministic identity group for room types that need
+    /// more than a generic furniture pool to read correctly. Each prototype is
+    /// passed through the same placement-rule dispatcher as normal dressing.
+    /// </summary>
+    private int ComposeRoomIdentity(
+        RoomDef room,
+        EntityUid gridUid,
+        MapGridComponent grid,
+        List<(int x, int y)> wallTiles,
+        List<(int x, int y)> wallAdjacentTiles,
+        HashSet<(int, int)> occupiedTiles,
+        Dictionary<(int, int), string> placedEntities,
+        Random rng,
+        CellType[,] cellMap,
+        int W,
+        int H)
+    {
+        string[] prototypes = room.RoomType switch
+        {
+            RoomType.VaultBarracks => new[]
+            {
+                "N14BedBunk", "N14BedBunk", "N14LootCrateFootlocker",
+                "N14ClosetGrey1", "N14TableDeskMetalSmall",
+            },
+            RoomType.VaultArmory => new[]
+            {
+                "N14WorkbenchWeaponbench", "N14AmmoBox10mm", "N14CrateArmy",
+                "N14ClosetGrey1", "N14ComputerTerminal",
+            },
+            RoomType.VaultReactor => new[]
+            {
+                "N14APCBreaker", "N14GasPipeStraight", "N14SignDanger",
+            },
+            RoomType.SewerNest => new[]
+            {
+                "N14Bedroll", "N14JunkPile9", "N14JunkPile10",
+                "N14DecorFloorSkeleton",
+            },
+            RoomType.MetroPlatform => new[]
+            {
+                "N14JunkBench", "N14MagazineRack", "N14VendingMachineNukaCola",
+                "N14Trashbin", "N14PosterAdvertNukaCola1",
+            },
+            _ => Array.Empty<string>(),
+        };
+
+        int placed = 0;
+        foreach (var proto in prototypes)
+        {
+            var rule = GetPlacementRule(proto, room.RoomType.ToString());
+            if (!TryPlaceByRule(proto, rule, room, gridUid, grid,
+                                wallTiles, wallAdjacentTiles, occupiedTiles, placedEntities, rng,
+                                cellMap, W, H))
+                continue;
+
+            placed++;
+        }
+
+        return placed;
     }
 
     // ─────────────────────────────────────────────────────────────────────────
