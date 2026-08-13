@@ -150,7 +150,7 @@
             <!-- #Misfits Add - job tab strip + filtered list -->
             <BoxContainer Name="Jobs" HorizontalExpand="True" Orientation="Vertical">
                 <BoxContainer Name="JobTabStrip" Orientation="Horizontal" HorizontalExpand="True" Margin="0 0 0 2">
-                    <Button Name="JobTabWasteland"     Text="{Loc job-tab-wasteland}"      HorizontalExpand="True" ToggleMode="True" />
+                    <Button Name="JobTabWasteland"     Text="{Loc job-tab-no-faction}"      HorizontalExpand="True" ToggleMode="True" />
                     <Button Name="JobTabMinorFactions" Text="{Loc job-tab-minor-factions}" HorizontalExpand="True" ToggleMode="True" />
                     <Button Name="JobTabMajorFactions" Text="{Loc job-tab-major-factions}" HorizontalExpand="True" ToggleMode="True" />
                     <Button Name="JobTabWhitelist"     Text="{Loc job-tab-whitelist}"      HorizontalExpand="True" ToggleMode="True" />
@@ -258,6 +258,26 @@
                 </ScrollContainer>
             </BoxContainer>
             <BoxContainer Name="MarkingsTab" HorizontalExpand="True" Orientation="Vertical" Margin="10">
+                <BoxContainer Name="ProstheticsPanel" Orientation="Vertical" HorizontalExpand="True" Margin="0 0 0 8">
+                    <Label Text="{Loc humanoid-profile-editor-prosthetics-title}" />
+                    <Label Text="{Loc humanoid-profile-editor-prosthetics-description}" FontColorOverride="#aaaaaa" />
+                    <BoxContainer Orientation="Horizontal" HorizontalExpand="True">
+                        <Label Text="{Loc humanoid-profile-editor-prosthetic-left-hand}" MinWidth="130" />
+                        <OptionButton Name="ProstheticLeftHand" HorizontalExpand="True" />
+                    </BoxContainer>
+                    <BoxContainer Orientation="Horizontal" HorizontalExpand="True">
+                        <Label Text="{Loc humanoid-profile-editor-prosthetic-right-hand}" MinWidth="130" />
+                        <OptionButton Name="ProstheticRightHand" HorizontalExpand="True" />
+                    </BoxContainer>
+                    <BoxContainer Orientation="Horizontal" HorizontalExpand="True">
+                        <Label Text="{Loc humanoid-profile-editor-prosthetic-left-foot}" MinWidth="130" />
+                        <OptionButton Name="ProstheticLeftFoot" HorizontalExpand="True" />
+                    </BoxContainer>
+                    <BoxContainer Orientation="Horizontal" HorizontalExpand="True">
+                        <Label Text="{Loc humanoid-profile-editor-prosthetic-right-foot}" MinWidth="130" />
+                        <OptionButton Name="ProstheticRightFoot" HorizontalExpand="True" />
+                    </BoxContainer>
+                </BoxContainer>
                 <ScrollContainer HorizontalExpand="True" HScrollEnabled="True" VerticalExpand="True" VScrollEnabled="True">
                     <humanoid:MarkingPicker Name="Markings" IgnoreCategories="Hair,FacialHair" />
                 </ScrollContainer>

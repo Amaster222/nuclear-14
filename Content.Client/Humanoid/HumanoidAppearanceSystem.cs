@@ -207,7 +207,7 @@ public sealed class HumanoidAppearanceSystem : SharedHumanoidAppearanceSystem
             return;
         }
 
-        var customBaseLayers = new Dictionary<HumanoidVisualLayers, CustomBaseLayerInfo>();
+        var customBaseLayers = new Dictionary<HumanoidVisualLayers, CustomBaseLayerInfo>(profile.Appearance.CustomBaseLayers);
 
         var speciesPrototype = _prototypeManager.Index<SpeciesPrototype>(profile.Species);
         var markings = new MarkingSet(speciesPrototype.MarkingPoints, _markingManager, _prototypeManager);

@@ -80,9 +80,6 @@
     LeftHand:
       points: 2
       required: false
-    Prosthetics: # #Misfits Add - prosthetics markings tab, one point per limb
-      points: 8
-      required: false
     UndergarmentTop: # #Misfits Add - Wizden modesty layer
       points: 1
       required: false
@@ -129,9 +126,6 @@
       required: false
     LeftHand:
       points: 2
-      required: false
-    Prosthetics: # #Misfits Add - prosthetics markings tab, one point per limb
-      points: 8
       required: false
     UndergarmentTop: # #Misfits Add - Wizden modesty layer
       points: 1

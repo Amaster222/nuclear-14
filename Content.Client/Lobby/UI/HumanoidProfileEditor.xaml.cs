@@ -171,9 +171,10 @@ namespace Content.Client.Lobby.UI
         };
 
         private readonly Dictionary<string, BoxContainer> _jobCategories;
+        private readonly HashSet<string> _collapsedJobDepartments = new();
 
         // #Misfits Add - active job tab; drives department filter in RefreshJobs
-        private DepartmentUICategory _jobUICategory = DepartmentUICategory.Wasteland;
+        private DepartmentUICategory _jobUICategory = DepartmentUICategory.NoFaction;
 
         private Dictionary<Button, ConfirmationData> _confirmationData = new();
         private int _traitCount;
@@ -654,7 +655,7 @@ namespace Content.Client.Lobby.UI
             JobTabWasteland.Pressed = true;
             var jobTabMap = new[]
             {
-                (JobTabWasteland,     DepartmentUICategory.Wasteland),
+                (JobTabWasteland,     DepartmentUICategory.NoFaction),
                 (JobTabMinorFactions, DepartmentUICategory.MinorFaction),
                 (JobTabMajorFactions, DepartmentUICategory.MajorFaction),
                 (JobTabWhitelist,     DepartmentUICategory.Whitelist),
@@ -729,6 +730,8 @@ namespace Content.Client.Lobby.UI
             Markings.OnMarkingRemoved += OnMarkingChange;
             Markings.OnMarkingColorChange += OnMarkingChange;
             Markings.OnMarkingRankChange += OnMarkingChange;
+
+            SetupProstheticSelectors();
 
             #endregion Markings
 
@@ -1070,6 +1073,7 @@ namespace Content.Client.Lobby.UI
             UpdateEyePickers();
             UpdateSaveButton();
             UpdateMarkings();
+            UpdateProsthetics();
             UpdateBarkVoicesControls(); // Corvax-Fallout-Barks
             UpdateSpeechVerbControls(); // #Misfits Add - vocal style
             UpdateTTSVoicesControls(); // Corvax-TTS
@@ -1197,11 +1201,12 @@ namespace Content.Client.Lobby.UI
                     .ToArray();
 
                 Array.Sort(jobs, JobUIComparer.Instance);
-
                 // #Misfits Change: hide empty department categories
                 if (jobs.Length == 0)
                     continue;
 
+                // #Cythisiax Fixed - hoist departmentContents out of the if-block so it is visible to the jobs foreach below
+                BoxContainer departmentContents = null!;
                 if (!_jobCategories.TryGetValue(department.ID, out var category))
                 {
                     category = new BoxContainer
@@ -1217,19 +1222,30 @@ namespace Content.Client.Lobby.UI
                     else
                         category.AddChild(new Control { MinSize = new Vector2(0, 23) });
 
-                    category.AddChild(new PanelContainer
+                    departmentContents = new BoxContainer
                     {
-                        StyleClasses = { StyleNano.StyleClassPipBoyHighlight }, // #Misfits Change - themeable highlight
-                        Children =
-                        {
-                            new Label
-                            {
-                                Text = Loc.GetString("humanoid-profile-editor-department-jobs-label",
-                                    ("departmentName", departmentName)),
-                                Margin = new Thickness(5f, 0, 0, 0),
-                            },
-                        },
-                    });
+                        Orientation = LayoutOrientation.Vertical,
+                        Visible = !_collapsedJobDepartments.Contains(department.ID),
+                    };
+
+                    var departmentButton = new Button
+                    {
+                        Text = departmentName,
+                        HorizontalExpand = true,
+                        ToggleMode = true,
+                        Pressed = !_collapsedJobDepartments.Contains(department.ID),
+                    };
+                    departmentButton.OnToggled += args =>
+                    {
+                        departmentContents.Visible = args.Pressed;
+                        if (args.Pressed)
+                            _collapsedJobDepartments.Remove(department.ID);
+                        else
+                            _collapsedJobDepartments.Add(department.ID);
+                    };
+
+                    category.AddChild(departmentButton);
+                    category.AddChild(departmentContents);
 
                     _jobCategories[department.ID] = category;
                     JobList.AddChild(category);
@@ -1240,7 +1256,7 @@ namespace Content.Client.Lobby.UI
                     // #Misfits Tweak - stronger gap makes role tier breaks readable in ranked departments.
                     if (job.ShowBorder)
                     {
-                        category.AddChild(new PanelContainer
+                        departmentContents.AddChild(new PanelContainer
                         {
                             StyleClasses = { StyleNano.StyleClassPipBoyHighlight }, // #Misfits Change - themeable highlight
                             MinSize = new Vector2(0, 2),
@@ -1249,7 +1265,10 @@ namespace Content.Client.Lobby.UI
                     }
 
                     var jobContainer = new BoxContainer { Orientation = LayoutOrientation.Horizontal, };
-                    var selector = new RequirementsSelector { Margin = new(3f, 3f, 3f, 0f) };
+                    var selector = new RequirementsSelector
+                    {
+                        Margin = new(3f, 3f, 3f, 0f),
+                    };
 
                     // #Misfits Tweak - fixed icon slot keeps mixed faction rank icons aligned in job preferences.
                     var icon = new TextureRect
@@ -1306,7 +1325,7 @@ namespace Content.Client.Lobby.UI
 
                     _jobPriorities.Add((job.ID, selector));
                     jobContainer.AddChild(selector);
-                    category.AddChild(jobContainer);
+                    departmentContents.AddChild(jobContainer);
                 }
             }
 
@@ -1333,6 +1352,9 @@ namespace Content.Client.Lobby.UI
 
             foreach (var department in departments)
             {
+                if (department.EditorHidden || department.UICategory != _jobUICategory)
+                    continue;
+
                 var departmentName = Loc.GetString($"department-{department.ID}");
                 var profile = Profile ?? HumanoidCharacterProfile.DefaultWithSpecies();
                 var playTimes = _requirements.GetRawPlayTimeTrackers();
@@ -1356,8 +1378,9 @@ namespace Content.Client.Lobby.UI
                         out _,
                         jobWhitelisted: _requirements.IsJobWhitelisted(job.ID))) // #Misfits Change
                     .ToArray();
-                Array.Sort(jobs, JobUIComparer.Instance);
 
+                BoxContainer departmentContents = null!;
+                Array.Sort(jobs, JobUIComparer.Instance);
                 // #Misfits Change: hide empty department categories
                 if (jobs.Length == 0)
                     continue;
@@ -1382,19 +1405,30 @@ namespace Content.Client.Lobby.UI
                         });
                     }
 
-                    category.AddChild(new PanelContainer
+                    departmentContents = new BoxContainer
                     {
-                        StyleClasses = { StyleNano.StyleClassPipBoyHighlight }, // #Misfits Change - themeable highlight
-                        Children =
-                        {
-                            new Label
-                            {
-                                Text = Loc.GetString("humanoid-profile-editor-department-jobs-label",
-                                    ("departmentName", departmentName)),
-                                Margin = new Thickness(5f, 0, 0, 0)
-                            }
-                        }
-                    });
+                        Orientation = LayoutOrientation.Vertical,
+                        Visible = !_collapsedJobDepartments.Contains(department.ID),
+                    };
+
+                    var departmentButton = new Button
+                    {
+                        Text = departmentName,
+                        HorizontalExpand = true,
+                        ToggleMode = true,
+                        Pressed = !_collapsedJobDepartments.Contains(department.ID),
+                    };
+                    departmentButton.OnToggled += args =>
+                    {
+                        departmentContents.Visible = args.Pressed;
+                        if (args.Pressed)
+                            _collapsedJobDepartments.Remove(department.ID);
+                        else
+                            _collapsedJobDepartments.Add(department.ID);
+                    };
+
+                    category.AddChild(departmentButton);
+                    category.AddChild(departmentContents);
 
                     _jobCategories[department.ID] = category;
                     JobList.AddChild(category);
@@ -1405,7 +1439,7 @@ namespace Content.Client.Lobby.UI
                     // #Misfits Tweak - stronger gap makes role tier breaks readable in ranked departments.
                     if (job.ShowBorder)
                     {
-                        category.AddChild(new PanelContainer
+                        departmentContents.AddChild(new PanelContainer
                         {
                             StyleClasses = { StyleNano.StyleClassPipBoyHighlight }, // #Misfits Change - themeable highlight
                             MinSize = new Vector2(0, 2),
@@ -1418,7 +1452,10 @@ namespace Content.Client.Lobby.UI
                         Orientation = LayoutOrientation.Horizontal,
                     };
 
-                    var selector = new RequirementsSelector { Margin = new Thickness(3f, 3f, 3f, 0f), };
+                    var selector = new RequirementsSelector
+                    {
+                        Margin = new Thickness(3f, 3f, 3f, 0f),
+                    };
 
                     // #Misfits Tweak - fixed icon slot keeps mixed faction rank icons aligned in job preferences.
                     var icon = new TextureRect
@@ -1475,7 +1512,7 @@ namespace Content.Client.Lobby.UI
 
                     _jobPriorities.Add((job.ID, selector));
                     jobContainer.AddChild(selector);
-                    category.AddChild(jobContainer);
+                    departmentContents.AddChild(jobContainer);
                 }
             }
 
@@ -1769,6 +1806,7 @@ namespace Content.Client.Lobby.UI
 
             OnSkinColorOnValueChanged(); // Species may have special color prefs, make sure to update it.
             Markings.SetSpecies(newSpecies); // Repopulate the markings tab as well.
+            UpdateProsthetics();
             UpdateSexControls(); // Update sex for new species
             UpdateCharacterRequired();
             // Changing species provides inaccurate sliders without these
@@ -2195,6 +2233,71 @@ namespace Content.Client.Lobby.UI
 
             Markings.SetData(Profile.Appearance.Markings, Profile.Species, Profile.Sex, Profile.Appearance.SkinColor,
                 Profile.Appearance.EyeColor);
+        }
+
+        private static readonly Dictionary<HumanoidVisualLayers, string[]> ProstheticOptions = new()
+        {
+            [HumanoidVisualLayers.LHand] = ["", "MisfitsProstheticSimpleLeftHand", "MisfitsProstheticVaultTecLeftHand", "MisfitsProstheticNCRLeftHand"],
+            [HumanoidVisualLayers.RHand] = ["", "MisfitsProstheticSimpleRightHand", "MisfitsProstheticVaultTecRightHand", "MisfitsProstheticNCRRightHand"],
+            [HumanoidVisualLayers.LFoot] = ["", "MisfitsProstheticSimpleLeftFoot", "MisfitsProstheticVaultTecLeftFoot"],
+            [HumanoidVisualLayers.RFoot] = ["", "MisfitsProstheticSimpleRightFoot", "MisfitsProstheticVaultTecRightFoot"],
+        };
+
+        private void SetupProstheticSelectors()
+        {
+            SetupProstheticSelector(ProstheticLeftHand, HumanoidVisualLayers.LHand);
+            SetupProstheticSelector(ProstheticRightHand, HumanoidVisualLayers.RHand);
+            SetupProstheticSelector(ProstheticLeftFoot, HumanoidVisualLayers.LFoot);
+            SetupProstheticSelector(ProstheticRightFoot, HumanoidVisualLayers.RFoot);
+        }
+
+        private void SetupProstheticSelector(OptionButton selector, HumanoidVisualLayers layer)
+        {
+            selector.AddItem(Loc.GetString("humanoid-profile-editor-prosthetic-none"), 0);
+            foreach (var id in ProstheticOptions[layer].Skip(1))
+                selector.AddItem(Loc.GetString($"entity-name-{id}"), selector.ItemCount);
+
+            selector.OnItemSelected += args =>
+            {
+                // OptionButton emits the selection event before committing the displayed item.
+                // Keep the control in sync with the profile mutation below.
+                selector.SelectId(args.Id);
+
+                if (Profile == null)
+                    return;
+
+                var id = ProstheticOptions[layer][args.Id];
+                if (string.IsNullOrEmpty(id))
+                    Profile.Appearance.CustomBaseLayers.Remove(layer);
+                else
+                    Profile.Appearance.CustomBaseLayers[layer] = new CustomBaseLayerInfo(id);
+
+                SetDirty();
+                ReloadProfilePreview();
+            };
+        }
+
+        private void UpdateProsthetics()
+        {
+            if (Profile == null)
+                return;
+
+            var available = Profile.Species is "Human" or "Ghoul";
+            ProstheticsPanel.Visible = available;
+            if (!available)
+                return;
+
+            SelectProsthetic(ProstheticLeftHand, HumanoidVisualLayers.LHand);
+            SelectProsthetic(ProstheticRightHand, HumanoidVisualLayers.RHand);
+            SelectProsthetic(ProstheticLeftFoot, HumanoidVisualLayers.LFoot);
+            SelectProsthetic(ProstheticRightFoot, HumanoidVisualLayers.RFoot);
+        }
+
+        private void SelectProsthetic(OptionButton selector, HumanoidVisualLayers layer)
+        {
+            var id = Profile!.Appearance.CustomBaseLayers.GetValueOrDefault(layer).Id?.ToString();
+            var index = Array.IndexOf(ProstheticOptions[layer], id ?? "");
+            selector.SelectId(index < 0 ? 0 : index);
         }
 
         private void UpdateGenderControls()

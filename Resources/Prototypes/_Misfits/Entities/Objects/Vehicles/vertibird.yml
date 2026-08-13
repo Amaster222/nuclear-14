@@ -63,11 +63,6 @@
   - type: MZPhysics
     bounciness: 0.05
   - type: Appearance
-  # #Misfits Fix - InputMoverComponent removed: the MoverController processes every
-  # InputMover entity and frictions their velocity toward 0 (MovementSpeedModifier
-  # has walkSpeed/sprintSpeed/acceleration all zero). That ran *before* the physics
-  # step, zeroing velocity before UpdateCruising could set it in the next Update.
-  # Now the vertibird reads the pilot's HeldMoveButtons directly — no relay needed.
   - type: CanMoveInAir
   - type: MovementAlwaysTouching
   - type: InteractionOutline

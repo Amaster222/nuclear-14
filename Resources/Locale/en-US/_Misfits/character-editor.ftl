@@ -85,7 +85,8 @@ humanoid-profile-editor-robot-model-c27-bos = Brotherhood Issue
 humanoid-profile-editor-robot-model-c27-zax = Z.A.X Chassis
 
 # #Misfits Add - Job selection tab labels (Late Join + Profile Editor).
-job-tab-wasteland = Wasteland
+job-tab-wasteland = No Faction
+job-tab-no-faction = No Faction
 job-tab-minor-factions = Minor Factions
 job-tab-major-factions = Major Factions
 job-tab-whitelist = Whitelist

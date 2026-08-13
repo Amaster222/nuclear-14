@@ -1,13 +1,14 @@
 # #Misfits Add - Flyable vertibird pilot action.
 - type: entity
   id: ActionVertibirdTakeOff
-  name: take off
-  description: Lift the vertibird into flight.
+  name: action-name-vertibird-takeoff
+  description: action-description-vertibird-takeoff
   categories: [ HideSpawnMenu ]
   components:
   - type: InstantAction
     itemIconStyle: NoItem
     checkCanInteract: false
+    raiseOnUser: true
     useDelay: 1
     icon:
       sprite: Interface/Actions/flight.rsi
@@ -16,13 +17,14 @@
 
 - type: entity
   id: ActionVertibirdLand
-  name: land
-  description: Bring the vertibird down to the current level.
+  name: action-name-vertibird-land
+  description: action-description-vertibird-land
   categories: [ HideSpawnMenu ]
   components:
   - type: InstantAction
     itemIconStyle: NoItem
     checkCanInteract: false
+    raiseOnUser: true
     useDelay: 1
     icon:
       sprite: Interface/Actions/flight.rsi
@@ -31,13 +33,14 @@
 
 - type: entity
   id: ActionVertibirdMoveUp
-  name: ascend z-level
-  description: Move the airborne vertibird to the z-level above.
+  name: action-name-vertibird-move-up
+  description: action-description-vertibird-move-up
   categories: [ HideSpawnMenu ]
   components:
   - type: InstantAction
     itemIconStyle: NoItem
     checkCanInteract: false
+    raiseOnUser: true
     useDelay: 1
     icon:
       sprite: _MultiZ/Actions/misc.rsi
@@ -46,13 +49,14 @@
 
 - type: entity
   id: ActionVertibirdMoveDown
-  name: descend z-level
-  description: Move the airborne vertibird to the z-level below.
+  name: action-name-vertibird-move-down
+  description: action-description-vertibird-move-down
   categories: [ HideSpawnMenu ]
   components:
   - type: InstantAction
     itemIconStyle: NoItem
     checkCanInteract: false
+    raiseOnUser: true
     useDelay: 1
     icon:
       sprite: _MultiZ/Actions/misc.rsi

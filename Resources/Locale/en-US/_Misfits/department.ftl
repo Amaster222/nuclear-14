@@ -17,7 +17,7 @@ department-C27Unit = C-27 Autonomous Unit
 department-C27Unit-description = Pre-war General Atomics humanoid robotics frames, retrofitted into autonomous Wasteland service units.
 
 # #Cythisiax Added - Brotherhood of Steel personal whitelist department locale.
-department-BoSPersonalWhitelist = Brotherhood of Steel — Personal Whitelists
+department-BoSPersonalWhitelist = Brotherhood of Steel - OC Whitelist
 department-BoSPersonalWhitelist-description = Private Brotherhood of Steel Roles
 
 # #Misfits Fix: duplicate — department-CaesarLegion and its description are already defined in

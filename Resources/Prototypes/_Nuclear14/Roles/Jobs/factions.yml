@@ -163,11 +163,10 @@
   id: Wastelander
   description: department-Wastelander-description
   color: "#81c784"
-  uiCategory: Wasteland
+  uiCategory: NoFaction
   roles:
   - Wastelander
-  - WastelandMusician
-  - WastelandScavenger
+  - Outcast
   # Forge-Change: Followers — moved to FollowersOfTheApocalypse department in _Misfits/Roles/Jobs/Followers/followers.yml
 
 - type: department

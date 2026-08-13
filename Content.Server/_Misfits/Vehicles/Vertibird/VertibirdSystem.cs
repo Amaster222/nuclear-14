@@ -9,19 +9,18 @@ using Content.Shared.Buckle;
 using Content.Shared.Buckle.Components;
 using Content.Shared.Chat;
 using Content.Shared.IdentityManagement;
-using Content.Shared.Movement.Components;
-using Content.Shared.Movement.Events;
-using Content.Shared.Movement.Systems;
 using Content.Shared.Popups;
 using Content.Shared.Stealth;
 using Content.Shared.Stealth.Components;
 using Content.Shared.UserInterface;
 using Robust.Shared.Audio.Systems;
+using Robust.Shared.Map;
+using Robust.Shared.Map.Components;
 using Robust.Shared.Physics.Components;
 using Robust.Shared.Physics.Systems;
 using Robust.Shared.Timing;
 using Robust.Server.GameObjects;
-using Content.Server.Physics.Controllers;
+using Robust.Shared.Player;
 
 namespace Content.Server._Misfits.Vehicles.Vertibird;
 
@@ -41,7 +40,6 @@ public sealed partial class VertibirdSystem : EntitySystem
     [Dependency] private ChatSystem _chat = default!;
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private MZSystem _multiZ = default!;
-    [Dependency] private SharedMoverController _mover = default!;
     [Dependency] private SharedPhysicsSystem _physics = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private SharedStealthSystem _stealth = default!;
@@ -57,23 +55,18 @@ public sealed partial class VertibirdSystem : EntitySystem
     {
         base.Initialize();
 
-        // Apply flight velocity after the stock mover has processed the pilot relay.
-        UpdatesAfter.Add(typeof(MoverController));
-
         SubscribeLocalEvent<VertibirdComponent, StrapAttemptEvent>(OnStrapAttempt);
         SubscribeLocalEvent<VertibirdComponent, StrappedEvent>(OnStrapped);
         SubscribeLocalEvent<VertibirdComponent, UnstrapAttemptEvent>(OnUnstrapAttempt);
         SubscribeLocalEvent<VertibirdComponent, UnstrappedEvent>(OnUnstrapped);
-        SubscribeLocalEvent<VertibirdComponent, VertibirdFlightActionEvent>(OnFlightAction);
-        SubscribeLocalEvent<VertibirdComponent, VertibirdLandActionEvent>(OnLandAction);
-        SubscribeLocalEvent<VertibirdComponent, VertibirdMoveUpActionEvent>(OnMoveUpAction);
-        SubscribeLocalEvent<VertibirdComponent, VertibirdMoveDownActionEvent>(OnMoveDownAction);
+        SubscribeLocalEvent<VertibirdPilotPerkComponent, VertibirdFlightActionEvent>(OnFlightAction);
+        SubscribeLocalEvent<VertibirdPilotPerkComponent, VertibirdLandActionEvent>(OnLandAction);
+        SubscribeLocalEvent<VertibirdPilotPerkComponent, VertibirdMoveUpActionEvent>(OnMoveUpAction);
+        SubscribeLocalEvent<VertibirdPilotPerkComponent, VertibirdMoveDownActionEvent>(OnMoveDownAction);
         SubscribeLocalEvent<VertibirdComponent, ComponentShutdown>(OnShutdown);
         SubscribeLocalEvent<VertibirdComponent, AfterActivatableUIOpenEvent>(OnAfterUiOpen);
         SubscribeLocalEvent<VertibirdComponent, VertibirdSelectSeatMessage>(OnSelectSeat);
-
-        // #Misfits Add - Receive WASD state directly from client pilot.
-        SubscribeNetworkEvent<VertibirdMoveInputMessage>(OnMoveInputMessage);
+        SubscribeNetworkEvent<VertibirdControlInputMessage>(OnControlInput);
     }
 
     public override void Update(float frameTime)
@@ -102,6 +95,9 @@ public sealed partial class VertibirdSystem : EntitySystem
                     // Remove MZFallingComponent so MultiZ doesn't fight our hover.
                     RemComp<MZFallingComponent>(uid);
                     UpdateCruising(uid, vertibird, physics, xform, frameTime);
+                    break;
+                case VertibirdFlightState.ChangingAltitude:
+                    UpdateAltitudeTransition(uid, vertibird, mzPhysics, xform);
                     break;
             }
         }
@@ -143,7 +139,6 @@ public sealed partial class VertibirdSystem : EntitySystem
         if (seatIndex == 0)
         {
             ent.Comp.Pilot = occupant;
-            ApplyPilotRelay(occupant, ent.Owner);
             AddPilotActions(occupant, ent);
         }
 
@@ -182,7 +177,6 @@ public sealed partial class VertibirdSystem : EntitySystem
         RemovePilotAction(args.Buckle.Owner, ent.Comp);
         RemovePilotRelay(args.Buckle.Owner, ent.Owner);
         ent.Comp.Pilot = null;
-        ent.Comp.FlightMoveButtons = MoveButtons.None;
 
         var pilotSeat = GetSeatIndex(ent.Comp, args.Buckle.Owner);
         if (pilotSeat != null)
@@ -193,19 +187,13 @@ public sealed partial class VertibirdSystem : EntitySystem
         UpdateUi(ent);
     }
 
-    private void OnFlightAction(Entity<VertibirdComponent> ent, ref VertibirdFlightActionEvent args)
+    private void OnFlightAction(Entity<VertibirdPilotPerkComponent> pilot, ref VertibirdFlightActionEvent args)
     {
         if (args.Handled)
             return;
 
-        if (ent.Comp.Pilot != args.Performer)
+        if (!TryGetPilotVertibird(args, pilot.Owner, out var ent))
             return;
-
-        if (!HasComp<VertibirdPilotPerkComponent>(args.Performer))
-        {
-            _popup.PopupEntity(Loc.GetString("vertibird-pilot-required"), ent, args.Performer);
-            return;
-        }
 
         switch (ent.Comp.State)
         {
@@ -216,8 +204,11 @@ public sealed partial class VertibirdSystem : EntitySystem
         }
     }
 
-    private void OnLandAction(Entity<VertibirdComponent> ent, ref VertibirdLandActionEvent args)
+    private void OnLandAction(Entity<VertibirdPilotPerkComponent> pilot, ref VertibirdLandActionEvent args)
     {
+        if (!TryGetPilotVertibird(args, pilot.Owner, out var ent))
+            return;
+
         if (args.Handled || !CanUsePilotAction(ent, args.Performer))
             return;
 
@@ -233,20 +224,41 @@ public sealed partial class VertibirdSystem : EntitySystem
         }
     }
 
-    private void OnMoveUpAction(Entity<VertibirdComponent> ent, ref VertibirdMoveUpActionEvent args)
+    private void OnMoveUpAction(Entity<VertibirdPilotPerkComponent> pilot, ref VertibirdMoveUpActionEvent args)
     {
+        if (!TryGetPilotVertibird(args, pilot.Owner, out var ent))
+            return;
+
         if (args.Handled || !CanUsePilotAction(ent, args.Performer))
             return;
 
         args.Handled = TryMoveZ(ent, 1);
     }
 
-    private void OnMoveDownAction(Entity<VertibirdComponent> ent, ref VertibirdMoveDownActionEvent args)
+    private void OnMoveDownAction(Entity<VertibirdPilotPerkComponent> pilot, ref VertibirdMoveDownActionEvent args)
     {
+        if (!TryGetPilotVertibird(args, pilot.Owner, out var ent))
+            return;
+
         if (args.Handled || !CanUsePilotAction(ent, args.Performer))
             return;
 
         args.Handled = TryMoveZ(ent, -1);
+    }
+
+    private bool TryGetPilotVertibird<T>(T args, EntityUid pilot, out Entity<VertibirdComponent> vertibird)
+        where T : BaseActionEvent
+    {
+        vertibird = default;
+        if (args.Action.Comp.Container is not { } container ||
+            !TryComp<VertibirdComponent>(container, out var component) ||
+            component.Pilot != pilot)
+        {
+            return false;
+        }
+
+        vertibird = (container, component);
+        return true;
     }
 
     private bool CanUsePilotAction(Entity<VertibirdComponent> ent, EntityUid performer)
@@ -268,7 +280,7 @@ public sealed partial class VertibirdSystem : EntitySystem
         ent.Comp.StartupFinishedAt = _timing.CurTime + TimeSpan.FromSeconds(ent.Comp.StartupDuration);
         ent.Comp.StartupEmoteIndex = 0;
         ent.Comp.DriftVelocity = Vector2.Zero;
-        ent.Comp.FlightMoveButtons = MoveButtons.None;
+        ent.Comp.HeldInputs = VertibirdControlInput.None;
         ent.Comp.StartupSoundStream = _audio.Stop(ent.Comp.StartupSoundStream);
 
         if (ent.Comp.StartupSound != null)
@@ -287,7 +299,7 @@ public sealed partial class VertibirdSystem : EntitySystem
         ent.Comp.StartupFinishedAt = TimeSpan.Zero;
         ent.Comp.StartupEmoteIndex = 0;
         ent.Comp.DriftVelocity = Vector2.Zero;
-        ent.Comp.FlightMoveButtons = MoveButtons.None;
+        ent.Comp.HeldInputs = VertibirdControlInput.None;
         Dirty(ent);
         UpdateUi(ent);
     }
@@ -334,7 +346,7 @@ public sealed partial class VertibirdSystem : EntitySystem
         ent.Comp.StartupEmoteIndex = 0;
         ent.Comp.StartupSoundStream = _audio.Stop(ent.Comp.StartupSoundStream);
         ent.Comp.DriftVelocity = Vector2.Zero;
-        ent.Comp.FlightMoveButtons = MoveButtons.None;
+        ent.Comp.HeldInputs = VertibirdControlInput.None;
         SendVertibirdEmote(ent.Owner, "vertibird-rp-takeoff");
         Dirty(ent);
         _multiZ.WakeZPhysics((ent.Owner, mzPhysics));
@@ -355,7 +367,7 @@ public sealed partial class VertibirdSystem : EntitySystem
         mzPhysics.Velocity = 0f;
         ent.Comp.State = VertibirdFlightState.Landing;
         ent.Comp.DriftVelocity = Vector2.Zero;
-        ent.Comp.FlightMoveButtons = MoveButtons.None;
+        ent.Comp.HeldInputs = VertibirdControlInput.None;
         Dirty(ent);
         _multiZ.WakeZPhysics((ent.Owner, mzPhysics));
         UpdateUi(ent);
@@ -371,8 +383,6 @@ public sealed partial class VertibirdSystem : EntitySystem
             return;
 
         vertibird.State = VertibirdFlightState.Cruising;
-        if (vertibird.Pilot is { } pilot)
-            ApplyPilotRelay(pilot, uid);
         // #Misfits Debug - confirm transition (remove after fix)
         Log.Info($"[Vertibird] Takeoff complete -> Cruising | Pilot={ToPrettyString(vertibird.Pilot)}");
         StartFlightLoop(uid, vertibird);
@@ -394,7 +404,6 @@ public sealed partial class VertibirdSystem : EntitySystem
         vertibird.State = VertibirdFlightState.Grounded;
         StopFlightLoop(vertibird);
         SendVertibirdEmote(uid, "vertibird-rp-landing");
-        vertibird.FlightMoveButtons = MoveButtons.None;
         Dirty(uid, vertibird);
         RemComp<MZFallingComponent>(uid);
         UpdateUi((uid, vertibird));
@@ -408,23 +417,22 @@ public sealed partial class VertibirdSystem : EntitySystem
 
     private void UpdateCruising(EntityUid uid, VertibirdComponent vertibird, PhysicsComponent physics, TransformComponent xform, float frameTime)
     {
-        // #Misfits Fix - Read FlightMoveButtons set by client→server network message.
-        var rawButtons = vertibird.FlightMoveButtons;
+        // Read the server-authoritative input state sent by the pilot's controls.
+        var inputs = vertibird.HeldInputs;
 
         // #Misfits Debug - trace pilot/wasd state (remove after confirming fix)
         if (++_cruiseDebugFrame % 60 == 0)
         {
-            Log.Info($"[Vertibird] Cruising tick #{_cruiseDebugFrame} | RawButtons={rawButtons} | Drift={vertibird.DriftVelocity}");
+            Log.Info($"[Vertibird] Cruising tick #{_cruiseDebugFrame} | Inputs={inputs} | Drift={vertibird.DriftVelocity}");
         }
 
-        var buttons = SharedMoverController.GetNormalizedMovement(rawButtons);
         var rotation = _transform.GetWorldRotation(xform);
         var turn = 0f;
 
-        if ((buttons & MoveButtons.Left) != 0)
+        if ((inputs & VertibirdControlInput.Left) != 0)
             turn += 1f;
 
-        if ((buttons & MoveButtons.Right) != 0)
+        if ((inputs & VertibirdControlInput.Right) != 0)
             turn -= 1f;
 
         if (turn != 0f)
@@ -433,10 +441,10 @@ public sealed partial class VertibirdSystem : EntitySystem
         var thrust = Vector2.Zero;
         var forward = rotation.ToWorldVec();
 
-        if ((buttons & MoveButtons.Up) != 0)
+        if ((inputs & VertibirdControlInput.Forward) != 0)
             thrust += forward * vertibird.ThrustAcceleration;
 
-        if ((buttons & MoveButtons.Down) != 0)
+        if ((inputs & VertibirdControlInput.Back) != 0)
             thrust -= forward * vertibird.ReverseAcceleration;
 
         vertibird.DriftVelocity += thrust * frameTime;
@@ -467,22 +475,58 @@ public sealed partial class VertibirdSystem : EntitySystem
         if (!TryComp<MZPhysicsComponent>(ent, out var mzPhysics))
             return false;
 
-        var moved = offset > 0
-            ? _multiZ.TryMoveUp(ent.Owner)
-            : _multiZ.TryMoveDown(ent.Owner);
-
-        if (!moved)
+        if (!TryComp<TransformComponent>(ent, out var xform) ||
+            xform.MapUid is not { } mapUid ||
+            !_multiZ.TryMapOffset(mapUid, offset, out var targetMap) ||
+            targetMap is not { } resolvedTargetMap ||
+            !TryComp<MapComponent>(resolvedTargetMap.Owner, out var targetMapComp))
             return false;
 
-        mzPhysics.LocalPosition = offset > 0
-            ? 0.05f
-            : 0.95f;
+        ent.Comp.State = VertibirdFlightState.ChangingAltitude;
+        ent.Comp.AltitudeTransitionFinishedAt = _timing.CurTime + TimeSpan.FromSeconds(5);
+        ent.Comp.AltitudeTargetMap = resolvedTargetMap.Owner;
+        ent.Comp.AltitudeOffset = offset;
+        ent.Comp.HeldInputs = VertibirdControlInput.None;
         mzPhysics.Velocity = 0f;
         ent.Comp.DriftVelocity = Vector2.Zero;
         SendVertibirdEmote(ent.Owner, offset > 0 ? "vertibird-rp-z-up" : "vertibird-rp-z-down");
         Dirty(ent);
-        _multiZ.WakeZPhysics((ent.Owner, mzPhysics));
+        UpdateUi(ent);
         return true;
+    }
+
+    private void UpdateAltitudeTransition(
+        EntityUid uid,
+        VertibirdComponent vertibird,
+        MZPhysicsComponent mzPhysics,
+        TransformComponent xform)
+    {
+        mzPhysics.Velocity = 0f;
+        vertibird.DriftVelocity = Vector2.Zero;
+
+        if (_timing.CurTime < vertibird.AltitudeTransitionFinishedAt)
+            return;
+
+        if (vertibird.AltitudeTargetMap is not { } targetMap ||
+            !TryComp<MapComponent>(targetMap, out var targetMapComp))
+        {
+            vertibird.State = VertibirdFlightState.Cruising;
+            vertibird.AltitudeTargetMap = null;
+            Dirty(uid, vertibird);
+            UpdateUi((uid, vertibird));
+            return;
+        }
+
+        var worldPosition = _transform.GetWorldPosition(xform);
+        _transform.SetMapCoordinates(uid, new MapCoordinates(worldPosition, targetMapComp.MapId));
+        mzPhysics.LocalPosition = vertibird.AltitudeOffset > 0 ? 0.05f : 0.95f;
+        mzPhysics.Velocity = 0f;
+        vertibird.State = VertibirdFlightState.Cruising;
+        vertibird.AltitudeTargetMap = null;
+        vertibird.AltitudeTransitionFinishedAt = TimeSpan.Zero;
+        vertibird.AltitudeOffset = 0;
+        Dirty(uid, vertibird);
+        UpdateUi((uid, vertibird));
     }
 
     private void StartFlightLoop(EntityUid uid, VertibirdComponent vertibird)
@@ -622,12 +666,6 @@ public sealed partial class VertibirdSystem : EntitySystem
         _ui.SetUiState(ent.Owner, VertibirdUiKey.Key, BuildUiState(ent.Comp));
     }
 
-    // #Misfits Fix - No longer using mover relay; pilot's HeldMoveButtons are read
-    // directly in UpdateCruising. This avoids MoverController friction-interference.
-    private void ApplyPilotRelay(EntityUid pilot, EntityUid vertibird)
-    {
-    }
-
     private VertibirdSeatBoundUserInterfaceState BuildUiState(VertibirdComponent vertibird)
     {
         var seats = new VertibirdSeatUiState[vertibird.SeatOccupants.Length];
@@ -656,8 +694,34 @@ public sealed partial class VertibirdSystem : EntitySystem
 
     private void RemovePilotRelay(EntityUid pilot, EntityUid vertibird)
     {
-        if (TryComp<RelayInputMoverComponent>(pilot, out var relay) && relay.RelayEntity == vertibird)
-            RemComp<RelayInputMoverComponent>(pilot);
+        if (TryComp<VertibirdComponent>(vertibird, out var component))
+            component.HeldInputs = VertibirdControlInput.None;
+    }
+
+    private void OnControlInput(VertibirdControlInputMessage message, EntitySessionEventArgs session)
+    {
+        if (message.Input is not (VertibirdControlInput.Forward or VertibirdControlInput.Back or
+            VertibirdControlInput.Left or VertibirdControlInput.Right))
+        {
+            return;
+        }
+
+        if (session.SenderSession.AttachedEntity is not { } pilot)
+            return;
+
+        var query = EntityQueryEnumerator<VertibirdComponent>();
+        while (query.MoveNext(out var uid, out var vertibird))
+        {
+            if (vertibird.Pilot != pilot || vertibird.State != VertibirdFlightState.Cruising)
+                continue;
+
+            if (message.Pressed)
+                vertibird.HeldInputs |= message.Input;
+            else
+                vertibird.HeldInputs &= ~message.Input;
+
+            return;
+        }
     }
 
     private void AddPilotActions(EntityUid pilot, Entity<VertibirdComponent> ent)
@@ -678,17 +742,6 @@ public sealed partial class VertibirdSystem : EntitySystem
         vertibird.LandActionEntity = null;
         vertibird.MoveUpActionEntity = null;
         vertibird.MoveDownActionEntity = null;
-    }
-
-    // #Misfits Add - Receive WASD state directly from client pilot via network message.
-    private void OnMoveInputMessage(VertibirdMoveInputMessage msg)
-    {
-        var vbUid = GetEntity(msg.Vertibird);
-        if (!TryComp<VertibirdComponent>(vbUid, out var vertibird))
-            return;
-
-        vertibird.FlightMoveButtons = msg.Buttons;
-        Dirty(vbUid, vertibird);
     }
 
 }

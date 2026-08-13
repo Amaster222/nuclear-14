@@ -1,3 +1,12 @@
+action-name-vertibird-takeoff = Take off
+action-description-vertibird-takeoff = Lift the vertibird into flight.
+action-name-vertibird-land = Land
+action-description-vertibird-land = Bring the vertibird down to the current level.
+action-name-vertibird-move-up = Ascend z-level
+action-description-vertibird-move-up = Move the airborne vertibird to the z-level above.
+action-name-vertibird-move-down = Descend z-level
+action-description-vertibird-move-down = Move the airborne vertibird to the z-level below.
+
 vertibird-pilot-required = You need the Vertibird Pilot perk to fly this.
 vertibird-unbuckle-blocked = You cannot unbuckle while the vertibird is airborne.
 vertibird-use-seat-manifest = Use the vertibird seat manifest to board.

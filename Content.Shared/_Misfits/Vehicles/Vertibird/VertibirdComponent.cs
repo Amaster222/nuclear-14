@@ -1,7 +1,7 @@
 // #Misfits Add - Flyable vertibird POC state and pilot action wiring.
 using System.Numerics;
+using System;
 using Content.Shared.Actions;
-using Content.Shared.Movement.Systems;
 using Robust.Shared.Audio;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
@@ -95,10 +95,29 @@ public sealed partial class VertibirdComponent : Component
     public Vector2 DriftVelocity = Vector2.Zero;
 
     [ViewVariables]
-    public MoveButtons FlightMoveButtons = MoveButtons.None;
+    public VertibirdControlInput HeldInputs;
+
+    [ViewVariables]
+    public TimeSpan AltitudeTransitionFinishedAt = TimeSpan.Zero;
+
+    [ViewVariables]
+    public EntityUid? AltitudeTargetMap;
+
+    [ViewVariables]
+    public int AltitudeOffset;
 
     [DataField]
     public string MapConfigId = "Wendover";
+}
+
+[Flags]
+public enum VertibirdControlInput : byte
+{
+    None = 0,
+    Forward = 1 << 0,
+    Back = 1 << 1,
+    Left = 1 << 2,
+    Right = 1 << 3,
 }
 
 [RegisterComponent]
@@ -144,12 +163,26 @@ public sealed class VertibirdSelectSeatMessage : BoundUserInterfaceMessage
     }
 }
 
+[Serializable, NetSerializable]
+public sealed class VertibirdControlInputMessage : EntityEventArgs
+{
+    public VertibirdControlInput Input;
+    public bool Pressed;
+
+    public VertibirdControlInputMessage(VertibirdControlInput input, bool pressed)
+    {
+        Input = input;
+        Pressed = pressed;
+    }
+}
+
 public enum VertibirdFlightState : byte
 {
     Grounded,
     Starting,
     TakingOff,
     Cruising,
+    ChangingAltitude,
     Landing,
 }
 
