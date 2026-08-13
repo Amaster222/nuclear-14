@@ -62,3 +62,8 @@ overwatch-category-bos-knight = KNIGHT
 overwatch-category-bos-scribe = SCRIBE
 overwatch-category-bos-aspirant = ASPIRANTS
 overwatch-category-bos-support = SUPPORT
+
+# #Misfits Add - target-side notifications & HUD indicator
+overwatch-target-watched = You are being watched by {$name}.
+overwatch-target-unwatched = You are no longer being watched by {$name}.
+overwatch-target-hud = UNDER OVERWATCH — {$names}

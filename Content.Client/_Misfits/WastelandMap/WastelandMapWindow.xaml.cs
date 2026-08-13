@@ -37,6 +37,7 @@ public sealed partial class WastelandMapWindow : FancyWindow
     private Robust.Shared.Maths.Box2 _loadedBounds;
     private bool _hasLoadedMap;
     private OverwatchConsoleState? _overwatchState;
+    private OverwatchWatchingComponent? _overwatchWatch;
     private IEye? _overwatchSourceEye;
     private WastelandMapCommunicationsState? _communicationsState;
 
@@ -159,15 +160,17 @@ public sealed partial class WastelandMapWindow : FancyWindow
         _mapViewer.SetAnnotations(sharedAnnotations);
     }
 
-    public void UpdateOverwatch(OverwatchConsoleState? state, IEye? eye)
+    public void UpdateOverwatch(OverwatchConsoleState? state, OverwatchWatchingComponent? watch, IEye? eye)
     {
         _overwatchState = state;
+        _overwatchWatch = watch;
         _overwatchSourceEye = eye;
         UpdateModeBar();
 
         if (state == null)
         {
             _overwatchSourceEye = null;
+            OverwatchViewersLabel.Visible = false;
             UpdateOverwatchCamera(null);
             if (OverwatchPanel.Visible)
                 SwitchToMap();
@@ -175,8 +178,19 @@ public sealed partial class WastelandMapWindow : FancyWindow
         }
 
         OverwatchHeaderLabel.Text = state.MonitorTitle;
+        UpdateOverwatchViewers(state);
         UpdateOverwatchCamera(eye);
         RefreshOverwatchView();
+    }
+
+    private void UpdateOverwatchViewers(OverwatchConsoleState state)
+    {
+        OverwatchViewersLabel.Visible = state.Viewers.Count > 0;
+        if (state.Viewers.Count == 0)
+            return;
+
+        var names = string.Join(", ", state.Viewers.Select(FormattedMessage.EscapeText));
+        SetMarkup(OverwatchViewersLabel, $"[color={TermDimGreen}]Viewing: {names}[/color]");
     }
 
     public void UpdateCommunications(WastelandMapCommunicationsState? state)
@@ -250,21 +264,21 @@ public sealed partial class WastelandMapWindow : FancyWindow
                 .ToList();
 
         OverwatchNoPersonnelLabel.Visible = visibleEntries.Count == 0;
-        OverwatchStopWatchingButton.Disabled = _overwatchState.WatchedNumber == null;
+        OverwatchStopWatchingButton.Disabled = _overwatchWatch?.WatchedNumber == null;
         SetMarkup(OverwatchRosterSummaryLabel,
             _overwatchState.Personnel.Count == 0
                 ? $"[color={TermDimGreen}]No linked personnel detected.[/color]"
                 : $"[color={TermGreen}]{visibleEntries.Count} of {_overwatchState.Personnel.Count} linked personnel visible.[/color]");
 
-        var hasCurrent = _overwatchState.WatchedNumber != null &&
-                         _overwatchState.Personnel.Any(entry => entry.Number == _overwatchState.WatchedNumber.Value);
+        var hasCurrent = _overwatchWatch?.WatchedNumber != null &&
+                         _overwatchState.Personnel.Any(entry => entry.Number == _overwatchWatch.WatchedNumber.Value);
 
         if (hasCurrent)
         {
             SetMarkup(OverwatchStatusLabel,
                 $"[color={TermGreen}]SOUND[/color] live   [color={TermGreen}]CAMERA[/color] live");
         }
-        else if (_overwatchState.WatchedNumber != null && HasLastKnownOverwatchPosition())
+        else if (_overwatchWatch?.WatchedNumber != null && HasLastKnownOverwatchPosition())
         {
             SetMarkup(OverwatchStatusLabel,
                 $"[color={TermGreen}]SOUND[/color] lost   [color={TermGreen}]CAMERA[/color] lost   [color={TermDimGreen}]Last known:[/color] {FormattedMessage.EscapeText(GetLastKnownOverwatchText())}");
@@ -315,7 +329,7 @@ public sealed partial class WastelandMapWindow : FancyWindow
             {
                 HorizontalExpand = true,
                 BodyVisible = !_overwatchGroupExpanded.TryGetValue(groupName, out var expanded)
-                    ? string.IsNullOrWhiteSpace(search) || group.Any(entry => entry.IsCurrentTarget)
+                    ? string.IsNullOrWhiteSpace(search) || group.Any(entry => entry.Number == _overwatchWatch?.WatchedNumber)
                     : expanded,
             };
 
@@ -326,7 +340,7 @@ public sealed partial class WastelandMapWindow : FancyWindow
 
     private Control MakeOverwatchRow(OverwatchConsoleEntry entry)
     {
-        var active = entry.IsCurrentTarget;
+        var active = entry.Number == _overwatchWatch?.WatchedNumber;
         var row = new ContainerButton
         {
             HorizontalExpand = true,
@@ -481,7 +495,7 @@ public sealed partial class WastelandMapWindow : FancyWindow
         OverwatchCameraFallback.Visible = !hasFeed;
 
         var hasCurrent = TryGetCurrentOverwatchEntry(out _);
-        var hasLastKnown = _overwatchState?.WatchedNumber != null && HasLastKnownOverwatchPosition();
+        var hasLastKnown = _overwatchWatch?.WatchedNumber != null && HasLastKnownOverwatchPosition();
         OverwatchCameraFallbackLabel.Text = hasCurrent
             ? "CAMERA FEED UNAVAILABLE"
             : hasLastKnown
@@ -513,12 +527,12 @@ public sealed partial class WastelandMapWindow : FancyWindow
     {
         entry = default;
 
-        if (_overwatchState?.WatchedNumber == null)
+        if (_overwatchState == null || _overwatchWatch?.WatchedNumber == null)
             return false;
 
         foreach (var personnel in _overwatchState.Personnel)
         {
-            if (personnel.Number != _overwatchState.WatchedNumber.Value)
+            if (personnel.Number != _overwatchWatch.WatchedNumber.Value)
                 continue;
 
             entry = personnel;
@@ -530,21 +544,21 @@ public sealed partial class WastelandMapWindow : FancyWindow
 
     private bool HasLastKnownOverwatchPosition()
     {
-        return _overwatchState?.LastKnownX != null &&
-               _overwatchState.LastKnownY != null &&
-               !string.IsNullOrWhiteSpace(_overwatchState.LastKnownTimestamp);
+        return _overwatchWatch?.LastKnownX != null &&
+               _overwatchWatch.LastKnownY != null &&
+               !string.IsNullOrWhiteSpace(_overwatchWatch.LastKnownTimestamp);
     }
 
     private string GetLastKnownOverwatchText()
     {
-        if (_overwatchState?.LastKnownX == null ||
-            _overwatchState.LastKnownY == null ||
-            string.IsNullOrWhiteSpace(_overwatchState.LastKnownTimestamp))
+        if (_overwatchWatch?.LastKnownX == null ||
+            _overwatchWatch.LastKnownY == null ||
+            string.IsNullOrWhiteSpace(_overwatchWatch.LastKnownTimestamp))
         {
             return "UNAVAILABLE";
         }
 
-        return $"{_overwatchState.LastKnownX.Value:0.0}, {_overwatchState.LastKnownY.Value:0.0} @ {_overwatchState.LastKnownTimestamp}";
+        return $"{_overwatchWatch.LastKnownX.Value:0.0}, {_overwatchWatch.LastKnownY.Value:0.0} @ {_overwatchWatch.LastKnownTimestamp}";
     }
 
     private static void UpdateHealthBarStyle(ProgressBar bar, float health, MobState state)

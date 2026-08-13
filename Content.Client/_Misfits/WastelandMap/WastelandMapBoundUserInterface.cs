@@ -1,5 +1,6 @@
 // #Misfits Change - Wasteland Map Viewer BUI
 using Content.Client.Eye;
+using Content.Client._Misfits.Overwatch;
 using Content.Shared._Misfits.Overwatch;
 using Content.Shared._Misfits.WastelandMap;
 using JetBrains.Annotations;
@@ -46,13 +47,14 @@ public sealed class WastelandMapBoundUserInterface : BoundUserInterface
         var bounds = new Box2(mapState.BoundsLeft, mapState.BoundsBottom, mapState.BoundsRight, mapState.BoundsTop);
         var texturePath = new ResPath(mapState.MapTexturePath);
         _window?.SetMap(mapState.MapTitle, texturePath, bounds, mapState.TrackedBlips, mapState.SharedAnnotations, mapState.CompactHud);
-        _window?.UpdateOverwatch(mapState.Overwatch, ResolveOverwatchEye(mapState.Overwatch));
+        var watch = EntMan.System<OverwatchConsoleSystem>().GetLocalWatch();
+        _window?.UpdateOverwatch(mapState.Overwatch, watch, ResolveOverwatchEye(watch));
         _window?.UpdateCommunications(mapState.Communications);
     }
 
-    private IEye? ResolveOverwatchEye(OverwatchConsoleState? state)
+    private IEye? ResolveOverwatchEye(OverwatchWatchingComponent? watch)
     {
-        var target = EntMan.GetEntity(state?.WatchedEntity);
+        var target = watch?.Watching;
         if (target == null)
         {
             ClearOverwatchTarget();

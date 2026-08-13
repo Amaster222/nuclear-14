@@ -56,6 +56,7 @@
                 <Label Name="OverwatchSignalLabel" Text="UPLINK READY" StyleClasses="monospace" HorizontalAlignment="Right" />
             </BoxContainer>
             <PanelContainer Name="SepOverwatch" MinHeight="1" HorizontalExpand="True" />
+            <RichTextLabel Name="OverwatchViewersLabel" StyleClasses="monospace" HorizontalExpand="True" Visible="False" />
             <BoxContainer Orientation="Horizontal" VerticalExpand="True" SeparationOverride="8">
                 <BoxContainer Orientation="Vertical" MinWidth="300" MaxWidth="380" SeparationOverride="4">
                     <RichTextLabel Name="OverwatchRosterSummaryLabel" StyleClasses="monospace" HorizontalExpand="True" />
