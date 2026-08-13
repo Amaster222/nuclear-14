@@ -31,6 +31,8 @@ namespace Content.Shared.Humanoid.Markings
         Eyes,
         UndergarmentTop,
         UndergarmentBottom,
+        // Misfits Add - prosthetics tab in the markings picker, kept separate from tattoos/marks
+        Prosthetics,
     }
 
     public static class MarkingCategoriesConversion
