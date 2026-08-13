@@ -9885,3 +9885,14 @@ Entries:
   id: 6312
   time: '2026-08-12T18:48:03.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1128
+- author: Marabout
+  changes:
+    - type: Add
+      message: >-
+        The NCR has sent a team of contractors to rebuild the base to the core
+        state's standards.
+    - type: Add
+      message: Ranger's Bino statue in the legion's colloseum (Lucky)
+  id: 6313
+  time: '2026-08-13T23:40:50.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1137
