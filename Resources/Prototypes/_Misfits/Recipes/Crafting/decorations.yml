@@ -137,6 +137,22 @@
   objectType: Structure
   placementMode: SnapgridCenter
 
+# #Misfits Add - 509th Brotherhood of Steel wall flag recipe
+- type: construction
+  name: Flag of the 509th Brotherhood of Steel
+  id: MisfitsFlagWallBrotherhoodBonneville509
+  graph: MisfitsFlagBOS509W
+  startNode: start
+  targetNode: flagbos509w
+  # category: construction-category-decorations
+  description: The banner of the 509th Brotherhood of Steel, an offshoot of the Mojave Chapter that survived Operation Sunburst and spent a decade as ghosts of the salt flats. Now risen as an active vanguard, they secure the region's lost technology before the Enclave or the ignorant can seize it.
+  hide: false
+  icon:
+    sprite: _Misfits/Structures/Wallmounts/walldecor_bos509th.rsi
+    state: flag_509th
+  objectType: Structure
+  placementMode: SnapgridCenter
+
 #- type: construction
 #  name: Washington Brotherhood of Steel flag
 #  id: N14FlagWallWashingtonBrotherhood
@@ -379,6 +395,22 @@
   icon:
     sprite: _Misfits/Structures/Decoration/tribal_banner.rsi
     state: banner1
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+# #Misfits Add - 509th Brotherhood of Steel standing flag recipe
+- type: construction
+  name: Flag of the 509th Brotherhood of Steel
+  id: MisfitsDecorationFlagBoSBonneville509
+  graph: MisfitsFlagBOS509
+  startNode: start
+  targetNode: FlagBOS509
+  # category: construction-category-decorations
+  description: The banner of the 509th Brotherhood of Steel, an offshoot of the Mojave Chapter that survived Operation Sunburst and spent a decade as ghosts of the salt flats. Now risen as an active vanguard, they secure the region's lost technology before the Enclave or the ignorant can seize it.
+  hide: false
+  icon:
+    sprite: _Misfits/Structures/Decoration/bos509thflag.rsi
+    state: bos509thflag
   objectType: Structure
   placementMode: SnapgridCenter
 

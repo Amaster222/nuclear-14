@@ -705,6 +705,67 @@
               prototype: MaterialCloth1
               amount: 5
             - !type:DeleteEntity
+
+# #Misfits Add - 509th Brotherhood of Steel standing flag construction graph
+- type: constructionGraph
+  id: MisfitsFlagBOS509
+  start: start
+  graph:
+    - node: start
+      edges:
+        - to: FlagBOS509
+          steps:
+            - material: WoodPlank
+              amount: 5
+              doAfter: 3
+            - material: Cloth
+              amount: 5
+              doAfter: 3
+          completed:
+            - !type:SnapToGrid
+              southRotation: true
+
+    - node: FlagBOS509
+      entity: MisfitsDecorationFlagBoSBonneville509
+      edges:
+        - to: start
+          steps:
+            - tool: Prying
+              doAfter: 5
+          completed:
+            - !type:SpawnPrototype
+              prototype: MaterialWoodPlank1
+              amount: 5
+            - !type:SpawnPrototype
+              prototype: MaterialCloth1
+              amount: 5
+            - !type:DeleteEntity
+
+# #Misfits Add - 509th Brotherhood of Steel wall flag construction graph
+- type: constructionGraph
+  id: MisfitsFlagBOS509W
+  start: start
+  graph:
+    - node: start
+      edges:
+        - to: flagbos509w
+          steps:
+            - material: Cloth
+              amount: 2
+              doAfter: 3
+
+    - node: flagbos509w
+      entity: MisfitsFlagWallBrotherhoodBonneville509
+      edges:
+        - to: start
+          steps:
+            - tool: Cutting
+              doAfter: 3
+          completed:
+            - !type:SpawnPrototype
+              prototype: MaterialCloth1
+              amount: 2
+            - !type:DeleteEntity
               
               # Signs (like left and right wooden signs)
 
