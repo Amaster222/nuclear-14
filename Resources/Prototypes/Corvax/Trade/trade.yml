@@ -1,8 +1,8 @@
 - type: entity
   id: Trademachine
   abstract: true
-  name: City Trading Terminal
-  description: Quick supply - it's right nearby. Choose, pay, take.
+  name: Caravan Network Terminal
+  description: Trade terminal of the Caravan Network, their reach goes from the West Coast to the Midwest. Buy, sell, take contracts and grow your legend.
   suffix: vendor, normal
   components:
   - type: UserInterface
@@ -47,8 +47,8 @@
 - type: entity
   id: TrademachineCity
   parent: Trademachine
-  name: City Trading Terminal
-  description: Quick supply - it's right nearby. Choose, pay, take.
+  name: Caravan Network Terminal
+  description: Trade terminal of the Caravan Network, their reach goes from the West Coast to the Midwest. Buy, sell, take contracts and grow your legend.
   suffix: vendor, normal
   components:
   - type: NcStore

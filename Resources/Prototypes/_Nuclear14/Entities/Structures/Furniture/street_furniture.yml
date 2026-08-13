@@ -767,8 +767,8 @@
 - type: entity
   parent: N14DecorStreetMailbox
   id: N14DecorStreetTrashbin
-  name: trashbin
-  description: An old trashbin
+  name: trash bin
+  description: You get the feeling it hasn't been changed in awhile.
   components:
   - type: Sprite
     state: trashbin

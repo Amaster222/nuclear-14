@@ -9798,3 +9798,90 @@ Entries:
   id: 6303
   time: '2026-08-07T21:34:27.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1135
+- author: IdiocityInc
+  changes:
+    - type: Add
+      message: NCR Commissar Sabre
+    - type: Add
+      message: NCR Commissar Gas mask
+    - type: Add
+      message: NCR Commissar Breastplate
+    - type: Add
+      message: NCR Commissar Hat
+    - type: Add
+      message: NCR Commissar Jacket
+    - type: Add
+      message: NCR Commissar Kit to LT kits
+  id: 6304
+  time: '2026-08-10T00:02:02.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1136
+- author: Superspheres
+  changes:
+    - type: Add
+      message: NCR flak vest to NCR blueprints.
+    - type: Fix
+      message: Fixed new super mutant ranger armor not showing up properly in loadout.
+    - type: Fix
+      message: Fixed error messages related to new veteran ranger armor in loadouts.
+  id: 6305
+  time: '2026-08-10T00:02:57.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1138
+- author: Oli
+  changes:
+    - type: Add
+      message: >-
+        Dead Horses, Sorrows, Rustwalkers, White Legs Uniforms. Dead Horses,
+        Sorrows, White Legs, Western Wayfarers, Bone Plate, Talon Company Armors
+        to loadout menu
+  id: 6306
+  time: '2026-08-11T01:07:46.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1139
+- author: Bradysgaming
+  changes:
+    - type: Tweak
+      message: Chemicals now take ten minutes to evaporate instead of instantly
+  id: 6307
+  time: '2026-08-11T01:13:41.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1142
+- author: cythisjax
+  changes:
+    - type: Fix
+      message: >-
+        server and client desync for null exception on suicide & delimbing with
+        SelfAware perk that was local to player who did this, affecting all
+        others around them
+  id: 6308
+  time: '2026-08-11T15:07:07.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1145
+- author: cythisiax
+  changes:
+    - type: Fix
+      message: Speech occlusion failure, reverted
+  id: 6309
+  time: '2026-08-12T04:03:55.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1738
+- author: Superspheres
+  changes:
+    - type: Tweak
+      message: Changes the borg laser module to select fire.
+  id: 6310
+  time: '2026-08-12T15:00:04.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1144
+- author: Marabout
+  changes:
+    - type: Tweak
+      message: NCR's CO service rifle kit with a marksman carbine
+    - type: Tweak
+      message: NCR's Engineers kits are now more specialized and useful.
+    - type: Tweak
+      message: Ripper's structural damaged buffed from 8 to 18
+  id: 6311
+  time: '2026-08-12T15:04:41.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1146
+- author: John-Dang
+  changes:
+    - type: Add
+      message: Added fun :D
+  id: 6312
+  time: '2026-08-12T18:48:03.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1128
