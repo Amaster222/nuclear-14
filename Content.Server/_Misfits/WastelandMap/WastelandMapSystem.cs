@@ -19,6 +19,7 @@ using Content.Shared._Misfits.WastelandMap;
 using Content.Shared._Misfits.TribalHunt;
 using Content.Shared.NPC.Components; // NpcFactionMemberComponent
 using Content.Shared.NPC.Systems;
+using Content.Shared.Radio;
 using Content.Shared.Radio.Components;
 using Content.Shared.Radio.EntitySystems;
 using Content.Shared.Roles.Jobs; // #Misfits Add - leadership job lookup for Tree TacMap access
@@ -43,6 +44,8 @@ namespace Content.Server._Misfits.WastelandMap;
 /// </summary>
 public sealed class WastelandMapSystem : EntitySystem
 {
+    private const string WastelandGlobalChannel = "WastelandGlobal";
+
     private static readonly HashSet<string> EmptyCommunicationsJobs = [];
 
     private static readonly HashSet<string> BrotherhoodCommunicationsJobs =
@@ -323,11 +326,15 @@ public sealed class WastelandMapSystem : EntitySystem
 
     private void OnCommunicationsMessage(EntityUid uid, WastelandMapComponent comp, WastelandMapCommunicationsMessage args)
     {
-        if (!TryResolveCommunications(comp, out var factionId, out var channelId) ||
+        if (!TryResolveCommunications(comp, out var factionId, out var factionChannelId) ||
             !CanManageCommunications(args.Actor, comp))
         {
             return;
         }
+
+        var channelId = args.ChannelKind == WastelandMapCommunicationsChannelKind.Wasteland
+            ? WastelandGlobalChannel
+            : factionChannelId;
 
         var target = GetEntity(args.Target);
         if (Deleted(target) ||
@@ -443,13 +450,16 @@ public sealed class WastelandMapSystem : EntitySystem
                 if (!_npcFaction.IsMember(player, factionId))
                     continue;
 
-                var (hasHeadset, revoked) = GetFactionHeadsetState(player, channelId);
+                var (hasFactionHeadset, factionRevoked) = GetChannelHeadsetState(player, channelId);
+                var (hasWastelandHeadset, wastelandRevoked) = GetChannelHeadsetState(player, WastelandGlobalChannel);
                 entries.Add(new WastelandMapCommunicationsEntry(
                     GetNetEntity(player),
                     Name(player),
                     TryGetJobTitle(player),
-                    hasHeadset,
-                    revoked));
+                    hasFactionHeadset,
+                    factionRevoked,
+                    hasWastelandHeadset,
+                    wastelandRevoked));
             }
 
             entries.Sort((left, right) => string.Compare(left.Name, right.Name, StringComparison.OrdinalIgnoreCase));
@@ -457,7 +467,9 @@ public sealed class WastelandMapSystem : EntitySystem
 
         return new WastelandMapCommunicationsState(
             channelId,
-            channelId,
+            GetChannelName(channelId),
+            WastelandGlobalChannel,
+            GetChannelName(WastelandGlobalChannel),
             canManage,
             entries.ToArray());
     }
@@ -513,7 +525,14 @@ public sealed class WastelandMapSystem : EntitySystem
         return job.LocalizedName;
     }
 
-    private (bool HasHeadset, bool Revoked) GetFactionHeadsetState(EntityUid player, string channelId)
+    private string GetChannelName(string channelId)
+    {
+        return _prototypeManager.TryIndex<RadioChannelPrototype>(channelId, out var channel)
+            ? channel.LocalizedName
+            : channelId;
+    }
+
+    private (bool HasHeadset, bool Revoked) GetChannelHeadsetState(EntityUid player, string channelId)
     {
         if (!TryComp<WearingHeadsetComponent>(player, out var wearing) ||
             !TryComp<EncryptionKeyHolderComponent>(wearing.Headset, out var holder))

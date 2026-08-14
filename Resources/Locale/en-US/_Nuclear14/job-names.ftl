@@ -2,7 +2,7 @@
 job-name-bos-mid-paladin-comm = Brotherhood Head Paladin
 job-description-bos-mid-paladin-comm = Lead the martial wing of the Brotherhood chapter and direct field operations.
 job-name-bos-paladin-commander = Paladin Commander
-job-description-bos-paladin-commander = A hand-picked Brotherhood commander granted personal authority to direct chapter field operations.
+job-description-bos-paladin-commander = A hand-picked Brotherhood Head Paladin granted honorific to recall your Midwestern roots by Elder Viktoriya Plum of the Bonneville Chapter.
 job-name-bos-mid-paladin = Brotherhood Senior Paladin
 job-description-bos-mid-paladin = Serve as a veteran field commander and heavy infantry leader for the Brotherhood.
 job-name-bos-mid-knight = Brotherhood Senior Knight

@@ -27,7 +27,7 @@ public sealed partial class WastelandMapWindow : FancyWindow
     public event Action<int>? OnRemoveAnnotation;
     public event Action? OnClearAnnotations;
     public event Action<OverwatchConsoleMessageType, uint?>? OnOverwatchAction;
-    public event Action<NetEntity, bool>? OnCommunicationsAction;
+    public event Action<NetEntity, WastelandMapCommunicationsChannelKind, bool>? OnCommunicationsAction;
 
     private readonly MapViewerControl _mapViewer;
     private readonly Dictionary<string, bool> _overwatchGroupExpanded = new();
@@ -207,7 +207,7 @@ public sealed partial class WastelandMapWindow : FancyWindow
         }
 
         CommunicationsHeaderLabel.Text = "COMMUNICATIONS";
-        CommunicationsChannelLabel.Text = $"{state.ChannelName} LINK";
+        CommunicationsChannelLabel.Text = $"{state.FactionChannelName} / {state.WastelandChannelName} LINK";
         RefreshCommunicationsView();
     }
 
@@ -432,13 +432,17 @@ public sealed partial class WastelandMapWindow : FancyWindow
 
     private Control MakeCommunicationsRow(WastelandMapCommunicationsEntry entry)
     {
+        var factionRevoked = entry.FactionRevoked;
+        var wastelandRevoked = entry.WastelandRevoked;
+        var anyRevoked = factionRevoked || wastelandRevoked;
+
         var row = new PanelContainer
         {
             HorizontalExpand = true,
             PanelOverride = new StyleBoxFlat
             {
-                BackgroundColor = Color.FromHex(entry.Revoked ? "#130808" : "#050805"),
-                BorderColor = Color.FromHex(entry.Revoked ? "#7a1010" : "#0f3d0f"),
+                BackgroundColor = Color.FromHex(anyRevoked ? "#130808" : "#050805"),
+                BorderColor = Color.FromHex(anyRevoked ? "#7a1010" : "#0f3d0f"),
                 BorderThickness = new Thickness(1),
             },
         };
@@ -464,27 +468,60 @@ public sealed partial class WastelandMapWindow : FancyWindow
         SetMarkup(title, $"[color={TermGreen}][bold]> {FormattedMessage.EscapeText(entry.Name)}[/bold][/color]");
         labels.AddChild(title);
 
-        var status = entry.Revoked
-            ? "KEY DISABLED"
-            : entry.HasFactionHeadset
-                ? "KEY ACTIVE"
-                : "NO LINKED HEADSET";
         var detail = new RichTextLabel { HorizontalExpand = true };
         SetMarkup(detail,
-            $"[color={TermDimGreen}]{FormattedMessage.EscapeText(string.IsNullOrWhiteSpace(entry.JobTitle) ? "Unknown role" : entry.JobTitle!)}[/color]   [color={TermDimGreen}]{status}[/color]");
+            $"[color={TermDimGreen}]{FormattedMessage.EscapeText(string.IsNullOrWhiteSpace(entry.JobTitle) ? "Unknown role" : entry.JobTitle!)}[/color]   " +
+            $"[color={TermDimGreen}]Faction: {GetCommunicationsStatus(entry.HasFactionHeadset, factionRevoked)}[/color]   " +
+            $"[color={TermDimGreen}]Wasteland: {GetCommunicationsStatus(entry.HasWastelandHeadset, wastelandRevoked)}[/color]");
         labels.AddChild(detail);
 
-        var action = new Button
+        var actions = new BoxContainer
         {
-            Text = entry.Revoked ? "Restore" : "Disable",
-            Disabled = _communicationsState?.CanManage != true || !entry.HasFactionHeadset,
-            MinWidth = 96,
+            Orientation = BoxContainer.LayoutOrientation.Horizontal,
+            SeparationOverride = 6,
             HorizontalAlignment = HAlignment.Right,
         };
-        action.OnPressed += _ => OnCommunicationsAction?.Invoke(entry.Target, !entry.Revoked);
-        contents.AddChild(action);
+        contents.AddChild(actions);
+
+        actions.AddChild(MakeCommunicationsActionButton(
+            entry,
+            WastelandMapCommunicationsChannelKind.Faction,
+            factionRevoked,
+            entry.HasFactionHeadset,
+            "Faction"));
+        actions.AddChild(MakeCommunicationsActionButton(
+            entry,
+            WastelandMapCommunicationsChannelKind.Wasteland,
+            wastelandRevoked,
+            entry.HasWastelandHeadset,
+            "Wasteland"));
 
         return row;
+    }
+
+    private Button MakeCommunicationsActionButton(
+        WastelandMapCommunicationsEntry entry,
+        WastelandMapCommunicationsChannelKind channelKind,
+        bool revoked,
+        bool hasHeadset,
+        string label)
+    {
+        var action = new Button
+        {
+            Text = revoked ? $"Restore {label}" : $"Disable {label}",
+            Disabled = _communicationsState?.CanManage != true || !hasHeadset,
+            MinWidth = 126,
+        };
+        action.OnPressed += _ => OnCommunicationsAction?.Invoke(entry.Target, channelKind, !revoked);
+        return action;
+    }
+
+    private static string GetCommunicationsStatus(bool hasHeadset, bool revoked)
+    {
+        if (revoked)
+            return "DISABLED";
+
+        return hasHeadset ? "ACTIVE" : "NO LINK";
     }
 
     private void UpdateOverwatchCamera(IEye? eye)

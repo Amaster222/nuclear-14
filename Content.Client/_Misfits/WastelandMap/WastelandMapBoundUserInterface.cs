@@ -33,8 +33,8 @@ public sealed class WastelandMapBoundUserInterface : BoundUserInterface
         _window.OnClearAnnotations += () => SendMessage(new WastelandMapClearAnnotationsMessage());
         _window.OnOverwatchAction += (type, targetNumber) =>
             SendMessage(new OverwatchConsoleMessage(type, targetNumber));
-        _window.OnCommunicationsAction += (target, revoke) =>
-            SendMessage(new WastelandMapCommunicationsMessage(target, revoke));
+        _window.OnCommunicationsAction += (target, channelKind, revoke) =>
+            SendMessage(new WastelandMapCommunicationsMessage(target, channelKind, revoke));
     }
 
     protected override void UpdateState(BoundUserInterfaceState state)
