@@ -66,4 +66,4 @@ overwatch-category-bos-support = SUPPORT
 # #Misfits Add - target-side notifications & HUD indicator
 overwatch-target-watched = You are being watched by {$name}.
 overwatch-target-unwatched = You are no longer being watched by {$name}.
-overwatch-target-hud = UNDER OVERWATCH — {$names}
+overwatch-target-hud = HUD VIEWED THROUGH OVERWATCH

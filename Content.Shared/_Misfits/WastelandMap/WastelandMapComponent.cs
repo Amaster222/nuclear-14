@@ -67,29 +67,44 @@ public enum WastelandMapTacticalFeedKind : byte
 public readonly record struct WastelandMapTrackedBlip(float X, float Y, string Label, WastelandMapTrackedBlipKind Kind);
 
 [Serializable, NetSerializable]
+public enum WastelandMapCommunicationsChannelKind : byte
+{
+    Faction,
+    Wasteland,
+}
+
+[Serializable, NetSerializable]
 public readonly record struct WastelandMapCommunicationsEntry(
     NetEntity Target,
     string Name,
     string? JobTitle,
     bool HasFactionHeadset,
-    bool Revoked);
+    bool FactionRevoked,
+    bool HasWastelandHeadset,
+    bool WastelandRevoked);
 
 [Serializable, NetSerializable]
 public sealed class WastelandMapCommunicationsState
 {
-    public readonly string ChannelId;
-    public readonly string ChannelName;
+    public readonly string FactionChannelId;
+    public readonly string FactionChannelName;
+    public readonly string WastelandChannelId;
+    public readonly string WastelandChannelName;
     public readonly bool CanManage;
     public readonly WastelandMapCommunicationsEntry[] Personnel;
 
     public WastelandMapCommunicationsState(
-        string channelId,
-        string channelName,
+        string factionChannelId,
+        string factionChannelName,
+        string wastelandChannelId,
+        string wastelandChannelName,
         bool canManage,
         WastelandMapCommunicationsEntry[]? personnel = null)
     {
-        ChannelId = channelId;
-        ChannelName = channelName;
+        FactionChannelId = factionChannelId;
+        FactionChannelName = factionChannelName;
+        WastelandChannelId = wastelandChannelId;
+        WastelandChannelName = wastelandChannelName;
         CanManage = canManage;
         Personnel = personnel ?? [];
     }
@@ -185,11 +200,16 @@ public sealed class WastelandMapRemoveAnnotationMessage : BoundUserInterfaceMess
 public sealed class WastelandMapCommunicationsMessage : BoundUserInterfaceMessage
 {
     public readonly NetEntity Target;
+    public readonly WastelandMapCommunicationsChannelKind ChannelKind;
     public readonly bool Revoke;
 
-    public WastelandMapCommunicationsMessage(NetEntity target, bool revoke)
+    public WastelandMapCommunicationsMessage(
+        NetEntity target,
+        WastelandMapCommunicationsChannelKind channelKind,
+        bool revoke)
     {
         Target = target;
+        ChannelKind = channelKind;
         Revoke = revoke;
     }
 }
