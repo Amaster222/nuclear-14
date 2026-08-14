@@ -59,10 +59,10 @@ public sealed partial class VertibirdSystem : EntitySystem
         SubscribeLocalEvent<VertibirdComponent, StrappedEvent>(OnStrapped);
         SubscribeLocalEvent<VertibirdComponent, UnstrapAttemptEvent>(OnUnstrapAttempt);
         SubscribeLocalEvent<VertibirdComponent, UnstrappedEvent>(OnUnstrapped);
-        SubscribeLocalEvent<VertibirdPilotPerkComponent, VertibirdFlightActionEvent>(OnFlightAction);
-        SubscribeLocalEvent<VertibirdPilotPerkComponent, VertibirdLandActionEvent>(OnLandAction);
-        SubscribeLocalEvent<VertibirdPilotPerkComponent, VertibirdMoveUpActionEvent>(OnMoveUpAction);
-        SubscribeLocalEvent<VertibirdPilotPerkComponent, VertibirdMoveDownActionEvent>(OnMoveDownAction);
+        SubscribeLocalEvent<VertibirdComponent, VertibirdFlightActionEvent>(OnFlightAction);
+        SubscribeLocalEvent<VertibirdComponent, VertibirdLandActionEvent>(OnLandAction);
+        SubscribeLocalEvent<VertibirdComponent, VertibirdMoveUpActionEvent>(OnMoveUpAction);
+        SubscribeLocalEvent<VertibirdComponent, VertibirdMoveDownActionEvent>(OnMoveDownAction);
         SubscribeLocalEvent<VertibirdComponent, ComponentShutdown>(OnShutdown);
         SubscribeLocalEvent<VertibirdComponent, AfterActivatableUIOpenEvent>(OnAfterUiOpen);
         SubscribeLocalEvent<VertibirdComponent, VertibirdSelectSeatMessage>(OnSelectSeat);
@@ -89,11 +89,6 @@ public sealed partial class VertibirdSystem : EntitySystem
                     break;
                 case VertibirdFlightState.Cruising:
                     HoldHover(uid, vertibird, mzPhysics);
-                    // #Misfits Fix - HoldHover calls SetZLocalPosition → WakeZPhysics →
-                    // adds MZFallingComponent. UpdateZMovement then applies gravity,
-                    // pulling the vertibird back to ground (the "auto-landing" bug).
-                    // Remove MZFallingComponent so MultiZ doesn't fight our hover.
-                    RemComp<MZFallingComponent>(uid);
                     UpdateCruising(uid, vertibird, physics, xform, frameTime);
                     break;
                 case VertibirdFlightState.ChangingAltitude:
@@ -148,7 +143,10 @@ public sealed partial class VertibirdSystem : EntitySystem
 
     private void OnUnstrapAttempt(Entity<VertibirdComponent> ent, ref UnstrapAttemptEvent args)
     {
-        if (ent.Comp.State == VertibirdFlightState.Grounded)
+        // Pressing Land commits the craft to a controlled descent and should
+        // immediately unlock the cabin for egress; waiting for the final
+        // Grounded tick left occupants trapped through the landing sequence.
+        if (ent.Comp.State is VertibirdFlightState.Landing or VertibirdFlightState.Grounded)
             return;
 
         if (args.User == null || args.User != args.Buckle.Owner)
@@ -187,12 +185,15 @@ public sealed partial class VertibirdSystem : EntitySystem
         UpdateUi(ent);
     }
 
-    private void OnFlightAction(Entity<VertibirdPilotPerkComponent> pilot, ref VertibirdFlightActionEvent args)
+    private void OnFlightAction(Entity<VertibirdComponent> ent, ref VertibirdFlightActionEvent args)
     {
         if (args.Handled)
             return;
 
-        if (!TryGetPilotVertibird(args, pilot.Owner, out var ent))
+        if (ent.Comp.Pilot != args.Performer)
+            return;
+
+        if (!HasComp<VertibirdPilotPerkComponent>(args.Performer))
             return;
 
         switch (ent.Comp.State)
@@ -204,11 +205,8 @@ public sealed partial class VertibirdSystem : EntitySystem
         }
     }
 
-    private void OnLandAction(Entity<VertibirdPilotPerkComponent> pilot, ref VertibirdLandActionEvent args)
+    private void OnLandAction(Entity<VertibirdComponent> ent, ref VertibirdLandActionEvent args)
     {
-        if (!TryGetPilotVertibird(args, pilot.Owner, out var ent))
-            return;
-
         if (args.Handled || !CanUsePilotAction(ent, args.Performer))
             return;
 
@@ -224,41 +222,20 @@ public sealed partial class VertibirdSystem : EntitySystem
         }
     }
 
-    private void OnMoveUpAction(Entity<VertibirdPilotPerkComponent> pilot, ref VertibirdMoveUpActionEvent args)
+    private void OnMoveUpAction(Entity<VertibirdComponent> ent, ref VertibirdMoveUpActionEvent args)
     {
-        if (!TryGetPilotVertibird(args, pilot.Owner, out var ent))
-            return;
-
         if (args.Handled || !CanUsePilotAction(ent, args.Performer))
             return;
 
         args.Handled = TryMoveZ(ent, 1);
     }
 
-    private void OnMoveDownAction(Entity<VertibirdPilotPerkComponent> pilot, ref VertibirdMoveDownActionEvent args)
+    private void OnMoveDownAction(Entity<VertibirdComponent> ent, ref VertibirdMoveDownActionEvent args)
     {
-        if (!TryGetPilotVertibird(args, pilot.Owner, out var ent))
-            return;
-
         if (args.Handled || !CanUsePilotAction(ent, args.Performer))
             return;
 
         args.Handled = TryMoveZ(ent, -1);
-    }
-
-    private bool TryGetPilotVertibird<T>(T args, EntityUid pilot, out Entity<VertibirdComponent> vertibird)
-        where T : BaseActionEvent
-    {
-        vertibird = default;
-        if (args.Action.Comp.Container is not { } container ||
-            !TryComp<VertibirdComponent>(container, out var component) ||
-            component.Pilot != pilot)
-        {
-            return false;
-        }
-
-        vertibird = (container, component);
-        return true;
     }
 
     private bool CanUsePilotAction(Entity<VertibirdComponent> ent, EntityUid performer)
@@ -333,13 +310,22 @@ public sealed partial class VertibirdSystem : EntitySystem
 
     private void StartTakeoffLift(Entity<VertibirdComponent> ent)
     {
-        if (!TryComp<MZPhysicsComponent>(ent, out var mzPhysics))
+        if (!TryComp<MZPhysicsComponent>(ent, out var mzPhysics) ||
+            !TryComp(ent.Owner, out TransformComponent? xform) ||
+            !TryComp<PhysicsComponent>(ent, out var physics) ||
+            xform.MapUid is not { } mapUid)
             return;
 
-        var coords = _transform.GetMapCoordinates(ent.Owner);
-        _transform.SetMapCoordinates(ent.Owner, coords);
+        // MultiZ only supports entities parented directly to their map. Using
+        // SetMapCoordinates here reattaches the vertibird to the grid under it,
+        // causing MultiZ to reset LocalPosition to zero every update.
+        var worldPosition = _transform.GetWorldPosition(xform);
+        _transform.SetCoordinates(ent.Owner, new EntityCoordinates(mapUid, worldPosition));
+        Log.Info($"[Vertibird] Startup complete -> TakingOff | Parent={Transform(ent.Owner).ParentUid} | Map={mapUid}");
 
+        mzPhysics.LocalPosition = 0f;
         mzPhysics.Velocity = 0f;
+        _physics.SetBodyStatus(ent.Owner, physics, BodyStatus.InAir);
         ent.Comp.State = VertibirdFlightState.TakingOff;
         ent.Comp.StartupStartedAt = TimeSpan.Zero;
         ent.Comp.StartupFinishedAt = TimeSpan.Zero;
@@ -349,7 +335,7 @@ public sealed partial class VertibirdSystem : EntitySystem
         ent.Comp.HeldInputs = VertibirdControlInput.None;
         SendVertibirdEmote(ent.Owner, "vertibird-rp-takeoff");
         Dirty(ent);
-        _multiZ.WakeZPhysics((ent.Owner, mzPhysics));
+        RemComp<MZFallingComponent>(ent.Owner);
         UpdateUi(ent);
     }
 
@@ -369,15 +355,16 @@ public sealed partial class VertibirdSystem : EntitySystem
         ent.Comp.DriftVelocity = Vector2.Zero;
         ent.Comp.HeldInputs = VertibirdControlInput.None;
         Dirty(ent);
-        _multiZ.WakeZPhysics((ent.Owner, mzPhysics));
+        RemComp<MZFallingComponent>(ent.Owner);
         UpdateUi(ent);
     }
 
     private void UpdateTakeoff(EntityUid uid, VertibirdComponent vertibird, MZPhysicsComponent mzPhysics, float frameTime)
     {
         var next = MathF.Min(vertibird.HoverAltitude, mzPhysics.LocalPosition + vertibird.VerticalSpeed * frameTime);
-        _multiZ.SetZLocalPosition((uid, mzPhysics), next);
+        mzPhysics.LocalPosition = next;
         mzPhysics.Velocity = 0f;
+        RemComp<MZFallingComponent>(uid);
 
         if (next < vertibird.HoverAltitude)
             return;
@@ -395,15 +382,24 @@ public sealed partial class VertibirdSystem : EntitySystem
         vertibird.DriftVelocity = Vector2.Zero;
 
         var next = MathF.Max(0f, mzPhysics.LocalPosition - vertibird.VerticalSpeed * frameTime);
-        _multiZ.SetZLocalPosition((uid, mzPhysics), next);
+        mzPhysics.LocalPosition = next;
         mzPhysics.Velocity = 0f;
+        RemComp<MZFallingComponent>(uid);
 
         if (next > 0f)
             return;
 
         vertibird.State = VertibirdFlightState.Grounded;
+        vertibird.HeldInputs = VertibirdControlInput.None;
         StopFlightLoop(vertibird);
         SendVertibirdEmote(uid, "vertibird-rp-landing");
+
+        if (TryComp<PhysicsComponent>(uid, out var physics))
+            _physics.SetBodyStatus(uid, physics, BodyStatus.OnGround);
+
+        // Landing is the one point where the craft should become grid-parented
+        // again so ordinary ground collision and grid movement semantics resume.
+        _transform.SetMapCoordinates(uid, _transform.GetMapCoordinates(uid));
         Dirty(uid, vertibird);
         RemComp<MZFallingComponent>(uid);
         UpdateUi((uid, vertibird));
@@ -411,8 +407,9 @@ public sealed partial class VertibirdSystem : EntitySystem
 
     private void HoldHover(EntityUid uid, VertibirdComponent vertibird, MZPhysicsComponent mzPhysics)
     {
-        _multiZ.SetZLocalPosition((uid, mzPhysics), vertibird.HoverAltitude);
+        mzPhysics.LocalPosition = vertibird.HoverAltitude;
         mzPhysics.Velocity = 0f;
+        RemComp<MZFallingComponent>(uid);
     }
 
     private void UpdateCruising(EntityUid uid, VertibirdComponent vertibird, PhysicsComponent physics, TransformComponent xform, float frameTime)
@@ -475,11 +472,11 @@ public sealed partial class VertibirdSystem : EntitySystem
         if (!TryComp<MZPhysicsComponent>(ent, out var mzPhysics))
             return false;
 
-        if (!TryComp<TransformComponent>(ent, out var xform) ||
+        if (!TryComp(ent.Owner, out TransformComponent? xform) ||
             xform.MapUid is not { } mapUid ||
             !_multiZ.TryMapOffset(mapUid, offset, out var targetMap) ||
             targetMap is not { } resolvedTargetMap ||
-            !TryComp<MapComponent>(resolvedTargetMap.Owner, out var targetMapComp))
+            !HasComp<MapComponent>(resolvedTargetMap.Owner))
             return false;
 
         ent.Comp.State = VertibirdFlightState.ChangingAltitude;
@@ -489,7 +486,6 @@ public sealed partial class VertibirdSystem : EntitySystem
         ent.Comp.HeldInputs = VertibirdControlInput.None;
         mzPhysics.Velocity = 0f;
         ent.Comp.DriftVelocity = Vector2.Zero;
-        SendVertibirdEmote(ent.Owner, offset > 0 ? "vertibird-rp-z-up" : "vertibird-rp-z-down");
         Dirty(ent);
         UpdateUi(ent);
         return true;
@@ -508,7 +504,7 @@ public sealed partial class VertibirdSystem : EntitySystem
             return;
 
         if (vertibird.AltitudeTargetMap is not { } targetMap ||
-            !TryComp<MapComponent>(targetMap, out var targetMapComp))
+            !HasComp<MapComponent>(targetMap))
         {
             vertibird.State = VertibirdFlightState.Cruising;
             vertibird.AltitudeTargetMap = null;
@@ -518,8 +514,9 @@ public sealed partial class VertibirdSystem : EntitySystem
         }
 
         var worldPosition = _transform.GetWorldPosition(xform);
-        _transform.SetMapCoordinates(uid, new MapCoordinates(worldPosition, targetMapComp.MapId));
-        mzPhysics.LocalPosition = vertibird.AltitudeOffset > 0 ? 0.05f : 0.95f;
+        var altitudeOffset = vertibird.AltitudeOffset;
+        _transform.SetCoordinates(uid, new EntityCoordinates(targetMap, worldPosition));
+        mzPhysics.LocalPosition = altitudeOffset > 0 ? 0.05f : 0.95f;
         mzPhysics.Velocity = 0f;
         vertibird.State = VertibirdFlightState.Cruising;
         vertibird.AltitudeTargetMap = null;
@@ -527,6 +524,7 @@ public sealed partial class VertibirdSystem : EntitySystem
         vertibird.AltitudeOffset = 0;
         Dirty(uid, vertibird);
         UpdateUi((uid, vertibird));
+        SendVertibirdEmote(uid, altitudeOffset > 0 ? "vertibird-rp-z-up" : "vertibird-rp-z-down");
     }
 
     private void StartFlightLoop(EntityUid uid, VertibirdComponent vertibird)

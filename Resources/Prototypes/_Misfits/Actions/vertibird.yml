@@ -8,7 +8,6 @@
   - type: InstantAction
     itemIconStyle: NoItem
     checkCanInteract: false
-    raiseOnUser: true
     useDelay: 1
     icon:
       sprite: Interface/Actions/flight.rsi
@@ -24,7 +23,6 @@
   - type: InstantAction
     itemIconStyle: NoItem
     checkCanInteract: false
-    raiseOnUser: true
     useDelay: 1
     icon:
       sprite: Interface/Actions/flight.rsi
@@ -40,7 +38,6 @@
   - type: InstantAction
     itemIconStyle: NoItem
     checkCanInteract: false
-    raiseOnUser: true
     useDelay: 1
     icon:
       sprite: _MultiZ/Actions/misc.rsi
@@ -56,7 +53,6 @@
   - type: InstantAction
     itemIconStyle: NoItem
     checkCanInteract: false
-    raiseOnUser: true
     useDelay: 1
     icon:
       sprite: _MultiZ/Actions/misc.rsi

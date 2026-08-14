@@ -8,7 +8,7 @@ action-name-vertibird-move-down = Descend z-level
 action-description-vertibird-move-down = Move the airborne vertibird to the z-level below.
 
 vertibird-pilot-required = You need the Vertibird Pilot perk to fly this.
-vertibird-unbuckle-blocked = You cannot unbuckle while the vertibird is airborne.
+vertibird-unbuckle-blocked = You cannot unbuckle until the vertibird begins landing.
 vertibird-use-seat-manifest = Use the vertibird seat manifest to board.
 vertibird-seat-airborne-blocked = You cannot change seats while the vertibird is airborne.
 vertibird-seat-pilot = Pilot seat
@@ -26,5 +26,5 @@ vertibird-rp-startup-rotors = feeds power into the twin rotors, each blade chopp
 vertibird-rp-startup-throttle = advances the throttle as the frame shudders against the landing gear.
 vertibird-rp-takeoff = lifts from the ground in a hard wash of rotor noise.
 vertibird-rp-landing = settles back onto the ground as the rotors wind down.
-vertibird-rp-z-up = climbs toward the z-level above.
-vertibird-rp-z-down = descends toward the z-level below.
+vertibird-rp-z-up = climbs toward the sky for cruising.
+vertibird-rp-z-down = descends toward the ground for ground effect flight.

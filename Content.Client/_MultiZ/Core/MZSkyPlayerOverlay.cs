@@ -1,5 +1,5 @@
 // Origin: misfits-14 _MultiZ
-// #Cythisiax Add - visible player marker while viewing from empty sky layers
+// #Cythisiax Add - visible player or vehicle marker while viewing from empty sky layers
 
 using System.Numerics;
 using Content.Shared._MultiZ;
@@ -15,9 +15,9 @@ using Robust.Shared.Map.Components;
 namespace Content.Client._MultiZ.Core;
 
 /// <summary>
-/// Draws a lightweight marker for the local player while the empty sky layer is
-/// rendered as the lower map. The player entity itself lives on the sky map, so
-/// it is not part of the lower-map viewport pass.
+/// Draws the local player or their outer vehicle while the empty sky layer is
+/// rendered as the lower map. Sky-map entities are not part of that lower-map
+/// viewport pass and must be composited explicitly.
 /// </summary>
 public sealed class MZSkyPlayerOverlay : Overlay
 {
@@ -51,23 +51,52 @@ public sealed class MZSkyPlayerOverlay : Overlay
         if (HasRenderableGrids(mapUid))
             return;
 
-        if (args.ViewportControl == null ||
-            !_entMan.TryGetComponent<SpriteComponent>(player.Value, out var sprite))
+        if (args.ViewportControl == null)
         {
             return;
         }
 
-        var worldPos = _entMan.System<SharedTransformSystem>().GetWorldPosition(xform);
+        var displayEntity = GetSkyDisplayEntity(player.Value, xform);
+        if (!_entMan.TryGetComponent<TransformComponent>(displayEntity, out var displayXform) ||
+            !_entMan.TryGetComponent<SpriteComponent>(displayEntity, out var sprite))
+        {
+            return;
+        }
+
+        var worldPos = _entMan.System<SharedTransformSystem>().GetWorldPosition(displayXform);
         var screenPos = args.ViewportControl.WorldToScreen(worldPos);
         args.ScreenHandle.DrawEntity(
-            player.Value,
+            displayEntity,
             screenPos,
             Vector2.One,
             null,
             args.Viewport.Eye?.Rotation ?? default,
             sprite: sprite,
-            xform: xform,
+            xform: displayXform,
             xformSystem: _entMan.System<SharedTransformSystem>());
+    }
+
+    /// <summary>
+    /// Buckled occupants are children of their vehicle. Empty sky maps are
+    /// composited manually, so draw the outer sprite-bearing parent instead
+    /// of exposing the otherwise hidden occupant as a floating player marker.
+    /// </summary>
+    private EntityUid GetSkyDisplayEntity(EntityUid player, TransformComponent playerXform)
+    {
+        var displayEntity = player;
+        var currentXform = playerXform;
+
+        while (currentXform.ParentUid != currentXform.MapUid &&
+               _entMan.TryGetComponent<TransformComponent>(currentXform.ParentUid, out var parentXform))
+        {
+            var parent = currentXform.ParentUid;
+            if (_entMan.HasComponent<SpriteComponent>(parent))
+                displayEntity = parent;
+
+            currentXform = parentXform;
+        }
+
+        return displayEntity;
     }
 
     private bool HasRenderableGrids(EntityUid mapUid)

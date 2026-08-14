@@ -9,7 +9,7 @@ using Robust.Shared.Serialization;
 
 namespace Content.Shared._Misfits.Vehicles.Vertibird;
 
-[RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
+[RegisterComponent, NetworkedComponent, AutoGenerateComponentState(raiseAfterAutoHandleState: true)]
 public sealed partial class VertibirdComponent : Component
 {
     [DataField, AutoNetworkedField]
@@ -46,7 +46,7 @@ public sealed partial class VertibirdComponent : Component
     public EntProtoId MoveDownAction = "ActionVertibirdMoveDown";
 
     [DataField]
-    public float StartupDuration = 35f;
+    public float StartupDuration = 55f;
 
     public TimeSpan StartupStartedAt = TimeSpan.Zero;
 
@@ -120,7 +120,7 @@ public enum VertibirdControlInput : byte
     Right = 1 << 3,
 }
 
-[RegisterComponent]
+[RegisterComponent, NetworkedComponent]
 public sealed partial class VertibirdHiddenOccupantComponent : Component
 {
     [DataField]
@@ -184,6 +184,12 @@ public enum VertibirdFlightState : byte
     Cruising,
     ChangingAltitude,
     Landing,
+}
+
+public enum VertibirdVisualLayers : byte
+{
+    Shadow,
+    Base,
 }
 
 public sealed partial class VertibirdFlightActionEvent : InstantActionEvent;

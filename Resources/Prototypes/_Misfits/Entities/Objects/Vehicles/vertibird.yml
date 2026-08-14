@@ -52,7 +52,7 @@
   components:
   - type: Vertibird
     mapConfigId: Wendover
-    startupDuration: 35
+    startupDuration: 55
     hoverAltitude: 0.85
     verticalSpeed: 0.75
     thrustAcceleration: 6
@@ -74,15 +74,27 @@
     key: enum.VertibirdUiKey.Key
   - type: Sprite
     sprite: _Misfits/N14/Objects/Vehicles/vertibird.rsi
-    state: vertibird
     drawdepth: Mobs
     noRot: false
     offset: 0, 1.8
     scale: 0.6, 0.6
+    layers:
+    - sprite: _Nuclear14/Mobs/Robots/eyebot.rsi
+      state: shadow_eyebot
+      map: [ enum.VertibirdVisualLayers.Shadow ]
+      offset: 0, -1.8
+      scale: 8, 4
+      color: "#00000055"
+      visible: false
+    - state: vertibird
+      map: [ enum.VertibirdVisualLayers.Base ]
   - type: Strap
     position: Stand
     size: 900
-    buckleOffset: 0, 2.65
+    # Occupants are hidden while boarded. Keep their interaction origin on the
+    # craft so the standard self-unbuckle action remains within buckle range.
+    buckleOffset: 0, 0
+    lockToBuckleOffset: true
     rotation: 0
     buckleOnInteractHand: false
     whitelist:
