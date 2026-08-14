@@ -23,6 +23,9 @@
     - !type:CharacterDepartmentTimeRequirement # #Misfits Add - T4.5 faction timelock (14h NCR)
       department: NCR
       min: 50400 # 14 hours
+    - !type:CharacterPlaytimeRequirement
+      tracker: NCRWeaponSpecialist
+      min: 14400 # 4 hours as Weapon Specialist
   startingGear: NCRHeavyTrooperGear
   icon: "JobIconNcrSpec" # closest fitting icon: specialist tier
   supervisors: job-supervisors-ncr-sergeant

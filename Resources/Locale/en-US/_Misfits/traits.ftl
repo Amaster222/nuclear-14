@@ -116,6 +116,10 @@ trait-description-N14RidingPerk =
     You know how to handle wasteland motorcycles.
     Old engines, bad roads, and improvised frames are familiar enough that you can keep a bike moving without wrecking yourself.
 
+trait-name-N14VertibirdPilotPerk = Vertibird Pilot
+trait-description-N14VertibirdPilotPerk =
+    You know enough about pre-War tilt-rotor aircraft to get a vertibird off the ground and back down again.
+
 trait-name-LanguageTribalGeneral = Tribal Language
 trait-description-LanguageTribalGeneral = You can understand and speak the local Tribal language. Were you from the Tribe?
 

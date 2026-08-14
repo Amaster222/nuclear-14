@@ -72,11 +72,14 @@
   description: A specialized trading terminal that accepts caravan vouchers in exchange for quality equipment.
   suffix: vendor, Tickets
   components:
-  - type: NcStore
-    buyPresets:
-    - caravan_storetickets
-    sellPresets:
-    - caravan_storetickets_sell
+  # #Cythisiax Edit - Free Market Exchange: overrides inherited NcStoreStructuredBoundUi
+  - type: UserInterface
+    interfaces:
+      enum.MarketUiKey.Key:
+        type: MarketBoundUi
+  - type: ActivatableUI
+    key: enum.MarketUiKey.Key
+  - type: MarketTerminal
   - type: AccessReader
     access:
     - [ "TownieShopkeeper" ]

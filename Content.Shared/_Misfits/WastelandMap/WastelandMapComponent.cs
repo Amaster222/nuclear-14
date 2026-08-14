@@ -1,6 +1,7 @@
 // #Misfits Change - Wasteland Map Viewer
 using Robust.Shared.GameStates;
 using Robust.Shared.Maths;
+using Robust.Shared.Network;
 using Robust.Shared.Serialization;
 using Robust.Shared.Utility;
 using Content.Shared._Misfits.Overwatch;
@@ -34,6 +35,7 @@ public enum WastelandMapTrackedBlipKind : byte
     // #Misfits Add - PipBoy Hub contact/group blips for wasteland map integration
     PipBoyContact,    // PipBoy contact sharing location — cyan circle
     PipBoyGroupMember, // PipBoy group member with map tracking — teal triangle
+    GroupRallyPoint,   // Shared group rally point — amber diamond
     TribalHuntTarget, // Active tribal hunt Deathclaw target
     // #Misfits Add - Followers of the Apocalypse dead body blip
     DeadBody,          // deceased player-controlled entity shown on Followers tac-map
@@ -63,6 +65,35 @@ public enum WastelandMapTacticalFeedKind : byte
 
 [Serializable, NetSerializable]
 public readonly record struct WastelandMapTrackedBlip(float X, float Y, string Label, WastelandMapTrackedBlipKind Kind);
+
+[Serializable, NetSerializable]
+public readonly record struct WastelandMapCommunicationsEntry(
+    NetEntity Target,
+    string Name,
+    string? JobTitle,
+    bool HasFactionHeadset,
+    bool Revoked);
+
+[Serializable, NetSerializable]
+public sealed class WastelandMapCommunicationsState
+{
+    public readonly string ChannelId;
+    public readonly string ChannelName;
+    public readonly bool CanManage;
+    public readonly WastelandMapCommunicationsEntry[] Personnel;
+
+    public WastelandMapCommunicationsState(
+        string channelId,
+        string channelName,
+        bool canManage,
+        WastelandMapCommunicationsEntry[]? personnel = null)
+    {
+        ChannelId = channelId;
+        ChannelName = channelName;
+        CanManage = canManage;
+        Personnel = personnel ?? [];
+    }
+}
 
 [Serializable, NetSerializable]
 public readonly record struct WastelandMapAnnotation(
@@ -101,13 +132,15 @@ public sealed class WastelandMapBoundUserInterfaceState : BoundUserInterfaceStat
     public readonly WastelandMapTrackedBlip[] TrackedBlips;
     public readonly WastelandMapAnnotation[] SharedAnnotations;
     public readonly OverwatchConsoleState? Overwatch;
+    public readonly WastelandMapCommunicationsState? Communications;
 
     public WastelandMapBoundUserInterfaceState(string mapTitle, string mapTexturePath,
         bool compactHud,
         float boundsLeft, float boundsBottom, float boundsRight, float boundsTop,
         WastelandMapTrackedBlip[]? trackedBlips = null,
         WastelandMapAnnotation[]? sharedAnnotations = null,
-        OverwatchConsoleState? overwatch = null)
+        OverwatchConsoleState? overwatch = null,
+        WastelandMapCommunicationsState? communications = null)
     {
         MapTitle = mapTitle;
         MapTexturePath = mapTexturePath;
@@ -119,6 +152,7 @@ public sealed class WastelandMapBoundUserInterfaceState : BoundUserInterfaceStat
         TrackedBlips = trackedBlips ?? [];
         SharedAnnotations = sharedAnnotations ?? [];
         Overwatch = overwatch;
+        Communications = communications;
     }
 }
 
@@ -144,6 +178,19 @@ public sealed class WastelandMapRemoveAnnotationMessage : BoundUserInterfaceMess
     public WastelandMapRemoveAnnotationMessage(int index)
     {
         Index = index;
+    }
+}
+
+[Serializable, NetSerializable]
+public sealed class WastelandMapCommunicationsMessage : BoundUserInterfaceMessage
+{
+    public readonly NetEntity Target;
+    public readonly bool Revoke;
+
+    public WastelandMapCommunicationsMessage(NetEntity target, bool revoke)
+    {
+        Target = target;
+        Revoke = revoke;
     }
 }
 
@@ -206,6 +253,13 @@ public sealed partial class WastelandMapComponent : Component
     // #Misfits Add - optional leadership-only Tree map activation.
     [DataField]
     public HashSet<string>? ActivatorJobs;
+
+    /// <summary>
+    /// Jobs allowed to revoke and restore the faction radio encryption for online members.
+    /// If unset, communications management is disabled for this map.
+    /// </summary>
+    [DataField]
+    public HashSet<string>? CommunicationsJobs;
 
     /// <summary>
     /// If true, the UI hides the annotation toolbar and uses a smaller HUD-style layout.

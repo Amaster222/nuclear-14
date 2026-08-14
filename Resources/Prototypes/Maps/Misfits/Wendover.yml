@@ -15,15 +15,16 @@
   mapAuthor: 'mc_rainbow32' # Misfits Add - map credit displayed in lobby
   mapPath: /Maps/Misfits/Wendover.yml
   minPlayers: 0
+  mapsAbove:
+    - /Maps/Misfits/WendoverSky.yml
+  mapsBelow:
+    - /Maps/Misfits/Vault.yml
   stations:
     Wendover:
       stationProto: FalloutStation
       components:
       - type: StationNameSetup
         mapNameTemplate: 'Wendover'
-      - type: CP14StationAdditionalMap
-        mapPaths:
-        - /Maps/Misfits/Vault.yml
       - type: StationJobs
         overflowJobs:
         - Townsperson # #Misfits Change - Townsperson is now the default starter overflow role
@@ -46,6 +47,7 @@
           WastelandChaplain: [ 1, 1 ]
           WastelandBartender: [ 1, 2 ]
           TribalElder: [ 1, 1 ] # #Misfits Tweak - Willowers leadership stays singular while the faction expands to 16 total slots.
+          YumaElder: [ 1, 3 ] # #Misfits Add - sagely elder, 1-3 per round
           Tribal: [ 8, 8 ]
           TribalFarmer: [ 4, 4 ]
           TribalShaman: [ 3, 3 ] # #Misfits Change - renamed from TribalHealer
@@ -88,6 +90,7 @@
           NCRMilitaryPoliceCaptain: [ 1, 1 ]
           BoSWestElderCommander: [ 1, 0 ] # Misfits Change # #Misfits Tweak - 0 active slots (admin-notify role)
           BoSMidPaladinCommander: [ 1, 1 ]
+          BoSPaladinCommander: [ 1, 1 ] # #Cythisiax Added - personal-whitelist Paladin Commander slot
           BoSHeadKnight: [ 1, 1 ]  #Misfits Change /Add/: New consolidated BoS jobs
           BoSWestScribe: [ 1, 1 ] # Misfits Change
           BoSMidPaladin: [ 1, 1 ]  #Misfits Tweak: 1 slot — Senior Paladin is a rare rank

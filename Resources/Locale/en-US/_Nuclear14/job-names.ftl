@@ -1,6 +1,8 @@
 # Brotherhood of Steel
 job-name-bos-mid-paladin-comm = Brotherhood Head Paladin
 job-description-bos-mid-paladin-comm = Lead the martial wing of the Brotherhood chapter and direct field operations.
+job-name-bos-paladin-commander = Paladin Commander
+job-description-bos-paladin-commander = A hand-picked Brotherhood commander granted personal authority to direct chapter field operations.
 job-name-bos-mid-paladin = Brotherhood Senior Paladin
 job-description-bos-mid-paladin = Serve as a veteran field commander and heavy infantry leader for the Brotherhood.
 job-name-bos-mid-knight = Brotherhood Senior Knight
@@ -130,6 +132,8 @@ job-name-scavenger = Scavenger
 job-description-scavenger = This role is going to be removed from the game, please set your preference to "NEVER" on all your characters!
 job-name-wastelander = Wastelander
 job-description-wastelander = Survive in the wasteland and carve out your own path. It's tough out there alone, consider finding others.
+job-name-outcast = Outcast
+job-description-outcast = A Brotherhood of Steel outcast, surviving beyond the protection of the order while seeking a place in the wasteland.
 
 # Town
 job-name-townsperson = Town Townsperson

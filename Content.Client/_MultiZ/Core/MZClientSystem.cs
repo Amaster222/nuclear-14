@@ -26,17 +26,19 @@ public sealed class MZClientSystem : MZSharedSystem
     [Dependency] private readonly SharedTransformSystem _transform = default!;
 
     private MZBlurOverlay _blurOverlay = default!;
-    private MZVisibleEntityOverlay _visibleOverlay = default!;
+    private MZAerialRoofOverlay _aerialRoofOverlay = default!;
+    private MZSkyPlayerOverlay _skyPlayerOverlay = default!;
 
     public override void Initialize()
     {
         base.Initialize();
 
         _blurOverlay = new MZBlurOverlay();
-        _visibleOverlay = new MZVisibleEntityOverlay();
-
+        _aerialRoofOverlay = new MZAerialRoofOverlay();
+        _skyPlayerOverlay = new MZSkyPlayerOverlay();
         _overlayManager.AddOverlay(_blurOverlay);
-        _overlayManager.AddOverlay(_visibleOverlay);
+        _overlayManager.AddOverlay(_aerialRoofOverlay);
+        _overlayManager.AddOverlay(_skyPlayerOverlay);
     }
 
     public override void Shutdown()
@@ -44,7 +46,8 @@ public sealed class MZClientSystem : MZSharedSystem
         base.Shutdown();
 
         _overlayManager.RemoveOverlay(_blurOverlay);
-        _overlayManager.RemoveOverlay(_visibleOverlay);
+        _overlayManager.RemoveOverlay(_aerialRoofOverlay);
+        _overlayManager.RemoveOverlay(_skyPlayerOverlay);
     }
 
     public override void FrameUpdate(float frameTime)

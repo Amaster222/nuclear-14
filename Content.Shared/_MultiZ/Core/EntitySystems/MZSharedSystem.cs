@@ -44,6 +44,7 @@ public abstract partial class MZSharedSystem : EntitySystem
         _zMapQuery = GetEntityQuery<MZMapComponent>();
         GridQuery = GetEntityQuery<MapGridComponent>();
         _xformQuery = GetEntityQuery<TransformComponent>();
+        InitMovement();
     }
 
     // ── Z-Network Queries ────────────────────────────────────────────────

@@ -9,6 +9,7 @@ using System.Linq;
 using Content.Shared._Misfits.Group;
 using Content.Shared.GameTicking;
 using Robust.Server.Player;
+using Robust.Shared.Map;
 using Robust.Shared.Enums;
 using Robust.Shared.Timing;
 using Robust.Shared.Network;
@@ -18,7 +19,7 @@ namespace Content.Server._Misfits.Group;
 
 /// <summary>
 /// Manages ephemeral player groups. Groups are lost on round restart.
-/// Max 8 members, invite expires after 60 seconds.
+/// Max 20 members, invite expires after 60 seconds.
 /// Only the leader can invite/kick; any member can leave.
 /// Leadership transfers to the oldest remaining member when the leader leaves.
 /// </summary>
@@ -27,7 +28,7 @@ public sealed class GroupSystem : EntitySystem
     [Dependency] private readonly IPlayerManager _playerManager = default!;
     [Dependency] private readonly IGameTiming    _timing        = default!;
 
-    private const int MaxGroupSize = 8;
+    private const int MaxGroupSize = 20;
     private static readonly TimeSpan InviteExpiry       = TimeSpan.FromSeconds(60);
     private const float OverlayBroadcastInterval = 2.0f;
 
@@ -36,9 +37,12 @@ public sealed class GroupSystem : EntitySystem
     private sealed class GroupData
     {
         public int   Id;
+        public string Name = string.Empty;
         public NetUserId LeaderUserId;
         /// <summary>Members in join order (leader is always first).</summary>
         public List<NetUserId> MemberOrder = new();
+        public Dictionary<NetUserId, GroupMemberRole> Roles = new();
+        public MapCoordinates? RallyPoint;
     }
 
     private sealed class PendingInvite
@@ -71,6 +75,10 @@ public sealed class GroupSystem : EntitySystem
         SubscribeNetworkEvent<GroupInviteResponseEvent>(OnInviteResponse);
         SubscribeNetworkEvent<GroupLeaveRequestEvent>(OnLeave);
         SubscribeNetworkEvent<GroupKickRequestEvent>(OnKick);
+        SubscribeNetworkEvent<GroupRoleChangeRequestEvent>(OnRoleChange);
+        SubscribeNetworkEvent<GroupRenameRequestEvent>(OnRename);
+        SubscribeNetworkEvent<GroupSetRallyPointRequestEvent>(OnSetRallyPoint);
+        SubscribeNetworkEvent<GroupClearRallyPointRequestEvent>(OnClearRallyPoint);
         SubscribeNetworkEvent<GroupToggleOverlayRequestEvent>(OnToggleOverlay);
 
         SubscribeLocalEvent<RoundRestartCleanupEvent>(OnRoundRestart);
@@ -126,6 +134,47 @@ public sealed class GroupSystem : EntitySystem
                 result.Add(ent);
         }
         return result;
+    }
+
+    /// <summary>Returns the active rally point for the actor's group, or null if none exists.</summary>
+    public MapCoordinates? GetGroupRallyPoint(EntityUid actor)
+    {
+        if (!TryComp<ActorComponent>(actor, out var actorComp))
+            return null;
+
+        if (!_playerToGroup.TryGetValue(actorComp.PlayerSession.UserId, out var groupId))
+            return null;
+
+        if (!_groups.TryGetValue(groupId, out var group))
+            return null;
+
+        return group.RallyPoint;
+    }
+
+    /// <summary>Returns snapshots for all active groups, used by the raid panel to target formed groups.</summary>
+    public List<GroupRaidTargetInfo> GetRaidTargets()
+    {
+        var targets = new List<GroupRaidTargetInfo>();
+        foreach (var (groupId, group) in _groups)
+        {
+            targets.Add(new GroupRaidTargetInfo(groupId, group.Name, BuildMembers(group)));
+        }
+
+        targets.Sort((a, b) => string.Compare(a.GroupName, b.GroupName, StringComparison.Ordinal));
+        return targets;
+    }
+
+    /// <summary>Looks up a single group snapshot for raid targeting / peer-approval routing.</summary>
+    public bool TryGetRaidTargetInfo(int groupId, out GroupRaidTargetInfo info)
+    {
+        if (_groups.TryGetValue(groupId, out var group))
+        {
+            info = new GroupRaidTargetInfo(groupId, group.Name, BuildMembers(group));
+            return true;
+        }
+
+        info = default;
+        return false;
     }
 
     // ── Overlay broadcast ─────────────────────────────────────────────────
@@ -193,9 +242,11 @@ public sealed class GroupSystem : EntitySystem
         var group = new GroupData
         {
             Id           = id,
+            Name         = $"Group {id}",
             LeaderUserId = userId,
             MemberOrder  = new List<NetUserId> { userId },
         };
+        group.Roles[userId] = GroupMemberRole.Leader;
 
         _groups[id]          = group;
         _playerToGroup[userId] = id;
@@ -217,7 +268,7 @@ public sealed class GroupSystem : EntitySystem
 
         var group = _groups[groupId];
 
-        if (group.LeaderUserId != userId)
+        if (!CanInvite(userId, group))
         {
             SendResult(session, false, Loc.GetString("group-not-leader"));
             return;
@@ -317,6 +368,7 @@ public sealed class GroupSystem : EntitySystem
 
         group.MemberOrder.Add(userId);
         _playerToGroup[userId] = invite.GroupId;
+        group.Roles[userId] = GroupMemberRole.Member;
 
         BroadcastStateToGroup(invite.GroupId);
         SendResult(session, true, Loc.GetString("group-joined"));
@@ -354,7 +406,7 @@ public sealed class GroupSystem : EntitySystem
 
         var group = _groups[groupId];
 
-        if (group.LeaderUserId != userId)
+        if (!CanKick(userId, group))
         {
             SendResult(session, false, Loc.GetString("group-not-leader"));
             return;
@@ -390,6 +442,137 @@ public sealed class GroupSystem : EntitySystem
         SendResult(session, true, Loc.GetString("group-kicked", ("name", msg.TargetCharacterName)));
     }
 
+    private void OnRoleChange(GroupRoleChangeRequestEvent msg, EntitySessionEventArgs args)
+    {
+        var session = args.SenderSession;
+        var userId = session.UserId;
+
+        if (!_playerToGroup.TryGetValue(userId, out var groupId))
+        {
+            SendResult(session, false, Loc.GetString("group-not-in-group"));
+            return;
+        }
+
+        var group = _groups[groupId];
+        if (!CanManageRoles(userId, group))
+        {
+            SendResult(session, false, Loc.GetString("group-not-leader"));
+            return;
+        }
+
+        if (!TryGetSessionByCharacterName(msg.TargetCharacterName, out var targetSession) || targetSession == null)
+        {
+            SendResult(session, false, Loc.GetString("group-player-not-found", ("name", msg.TargetCharacterName)));
+            return;
+        }
+
+        var targetUserId = targetSession.UserId;
+        if (targetUserId == userId)
+        {
+            SendResult(session, false, Loc.GetString("group-cannot-change-own-role"));
+            return;
+        }
+
+        if (!_playerToGroup.TryGetValue(targetUserId, out var targetGroupId) || targetGroupId != groupId)
+        {
+            SendResult(session, false, Loc.GetString("group-target-not-in-group", ("name", msg.TargetCharacterName)));
+            return;
+        }
+
+        if (msg.TargetRole == GroupMemberRole.Leader)
+        {
+            SendResult(session, false, Loc.GetString("group-invalid-role-change"));
+            return;
+        }
+
+        var currentRole = GetMemberRole(group, targetUserId);
+        if (currentRole == msg.TargetRole)
+        {
+            SendResult(session, false, Loc.GetString("group-role-already-set", ("name", msg.TargetCharacterName)));
+            return;
+        }
+
+        group.Roles[targetUserId] = msg.TargetRole;
+        BroadcastStateToGroup(groupId);
+        SendResult(session, true, Loc.GetString("group-role-updated", ("name", msg.TargetCharacterName), ("role", GetRoleName(msg.TargetRole))));
+    }
+
+    private void OnRename(GroupRenameRequestEvent msg, EntitySessionEventArgs args)
+    {
+        var session = args.SenderSession;
+        var userId = session.UserId;
+
+        if (!_playerToGroup.TryGetValue(userId, out var groupId))
+        {
+            SendResult(session, false, Loc.GetString("group-not-in-group"));
+            return;
+        }
+
+        var group = _groups[groupId];
+        if (!CanManageRoles(userId, group))
+        {
+            SendResult(session, false, Loc.GetString("group-not-leader"));
+            return;
+        }
+
+        var name = msg.NewName.Trim();
+        if (string.IsNullOrWhiteSpace(name) || name.Length > 24)
+        {
+            SendResult(session, false, Loc.GetString("group-name-invalid"));
+            return;
+        }
+
+        group.Name = name;
+        BroadcastStateToGroup(groupId);
+        SendResult(session, true, Loc.GetString("group-name-updated", ("name", name)));
+    }
+
+    private void OnSetRallyPoint(GroupSetRallyPointRequestEvent msg, EntitySessionEventArgs args)
+    {
+        var session = args.SenderSession;
+        var userId = session.UserId;
+
+        if (!_playerToGroup.TryGetValue(userId, out var groupId))
+        {
+            SendResult(session, false, Loc.GetString("group-not-in-group"));
+            return;
+        }
+
+        var group = _groups[groupId];
+        if (!CanSetRallyPoint(userId, group))
+        {
+            SendResult(session, false, Loc.GetString("group-not-leader"));
+            return;
+        }
+
+        group.RallyPoint = msg.Coordinates;
+        BroadcastStateToGroup(groupId);
+        SendResult(session, true, Loc.GetString("group-rally-point-set"));
+    }
+
+    private void OnClearRallyPoint(GroupClearRallyPointRequestEvent msg, EntitySessionEventArgs args)
+    {
+        var session = args.SenderSession;
+        var userId = session.UserId;
+
+        if (!_playerToGroup.TryGetValue(userId, out var groupId))
+        {
+            SendResult(session, false, Loc.GetString("group-not-in-group"));
+            return;
+        }
+
+        var group = _groups[groupId];
+        if (!CanSetRallyPoint(userId, group))
+        {
+            SendResult(session, false, Loc.GetString("group-not-leader"));
+            return;
+        }
+
+        group.RallyPoint = null;
+        BroadcastStateToGroup(groupId);
+        SendResult(session, true, Loc.GetString("group-rally-point-cleared"));
+    }
+
     private void OnToggleOverlay(GroupToggleOverlayRequestEvent msg, EntitySessionEventArgs args)
     {
         var userId = args.SenderSession.UserId;
@@ -416,6 +599,7 @@ public sealed class GroupSystem : EntitySystem
 
         group.MemberOrder.Remove(userId);
         _playerToGroup.Remove(userId);
+        group.Roles.Remove(userId);
 
         if (group.MemberOrder.Count == 0)
         {
@@ -426,7 +610,10 @@ public sealed class GroupSystem : EntitySystem
 
         // Transfer leadership to the next oldest member if the leader left.
         if (group.LeaderUserId == userId)
+        {
             group.LeaderUserId = group.MemberOrder[0];
+            group.Roles[group.LeaderUserId] = GroupMemberRole.Leader;
+        }
 
         BroadcastStateToGroup(groupId);
     }
@@ -437,17 +624,6 @@ public sealed class GroupSystem : EntitySystem
         if (!_groups.TryGetValue(groupId, out var group))
             return;
 
-        // Build the member list for the event.
-        var members = new List<(NetEntity, string)>();
-        foreach (var memberId in group.MemberOrder)
-        {
-            if (!TryGetSession(memberId, out var ms) || ms == null)
-                continue;
-            if (ms.AttachedEntity is not { } ent)
-                continue;
-            members.Add((GetNetEntity(ent), Name(ent)));
-        }
-
         // Send individual state to each member.
         foreach (var memberId in group.MemberOrder)
         {
@@ -456,8 +632,10 @@ public sealed class GroupSystem : EntitySystem
 
             var ev = new GroupStateUpdateEvent
             {
-                Members      = new List<(NetEntity, string)>(members),
+                Members      = BuildMembers(group),
                 LeaderUserId = group.LeaderUserId,
+                GroupName    = group.Name,
+                RallyPoint   = group.RallyPoint,
             };
 
             RaiseNetworkEvent(ev, ms);
@@ -474,14 +652,9 @@ public sealed class GroupSystem : EntitySystem
             _groups.TryGetValue(groupId, out var group))
         {
             ev.LeaderUserId = group.LeaderUserId;
-            foreach (var memberId in group.MemberOrder)
-            {
-                if (!TryGetSession(memberId, out var ms) || ms == null)
-                    continue;
-                if (ms.AttachedEntity is not { } ent)
-                    continue;
-                ev.Members.Add((GetNetEntity(ent), Name(ent)));
-            }
+            ev.GroupName = group.Name;
+            ev.RallyPoint = group.RallyPoint;
+            ev.Members = BuildMembers(group);
         }
 
         // Check for a pending invite addressed to this player.
@@ -493,6 +666,59 @@ public sealed class GroupSystem : EntitySystem
         }
 
         RaiseNetworkEvent(ev, session);
+    }
+
+    private List<GroupMemberInfo> BuildMembers(GroupData group)
+    {
+        var members = new List<GroupMemberInfo>();
+        foreach (var memberId in group.MemberOrder)
+        {
+            if (!TryGetSession(memberId, out var ms) || ms == null)
+                continue;
+            if (ms.AttachedEntity is not { } ent)
+                continue;
+            members.Add(new GroupMemberInfo(GetNetEntity(ent), Name(ent), GetMemberRole(group, memberId)));
+        }
+
+        return members;
+    }
+
+    private GroupMemberRole GetMemberRole(GroupData group, NetUserId userId)
+    {
+        if (group.LeaderUserId == userId)
+            return GroupMemberRole.Leader;
+
+        return group.Roles.TryGetValue(userId, out var role) ? role : GroupMemberRole.Member;
+    }
+
+    private static bool CanInvite(NetUserId userId, GroupData group)
+    {
+        return group.LeaderUserId == userId || (group.Roles.TryGetValue(userId, out var role) && role == GroupMemberRole.Officer);
+    }
+
+    private static bool CanKick(NetUserId userId, GroupData group)
+    {
+        return group.LeaderUserId == userId;
+    }
+
+    private static bool CanManageRoles(NetUserId userId, GroupData group)
+    {
+        return group.LeaderUserId == userId;
+    }
+
+    private static bool CanSetRallyPoint(NetUserId userId, GroupData group)
+    {
+        return group.LeaderUserId == userId || (group.Roles.TryGetValue(userId, out var role) && role == GroupMemberRole.Officer);
+    }
+
+    private static string GetRoleName(GroupMemberRole role)
+    {
+        return role switch
+        {
+            GroupMemberRole.Leader => "leader",
+            GroupMemberRole.Officer => "officer",
+            _ => "member",
+        };
     }
 
     // ── Utilities ──────────────────────────────────────────────────────────
