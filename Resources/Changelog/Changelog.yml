@@ -10023,3 +10023,12 @@ Entries:
   id: 6314
   time: '2026-08-14T02:36:37.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1739
+- author: cythisia
+  changes:
+    - type: Tweak
+      message: communications panel on tacmap (missed main PR)
+    - type: Fix
+      message: erroneous .ftl file statement (missed main PR)
+  id: 6315
+  time: '2026-08-14T03:22:08.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1741
