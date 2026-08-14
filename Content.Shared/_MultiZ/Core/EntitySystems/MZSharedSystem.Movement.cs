@@ -46,6 +46,7 @@ public abstract partial class MZSharedSystem
     private EntityQuery<FixturesComponent> _fixturesQuery;
     private EntityQuery<MZHighGroundComponent> _highgroundQuery;
     private readonly List<EntityUid> _zMovementUpdateQueue = new();
+    private bool _movementInitialized;
 
     [Dependency] private readonly SharedPhysicsSystem _physics = default!;
     [Dependency] private readonly DamageableSystem _damage = default!;
@@ -53,20 +54,32 @@ public abstract partial class MZSharedSystem
 
     private void InitMovement()
     {
+        if (_movementInitialized)
+            return;
+
+        _movementInitialized = true;
         _fixturesQuery = GetEntityQuery<FixturesComponent>();
         _highgroundQuery = GetEntityQuery<MZHighGroundComponent>();
 
-        SubscribeLocalEvent<DamageableComponent, MZLevelHitEvent>(OnFallDamage);
     }
 
-    private void OnFallDamage(Entity<DamageableComponent> ent, ref MZLevelHitEvent args)
+    private void RaiseZLevelHit(EntityUid uid, float impactPower)
     {
+        ApplyFallDamage(uid, impactPower);
+        RaiseLocalEvent(uid, new MZLevelHitEvent(impactPower));
+    }
+
+    private void ApplyFallDamage(EntityUid uid, float impactPower)
+    {
+        if (!HasComp<DamageableComponent>(uid))
+            return;
+
         var damageType = _proto.Index(BluntDamageType);
-        var damageAmount = MathF.Pow(args.ImpactPower, 2);
+        var damageAmount = MathF.Pow(impactPower, 2);
         if (damageAmount <= 0f)
             return;
 
-        _damage.TryChangeDamage(ent.Owner, new DamageSpecifier(damageType, damageAmount));
+        _damage.TryChangeDamage(uid, new DamageSpecifier(damageType, damageAmount));
     }
 
     // ── Wake / Sleep ─────────────────────────────────────────────────────
@@ -438,7 +451,7 @@ public abstract partial class MZSharedSystem
         {
             if (MathF.Abs(zPhys.Velocity) >= ImpactVelocityLimit)
             {
-                RaiseLocalEvent(uid, new MZLevelHitEvent(MathF.Abs(zPhys.Velocity)));
+                RaiseZLevelHit(uid, MathF.Abs(zPhys.Velocity));
             }
 
             zPhys.LocalPosition = 1;
@@ -472,7 +485,7 @@ public abstract partial class MZSharedSystem
             _physics.SetBodyStatus(uid, physics, BodyStatus.OnGround);
 
         if (MathF.Abs(zPhys.Velocity) >= ImpactVelocityLimit)
-            RaiseLocalEvent(uid, new MZLevelHitEvent(MathF.Abs(zPhys.Velocity)));
+            RaiseZLevelHit(uid, MathF.Abs(zPhys.Velocity));
 
         if (stickyGround)
             zPhys.Velocity = 0f;
@@ -552,7 +565,7 @@ public abstract partial class MZSharedSystem
             {
                 if (MathF.Abs(zPhys.Velocity) >= ImpactVelocityLimit)
                 {
-                    RaiseLocalEvent(uid, new MZLevelHitEvent(MathF.Abs(zPhys.Velocity)));
+                    RaiseZLevelHit(uid, MathF.Abs(zPhys.Velocity));
                 }
 
                 zPhys.Velocity = -zPhys.Velocity * zPhys.Bounciness;

@@ -1368,6 +1368,7 @@
     Cream: 5
   solids:
     N14CookedFoodCakePlain: 1
+    FoodCherry: 1
 
 - type: microwaveMealRecipe
   id: N14RecipeChocolateCake

@@ -42,3 +42,93 @@
           collection: MetalBreak
       - !type:DoActsBehavior
         acts: [ "Destruction" ]
+
+- type: entity
+  parent: BaseStructureDynamic
+  id: N14VehicleVertibird
+  name: vertibird
+  description: A heavy tilt-rotor aircraft rigged for short-range wasteland flight.
+  suffix: Flyable, Wendover
+  components:
+  - type: Vertibird
+    mapConfigId: Wendover
+    startupDuration: 55
+    hoverAltitude: 0.85
+    verticalSpeed: 0.75
+    thrustAcceleration: 6
+    reverseAcceleration: 2
+    maxFlightSpeed: 12
+    flightDrag: 0.75
+    turnSpeedDegrees: 90
+  - type: MZPhysics
+    bounciness: 0.05
+  - type: Appearance
+  - type: CanMoveInAir
+  - type: MovementAlwaysTouching
+  - type: InteractionOutline
+  - type: UserInterface
+    interfaces:
+      enum.VertibirdUiKey.Key:
+        type: VertibirdBoundUserInterface
+  - type: ActivatableUI
+    key: enum.VertibirdUiKey.Key
+  - type: Sprite
+    sprite: _Misfits/N14/Objects/Vehicles/vertibird.rsi
+    drawdepth: Mobs
+    noRot: false
+    offset: 0, 1.8
+    scale: 0.6, 0.6
+    layers:
+    - sprite: _Nuclear14/Mobs/Robots/eyebot.rsi
+      state: shadow_eyebot
+      map: [ enum.VertibirdVisualLayers.Shadow ]
+      offset: 0, -1.8
+      scale: 8, 4
+      color: "#00000055"
+      visible: false
+    - state: vertibird
+      map: [ enum.VertibirdVisualLayers.Base ]
+  - type: Strap
+    position: Stand
+    size: 900
+    # Occupants are hidden while boarded. Keep their interaction origin on the
+    # craft so the standard self-unbuckle action remains within buckle range.
+    buckleOffset: 0, 0
+    lockToBuckleOffset: true
+    rotation: 0
+    buckleOnInteractHand: false
+    whitelist:
+      requireAll: true
+      components:
+      - HumanoidAppearance
+  - type: MovementSpeedModifier
+    acceleration: 0
+    friction: 5
+    baseWalkSpeed: 0
+    baseSprintSpeed: 0
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-1.6,-0.6,1.6,0.6"
+        density: 100
+        mask:
+        - MachineMask
+        layer:
+        - MidImpassable
+        - LowImpassable
+  - type: Damageable
+    damageContainer: Inorganic
+    damageModifierSet: Metallic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 250
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: MetalBreak
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]

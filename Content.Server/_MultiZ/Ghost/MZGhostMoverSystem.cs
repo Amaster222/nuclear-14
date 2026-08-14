@@ -4,8 +4,8 @@
 // Ported to misfits-14 _MultiZ/ — renamed &amp; adapted
 // #Cythisiax Ported — Multi-Z level support for misfits-14
 
+using Content.Server._MultiZ.Core;
 using Content.Shared._MultiZ.Core.Components;
-using Content.Shared._MultiZ.Core.EntitySystems;
 using Content.Shared._MultiZ.Ghost;
 using Content.Shared.Actions;
 
@@ -17,7 +17,10 @@ namespace Content.Server._MultiZ.Ghost;
 public sealed class MZGhostMoverSystem : EntitySystem
 {
     [Dependency] private SharedActionsSystem _actions = default!;
-    [Dependency] private MZSharedSystem _zLevel = default!;
+    // #Cythisiax Fixed - inject concrete server MZSystem, not abstract MZSharedSystem.
+    // MZSharedSystem has 2 server subtypes (MZSystem, MZPvsSystem) so Robust excludes the
+    // abstract supertype from IoC, causing UnregisteredDependencyException at startup.
+    [Dependency] private MZSystem _zLevel = default!;
 
     public override void Initialize()
     {

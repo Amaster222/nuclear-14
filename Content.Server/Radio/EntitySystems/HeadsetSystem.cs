@@ -1,15 +1,21 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Content.Server.Chat.Systems;
 using Content.Server.Emp;
 using Content.Server.Language;
 using Content.Server.Radio.Components;
 using Content.Server.Speech;
 using Content.Shared.Chat;
+using Content.Shared.Inventory;
 using Content.Shared.Inventory.Events;
 using Content.Shared.Radio;
 using Content.Shared.Radio.Components;
 using Content.Shared.Radio.EntitySystems;
+using Content.Shared.Verbs;
 using Robust.Shared.Network;
 using Robust.Shared.Player;
+using Robust.Shared.Prototypes;
 
 namespace Content.Server.Radio.EntitySystems;
 
@@ -18,18 +24,134 @@ public sealed class HeadsetSystem : SharedHeadsetSystem
     [Dependency] private readonly INetManager _netMan = default!;
     [Dependency] private readonly RadioSystem _radio = default!;
     [Dependency] private readonly LanguageSystem _language = default!;
+    [Dependency] private readonly EncryptionKeySystem _encryptionKeys = default!;
+    [Dependency] private readonly IPrototypeManager _prototype = default!;
 
     public override void Initialize()
     {
         base.Initialize();
         SubscribeLocalEvent<HeadsetComponent, RadioReceiveEvent>(OnHeadsetReceive);
         SubscribeLocalEvent<HeadsetComponent, EncryptionChannelsChangedEvent>(OnKeysChanged);
+        SubscribeLocalEvent<HeadsetComponent, InventoryRelayedEvent<GetVerbsEvent<EquipmentVerb>>>(OnGetEquipmentVerbs);
 
         SubscribeLocalEvent<WearingHeadsetComponent, EntitySpokeEvent>(OnSpeak);
         // Misfits Add - broadcast acronym/smiley emotes over headset radio
         SubscribeLocalEvent<WearingHeadsetComponent, EntitySpokeRadioEmoteEvent>(OnSpokeRadioEmote);
 
         SubscribeLocalEvent<HeadsetComponent, EmpPulseEvent>(OnEmpPulse);
+    }
+
+    private void OnGetEquipmentVerbs(Entity<HeadsetComponent> ent, ref InventoryRelayedEvent<GetVerbsEvent<EquipmentVerb>> args)
+    {
+        if (!args.Args.CanAccess ||
+            !args.Args.CanInteract ||
+            !TryComp<EncryptionKeyHolderComponent>(ent, out var holder))
+        {
+            return;
+        }
+
+        var wearer = Transform(ent).ParentUid;
+        if (args.Args.User != wearer)
+            return;
+
+        var channels = new HashSet<string>();
+        foreach (var keyUid in holder.KeyContainer.ContainedEntities)
+        {
+            if (!TryComp<EncryptionKeyComponent>(keyUid, out var key))
+                continue;
+
+            channels.UnionWith(key.Channels);
+        }
+
+        if (channels.Count == 0)
+            return;
+
+        var orderedChannels = channels.ToList();
+        orderedChannels.Sort(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var channelId in orderedChannels)
+        {
+            var holderDisabled = IsHeadsetChannelDisabled(ent, channelId);
+            var keyDisabled = IsInsertedKeyChannelDisabled(holder, channelId);
+            var disabled = holderDisabled || keyDisabled;
+            var channelName = GetChannelName(channelId);
+            var verb = new EquipmentVerb
+            {
+                Text = disabled ? $"Enable {channelName} radio" : $"Disable {channelName} radio",
+                Category = VerbCategory.ChannelSelect,
+                Priority = -5,
+                Disabled = keyDisabled,
+                Message = keyDisabled
+                    ? "This encryption key was disabled by command and cannot be restored from the headset."
+                    : null,
+                Act = () => SetHeadsetChannelDisabled(ent, channelId, !holderDisabled),
+            };
+
+            args.Args.Verbs.Add(verb);
+        }
+    }
+
+    private string GetChannelName(string channelId)
+    {
+        return _prototype.TryIndex<RadioChannelPrototype>(channelId, out var channel)
+            ? channel.LocalizedName
+            : channelId;
+    }
+
+    private bool IsHeadsetChannelDisabled(EntityUid uid, string channelId)
+    {
+        return TryComp<DisabledEncryptionChannelsComponent>(uid, out var disabled) &&
+               disabled.Channels.Contains(channelId);
+    }
+
+    private bool IsInsertedKeyChannelDisabled(EncryptionKeyHolderComponent holder, string channelId)
+    {
+        foreach (var keyUid in holder.KeyContainer.ContainedEntities)
+        {
+            if (!TryComp<EncryptionKeyComponent>(keyUid, out var key) ||
+                !key.Channels.Contains(channelId))
+            {
+                continue;
+            }
+
+            if (TryComp<DisabledEncryptionChannelsComponent>(keyUid, out var disabled) &&
+                disabled.Channels.Contains(channelId))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void SetHeadsetChannelDisabled(EntityUid uid, string channelId, bool disabled)
+    {
+        if (!TryComp<EncryptionKeyHolderComponent>(uid, out var holder))
+            return;
+
+        if (disabled)
+        {
+            var disabledChannels = EnsureComp<DisabledEncryptionChannelsComponent>(uid);
+            if (!disabledChannels.Channels.Add(channelId))
+                return;
+
+            Dirty(uid, disabledChannels);
+        }
+        else
+        {
+            if (!TryComp<DisabledEncryptionChannelsComponent>(uid, out var disabledChannels) ||
+                !disabledChannels.Channels.Remove(channelId))
+            {
+                return;
+            }
+
+            if (disabledChannels.Channels.Count == 0)
+                RemComp<DisabledEncryptionChannelsComponent>(uid);
+            else
+                Dirty(uid, disabledChannels);
+        }
+
+        _encryptionKeys.UpdateChannels(uid, holder);
     }
 
     private void OnKeysChanged(EntityUid uid, HeadsetComponent component, EncryptionChannelsChangedEvent args)

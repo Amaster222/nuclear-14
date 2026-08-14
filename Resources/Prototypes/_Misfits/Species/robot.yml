@@ -11,6 +11,8 @@
   order: 10 # #Misfits Change: robots last
   whitelistRequired: true # #Misfits Change
   restrictedCustomization: true # #Misfits Change
+  allowedTraits: # #Cythisiax Add - Mr Handy may select ONLY the Italian Accent perk (per-trait whitelist)
+  - N14ItalianAccent
   jobWhitelistUnlock: SyntheticMrHandy # #Misfits Change
   restrictedJobs: # #Misfits Change
   - SyntheticMrHandy

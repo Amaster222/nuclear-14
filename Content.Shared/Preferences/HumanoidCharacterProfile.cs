@@ -600,9 +600,18 @@ public sealed partial class HumanoidCharacterProfile : ICharacterProfile
         // players can select traits on a human, switch species to assaultron in char setup,
         // and have those traits carry over.
         if (speciesPrototype.RestrictedCustomization
-            && speciesPrototype.AllowedTraitCategories is not { Count: > 0 })
+            && speciesPrototype.AllowedTraitCategories is not { Count: > 0 }
+            && speciesPrototype.AllowedTraits is not { Count: > 0 }) // #Cythisiax Edited - also honor per-trait whitelist
         {
             traits.Clear();
+        }
+        // #Cythisiax Added - per-trait whitelist (exact IDs) takes precedence over categories,
+        // so a restricted species can allow a single specific perk (e.g. Mr Handy + Italian Accent).
+        else if (speciesPrototype.AllowedTraits is { Count: > 0 })
+        {
+            traits = traits
+                .Where(t => speciesPrototype.AllowedTraits.Contains(t))
+                .ToList();
         }
         else if (speciesPrototype.AllowedTraitCategories is { Count: > 0 })
         {
@@ -612,10 +621,48 @@ public sealed partial class HumanoidCharacterProfile : ICharacterProfile
                 .ToList();
         }
 
+        // #Cythisiax Edited - pets have their own separate point pool and size caps
+        // (1 large / 2 medium / 3 small / 3 total), independent from perk points. Perk points
+        // and the perk slot count only cover non-pet traits.
         var maxTraits = configManager.GetCVar(CCVars.GameTraitsMax);
         var defaultPoints = configManager.GetCVar(CCVars.GameTraitsDefaultPoints);
-        var pointTotal = defaultPoints + traits.Sum(t => prototypeManager.Index<TraitPrototype>(t).Points);
-        if (traits.Count > maxTraits || pointTotal < 0)
+        var petBudget = configManager.GetCVar(CCVars.GamePetsDefaultPoints);
+        var petMaxSmall = configManager.GetCVar(CCVars.GamePetsMaxSmall);
+        var petMaxMedium = configManager.GetCVar(CCVars.GamePetsMaxMedium);
+        var petMaxLarge = configManager.GetCVar(CCVars.GamePetsMaxLarge);
+        var petMaxTotal = configManager.GetCVar(CCVars.GamePetsMaxTotal);
+
+        var pointTotal = defaultPoints;
+        var petPoints = petBudget;
+        int petSmall = 0, petMedium = 0, petLarge = 0, petTotal = 0, perkCount = 0;
+        foreach (var t in traits)
+        {
+            var proto = prototypeManager.Index<TraitPrototype>(t);
+            if (PetTraitHelpers.IsPet(proto))
+            {
+                petPoints += proto.Points;
+                petTotal++;
+                switch (PetTraitHelpers.GetPetSize(proto))
+                {
+                    case PetTraitHelpers.SizeSmall: petSmall++; break;
+                    case PetTraitHelpers.SizeMedium: petMedium++; break;
+                    case PetTraitHelpers.SizeLarge: petLarge++; break;
+                }
+            }
+            else
+            {
+                pointTotal += proto.Points;
+                perkCount++;
+            }
+        }
+
+        var petsInvalid = petPoints < 0
+            || petSmall > petMaxSmall
+            || petMedium > petMaxMedium
+            || petLarge > petMaxLarge
+            || petTotal > petMaxTotal;
+
+        if (perkCount > maxTraits || pointTotal < 0 || petsInvalid)
             traits.Clear();
 
         var loadouts = LoadoutPreferences

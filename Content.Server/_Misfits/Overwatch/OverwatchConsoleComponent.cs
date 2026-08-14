@@ -13,30 +13,22 @@ public sealed partial class OverwatchConsoleComponent : Component
     [DataField]
     public string MonitorTitle = "overwatch-monitor-title";
 
+    /// <summary>
+    /// Per-operator watch sessions keyed by the watching actor. Each operator holds their
+    /// own target, enabling multiple simultaneous watchers on the same console.
+    /// </summary>
     [ViewVariables]
-    public bool UiOpen;
+    public Dictionary<EntityUid, OverwatchWatchSession> WatchSessions = new();
+}
 
-    [ViewVariables]
-    public EntityUid? UiActor;
+/// <summary>Server-side watch session for a single operator on this console.</summary>
+public sealed class OverwatchWatchSession
+{
+    public uint WatchedNumber;
 
-    [ViewVariables]
-    public EntityUid? WatchingActor;
-
-    [ViewVariables]
+    /// <summary>Last resolved watch target. Null while suspended or never resolved.</summary>
     public EntityUid? WatchedEntity;
 
-    [ViewVariables]
-    public uint? WatchedNumber;
-
-    [ViewVariables]
-    public string? LastKnownName;
-
-    [ViewVariables]
-    public float? LastKnownX;
-
-    [ViewVariables]
-    public float? LastKnownY;
-
-    [ViewVariables]
-    public string? LastKnownTimestamp;
+    /// <summary>True while the target cannot be resolved (link suspended, not stopped).</summary>
+    public bool Suspended;
 }

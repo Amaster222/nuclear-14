@@ -6,6 +6,7 @@
 
 using System.Numerics;
 using Content.Shared._MultiZ;
+using Content.Shared._MultiZ.Core.Components;
 using Robust.Client.Graphics;
 using Robust.Client.Player;
 using Robust.Shared.Configuration;
@@ -20,9 +21,10 @@ namespace Content.Client._MultiZ.Core;
 public sealed class MZBlurOverlay : Overlay
 {
     [Dependency] private readonly IConfigurationManager _cfg = default!;
+    [Dependency] private readonly IEntityManager _entMan = default!;
     [Dependency] private readonly IPlayerManager _player = default!;
 
-    public override OverlaySpace Space => OverlaySpace.WorldSpaceBelowFOV;
+    public override OverlaySpace Space => OverlaySpace.ScreenSpace;
 
     public MZBlurOverlay()
     {
@@ -38,11 +40,16 @@ public sealed class MZBlurOverlay : Overlay
         if (player == null)
             return;
 
-        var handle = args.WorldHandle;
+        if (!_entMan.TryGetComponent<MZViewerComponent>(player.Value, out var viewer))
+            return;
+
+        if (!viewer.LookUp && !viewer.FaintUp && !viewer.StairPreviewUp)
+            return;
+
+        var handle = args.ScreenHandle;
         var viewport = args.ViewportBounds;
         var strength = _cfg.GetCVar(MZCVars.BlurStrength);
 
-        // Simple semi-transparent overlay for Z-level transition
-        handle.DrawRect(new Box2(Vector2.Zero, viewport.Size), Color.Black.WithAlpha(0.3f * strength));
+        handle.DrawRect(UIBox2.FromDimensions(viewport.TopLeft, viewport.Size), Color.Black.WithAlpha(0.3f * strength));
     }
 }

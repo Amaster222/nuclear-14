@@ -357,6 +357,12 @@ public sealed class MapViewerControl : Control
                 handle.DrawCircle(markerPos, 5f, Color.Black);
                 break;
 
+            case WastelandMapTrackedBlipKind.GroupRallyPoint:
+                DrawDiamond(handle, markerPos, 12f, color);
+                handle.DrawCircle(markerPos, 3.5f, Color.Black);
+                handle.DrawCircle(markerPos, 2f, Color.White);
+                break;
+
             case WastelandMapTrackedBlipKind.TribalHuntTarget:
                 // Hunt target: bright crimson ring + white center for fast recognition.
                 handle.DrawCircle(markerPos, 11f, color);
@@ -562,6 +568,7 @@ public sealed class MapViewerControl : Control
             WastelandMapTrackedBlipKind.LegionDecanus => new Color(0.92f, 0.18f, 0.12f, 1f),   // bright red
             WastelandMapTrackedBlipKind.LegionWarrior => new Color(0.70f, 0.16f, 0.12f, 1f),   // dark red
             WastelandMapTrackedBlipKind.LegionRecruit => new Color(0.62f, 0.32f, 0.12f, 1f),   // brown
+            WastelandMapTrackedBlipKind.GroupRallyPoint => new Color(0.97f, 0.78f, 0.18f, 1f),
             WastelandMapTrackedBlipKind.TribalHuntTarget => new Color(1f, 0.20f, 0.18f, 1f),
             // #Misfits Add - Followers dead body blip: pale white
             WastelandMapTrackedBlipKind.DeadBody => new Color(0.9f, 0.9f, 0.9f, 1f),

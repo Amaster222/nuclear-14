@@ -16,6 +16,15 @@
       - state: green
       - state: commander
 
+# #Cythisiax Added - Paladin Commander personal-whitelist spawn point.
+- type: entity
+  parent: MisfitsSpawnPointBoSMidPaladinCommander
+  id: MisfitsSpawnPointBoSPaladinCommander
+  name: Brotherhood Paladin Commander
+  components:
+  - type: SpawnPoint
+    job_id: BoSPaladinCommander
+
 - type: entity
   parent: MisfitsSpawnPointBoSMidPaladinCommander
   id: MisfitsSpawnPointBoSMidKnight
