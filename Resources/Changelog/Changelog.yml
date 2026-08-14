@@ -10057,3 +10057,10 @@ Entries:
   id: 6318
   time: '2026-08-14T14:19:44.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1746
+- author: Marabout
+  changes:
+    - type: Fix
+      message: Fixed some issues in the NCR's base
+  id: 6319
+  time: '2026-08-14T21:27:45.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1747
