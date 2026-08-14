@@ -10064,3 +10064,10 @@ Entries:
   id: 6319
   time: '2026-08-14T21:27:45.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1747
+- author: aftemath434
+  changes:
+    - type: Add
+      message: Enclave Bunker door and hatch
+  id: 6320
+  time: '2026-08-14T23:26:20.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1748
