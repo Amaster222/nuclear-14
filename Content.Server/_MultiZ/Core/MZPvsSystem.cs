@@ -7,6 +7,7 @@ using System.Linq;
 using Content.Shared._MultiZ;
 using Content.Shared._MultiZ.Core.Components;
 using Content.Shared._MultiZ.Core.EntitySystems;
+using Content.Shared.GameTicking;
 using Robust.Server.GameObjects;
 using Robust.Shared.Enums;
 using Robust.Shared.GameObjects;
@@ -29,8 +30,9 @@ public sealed partial class MZPvsSystem : MZSharedSystem
 
     private readonly HashSet<ICommonSession> _trackedSessions = new();
     private readonly Dictionary<ICommonSession, EntityUid> _lowerViewRelays = new();
+    private readonly Queue<ICommonSession> _refreshQueue = new();
 
-    private float _probeAccumulator;
+    private float _refreshBudget;
 
     public override void Initialize()
     {
@@ -38,6 +40,7 @@ public sealed partial class MZPvsSystem : MZSharedSystem
 
         SubscribeLocalEvent<PlayerAttachedEvent>(OnPlayerAttached);
         SubscribeLocalEvent<PlayerDetachedEvent>(OnPlayerDetached);
+        SubscribeLocalEvent<RoundRestartCleanupEvent>(OnRoundRestart);
     }
 
     public override void Update(float frameTime)
@@ -45,43 +48,66 @@ public sealed partial class MZPvsSystem : MZSharedSystem
         base.Update(frameTime);
 
         var probeHz = _cfg.GetCVar(MZCVars.ProbeUpdateHz);
-        if (probeHz <= 0f || _trackedSessions.Count == 0)
+        if (probeHz <= 0f)
+        {
+            ClearAllRelays();
+            _refreshBudget = 0f;
+            return;
+        }
+
+        if (_trackedSessions.Count == 0)
+        {
+            _refreshBudget = 0f;
+            return;
+        }
+
+        _refreshBudget += frameTime * probeHz * _trackedSessions.Count;
+        var refreshCount = Math.Min((int) _refreshBudget, _refreshQueue.Count);
+        if (refreshCount == 0)
             return;
 
-        _probeAccumulator += frameTime;
-        var probeInterval = 1f / probeHz;
-        if (_probeAccumulator < probeInterval)
-            return;
+        _refreshBudget -= refreshCount;
+        for (var i = 0; i < refreshCount; i++)
+        {
+            var session = _refreshQueue.Dequeue();
+            if (!_trackedSessions.Contains(session))
+                continue;
 
-        _probeAccumulator = 0f;
-        RefreshTrackedSessions();
+            if (session.Status == SessionStatus.Disconnected)
+            {
+                ClearSession(session);
+                _trackedSessions.Remove(session);
+                RemoveFromRefreshQueue(session);
+                continue;
+            }
+
+            RefreshSession(session);
+            _refreshQueue.Enqueue(session);
+        }
     }
 
     private void OnPlayerAttached(PlayerAttachedEvent ev)
     {
-        _trackedSessions.Add(ev.Player);
-        RefreshSession(ev.Player);
+        if (_trackedSessions.Add(ev.Player))
+            _refreshQueue.Enqueue(ev.Player);
+
+        if (_cfg.GetCVar(MZCVars.ProbeUpdateHz) > 0f)
+            RefreshSession(ev.Player);
     }
 
     private void OnPlayerDetached(PlayerDetachedEvent ev)
     {
         _trackedSessions.Remove(ev.Player);
+        RemoveFromRefreshQueue(ev.Player);
         ClearSession(ev.Player);
     }
 
-    private void RefreshTrackedSessions()
+    private void OnRoundRestart(RoundRestartCleanupEvent ev)
     {
-        foreach (var session in _trackedSessions.ToArray())
-        {
-            if (session.Status == SessionStatus.Disconnected)
-            {
-                ClearSession(session);
-                _trackedSessions.Remove(session);
-                continue;
-            }
-
-            RefreshSession(session);
-        }
+        ClearAllRelays();
+        _trackedSessions.Clear();
+        _refreshQueue.Clear();
+        _refreshBudget = 0f;
     }
 
     private void RefreshSession(ICommonSession session)
@@ -132,6 +158,23 @@ public sealed partial class MZPvsSystem : MZSharedSystem
 
         if (!TerminatingOrDeleted(relay))
             QueueDel(relay);
+    }
+
+    private void ClearAllRelays()
+    {
+        foreach (var session in _lowerViewRelays.Keys.ToArray())
+            ClearSession(session);
+    }
+
+    private void RemoveFromRefreshQueue(ICommonSession session)
+    {
+        var count = _refreshQueue.Count;
+        for (var i = 0; i < count; i++)
+        {
+            var queued = _refreshQueue.Dequeue();
+            if (queued != session)
+                _refreshQueue.Enqueue(queued);
+        }
     }
 
     private bool HasRenderableGrids(EntityUid mapUid)

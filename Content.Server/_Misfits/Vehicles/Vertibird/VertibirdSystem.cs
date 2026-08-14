@@ -48,9 +48,6 @@ public sealed partial class VertibirdSystem : EntitySystem
 
     private readonly Dictionary<EntityUid, int> _pendingSeatSelections = new();
 
-    // #Misfits Debug - remove after fixing WASD
-    private int _cruiseDebugFrame;
-
     public override void Initialize()
     {
         base.Initialize();
@@ -417,12 +414,6 @@ public sealed partial class VertibirdSystem : EntitySystem
         // Read the server-authoritative input state sent by the pilot's controls.
         var inputs = vertibird.HeldInputs;
 
-        // #Misfits Debug - trace pilot/wasd state (remove after confirming fix)
-        if (++_cruiseDebugFrame % 60 == 0)
-        {
-            Log.Info($"[Vertibird] Cruising tick #{_cruiseDebugFrame} | Inputs={inputs} | Drift={vertibird.DriftVelocity}");
-        }
-
         var rotation = _transform.GetWorldRotation(xform);
         var turn = 0f;
 
@@ -461,7 +452,6 @@ public sealed partial class VertibirdSystem : EntitySystem
         _physics.SetLinearVelocity(uid, vertibird.DriftVelocity, body: physics);
         _physics.SetAngularVelocity(uid, 0f, body: physics);
         _transform.SetWorldRotation(uid, rotation);
-        Dirty(uid, vertibird);
     }
 
     private bool TryMoveZ(Entity<VertibirdComponent> ent, int offset)

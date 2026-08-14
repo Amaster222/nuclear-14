@@ -91,7 +91,7 @@ public sealed partial class VertibirdComponent : Component
     [DataField]
     public float TurnSpeedDegrees = 90f;
 
-    [DataField, AutoNetworkedField]
+    [DataField]
     public Vector2 DriftVelocity = Vector2.Zero;
 
     [ViewVariables]
