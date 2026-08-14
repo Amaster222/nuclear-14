@@ -132,8 +132,9 @@ job-name-scavenger = Scavenger
 job-description-scavenger = This role is going to be removed from the game, please set your preference to "NEVER" on all your characters!
 job-name-wastelander = Wastelander
 job-description-wastelander = Survive in the wasteland and carve out your own path. It's tough out there alone, consider finding others.
-job-name-outcast = Outcast
-job-description-outcast = A Brotherhood of Steel outcast, surviving beyond the protection of the order while seeking a place in the wasteland.
+# #Misfits Change - renamed "Outcast" to "BoS Exile" (display name only, ID stays Outcast so preferences/playtime are kept)
+job-name-outcast = BoS Exile
+job-description-outcast = A Brotherhood of Steel exile, surviving beyond the protection of the order while seeking a place in the wasteland.
 
 # Town
 job-name-townsperson = Town Townsperson

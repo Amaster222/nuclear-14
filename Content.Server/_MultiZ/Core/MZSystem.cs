@@ -9,6 +9,7 @@ using System.Linq;
 using Content.Server.GameTicking;
 using Content.Server.Station.Components;
 using Content.Server.Station.Systems;
+using Content.Shared.GameTicking;
 using Content.Shared._MultiZ;
 using Content.Shared._MultiZ.Core;
 using Content.Shared._MultiZ.Core.Components;
@@ -36,6 +37,8 @@ public sealed partial class MZSystem : MZSharedSystem
     [Dependency] private IConfigurationManager _cfg = default!;
 
     private bool _zLevelsEnabled;
+    private readonly HashSet<EntityUid> _createdMaps = new();
+    private readonly HashSet<EntityUid> _createdNetworks = new();
 
     public override void Initialize()
     {
@@ -43,6 +46,7 @@ public sealed partial class MZSystem : MZSharedSystem
 
         Subs.CVar(_cfg, MZCVars.Enabled, v => _zLevelsEnabled = v, true);
         SubscribeLocalEvent<PostGameMapLoad>(OnGameMapLoad, after: [typeof(StationSystem)]);
+        SubscribeLocalEvent<RoundRestartCleanupEvent>(OnRoundRestart);
     }
 
     public override void Update(float frameTime)
@@ -71,6 +75,9 @@ public sealed partial class MZSystem : MZSharedSystem
     /// </summary>
     private void OnGameMapLoad(PostGameMapLoad ev)
     {
+        if (!_zLevelsEnabled)
+            return;
+
         // #Cythisiax Ported — Check for multi-Z maps on the gameMap prototype
         if (ev.GameMap.MapsAbove.Count == 0 && ev.GameMap.MapsBelow.Count == 0)
             return;
@@ -108,6 +115,8 @@ public sealed partial class MZSystem : MZSharedSystem
                 continue;
             }
 
+            _createdMaps.Add(mapEnt.Value.Owner);
+
             Log.Info($"Created map {mapEnt.Value.Comp.MapId} for Station zNetwork at level {depth}");
             EntityManager.AddComponents(mapEnt.Value, ev.GameMap.ZLevelsComponentOverrides);
             AddZLevelGridsToStations(grids, stationsById, stations);
@@ -126,6 +135,8 @@ public sealed partial class MZSystem : MZSharedSystem
                 Log.Error($"Failed to load map for Station zNetwork at depth {depth}!");
                 continue;
             }
+
+            _createdMaps.Add(mapEnt.Value.Owner);
 
             Log.Info($"Created map {mapEnt.Value.Comp.MapId} for Station zNetwork at level {depth}");
             EntityManager.AddComponents(mapEnt.Value, ev.GameMap.ZLevelsComponentOverrides);
@@ -176,8 +187,27 @@ public sealed partial class MZSystem : MZSharedSystem
     private EntityUid CreateZNetwork()
     {
         var network = Spawn(null, MapCoordinates.Nullspace);
-        var comp = EnsureComp<MZNetworkComponent>(network);
+        EnsureComp<MZNetworkComponent>(network);
+        _createdNetworks.Add(network);
         return network;
+    }
+
+    private void OnRoundRestart(RoundRestartCleanupEvent ev)
+    {
+        foreach (var map in _createdMaps)
+        {
+            if (!TerminatingOrDeleted(map))
+                QueueDel(map);
+        }
+
+        foreach (var network in _createdNetworks)
+        {
+            if (!TerminatingOrDeleted(network))
+                QueueDel(network);
+        }
+
+        _createdMaps.Clear();
+        _createdNetworks.Clear();
     }
 
     /// <summary>
