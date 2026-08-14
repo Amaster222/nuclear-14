@@ -608,7 +608,7 @@
   availableFaction:
   - NCR
   materials:
-    Steel: 15000
+    Steel: 18000 # #Burger - increased to make up for buff (was 1500)
 
     N14Iron: 1500
 
@@ -616,7 +616,7 @@
 
     Circuitry: 600
 
-    Plastic: 1000
+    Plastic: 1500 # #Burger - increased to make up for buff (was 1000)
 
 # --- NCR Tier 5 Weapons (Anti-Materiel) ---
 # #Misfits Add - costs so much scrap metal to make these dang things
@@ -1360,12 +1360,12 @@
   requiresBlueprint: true
   availableFaction:
   - NCR
-  materials:
-    Lead: 85
+  materials: # #Burger - increased cost of ammo boxes to make up for higher capacity
+    Lead: 250 # #Burger - increased (was 85)
 
-    N14Brass: 55
+    N14Brass: 170 # #Burger - increased (was 55)
 
-    N14Gunpowder: 55
+    N14Gunpowder: 170 # #Burger - increased (was 55)
 
 
 - type: latheRecipe
