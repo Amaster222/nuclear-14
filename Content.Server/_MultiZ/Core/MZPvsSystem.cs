@@ -48,8 +48,8 @@ public sealed partial class MZPvsSystem : MZSharedSystem
         SubscribeLocalEvent<PlayerAttachedEvent>(OnPlayerAttached);
         SubscribeLocalEvent<PlayerDetachedEvent>(OnPlayerDetached);
         SubscribeLocalEvent<ActorComponent, EntParentChangedMessage>(OnActorParentChanged);
-        SubscribeLocalEvent<MapGridComponent, ComponentStartup>(OnGridStartup);
-        SubscribeLocalEvent<MapGridComponent, ComponentShutdown>(OnGridShutdown);
+        SubscribeLocalEvent<GridStartupEvent>(OnGridStartup);
+        SubscribeLocalEvent<GridRemovalEvent>(OnGridRemoved);
         SubscribeLocalEvent<MapGridComponent, EntParentChangedMessage>(OnGridParentChanged);
         SubscribeLocalEvent<RoundRestartCleanupEvent>(OnRoundRestart);
     }
@@ -114,14 +114,14 @@ public sealed partial class MZPvsSystem : MZSharedSystem
         RefreshSession(ent.Comp.PlayerSession);
     }
 
-    private void OnGridStartup(Entity<MapGridComponent> ent, ref ComponentStartup args)
+    private void OnGridStartup(GridStartupEvent args)
     {
-        UpdateGridMap(ent.Owner, Transform(ent).MapUid);
+        UpdateGridMap(args.EntityUid, Transform(args.EntityUid).MapUid);
     }
 
-    private void OnGridShutdown(Entity<MapGridComponent> ent, ref ComponentShutdown args)
+    private void OnGridRemoved(GridRemovalEvent args)
     {
-        UpdateGridMap(ent.Owner, null);
+        UpdateGridMap(args.EntityUid, null);
     }
 
     private void OnGridParentChanged(Entity<MapGridComponent> ent, ref EntParentChangedMessage args)
