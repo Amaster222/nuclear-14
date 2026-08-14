@@ -9896,3 +9896,130 @@ Entries:
   id: 6313
   time: '2026-08-13T23:40:50.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1137
+- author: Cythisiax
+  changes:
+    - type: Add
+      message: >-
+        Factions now have the option to disable/enable specific
+        headset/encryption keys
+    - type: Add
+      message: >-
+        Personal whitelist skeleton method for faction specific roles that are
+        out of the loop (To include NCR, Legion, BoS)
+    - type: Add
+      message: >-
+        _MultiZ with WendoverSky.yml | Wendover.yml | Vault.yml as placeholder.
+        Mappers are actively working at the moment.
+    - type: Add
+      message: Markings tab update
+    - type: Add
+      message: Patreon Tab in character setup @request of Dan
+    - type: Add
+      message: >-
+        Preliminary "Free Market" System i.e think EVE Online/Runescape Grand
+        Exchange where players can put up items for sale/barter (WIP)
+    - type: Add
+      message: Updated /group system
+    - type: Add
+      message: >-
+        Vehicle system (Vertibird specifically) to function between _MultiZ.
+        Wendover > WendoverSky > Wendover & land (WIP)
+    - type: Add
+      message: Bonneville509 BoS flag sprites
+    - type: Add
+      message: >-
+        Bonneville509 HP/Elder PA resprites by enchantedcrocolisk. Character
+        setup > Loadout (Role restricted)
+    - type: Add
+      message: Classic492's enclave sprites
+    - type: Add
+      message: prosthesis sprites for limbs by beepbopbopedy
+    - type: Add
+      message: >-
+        shoddy powerarmor manual that drops in JunkPiles for 0.5% chance,
+        similar to pipboy
+    - type: Add
+      message: T1 and T2 blueprints globally have more ballistic weaponry
+    - type: Tweak
+      message: Overwatch system refactor, multi-view, QOL, notification
+    - type: Tweak
+      message: EXPEDITIONS procgen tweaks (Able to be used LIVE [ALPHA])
+    - type: Tweak
+      message: Perks tree refactor
+    - type: Tweak
+      message: >-
+        Separate Pets into a new tab and same UIX design as Perk tree, allowed
+        more pets but with limiters of 3 max
+    - type: Tweak
+      message: >-
+        /War, /Raid to reflect /group, and individualized /war between Faction |
+        Group | Wastelander selection
+    - type: Tweak
+      message: PVS adjustments to accom _MultiZ
+    - type: Tweak
+      message: Gasmasks no longer hide hair (balddd)
+    - type: Tweak
+      message: admin bui consistencies
+    - type: Tweak
+      message: banlist & rolebanlist QOL additions for bulk pardoning
+    - type: Fix
+      message: >-
+        Tacmap & Overwatch System. Enclave shows Enclave, not BoS. Fixed NCR
+        Ranger tacmap showing BoS as well
+    - type: Fix
+      message: >-
+        _MultiZ overlay issue that was throwing a transparency bounding box for
+        blur attachment
+    - type: Fix
+      message: cuffs & baton not able to go into v.security belt.
+    - type: Fix
+      message: >-
+        Loadout ammo differences on some, 12g shotgun being said instead of
+        12.7mm, other
+    - type: Fix
+      message: >-
+        Updated /war from "blah blah 30 minutes" > "blah blah 60 minutes" to
+        reflect actual time
+    - type: Fix
+      message: Vault missing T4 ChargePacks for a weapon they can create
+    - type: Fix
+      message: Adjust Eighties IDCard identifications to be set appropriately
+    - type: Fix
+      message: Wrong description for MisfitsNCRMSLMask
+    - type: Fix
+      message: Cheesecake reciping missing reagent
+    - type: Fix
+      message: N14PoliceBaton missing appropriate tag in tags.
+    - type: Fix
+      message: end of draft zlevel changes and vertibird FM
+    - type: Fix
+      message: >-
+        legion door shenanigans allowing non-legion opening things like cent
+        door.
+    - type: Fix
+      message: NCR t51 not having Reflect component
+    - type: Fix
+      message: trenchshotgun missing holster sprite
+    - type: Fix
+      message: mr gutsy flashlight issue with borg modules
+    - type: Fix
+      message: >-
+        80s mines having 'asteroidrock' @egregious durability. Also renamed
+        asteroid rock
+    - type: Fix
+      message: NCR prisoners not on crewmanifest, provided IDcard braclet to circumvent
+    - type: Fix
+      message: loadout issue in weapons for 12g <> 12.7mm ammo box, fixed names
+    - type: Fix
+      message: toxic barrels not emitting radiation aura
+    - type: Fix
+      message: Longsword in character setup > loadout invalidating other items
+    - type: Fix
+      message: garand bolt causing +1 multichamber requiring double bolt.
+    - type: Fix
+      message: willower not being able to use drylander goggles
+    - type: Fix
+      message: sprite sync lacking on gutsy & handy
+  id: 6314
+  time: '2026-08-14T02:36:37.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1739
