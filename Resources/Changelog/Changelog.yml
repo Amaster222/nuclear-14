@@ -10041,3 +10041,12 @@ Entries:
   id: 6316
   time: '2026-08-14T13:11:07.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1745
+- author: Tytos
+  changes:
+    - type: Fix
+      message: Fixed the  legion base (Tytos) and the NCR's base (Marabout)
+    - type: Add
+      message: The willowers' elder will now spawn infront of the Tree
+  id: 6317
+  time: '2026-08-14T14:19:17.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1744
