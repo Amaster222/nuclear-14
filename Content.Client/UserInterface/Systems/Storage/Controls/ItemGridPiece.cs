@@ -57,7 +57,7 @@ public sealed class ItemGridPiece : Control, IEntityControl
 
         _entityManager = entityManager;
         _storageController = UserInterfaceManager.GetUIController<StorageUIController>();
-
+        // todo: finish whatever I was doing here
         Entity = entity.Owner;
         InsertLoc = location;
         Shape = shape;
