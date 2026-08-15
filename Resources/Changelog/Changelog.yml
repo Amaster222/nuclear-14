@@ -10144,3 +10144,31 @@ Entries:
   id: 6325
   time: '2026-08-15T15:46:56.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1143
+- author: Squagg
+  changes:
+    - type: Add
+      message: >-
+        Enclave roles now earn their rank pin from time played, instead of
+        always spawning with the same one.
+    - type: Add
+      message: >-
+        Enclave supermutants have their own rank ladder, from Private up to
+        Sergeant Major.
+    - type: Add
+      message: The Enclave supermutant role now has a slot on Wendover.
+    - type: Add
+      message: Enclave rank pins now show a rank title on examine and on your ID.
+    - type: Tweak
+      message: >-
+        Enclave supermutants now spawn in rags with a plasma cutter on the belt
+        and a super sledge on the back, instead of a lab coat and a loadout kit
+        with guns they can't use.
+    - type: Fix
+      message: Enclave rank pins can now be worn by supermutants.
+    - type: Remove
+      message: >-
+        Removed the radiation resistance from the supermutant X-01, since
+        supermutants are already immune.
+  id: 6326
+  time: '2026-08-15T21:36:46.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1756
