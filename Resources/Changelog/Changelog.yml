@@ -10172,3 +10172,43 @@ Entries:
   id: 6326
   time: '2026-08-15T21:36:46.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1756
+- author: Squagg
+  changes:
+    - type: Fix
+      message: >-
+        The genetics console works again. Scanning, sequencing, combining and
+        applying unique enzymes all did nothing after the console announced it
+        had started.
+    - type: Fix
+      message: >-
+        The Webbing mutation now actually lets you craft with the silk it gives
+        you.
+    - type: Fix
+      message: >-
+        Upgrading Rock Eater into Rock Absorber no longer takes away your
+        ability to eat items entirely.
+    - type: Fix
+      message: >-
+        Inexorable now does what it says and keeps you out of crit. It
+        previously had no effect at all.
+    - type: Fix
+      message: >-
+        Mutations that get auto removed for conflicting with another no longer
+        leave their instability behind.
+    - type: Fix
+      message: Mutation popups no longer appear twice.
+    - type: Fix
+      message: >-
+        Bystanders can now see someone being injected with a mutator or linked
+        to a handheld genome scanner.
+    - type: Fix
+      message: >-
+        Clicking a sequence just as another is removed no longer acts on the
+        wrong mutation.
+    - type: Tweak
+      message: >-
+        Combining mutations now takes 10 seconds instead of 5, and plays a sound
+        when it finishes.
+  id: 6327
+  time: '2026-08-15T23:37:58.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1757
