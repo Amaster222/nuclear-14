@@ -76,6 +76,13 @@
     solution: vertibirdFuel
   - type: ExaminableSolution
     solution: vertibirdFuel
+  # #Misfits Fix - mobs are KinematicController bodies, which carry effectively infinite
+  # mass in the solver, so walking into a dynamic body launched the craft across the pad.
+  # Matching the mech pattern of KinematicController plus Pullable makes the vertibird
+  # immune to being shoved while still leaving it draggable, since PullingSystem only
+  # refuses static bodies. Flight is unaffected: it drives velocity directly.
+  - type: Physics
+    bodyType: KinematicController
   - type: MZPhysics
     bounciness: 0.05
   - type: AircraftImpactDamage
