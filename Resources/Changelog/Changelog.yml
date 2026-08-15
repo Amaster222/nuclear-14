@@ -10064,3 +10064,25 @@ Entries:
   id: 6319
   time: '2026-08-14T21:27:45.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1747
+- author: aftemath434
+  changes:
+    - type: Add
+      message: Enclave Bunker door and hatch
+  id: 6320
+  time: '2026-08-14T23:26:20.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1748
+- author: Squagg
+  changes:
+    - type: Add
+      message: >-
+        NCR Vertibird Pilot and Enclave Vertibird Pilot, each with their own
+        rank progression and the vertibird pilot perk included.
+    - type: Add
+      message: >-
+        Brotherhood Lancers, a new aviation department with Lancer-Captain,
+        Lancer-Knight, and Lancer.
+    - type: Add
+      message: Chief Warrant Officer 2 and 3 rank pins for the NCR aviation track.
+  id: 6321
+  time: '2026-08-15T00:53:17.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1749
