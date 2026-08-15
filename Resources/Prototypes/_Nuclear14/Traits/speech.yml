@@ -63,6 +63,7 @@
   - !type:CharacterDepartmentRequirement
     departments:
     - BrotherhoodOfSteel
+    - BrotherhoodOfSteelLancers
   - !type:CharacterJobRequirement
     inverted: true
     jobs:
@@ -84,6 +85,7 @@
       inverted: true
       departments:
         - BrotherhoodOfSteel
+        - BrotherhoodOfSteelLancers
   - !type:CharacterJobRequirement
     inverted: true
     jobs:

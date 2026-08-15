@@ -7,6 +7,7 @@
       inverted: true
       departments:
         - BrotherhoodOfSteel
+        - BrotherhoodOfSteelLancers
   - !type:CharacterJobRequirement # Forge-Change
     inverted: true
     jobs:
