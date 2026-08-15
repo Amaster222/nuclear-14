@@ -389,6 +389,18 @@ public sealed partial class VertibirdSystem : EntitySystem
 
         mzPhysics.LocalPosition = 0f;
         mzPhysics.Velocity = 0f;
+
+        // #Misfits Fix - Clear the rigid body, not just our own bookkeeping value below.
+        // While parked, occupants sit on the craft's own tile and overlap its fixture, so the
+        // solver pushes to separate them. A power armour wearer cancels being pushed back
+        // (PowerArmorWornComponent cancels AttemptMobTargetCollideEvent to act as an immovable
+        // wall), so the whole separation impulse lands on the craft instead of being shared.
+        // On the ground grid friction hides it. The moment we lift off we reparent to the map
+        // and go InAir, friction stops applying, and that stored velocity threw the aircraft.
+        // Takeoff must always begin from rest.
+        _physics.SetLinearVelocity(ent.Owner, Vector2.Zero, body: physics);
+        _physics.SetAngularVelocity(ent.Owner, 0f, body: physics);
+
         _physics.SetBodyStatus(ent.Owner, physics, BodyStatus.InAir);
         ent.Comp.State = VertibirdFlightState.TakingOff;
         ent.Comp.StartupStartedAt = TimeSpan.Zero;
@@ -429,6 +441,15 @@ public sealed partial class VertibirdSystem : EntitySystem
         mzPhysics.LocalPosition = next;
         mzPhysics.Velocity = 0f;
         RemComp<MZFallingComponent>(uid);
+
+        // #Misfits Fix - The climb is purely vertical, so pin horizontal velocity to zero the
+        // whole way up. Occupants still overlap the fixture during the climb and can keep
+        // feeding the craft separation impulses until Cruising takes control of velocity.
+        if (TryComp<PhysicsComponent>(uid, out var physics))
+        {
+            _physics.SetLinearVelocity(uid, Vector2.Zero, body: physics);
+            _physics.SetAngularVelocity(uid, 0f, body: physics);
+        }
 
         if (next < vertibird.HoverAltitude)
             return;
