@@ -145,6 +145,7 @@
     equipDelay: 14400 # The Experimental X-01 Power armor is a living Tomb for whichever poor supermutant they put in it, so it takes the entire round to unequip/equip.
     unequipDelay: 14400
   - type: Armor # #Misfits Tweak: Added Heat and Piercing coefficients — pre-reduces damage before integrity absorption so PA stays above Centurion/Vet.Ranger at all integrity levels.
+    # #Misfits Change - no Radiation coefficient; supermutants take no radiation damage to begin with.
     modifiers:
       coefficients:
         Blunt: 0.70
@@ -152,7 +153,6 @@
         Piercing: 0.70
         Heat: 0.70
         Caustic: 0.75
-        Radiation: 0.6
   - type: Unremoveable # This is your casket. Service guarantees citizenship.
   - type: Tag
     tags:

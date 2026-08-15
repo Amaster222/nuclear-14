@@ -8,6 +8,8 @@
   name: enclave private pin
   description: A United States Government rank insignia showing the wearer's rank.
   components:
+  - type: RankTitle
+    rankTitle: Private
   - type: Sprite
     sprite: _Nuclear14/Clothing/Neck/Misc/pins.rsi
     layers:
@@ -17,6 +19,11 @@
     clothingVisuals:
       neck:
       - state: gold-equipped
+  # #Misfits Add - the supermutant neck slot only accepts SuperMutantWearable, and every
+  # other Enclave pin inherits from this one, so tagging the base covers the whole set.
+  - type: Tag
+    tags:
+    - SuperMutantWearable
 
 # Enlisted ranks
 - type: entity
@@ -24,6 +31,8 @@
   id: ClothingNeckPinEnclavePFC
   name: enclave private first class pin
   components:
+  - type: RankTitle
+    rankTitle: Private First Class
   - type: Sprite
     sprite: _Nuclear14/Clothing/Neck/Misc/pins.rsi
     layers:
@@ -34,6 +43,8 @@
   id: ClothingNeckPinEnclaveSpecialist
   name: enclave specialist pin
   components:
+  - type: RankTitle
+    rankTitle: Specialist
   - type: Sprite
     sprite: _Nuclear14/Clothing/Neck/Misc/pins.rsi
     layers:
@@ -45,6 +56,8 @@
   id: ClothingNeckPinEnclaveSergeant
   name: enclave sergeant pin
   components:
+  - type: RankTitle
+    rankTitle: Sergeant
   - type: Sprite
     sprite: _Nuclear14/Clothing/Neck/Misc/pins.rsi
     layers:
@@ -55,6 +68,8 @@
   id: ClothingNeckPinEnclaveStaffSergeant
   name: enclave staff sergeant pin
   components:
+  - type: RankTitle
+    rankTitle: Staff Sergeant
   - type: Sprite
     sprite: _Nuclear14/Clothing/Neck/Misc/pins.rsi
     layers:
@@ -65,6 +80,8 @@
   id: ClothingNeckPinEnclaveSFC
   name: enclave sergeant first class pin
   components:
+  - type: RankTitle
+    rankTitle: Sergeant First Class
   - type: Sprite
     sprite: _Nuclear14/Clothing/Neck/Misc/pins.rsi
     layers:
@@ -75,6 +92,8 @@
   id: ClothingNeckPinEnclaveMasterSergeant
   name: enclave master sergeant pin
   components:
+  - type: RankTitle
+    rankTitle: Master Sergeant
   - type: Sprite
     sprite: _Nuclear14/Clothing/Neck/Misc/pins.rsi
     layers:
@@ -86,6 +105,8 @@
   id: ClothingNeckPinEnclaveSecondLieutenant
   name: enclave second lieutenant pin
   components:
+  - type: RankTitle
+    rankTitle: Second Lieutenant
   - type: Sprite
     sprite: _Nuclear14/Clothing/Neck/Misc/pins.rsi
     layers:
@@ -101,6 +122,8 @@
   id: ClothingNeckPinEnclaveFirstLieutenant
   name: enclave first lieutenant pin
   components:
+  - type: RankTitle
+    rankTitle: First Lieutenant
   - type: Sprite
     sprite: _Nuclear14/Clothing/Neck/Misc/pins.rsi
     layers:
@@ -112,6 +135,8 @@
   id: ClothingNeckPinEnclaveCaptain
   name: enclave captain pin
   components:
+  - type: RankTitle
+    rankTitle: Captain
   - type: Sprite
     sprite: _Nuclear14/Clothing/Neck/Misc/pins.rsi
     layers:
@@ -122,6 +147,8 @@
   id: ClothingNeckPinEnclaveMajor
   name: enclave major pin
   components:
+  - type: RankTitle
+    rankTitle: Major
   - type: Sprite
     sprite: _Nuclear14/Clothing/Neck/Misc/pins.rsi
     layers:
@@ -133,6 +160,8 @@
   id: ClothingNeckPinEnclaveLtColonel
   name: enclave lieutenant colonel pin
   components:
+  - type: RankTitle
+    rankTitle: Lieutenant Colonel
   - type: Sprite
     sprite: _Nuclear14/Clothing/Neck/Misc/pins.rsi
     layers:
@@ -143,6 +172,8 @@
   id: ClothingNeckPinEnclaveColonel
   name: enclave colonel pin
   components:
+  - type: RankTitle
+    rankTitle: Colonel
   - type: Sprite
     sprite: _Nuclear14/Clothing/Neck/Misc/pins.rsi
     layers:
@@ -153,6 +184,8 @@
   id: ClothingNeckPinEnclaveGeneral
   name: enclave general pin
   components:
+  - type: RankTitle
+    rankTitle: General
   - type: Sprite
     sprite: _Nuclear14/Clothing/Neck/Misc/pins.rsi
     layers:
@@ -165,6 +198,8 @@
   name: enclave junior scientist pin
   description: A United States Government research division insignia showing the wearer's rank.
   components:
+  - type: RankTitle
+    rankTitle: Junior Scientist
   - type: Sprite
     sprite: _Nuclear14/Clothing/Neck/Misc/pins.rsi
     layers:
@@ -180,6 +215,8 @@
   id: ClothingNeckPinEnclaveScientist
   name: enclave scientist pin
   components:
+  - type: RankTitle
+    rankTitle: Scientist
   - type: Sprite
     sprite: _Nuclear14/Clothing/Neck/Misc/pins.rsi
     layers:
@@ -195,6 +232,8 @@
   id: ClothingNeckPinEnclaveHeadScientist
   name: enclave head scientist pin
   components:
+  - type: RankTitle
+    rankTitle: Head Scientist
   - type: Sprite
     sprite: _Nuclear14/Clothing/Neck/Misc/pins.rsi
     layers:
