@@ -4,8 +4,8 @@ meta:
   engineVersion: 286.0.0
   forkId: ""
   forkVersion: ""
-  time: 08/15/2026 15:17:02
-  entityCount: 18033
+  time: 08/15/2026 15:32:50
+  entityCount: 18034
 maps:
 - 1
 grids:
@@ -1914,7 +1914,6 @@ entities:
       chunkEntities: []
     - type: GravityShake
       shakeTimes: 10
-      nextShake: 0
 - proto: AirlockMedical
   entities:
   - uid: 274
@@ -22262,7 +22261,7 @@ entities:
       rot: 3.141592653589793 rad
       pos: -9.5,-9.5
     - type: Drain
-      accumulator: 0.7137031
+      accumulator: 0.8874621
     - type: Fixtures
       fixtures: {}
   - uid: 1294
@@ -22272,7 +22271,7 @@ entities:
       rot: 3.141592653589793 rad
       pos: -8.5,-9.5
     - type: Drain
-      accumulator: 0.7417137
+      accumulator: 0.6995852
     - type: Fixtures
       fixtures: {}
   - uid: 3286
@@ -22282,7 +22281,7 @@ entities:
       rot: 3.141592653589793 rad
       pos: 20.5,63.5
     - type: Drain
-      accumulator: 0.66756237
+      accumulator: 0.027270075
     - type: Fixtures
       fixtures: {}
 - proto: FloorLavaEntity
@@ -29461,6 +29460,15 @@ entities:
     - type: Transform
       parent: 2
       pos: 10.382242,81.39769
+- proto: GravityGeneratorMini
+  entities:
+  - uid: 18034
+    components:
+    - type: Transform
+      parent: 2
+      pos: -21.5,41.5
+    - type: ApcPowerReceiver
+      needsPower: False
 - proto: Grille
   entities:
   - uid: 113
