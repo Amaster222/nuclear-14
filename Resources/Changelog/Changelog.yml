@@ -10122,3 +10122,18 @@ Entries:
   id: 6323
   time: '2026-08-15T11:56:59.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1754
+- author: Squagg
+  changes:
+    - type: Fix
+      message: >-
+        The vertibird is no longer launched when a power armor wearer sits in a
+        passenger seat.
+    - type: Fix
+      message: >-
+        The vertibird no longer drifts back toward its takeoff point when
+        maneuvering with passengers aboard.
+    - type: Fix
+      message: The vertibird can no longer be shoved around by players walking into it.
+  id: 6324
+  time: '2026-08-15T12:02:30.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1755
