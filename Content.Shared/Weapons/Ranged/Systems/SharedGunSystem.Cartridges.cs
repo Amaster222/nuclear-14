@@ -5,16 +5,24 @@ using Content.Shared.Item;
 using Content.Shared.Movement.Pulling.Components;
 using Content.Shared.Weapons.Ranged.Components;
 using Content.Shared.Weapons.Ranged.Events;
+using Robust.Shared.Graphics;
+using Robust.Shared.Map;
 using Robust.Shared.Physics;
 using Robust.Shared.Physics.Components;
+using Robust.Shared.Player;
 using Robust.Shared.Spawners;
 using Robust.Shared.Timing;
+using static Robust.Shared.Utility.SpriteSpecifier;
 
 namespace Content.Shared.Weapons.Ranged.Systems;
-// TODO Misfit: refactor spent cartridges to be a visual effect.
-//gotta see how game does dynamic animation or have client only spawned spent cart proto
+// TODO Misfit: reapproach spent cartridges to be clientside only physics entities after/during gun refactor
+//              Spent carts will only be local event raised on shooting client
+//              or sent to other clients who are in PVS range
+//              server will never spawn a physics ent itself.Just send the event to sessions in PVS
+//              We dont care about visual sync, and have it so carts delete when exiting PVS
+//              Need to fix guncode to make this possible due to messy code
 
-/// <notes> yapping
+/// <notes> yapping I did typed days ago
 /// referring mostly to <see cref="OnCartEjected"/>
 /// method is pretty jank in my view, since we might as well just make cartridges a visual effect
 /// we waste time checking for cartridges and then stripping them down to be a visual
@@ -34,17 +42,8 @@ public abstract partial class SharedGunSystem
     {
         // inserting just the cartridge itself into something
         SubscribeLocalEvent<CartridgeAmmoComponent, TakeAmmoEvent>(OnTakeAmmo);
-
-        // Raised events strip comps/physics on ejected spent carts on client/server side
-        // isnt ran for clients outside PVS(so carts still in client's broadphase)
-
-        /// already ran predictvely from client GunSystem on<see cref="RequestShootEvent"/> which calls shared code
-        /// so ends up running for both server and client
-        SubscribeLocalEvent<CartridgeAmmoComponent, EjectSpentCartEvent>(OnCartEjected);
-
-        // networked only to clients.
-        SubscribeNetworkEvent<EjectSpentCartEvent>(OnCartEjected);
     }
+
     /// <summary>
     /// "Taking ammo" from a single cartridge. Done just for compatability/standardization
     /// (not a container with cartridges like <see cref="BallisticAmmoProviderComponent"/>)
@@ -55,128 +54,18 @@ public abstract partial class SharedGunSystem
         Dirty(uid, giverComp);
     }
 
+    public virtual void EjectSpentCart(MapCoordinates coord, Angle angle, string? cartProto, ICommonSession? userSession) { }
 
-    /// <summary>
-    /// Strips down spent cartridges to be a lightweight entity that wont
-    /// slowdown physics on the server but still be animated dynamically as if it had physics
-    /// Events wont run for clients outside PVS range so dont rely on spent cartridge data being fully synced
-    /// <summary/>
-    public void OnCartEjected(EntityUid uid, CartridgeAmmoComponent comp, EjectSpentCartEvent args)
-    {
-#if DEBUG
-        // maybe thisll help later to stop event being raised in the first place multiple times for same ent
-        if (!TryComp<FixturesComponent>(uid, out var x) || x.FixtureCount == 0)
-        {
-            Log.Debug($"eventRaised for cartridge:{uid} Doesnt have fixture TickStamp:{_timing.TickStamp}");
-        }
-        Log.Debug($"Spent Cartridge with NetID: {args.Cartridge} TickStamp:{_timing.TickStamp}");
-#endif
-
-        // prediction or something keeps raising the event on same ent
-        if (!TryComp<FixturesComponent>(uid, out var fix) || fix.FixtureCount == 0)
-        {
-            return;
-        }
-
-        // #Misfits Tweak - Reduce casing despawn from 5min to 30s to prevent uid buildup during war
-        EnsureComp<TimedDespawnComponent>(uid).Lifetime = 30f;
-        //  edge case for null angles
-        // happens for carts that stay in container when fired(revolvers)
-        if (!args.EjectAngle.HasValue)
-        {
-            _xform.SetLocalPositionRotation(uid, Transform(uid).Coordinates.Position + args.VectRng,
-                                                                                                args.AngleRng);
-            // removing physicsComp on same tick ent is spawned
-            // doesnt cause issues from doing this in any other case
-            RemCompDeferred<PhysicsComponent>(uid);
-            StripCartCompsShared(uid);
-            return;
-        }
-
-        DebugTools.Assert(Comp<FixturesComponent>(uid).FixtureCount > 0);
-        // these methods below seem to work because they dont switch "CanColide"
-        // which causes entities to stop having physics(movement)
-        // we still want movement, but we also dont want the cart to be considered for collisions even indirectly
-
-        // Wont be considered for most collisions but still allowed to move
-        // also makes physics remove existing contacts
-        _sharedPhysics.SetBodyType(uid, BodyType.KinematicController);
-        // remove ent from broadphase, deletes fixture too
-        _lookup.RemoveFromEntityTree(uid, Transform(uid));
-        StripCartCompsShared(uid);
-
-
-        _xform.SetLocalRotation(uid, args.AngleRng);
-        Angle ejectAngle = args.EjectAngle.Value;
-        ejectAngle += 3.7f; // 212 degrees; casings should eject slightly to the right and behind of a gun
-        ThrowingSystem.TryThrow(uid, ejectAngle.ToVec() + args.VectRng, 5f);
-        // testing how to make visual lag less. Mostly fiddling WIP
-        FlagPredicted(uid);
-    }
-
-    /// <summary>
-    /// Networked wrapper of above for sending event from server to clients
-    /// validates netID and comp
-    /// Needed for when clients are in PVS range and spent cartridges originate from
-    /// a server triggered event(NPCs shooting, autofire ect...)
-    /// </summary>
-    public void OnCartEjected(EjectSpentCartEvent args)
-    {
-#if DEBUG
-        Log.Debug($"Spent Cartridge from server NetID: {args.Cartridge}");
-#endif
-        if (TryGetEntity(args.Cartridge, out var uid) && TryComp<CartridgeAmmoComponent>(uid, out var comp))
-        {
-            OnCartEjected(uid.Value, comp, args);
-        }
-    }
-    # region other stuff
-
-    /// <summary>
-    /// Strip comps that both client and server can access
-    /// To make cartridge as non-interactable as possible
-    /// and prevent comp events/functions from firing and breaking things
-    /// </summary>
-    public void StripCartCompsShared(EntityUid uid)
-    {
-
-        RemComp<ItemComponent>(uid);
-        RemComp<JointComponent>(uid);
-        RemComp<DamageOnHighSpeedImpactComponent>(uid);
-        RemComp<PullableComponent>(uid);
-        RemComp<EngravableComponent>(uid);
-        RemComp<DamageExaminableComponent>(uid);
-        RemComp<MovedByPressureComponent>(uid);
-        StripCartComps(uid);
-    }
-
-    /// <summary>
-    ///  strips client/server exclusive comps
-    /// </summary>
-    public virtual void StripCartComps(EntityUid uid) { }
-    /// <summary>
-    /// Event raised in order to strip comps of a uid with a CartridgeAmmoComponent
-    /// to make it just a purely visual object with a short despawn time
-    /// Meant for spent cartridges
-    /// </summary>
     [Serializable, NetSerializable]
-    public sealed class EjectSpentCartEvent : EntityEventArgs
+    public sealed class SpentCartEvent(MapCoordinates coords, Angle angle, string? proto, NetUserId? sender) : EntityEventArgs
     {
-        public NetEntity Cartridge;
-        public Angle? EjectAngle;
-        public Vector2 VectRng;
-        public Angle AngleRng;
-        public EjectSpentCartEvent(NetEntity cart, Angle? ejectAngle, Vector2 vectRng, Angle angleRng)
-        {
-            Cartridge = cart;
-            EjectAngle = ejectAngle;
-            VectRng = vectRng;
-            AngleRng = angleRng;
-
-        }
-
+        public MapCoordinates Coords = coords;
+        public Angle Angle = angle;
+        public string? Proto = proto;
+        public NetUserId? Sender = sender;
     }
 
-    # endregion other stuff
+
+
 
 }

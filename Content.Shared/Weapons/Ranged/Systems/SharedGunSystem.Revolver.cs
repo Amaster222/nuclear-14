@@ -129,8 +129,10 @@ public partial class SharedGunSystem
                 return false;
             }
 
-            for (var i = Math.Min(ev.Ammo.Count - 1, component.Capacity - 1); i >= 0; i--)
+            for (var i = 0; i < component.Capacity; i++)
             {
+                if (ev.Ammo.Count == 0)
+                    break;
                 var index = (component.CurrentIndex + i) % component.Capacity;
 
                 if (component.AmmoSlots[index] != null ||
@@ -152,8 +154,7 @@ public partial class SharedGunSystem
                 Containers.Insert(ent.Value, component.AmmoContainer);
                 SetChamber(index, component, uid);
 
-                if (ev.Ammo.Count == 0)
-                    break;
+
             }
 
             DebugTools.Assert(ammo.Count == 0);

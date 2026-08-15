@@ -81,16 +81,14 @@ public abstract partial class SharedGunSystem : EntitySystem
     [Dependency] protected SharedPhysicsSystem Physics = default!;
     [Dependency] protected SharedProjectileSystem Projectiles = default!;
     [Dependency] protected SharedTransformSystem _xform = default!;
-    [Dependency] protected TagSystem TagSystem = default!;
     [Dependency] protected ThrowingSystem ThrowingSystem = default!;
     [Dependency] private UseDelaySystem _useDelay = default!;
     [Dependency] private EntityWhitelistSystem _whitelistSystem = default!;
     [Dependency] private IEntityManager _entManager = default!;
-    [Dependency] private EntityManager _entSharedMan = default!;
-    [Dependency] private FixtureSystem _fixtureSystem = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private SharedPhysicsSystem _sharedPhysics = default!;
-    [Dependency] private CollisionWakeSystem _wakeSystem = default!;
+    [Dependency] private ISharedPlayerManager _sharedPlayer = default!;
+
 
     private const float InteractNextFire = 0.3f;
     private const double SafetyNextFire = 0.5;
@@ -803,47 +801,36 @@ public abstract partial class SharedGunSystem : EntitySystem
         cartridge.Spent = spent;
         Appearance.SetData(uid, AmmoVisuals.Spent, spent);
     }
-
+    /// TODO Misfit: refactor spent cartridges
+    /// Misfit: revamped EjectCartridge
     /// <summary>
     /// Drops a single cartridge / shell
+    /// Also raises <see cref="EjectSpentCartEvent"> to handle spent cartridges
+    /// to strip its comps(including physics) and ensure no desync issues
     /// </summary>
-    /// TODO Misfit: refactor spent cartridges to be a visual effect
-    /// Misfit: Minor revamp of method.
-    /// Eject logic for SPENT cartridge moved to <see cref="OnCartEjected"/>
     protected void EjectCartridge(
-        EntityUid entity,
+        EntityUid cart,
         Angle? angle = null,
-        bool playSound = true)
+        bool playSound = true,
+        ICommonSession? userSession = null)
     {
-        // havent fully read guncode yet and this code is ran on events that are networked
-        // so taking the precaution here prolly redundant
-        if (!TryGetNetEntity(entity, out var netEnt)) return;
+        // Misfit: pending refactor. maybe redundant check
+        if (!TryGetNetEntity(cart, out var netEnt)) return;
         // Misfit change: changed rng method for better server-client sync
-        var (posEjectRNG, angleEjectRNG) = GetRandVectAngle(netEnt.Value.Id, netEnt.Value.Id);
-        var xform = Transform(entity);
-        var coordinates = xform.Coordinates;
-        coordinates = coordinates.Offset(posEjectRNG);
 
-        // Misfit change: anything that isnt a spent CartridgeAmmoComponent doesnt need special handling
-        //                preserves original method logic
-        if (!TryComp<CartridgeAmmoComponent>(entity, out var cartComp) || !cartComp.Spent)
+        var xform = Transform(cart);
+        if (!TryComp<CartridgeAmmoComponent>(cart, out var cartComp) || !cartComp.Spent)
         {
-            _xform.SetLocalPositionRotation(entity, xform.Coordinates.Offset(posEjectRNG).Position, angleEjectRNG, xform);
+            var (posEjectRNG, angleEjectRNG) = GetRandVectAngle(netEnt.Value.Id, netEnt.Value.Id);
+            _xform.SetLocalPositionRotation(cart, xform.Coordinates.Offset(posEjectRNG).Position, angleEjectRNG, xform);
             return;
         }
+        var (posW, angleW) = _xform.GetWorldPositionRotation(xform);
+        var mapCoord = new MapCoordinates(posW, _xform.GetMapId(cart));
+        var cartProto = MetaData(cart).EntityPrototype?.ID;
+        EjectSpentCart(mapCoord, angleW, cartProto, userSession);
+        PredictedDel(cart);
 
-        // Misfit change: if (playSound){}... Playsound is unused
-        // think audio limit for specific sounds is already handled by AmbientSoundSystem
-        // someone pls confirm so i can get rid of these ugly ass comments audio code is boring to read
-        // // TODO: Sound limit version.
-        Audio.PlayPvs(cartComp.EjectSound, entity,
-        AudioParams.Default.WithVariation(SharedContentAudioSystem.DefaultVariation).WithVolume(-1f));
-
-        /// Misfit change: Rest of Eject logic for CartridgeAmmoComponent
-        ///                moved to <see cref="SharedGunSystem.OnCartEjected">
-
-        RaiseLocalEvent(entity, new EjectSpentCartEvent(GetNetEntity(entity), angle, posEjectRNG, angleEjectRNG));
-        if (!_netManager.IsClient) RaiseNetworkEvent(new EjectSpentCartEvent(GetNetEntity(entity), angle, posEjectRNG, angleEjectRNG));
     }
 
 
