@@ -306,6 +306,15 @@ public abstract partial class SharedProjectileSystem : EntitySystem
         {
             args.Cancelled = true;
         }
+
+        // #Misfits Edited - Broadcast extension point so fork systems (aircraft/vertibird) can add their
+        // own projectile collision rules without a duplicate PreventCollideEvent subscription.
+        if (!args.Cancelled)
+        {
+            var ev = new ProjectilePreventCollideEvent((uid, component), args.OtherEntity);
+            RaiseLocalEvent(ref ev);
+            args.Cancelled = ev.Cancelled;
+        }
     }
 
     public void SetShooter(EntityUid id, ProjectileComponent component, EntityUid shooterId)

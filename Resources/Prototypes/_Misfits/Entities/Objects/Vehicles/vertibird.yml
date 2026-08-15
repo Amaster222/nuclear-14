@@ -60,8 +60,32 @@
     maxFlightSpeed: 12
     flightDrag: 0.75
     turnSpeedDegrees: 90
+    altitudeTransitionDuration: 5
+    seatCount: 6
+    fuelSolution: vertibirdFuel
+    fuelUsePerSecond: 0.5
+    minimumTakeoffFuel: 30
+  - type: SolutionContainerManager
+    solutions:
+      vertibirdFuel:
+        maxVol: 250
+        reagents:
+        - ReagentId: WeldingFuel
+          Quantity: 250
+  - type: RefillableSolution
+    solution: vertibirdFuel
+  - type: ExaminableSolution
+    solution: vertibirdFuel
   - type: MZPhysics
     bounciness: 0.05
+  - type: AircraftImpactDamage
+    minimumSpeed: 4
+    damage:
+      types:
+        Structural: 10
+    speedDamageFactor: 0.5
+    velocityRetention: 0.25
+    damageCooldown: 0.65
   - type: Appearance
   - type: CanMoveInAir
   - type: MovementAlwaysTouching
@@ -95,6 +119,8 @@
     # craft so the standard self-unbuckle action remains within buckle range.
     buckleOffset: 0, 0
     lockToBuckleOffset: true
+    selfUnBuckleDelay: 5
+    unbuckleDoafterTime: 5
     rotation: 0
     buckleOnInteractHand: false
     whitelist:
@@ -119,16 +145,4 @@
         - MidImpassable
         - LowImpassable
   - type: Damageable
-    damageContainer: Inorganic
-    damageModifierSet: Metallic
-  - type: Destructible
-    thresholds:
-    - trigger:
-        !type:DamageTrigger
-        damage: 250
-      behaviors:
-      - !type:PlaySoundBehavior
-        sound:
-          collection: MetalBreak
-      - !type:DoActsBehavior
-        acts: [ "Destruction" ]
+    damageContainer: AircraftStructural

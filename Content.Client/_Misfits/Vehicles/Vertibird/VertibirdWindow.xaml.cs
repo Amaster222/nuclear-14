@@ -18,12 +18,36 @@ public sealed partial class VertibirdWindow : FancyWindow
 
     public void SetState(VertibirdSeatBoundUserInterfaceState state)
     {
-        StatusLabel.Text = Loc.GetString("vertibird-window-status", ("state", state.FlightState.ToString()));
-        SeatList.RemoveAllChildren();
+        Title = state.Title;
+
+        var stateName = Loc.GetString($"vertibird-state-{state.FlightState.ToString().ToLowerInvariant()}");
+        StatusLabel.Text = Loc.GetString("vertibird-window-status", ("state", stateName));
+        AltitudeLabel.Text = Loc.GetString("vertibird-window-altitude", ("altitude", state.Altitude));
+
+        var occupied = state.Seats.Count(seat => seat.OccupantName != null);
+        OccupancyLabel.Text = Loc.GetString("vertibird-window-occupancy",
+            ("occupied", occupied),
+            ("capacity", state.Seats.Length));
+
+        FuelBar.MaxValue = Math.Max(state.MaxFuel, 1f);
+        FuelBar.Value = Math.Clamp(state.Fuel, 0f, FuelBar.MaxValue);
+        FuelText.Text = Loc.GetString("vertibird-window-fuel-value",
+            ("fuel", MathF.Round(state.Fuel)),
+            ("max", MathF.Round(state.MaxFuel)));
+
+        StructureBar.MaxValue = Math.Max(state.MaxStructuralIntegrity, 1f);
+        StructureBar.Value = Math.Clamp(state.StructuralIntegrity, 0f, StructureBar.MaxValue);
+        StructureText.Text = Loc.GetString("vertibird-window-structure-value",
+            ("integrity", MathF.Round(state.StructuralIntegrity)),
+            ("max", MathF.Round(state.MaxStructuralIntegrity)));
+
+        FlightCrewList.RemoveAllChildren();
+        PassengerList.RemoveAllChildren();
 
         foreach (var seat in state.Seats)
         {
-            SeatList.AddChild(BuildSeatRow(seat, state.FlightState));
+            var list = seat.Index <= 1 ? FlightCrewList : PassengerList;
+            list.AddChild(BuildSeatRow(seat, state.FlightState));
         }
     }
 
@@ -39,13 +63,16 @@ public sealed partial class VertibirdWindow : FancyWindow
         var label = new Label
         {
             Text = seat.Name,
-            HorizontalExpand = true,
+            MinWidth = 132,
+            VerticalAlignment = VAlignment.Center,
         };
 
         var occupant = new Label
         {
             Text = seat.OccupantName ?? Loc.GetString("vertibird-seat-empty"),
-            MinWidth = 110,
+            HorizontalExpand = true,
+            ClipText = true,
+            VerticalAlignment = VAlignment.Center,
         };
 
         var button = new Button

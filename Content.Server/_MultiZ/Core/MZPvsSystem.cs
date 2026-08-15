@@ -28,6 +28,7 @@ public sealed partial class MZPvsSystem : MZSharedSystem
     private const float RelayMoveThreshold = 0.5f;
 
     [Dependency] private IConfigurationManager _cfg = default!;
+    [Dependency] private SharedEyeSystem _eye = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private ViewSubscriberSystem _viewSubscriber = default!;
 
@@ -138,7 +139,11 @@ public sealed partial class MZPvsSystem : MZSharedSystem
         _refreshBudget = 0f;
     }
 
-    private void RefreshSession(ICommonSession session)
+    /// <summary>
+    /// Immediately reconciles a session's lower-map relay. Vehicles call this after moving a
+    /// buckled pilot's ancestor between maps, which does not change the pilot's direct parent.
+    /// </summary>
+    public void RefreshSession(ICommonSession session)
     {
         if (session.AttachedEntity is not { Valid: true } attached ||
             !TryComp(attached, out TransformComponent? xform) ||
@@ -163,16 +168,24 @@ public sealed partial class MZPvsSystem : MZSharedSystem
             return;
 
         var playerPos = _transform.GetMapCoordinates(xform).Position;
+        var pvsScale = 1f;
+        if (TryComp<EyeComponent>(attached, out var eye))
+        {
+            playerPos += eye.Offset;
+            pvsScale = eye.PvsScale;
+        }
+
         var relayCoords = new MapCoordinates(playerPos, belowMapComp.MapId);
 
-        EnsureLowerViewRelay(session, relayCoords);
+        EnsureLowerViewRelay(session, relayCoords, pvsScale);
     }
 
-    private void EnsureLowerViewRelay(ICommonSession session, MapCoordinates coordinates)
+    private void EnsureLowerViewRelay(ICommonSession session, MapCoordinates coordinates, float pvsScale)
     {
         if (_lowerViewRelays.TryGetValue(session, out var relay) &&
             !TerminatingOrDeleted(relay))
         {
+            SetRelayPvsScale(relay, pvsScale);
             var relayCoordinates = _transform.GetMapCoordinates(relay);
             if (relayCoordinates.MapId == coordinates.MapId &&
                 Vector2.DistanceSquared(relayCoordinates.Position, coordinates.Position) <
@@ -186,8 +199,15 @@ public sealed partial class MZPvsSystem : MZSharedSystem
         }
 
         relay = Spawn(null, coordinates);
+        SetRelayPvsScale(relay, pvsScale);
         _lowerViewRelays[session] = relay;
         _viewSubscriber.AddViewSubscriber(relay, session);
+    }
+
+    private void SetRelayPvsScale(EntityUid relay, float pvsScale)
+    {
+        var relayEye = EnsureComp<EyeComponent>(relay);
+        _eye.SetPvsScale((relay, relayEye), MathF.Max(pvsScale, 1f));
     }
 
     private void StartTracking(ICommonSession session)

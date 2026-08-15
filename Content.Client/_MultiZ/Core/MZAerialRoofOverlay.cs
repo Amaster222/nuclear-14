@@ -21,8 +21,8 @@ namespace Content.Client._MultiZ.Core;
 /// </summary>
 public sealed class MZAerialRoofOverlay : Overlay
 {
-    private static readonly Color RoofPanel = Color.FromHex("#342C23");
-    private static readonly Color RoofSeam = Color.FromHex("#4A4033");
+    private static readonly Color RoofPanel = Color.Black;
+    private static readonly Color RoofSeam = Color.FromHex("#101010");
 
     [Dependency] private readonly IConfigurationManager _cfg = default!;
     [Dependency] private readonly IEntityManager _entMan = default!;
