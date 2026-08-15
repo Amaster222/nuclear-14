@@ -19,6 +19,7 @@
     - /Maps/Misfits/WendoverSky.yml
   mapsBelow:
     - /Maps/Misfits/Vault.yml
+    - /Maps/Misfits/Enclave.yml
   stations:
     Wendover:
       stationProto: FalloutStation
