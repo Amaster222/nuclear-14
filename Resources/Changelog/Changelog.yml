@@ -10032,3 +10032,108 @@ Entries:
   id: 6315
   time: '2026-08-14T03:22:08.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1741
+- author: Cythisiax
+  changes:
+    - type: Fix
+      message: >-
+        overwatch PVS subscription in conjunction to _multiZ causing
+        rubberbanding > scales with players
+  id: 6316
+  time: '2026-08-14T13:11:07.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1745
+- author: Tytos
+  changes:
+    - type: Fix
+      message: Fixed the  legion base (Tytos) and the NCR's base (Marabout)
+    - type: Add
+      message: The willowers' elder will now spawn infront of the Tree
+  id: 6317
+  time: '2026-08-14T14:19:17.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1744
+- author: Lucky
+  changes:
+    - type: Tweak
+      message: Use of the new 509th flags.
+  id: 6318
+  time: '2026-08-14T14:19:44.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1746
+- author: Marabout
+  changes:
+    - type: Fix
+      message: Fixed some issues in the NCR's base
+  id: 6319
+  time: '2026-08-14T21:27:45.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1747
+- author: aftemath434
+  changes:
+    - type: Add
+      message: Enclave Bunker door and hatch
+  id: 6320
+  time: '2026-08-14T23:26:20.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1748
+- author: Squagg
+  changes:
+    - type: Add
+      message: >-
+        NCR Vertibird Pilot and Enclave Vertibird Pilot, each with their own
+        rank progression and the vertibird pilot perk included.
+    - type: Add
+      message: >-
+        Brotherhood Lancers, a new aviation department with Lancer-Captain,
+        Lancer-Knight, and Lancer.
+    - type: Add
+      message: Chief Warrant Officer 2 and 3 rank pins for the NCR aviation track.
+  id: 6321
+  time: '2026-08-15T00:53:17.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1749
+- author: cythisiax
+  changes:
+    - type: Add
+      message: Legion Hot Air Balloon
+    - type: Tweak
+      message: >-
+        Both Vertibird & HotABs are shared core framework. .yml for
+        individualization.
+    - type: Tweak
+      message: 1 Pilot, 1 Chief, 4 passengers
+    - type: Tweak
+      message: >-
+        Structural gage upon hitting objects. 0 structure = explosion and round
+        end.
+    - type: Tweak
+      message: fuel consumption, 250 total with 0.5/sec, requires welding fuel.
+    - type: Tweak
+      message: cannot land in BlockWeather markers
+    - type: Tweak
+      message: 5 second 'doafter' for board & unboard
+    - type: Tweak
+      message: projectiles go through flyables, hit passengers directly.
+    - type: Fix
+      message: GUI for both craft.
+    - type: Fix
+      message: shadows
+  id: 6322
+  time: '2026-08-15T03:00:16.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1750
+- author: Squagg
+  changes:
+    - type: Fix
+      message: Brotherhood Lancers can now use Brotherhood loadouts and traits.
+  id: 6323
+  time: '2026-08-15T11:56:59.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1754
+- author: Squagg
+  changes:
+    - type: Fix
+      message: >-
+        The vertibird is no longer launched when a power armor wearer sits in a
+        passenger seat.
+    - type: Fix
+      message: >-
+        The vertibird no longer drifts back toward its takeoff point when
+        maneuvering with passengers aboard.
+    - type: Fix
+      message: The vertibird can no longer be shoved around by players walking into it.
+  id: 6324
+  time: '2026-08-15T12:02:30.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1755

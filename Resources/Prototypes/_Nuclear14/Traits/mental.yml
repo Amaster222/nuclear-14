@@ -45,6 +45,7 @@
         - NCRCommander
         - NCRExecutiveOfficer
         - NCRPlatoonLeader
+        - NCRVertibirdPilot
         - NCRVeteranRanger
         - NCRFieldRanger
         - NCRPatrolRanger
@@ -69,6 +70,9 @@
         - BoSPaladinCommander # #Cythisiax Added - personal-whitelist Paladin Commander is a combat role
         - BoSMidPaladin
         - BoSMidKnight
+        - BoSLancerCaptain
+        - BoSLancerKnight
+        - BoSLancer
         - BoSMidSquire
         # Forge-Change-Start
         #- BoSMidInquisitor # Misfits Fix: job prototype commented out
@@ -252,6 +256,7 @@
     - !type:CharacterDepartmentRequirement
       departments:
         - BrotherhoodOfSteel
+        - BrotherhoodOfSteelLancers
   functions:
     # #Misfits Fix - Use TraitSpawnEntity so multiple pet ghost roles can coexist
     - !type:TraitSpawnEntity
@@ -310,6 +315,7 @@
     - !type:CharacterDepartmentRequirement
       departments:
         - BrotherhoodOfSteel
+        - BrotherhoodOfSteelLancers
   functions:
     # #Misfits Fix - Use TraitSpawnEntity so multiple pet ghost roles can coexist
     - !type:TraitSpawnEntity

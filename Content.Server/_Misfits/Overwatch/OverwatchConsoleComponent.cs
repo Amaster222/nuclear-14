@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Content.Shared.Tag;
+using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 
 namespace Content.Server._Misfits.Overwatch;
@@ -24,6 +25,12 @@ public sealed partial class OverwatchConsoleComponent : Component
 /// <summary>Server-side watch session for a single operator on this console.</summary>
 public sealed class OverwatchWatchSession
 {
+    /// <summary>
+    /// The player session that owns the PVS subscription. Keep this independently of the actor entity so the
+    /// subscription can still be removed after detaching for ghosting, aghosting, or disconnecting.
+    /// </summary>
+    public ICommonSession Subscriber = default!;
+
     public uint WatchedNumber;
 
     /// <summary>Last resolved watch target. Null while suspended or never resolved.</summary>

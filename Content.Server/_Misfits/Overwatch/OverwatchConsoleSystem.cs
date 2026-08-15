@@ -50,6 +50,7 @@ public sealed class OverwatchConsoleSystem : EntitySystem
         base.Initialize();
 
         SubscribeLocalEvent<ExpandICChatRecipientsEvent>(OnExpandRecipients);
+        SubscribeLocalEvent<PlayerDetachedEvent>(OnPlayerDetached);
         SubscribeLocalEvent<OverwatchConsoleComponent, ComponentShutdown>(OnShutdown);
         SubscribeLocalEvent<OverwatchConsoleComponent, BoundUIOpenedEvent>(OnOpened);
         SubscribeLocalEvent<OverwatchConsoleComponent, BoundUIClosedEvent>(OnClosed);
@@ -109,6 +110,16 @@ public sealed class OverwatchConsoleSystem : EntitySystem
             StopWatching(ent, actor);
     }
 
+    private void OnPlayerDetached(PlayerDetachedEvent args)
+    {
+        var query = EntityQueryEnumerator<OverwatchConsoleComponent>();
+        while (query.MoveNext(out var uid, out var comp))
+        {
+            if (comp.WatchSessions.ContainsKey(args.Entity))
+                StopWatching((uid, comp), args.Entity);
+        }
+    }
+
     private void OnMessage(Entity<OverwatchConsoleComponent> ent, ref OverwatchConsoleMessage args)
     {
         if (!IsOverwatchUi(args.UiKey))
@@ -161,7 +172,8 @@ public sealed class OverwatchConsoleSystem : EntitySystem
 
     private void StartWatching(Entity<OverwatchConsoleComponent> ent, EntityUid actor, uint targetNumber)
     {
-        if (!TryGetWatchTarget(ent.Comp, targetNumber, out var watchedEntity))
+        if (!TryComp<ActorComponent>(actor, out var actorComp) ||
+            !TryGetWatchTarget(ent.Comp, targetNumber, out var watchedEntity))
         {
             StopWatching(ent, actor);
             return;
@@ -170,7 +182,7 @@ public sealed class OverwatchConsoleSystem : EntitySystem
         // Tear down any previous session for this actor on this console.
         if (ent.Comp.WatchSessions.TryGetValue(actor, out var existing))
         {
-            RemoveWatchViewSubscription(actor, existing.WatchedEntity);
+            RemoveWatchViewSubscription(existing.Subscriber, existing.WatchedEntity);
             if (!Deleted(actor) && existing.WatchedEntity is { } oldWatched && !Deleted(oldWatched))
                 RemoveTargetWatcher(oldWatched, actor);
         }
@@ -181,10 +193,11 @@ public sealed class OverwatchConsoleSystem : EntitySystem
         watching.WatchedName = MetaData(watchedEntity).EntityName;
         Dirty(actor, watching);
 
-        AddWatchViewSubscription(actor, watchedEntity);
+        AddWatchViewSubscription(actorComp.PlayerSession, watchedEntity);
 
         ent.Comp.WatchSessions[actor] = new OverwatchWatchSession
         {
+            Subscriber = actorComp.PlayerSession,
             WatchedNumber = targetNumber,
             WatchedEntity = watchedEntity,
         };
@@ -197,7 +210,7 @@ public sealed class OverwatchConsoleSystem : EntitySystem
     {
         if (ent.Comp.WatchSessions.TryGetValue(actor, out var session))
         {
-            RemoveWatchViewSubscription(actor, session.WatchedEntity);
+            RemoveWatchViewSubscription(session.Subscriber, session.WatchedEntity);
             if (!Deleted(actor) && session.WatchedEntity is { } watched && !Deleted(watched))
                 RemoveTargetWatcher(watched, actor);
             ent.Comp.WatchSessions.Remove(actor);
@@ -209,7 +222,7 @@ public sealed class OverwatchConsoleSystem : EntitySystem
 
     private void ValidateWatch(Entity<OverwatchConsoleComponent> ent, EntityUid actor, OverwatchWatchSession session)
     {
-        if (Deleted(actor))
+        if (Deleted(actor) || session.Subscriber.AttachedEntity != actor)
         {
             StopWatching(ent, actor);
             return;
@@ -217,7 +230,8 @@ public sealed class OverwatchConsoleSystem : EntitySystem
 
         if (!TryGetWatchTarget(ent.Comp, session.WatchedNumber, out var watchedEntity))
         {
-            SuspendWatching(actor, session);
+            if (!session.Suspended)
+                SuspendWatching(actor, session);
             return;
         }
 
@@ -231,8 +245,8 @@ public sealed class OverwatchConsoleSystem : EntitySystem
             return;
         }
 
-        RemoveWatchViewSubscription(actor, session.WatchedEntity);
-        AddWatchViewSubscription(actor, watchedEntity);
+        if (session.Suspended || session.WatchedEntity != watchedEntity)
+            AddWatchViewSubscription(session.Subscriber, watchedEntity);
 
         session.WatchedEntity = watchedEntity;
         session.Suspended = false;
@@ -240,15 +254,18 @@ public sealed class OverwatchConsoleSystem : EntitySystem
 
         if (!Deleted(actor) && TryComp<OverwatchWatchingComponent>(actor, out var watching))
         {
-            watching.Watching = watchedEntity;
-            watching.WatchedNumber = session.WatchedNumber;
-            Dirty(actor, watching);
+            if (watching.Watching != watchedEntity || watching.WatchedNumber != session.WatchedNumber)
+            {
+                watching.Watching = watchedEntity;
+                watching.WatchedNumber = session.WatchedNumber;
+                Dirty(actor, watching);
+            }
         }
     }
 
     private void SuspendWatching(EntityUid actor, OverwatchWatchSession session)
     {
-        RemoveWatchViewSubscription(actor, session.WatchedEntity);
+        RemoveWatchViewSubscription(session.Subscriber, session.WatchedEntity);
         session.Suspended = true;
 
         // Keep WatchedNumber + last-known telemetry so the client can show "FEED LOST".
@@ -476,32 +493,20 @@ public sealed class OverwatchConsoleSystem : EntitySystem
         return HasComp<MobStateComponent>(target) || HasComp<ActorComponent>(target);
     }
 
-    private void AddWatchViewSubscription(EntityUid? actor, EntityUid? watched)
+    private void AddWatchViewSubscription(ICommonSession subscriber, EntityUid? watched)
     {
-        if (actor == null ||
-            watched == null ||
-            Deleted(actor.Value) ||
-            Deleted(watched.Value) ||
-            !TryComp(actor.Value, out ActorComponent? actorComp))
-        {
+        if (watched == null || Deleted(watched.Value))
             return;
-        }
 
-        _viewSubscriber.AddViewSubscriber(watched.Value, actorComp.PlayerSession);
+        _viewSubscriber.AddViewSubscriber(watched.Value, subscriber);
     }
 
-    private void RemoveWatchViewSubscription(EntityUid? actor, EntityUid? watched)
+    private void RemoveWatchViewSubscription(ICommonSession subscriber, EntityUid? watched)
     {
-        if (actor == null ||
-            watched == null ||
-            Deleted(actor.Value) ||
-            Deleted(watched.Value) ||
-            !TryComp(actor.Value, out ActorComponent? actorComp))
-        {
+        if (watched == null)
             return;
-        }
 
-        _viewSubscriber.RemoveViewSubscriber(watched.Value, actorComp.PlayerSession);
+        _viewSubscriber.RemoveViewSubscriber(watched.Value, subscriber);
     }
 
     private void UpdateLastKnown(EntityUid actor, EntityUid watchedEntity)

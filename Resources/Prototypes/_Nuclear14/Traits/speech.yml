@@ -63,6 +63,7 @@
   - !type:CharacterDepartmentRequirement
     departments:
     - BrotherhoodOfSteel
+    - BrotherhoodOfSteelLancers
   - !type:CharacterJobRequirement
     inverted: true
     jobs:
@@ -84,6 +85,7 @@
       inverted: true
       departments:
         - BrotherhoodOfSteel
+        - BrotherhoodOfSteelLancers
   - !type:CharacterJobRequirement
     inverted: true
     jobs:
@@ -94,6 +96,7 @@
     - NCRCommander
     - NCRExecutiveOfficer
     - NCRPlatoonLeader
+    - NCRVertibirdPilot
     - NCRVeteranRanger
     - NCRFieldRanger
     - NCRPatrolRanger
@@ -114,6 +117,9 @@
     - NCRCadet
     - BoSMidScribe
     - BoSMidKnight
+    - BoSLancerCaptain
+    - BoSLancerKnight
+    - BoSLancer
     - BoSMidSquire
     - CaesarLegionCenturion
     - CaesarLegionLegate

@@ -13,13 +13,6 @@ namespace Content.Client._Misfits.Vehicles.Vertibird;
 
 public sealed class VertibirdVisualsSystem : EntitySystem
 {
-    private static readonly Vector2[] RotorOffsets =
-    [
-        new(-1.6f, 0.8f),
-        new(1.6f, 0.8f),
-    ];
-
-    private static readonly TimeSpan RotorWashInterval = TimeSpan.FromSeconds(0.45);
     private const float HoverVisualLift = 0.22f;
     private const float HoverBobAmplitude = 0.08f;
     private const float HoverBobSpeed = 2.2f;
@@ -30,7 +23,7 @@ public sealed class VertibirdVisualsSystem : EntitySystem
     [Dependency] private readonly SharedTransformSystem _transform = default!;
     [Dependency] private readonly SpriteSystem _sprite = default!;
 
-    private readonly Dictionary<EntityUid, TimeSpan> _nextRotorWash = new();
+    private readonly Dictionary<EntityUid, TimeSpan> _nextFlightEffect = new();
     private readonly Dictionary<EntityUid, bool> _hiddenOccupantVisibility = new();
 
     public override void Initialize()
@@ -56,7 +49,7 @@ public sealed class VertibirdVisualsSystem : EntitySystem
 
     private void OnShutdown(Entity<VertibirdComponent> ent, ref ComponentShutdown args)
     {
-        _nextRotorWash.Remove(ent.Owner);
+        _nextFlightEffect.Remove(ent.Owner);
     }
 
     private void OnOccupantHidden(Entity<VertibirdHiddenOccupantComponent> ent, ref ComponentStartup args)
@@ -87,7 +80,7 @@ public sealed class VertibirdVisualsSystem : EntitySystem
             return;
         }
 
-        var state = IsAirborne(ent.Comp.State) ? "vertibird_flying" : "vertibird";
+        var state = IsAirborne(ent.Comp.State) ? ent.Comp.FlyingSpriteState : ent.Comp.GroundedSpriteState;
         _sprite.LayerSetRsiState((ent.Owner, sprite), VertibirdVisualLayers.Base, state);
         UpdateGroundHoverVisuals(ent, sprite);
     }
@@ -107,15 +100,15 @@ public sealed class VertibirdVisualsSystem : EntitySystem
 
             if (!IsAirborne(vertibird.State) || xform.MapUid is not { } mapUid)
             {
-                _nextRotorWash.Remove(uid);
+                _nextFlightEffect.Remove(uid);
                 continue;
             }
 
-            if (_nextRotorWash.TryGetValue(uid, out var nextEffect) && _timing.CurTime < nextEffect)
+            if (_nextFlightEffect.TryGetValue(uid, out var nextEffect) && _timing.CurTime < nextEffect)
                 continue;
 
-            _nextRotorWash[uid] = _timing.CurTime + RotorWashInterval;
-            SpawnRotorWash(mapUid, xform);
+            _nextFlightEffect[uid] = _timing.CurTime + TimeSpan.FromSeconds(vertibird.FlightEffectInterval);
+            SpawnFlightEffect((uid, vertibird), mapUid, xform);
         }
     }
 
@@ -148,17 +141,29 @@ public sealed class VertibirdVisualsSystem : EntitySystem
         _sprite.LayerSetOffset((ent.Owner, sprite), VertibirdVisualLayers.Base, offset);
     }
 
-    private void SpawnRotorWash(EntityUid mapUid, TransformComponent xform)
+    private void SpawnFlightEffect(Entity<VertibirdComponent> ent, EntityUid mapUid, TransformComponent xform)
     {
+        if (ent.Comp.FlightEffectPrototype is not { } effectProto || effectProto.Length == 0)
+            return;
+
         var worldPosition = _transform.GetWorldPosition(xform);
         var worldRotation = _transform.GetWorldRotation(xform);
         var effectMap = GetVisibleEffectMap(mapUid);
 
-        foreach (var offset in RotorOffsets)
+        foreach (var offset in ent.Comp.FlightEffectOffsets)
         {
             var jitter = _random.NextVector2(0.2f);
             var position = worldPosition + worldRotation.RotateVec(offset + jitter);
-            Spawn("VertibirdRotorWashEffect", new EntityCoordinates(effectMap, position));
+            Spawn(effectProto, new EntityCoordinates(effectMap, position));
+        }
+
+        // On an empty sky layer, the craft itself is composited separately.
+        // Project a heavy moving shadow onto the visible lower map so players
+        // underneath can immediately read that an aircraft is overhead.
+        if (effectMap != mapUid)
+        {
+            var jitter = _random.NextVector2(0.08f);
+            Spawn("VertibirdOverheadShadowEffect", new EntityCoordinates(effectMap, worldPosition + jitter));
         }
     }
 
