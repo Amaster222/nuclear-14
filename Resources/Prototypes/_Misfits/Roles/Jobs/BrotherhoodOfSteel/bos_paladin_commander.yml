@@ -48,7 +48,7 @@
     back: N14ClothingBackpackMilitary
     shoes: N14ClothingBootsLeatherFilled
     head: N14ClothingPaladinBeret
-    outerClothing: N14ClothingOuterPowerArmorMidwestCommander # #Cythisiax Added - replaces Head Paladin's T-51b
+    outerClothing: N14ClothingOuterPowerArmorJacksontownley # #Cythisiax Edited - Jackson Townley personal Midwest Commander reskin (identical stats)
     hands: N14ClothingHandsGlovesCombat
     pocket1: BoSBrotherhoodHeadPaladinKits
     id: N14PaladinCommander_PipBoy # #Cythisiax Edited - dedicated Paladin Commander Pip-Boy (shows correct holotag job)
