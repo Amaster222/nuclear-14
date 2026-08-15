@@ -10115,3 +10115,10 @@ Entries:
   id: 6322
   time: '2026-08-15T03:00:16.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1750
+- author: Squagg
+  changes:
+    - type: Fix
+      message: Brotherhood Lancers can now use Brotherhood loadouts and traits.
+  id: 6323
+  time: '2026-08-15T11:56:59.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1754
