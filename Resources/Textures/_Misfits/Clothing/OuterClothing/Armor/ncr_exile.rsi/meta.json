@@ -1,0 +1,53 @@
+{
+    "version": 1,
+    "license": null,
+    "copyright": null,
+    "size": {
+        "x": 32,
+        "y": 32
+    },
+    "states": [
+        {
+            "name": "exile_bos icon"
+        },
+        {
+            "name": "exile_bos",
+            "directions": 4
+        },
+        {
+            "name": "ncrexile icon"
+        },
+        {
+            "name": "ncrexile",
+            "directions": 4
+        },
+        {
+            "name": "legexile icon"
+        },
+        {
+            "name": "legexile",
+            "directions": 4
+        },
+        {
+            "name": "ncr_uniformexile",
+            "directions": 4
+        },
+        {
+            "name": "legion_uniformexile",
+            "directions": 4
+        },
+        {
+            "name": "vault_exile",
+            "directions": 4
+        },
+        {
+            "name": "ncr_uniformexile icon"
+        },
+        {
+            "name": "legion_uniformexile icon"
+        },
+        {
+            "name": "vault_exile icon"
+        }
+    ]
+}
