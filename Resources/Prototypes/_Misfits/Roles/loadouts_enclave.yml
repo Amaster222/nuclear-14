@@ -103,6 +103,21 @@
   items:
     - ClothingNeckPinEnclaveMasterSergeant
 
+- type: loadout
+  id: LoadoutEnclavePinSergeantMajor
+  category: Roles
+  cost: 1
+  exclusive: true
+  requirements:
+    - !type:CharacterJobRequirement
+      jobs:
+        - EnclaveNCO
+    - !type:CharacterPlaytimeRequirement
+      tracker: EnclaveNCO
+      min: 288000 # 80 hours
+  items:
+    - ClothingNeckPinEnclaveSergeantMajor
+
 # === Junior Officer Ranks (EnclaveJuniorOfficer) ===
 
 - type: loadout
@@ -349,3 +364,18 @@
       min: 432000 # 120 hours
   items:
     - ClothingNeckPinEnclaveMasterSergeant
+
+- type: loadout
+  id: LoadoutEnclaveSMPinSergeantMajor
+  category: Roles
+  cost: 1
+  exclusive: true
+  requirements:
+    - !type:CharacterJobRequirement
+      jobs:
+        - SuperMutantEnclave
+    - !type:CharacterPlaytimeRequirement
+      tracker: SuperMutantEnclave
+      min: 504000 # 140 hours
+  items:
+    - ClothingNeckPinEnclaveSergeantMajor

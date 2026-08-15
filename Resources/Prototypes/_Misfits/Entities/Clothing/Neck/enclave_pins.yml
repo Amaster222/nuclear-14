@@ -99,6 +99,19 @@
     layers:
     - state: sergeantmajor
 
+# pins.rsi has no E-9 art, so this borrows the sergeantmajor state like the NCR senior NCO pins do.
+- type: entity
+  parent: ClothingNeckPinEnclavePrivate
+  id: ClothingNeckPinEnclaveSergeantMajor
+  name: enclave sergeant major pin
+  components:
+  - type: RankTitle
+    rankTitle: Sergeant Major
+  - type: Sprite
+    sprite: _Nuclear14/Clothing/Neck/Misc/pins.rsi
+    layers:
+    - state: sergeantmajor
+
 # Junior Officer ranks
 - type: entity
   parent: ClothingNeckPinEnclavePrivate

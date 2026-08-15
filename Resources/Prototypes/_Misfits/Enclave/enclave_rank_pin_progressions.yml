@@ -27,7 +27,7 @@
     - min: 144000  # 40 hours
       entity: ClothingNeckPinEnclaveSpecialist
 
-# NCO: SGT (E-5) → SSG (E-6) at 20h → SFC (E-7) at 40h → MSG (E-8) at 60h
+# NCO: SGT (E-5) → SSG (E-6) at 20h → SFC (E-7) at 40h → MSG (E-8) at 60h → SGM (E-9) at 80h
 - type: ncrRankPinProgression
   id: EnclaveNCOPins
   jobs:
@@ -43,6 +43,8 @@
       entity: ClothingNeckPinEnclaveSFC
     - min: 216000  # 60 hours
       entity: ClothingNeckPinEnclaveMasterSergeant
+    - min: 288000  # 80 hours
+      entity: ClothingNeckPinEnclaveSergeantMajor
 
 # Junior Officer: 2LT (O-1) → 1LT (O-2) at 20h
 - type: ncrRankPinProgression
@@ -98,7 +100,7 @@
       entity: ClothingNeckPinEnclaveGeneral
 
 # Supermutant: PVT (E-1) → PFC (E-3) at 20h → SPC (E-4) at 40h → SGT (E-5) at 60h
-# → SSG (E-6) at 80h → SFC (E-7) at 100h → MSG (E-8) at 120h
+# → SSG (E-6) at 80h → SFC (E-7) at 100h → MSG (E-8) at 120h → SGM (E-9) at 140h
 # Walks the whole enlisted and NCO ladder in one billet, so it runs longer than either.
 - type: ncrRankPinProgression
   id: SuperMutantEnclavePins
@@ -121,6 +123,8 @@
       entity: ClothingNeckPinEnclaveSFC
     - min: 432000  # 120 hours
       entity: ClothingNeckPinEnclaveMasterSergeant
+    - min: 504000  # 140 hours
+      entity: ClothingNeckPinEnclaveSergeantMajor
 
 # Vertibird Pilot: 2LT (O-1) → 1LT (O-2) at 20h → Captain (O-3) at 40h
 # Enclave aviators hold commissions, so the ladder tops out level with the Senior Officer billet.
