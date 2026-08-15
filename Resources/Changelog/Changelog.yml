@@ -10086,3 +10086,32 @@ Entries:
   id: 6321
   time: '2026-08-15T00:53:17.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1749
+- author: cythisiax
+  changes:
+    - type: Add
+      message: Legion Hot Air Balloon
+    - type: Tweak
+      message: >-
+        Both Vertibird & HotABs are shared core framework. .yml for
+        individualization.
+    - type: Tweak
+      message: 1 Pilot, 1 Chief, 4 passengers
+    - type: Tweak
+      message: >-
+        Structural gage upon hitting objects. 0 structure = explosion and round
+        end.
+    - type: Tweak
+      message: fuel consumption, 250 total with 0.5/sec, requires welding fuel.
+    - type: Tweak
+      message: cannot land in BlockWeather markers
+    - type: Tweak
+      message: 5 second 'doafter' for board & unboard
+    - type: Tweak
+      message: projectiles go through flyables, hit passengers directly.
+    - type: Fix
+      message: GUI for both craft.
+    - type: Fix
+      message: shadows
+  id: 6322
+  time: '2026-08-15T03:00:16.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1750
