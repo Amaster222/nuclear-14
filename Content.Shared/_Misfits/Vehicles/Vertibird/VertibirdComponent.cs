@@ -2,6 +2,9 @@
 using System.Numerics;
 using System;
 using Content.Shared.Actions;
+using Content.Shared.Chemistry.Reagent;
+using Content.Shared.DoAfter;
+using Content.Shared.FixedPoint;
 using Robust.Shared.Audio;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
@@ -18,8 +21,15 @@ public sealed partial class VertibirdComponent : Component
     [DataField, AutoNetworkedField]
     public EntityUid? Pilot;
 
+    /// <summary>
+    /// Number of seats this vehicle offers. The seat array is resized to this
+    /// value on component init so each vehicle can define its own capacity.
+    /// </summary>
+    [DataField]
+    public int SeatCount = 10;
+
     [ViewVariables]
-    public EntityUid?[] SeatOccupants = new EntityUid?[9];
+    public EntityUid?[] SeatOccupants = [];
 
     [DataField, AutoNetworkedField]
     public EntityUid? FlightActionEntity;
@@ -92,6 +102,45 @@ public sealed partial class VertibirdComponent : Component
     public float TurnSpeedDegrees = 90f;
 
     [DataField]
+    public float AltitudeTransitionDuration = 1.25f;
+
+    [DataField]
+    public string FuelSolution = "vertibirdFuel";
+
+    [DataField]
+    public ProtoId<ReagentPrototype> FuelReagent = "WeldingFuel";
+
+    [DataField]
+    public FixedPoint2 FuelUsePerSecond = FixedPoint2.New(0.5f);
+
+    [DataField]
+    public FixedPoint2 MinimumTakeoffFuel = FixedPoint2.New(30f);
+
+    [DataField]
+    public float LowFuelWarningFraction = 0.25f;
+
+    [DataField]
+    public float CriticalFuelWarningFraction = 0.10f;
+
+    [ViewVariables]
+    public bool LowFuelWarningIssued;
+
+    [ViewVariables]
+    public bool CriticalFuelWarningIssued;
+
+    [ViewVariables]
+    public float FuelAccumulator;
+
+    [ViewVariables]
+    public TimeSpan NextFuelUiUpdate;
+
+    [ViewVariables]
+    public bool FuelEmergencyActive;
+
+    [ViewVariables]
+    public bool EmergencyLandingActive;
+
+    [DataField]
     public Vector2 DriftVelocity = Vector2.Zero;
 
     [ViewVariables]
@@ -108,6 +157,65 @@ public sealed partial class VertibirdComponent : Component
 
     [DataField]
     public string MapConfigId = "Wendover";
+
+    // ---- Sprite / visual state (per-vehicle, so balloons/vertibirds use their own RSI states) ----
+    /// <summary>RSI state shown while grounded.</summary>
+    [DataField]
+    public string GroundedSpriteState = "vertibird";
+
+    /// <summary>RSI state shown while airborne.</summary>
+    [DataField]
+    public string FlyingSpriteState = "vertibird_flying";
+
+    /// <summary>
+    /// Effect entity spawned on a timer while airborne (rotor wash, burner embers,
+    /// etc). Null/empty means no per-frame effect.
+    /// </summary>
+    [DataField]
+    public string? FlightEffectPrototype = "VertibirdRotorWashEffect";
+
+    /// <summary>Local offsets (rotated with the vehicle) where the flight effect spawns.</summary>
+    [DataField]
+    public Vector2[] FlightEffectOffsets = [new(-1.6f, 0.8f), new(1.6f, 0.8f)];
+
+    [DataField]
+    public float FlightEffectInterval = 0.2f;
+
+    // ---- RP emote locale ids (per-vehicle flavor) ----
+    [DataField]
+    public string StartupEmote = "vertibird-rp-startup";
+
+    [DataField]
+    public string[] StartupProgressEmotes =
+    [
+        "vertibird-rp-startup-switches",
+        "vertibird-rp-startup-avionics",
+        "vertibird-rp-startup-rotors",
+        "vertibird-rp-startup-throttle",
+    ];
+
+    [DataField]
+    public string TakeoffEmote = "vertibird-rp-takeoff";
+
+    [DataField]
+    public string LandingEmote = "vertibird-rp-landing";
+
+    [DataField]
+    public string ZUpEmote = "vertibird-rp-z-up";
+
+    [DataField]
+    public string ZDownEmote = "vertibird-rp-z-down";
+
+    [DataField]
+    public string FuelEmergencyEmote = "vertibird-rp-fuel-emergency";
+
+    [DataField]
+    public string PilotDisconnectedEmote = "vertibird-rp-pilot-disconnected";
+
+    // ---- GUI ----
+    /// <summary>Locale key for the seat-manifest window title.</summary>
+    [DataField]
+    public string WindowTitleLocId = "vertibird-window-title";
 }
 
 [Flags]
@@ -139,12 +247,32 @@ public enum VertibirdUiKey : byte
 [Serializable, NetSerializable]
 public sealed class VertibirdSeatBoundUserInterfaceState : BoundUserInterfaceState
 {
+    public readonly string Title;
     public readonly VertibirdFlightState FlightState;
+    public readonly int Altitude;
+    public readonly float Fuel;
+    public readonly float MaxFuel;
+    public readonly float StructuralIntegrity;
+    public readonly float MaxStructuralIntegrity;
     public readonly VertibirdSeatUiState[] Seats;
 
-    public VertibirdSeatBoundUserInterfaceState(VertibirdFlightState flightState, VertibirdSeatUiState[] seats)
+    public VertibirdSeatBoundUserInterfaceState(
+        string title,
+        VertibirdFlightState flightState,
+        int altitude,
+        float fuel,
+        float maxFuel,
+        float structuralIntegrity,
+        float maxStructuralIntegrity,
+        VertibirdSeatUiState[] seats)
     {
+        Title = title;
         FlightState = flightState;
+        Altitude = altitude;
+        Fuel = fuel;
+        MaxFuel = maxFuel;
+        StructuralIntegrity = structuralIntegrity;
+        MaxStructuralIntegrity = maxStructuralIntegrity;
         Seats = seats;
     }
 }
@@ -173,6 +301,33 @@ public sealed class VertibirdControlInputMessage : EntityEventArgs
     {
         Input = input;
         Pressed = pressed;
+    }
+}
+
+[Serializable, NetSerializable]
+public sealed partial class VertibirdBoardDoAfterEvent : DoAfterEvent
+{
+    public int SeatIndex;
+
+    public VertibirdBoardDoAfterEvent(int seatIndex)
+    {
+        SeatIndex = seatIndex;
+    }
+
+    public override DoAfterEvent Clone() => new VertibirdBoardDoAfterEvent(SeatIndex);
+}
+
+/// <summary>
+/// Keeps the server's PVS viewers aligned with the pilot's client-side cursor camera.
+/// </summary>
+[Serializable, NetSerializable]
+public sealed class VertibirdCameraOffsetMessage : EntityEventArgs
+{
+    public Vector2 Offset;
+
+    public VertibirdCameraOffsetMessage(Vector2 offset)
+    {
+        Offset = offset;
     }
 }
 

@@ -1,17 +1,37 @@
+using System.Numerics;
 using Content.Shared._Misfits.Vehicles.Vertibird;
 using Content.Shared.Input;
 using Content.Shared.Movement.Systems;
+using Robust.Client.Graphics;
+using Robust.Client.Input;
 using Robust.Client.Player;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Input;
 using Robust.Shared.Input.Binding;
 using Robust.Shared.Player;
+using Robust.Shared.Timing;
 
 namespace Content.Client._Misfits.Vehicles.Vertibird;
 
 public sealed class VertibirdPilotInputSystem : EntitySystem
 {
+    private const float CameraPanFactor = 0.55f;
+    private const float CameraMaxOffset = 10f;
+    private const float CameraLerpSpeed = 8f;
+    private const float CameraSyncThreshold = 0.1f;
+    private static readonly TimeSpan CameraSyncInterval = TimeSpan.FromSeconds(0.1);
+
+    [Dependency] private readonly IEyeManager _eyeManager = default!;
+    [Dependency] private readonly IInputManager _input = default!;
     [Dependency] private readonly IPlayerManager _player = default!;
+    [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private readonly SharedEyeSystem _eye = default!;
+    [Dependency] private readonly SharedTransformSystem _transform = default!;
+
+    private EntityUid? _cameraPilot;
+    private Vector2 _cameraOffset;
+    private Vector2 _lastSentCameraOffset;
+    private TimeSpan _nextCameraSync;
 
     public override void Initialize()
     {
@@ -27,8 +47,44 @@ public sealed class VertibirdPilotInputSystem : EntitySystem
 
     public override void Shutdown()
     {
+        ResetCamera();
         base.Shutdown();
         CommandBinds.Unregister<VertibirdPilotInputSystem>();
+    }
+
+    public override void FrameUpdate(float frameTime)
+    {
+        base.FrameUpdate(frameTime);
+
+        if (_player.LocalEntity is not { } pilot ||
+            !_input.MouseScreenPosition.IsValid ||
+            !TryGetActiveVertibird(pilot, out _) ||
+            !TryComp<EyeComponent>(pilot, out var eye) ||
+            !TryComp<TransformComponent>(pilot, out var xform))
+        {
+            ResetCamera();
+            return;
+        }
+
+        var pilotChanged = _cameraPilot != pilot;
+        _cameraPilot = pilot;
+        var mouseMap = _eyeManager.PixelToMap(_input.MouseScreenPosition);
+        if (mouseMap.MapId != xform.MapID)
+            return;
+
+        // Remove our existing eye displacement from the unprojected mouse
+        // position so moving the camera does not feed back into a larger pan.
+        var pilotPosition = _transform.GetWorldPosition(xform);
+        var target = (mouseMap.Position - pilotPosition - _cameraOffset) * CameraPanFactor;
+        var length = target.Length();
+        if (length > CameraMaxOffset)
+            target = target / length * CameraMaxOffset;
+
+        var blend = 1f - MathF.Exp(-CameraLerpSpeed * MathF.Max(frameTime, 0f));
+        _cameraOffset = Vector2.Lerp(_cameraOffset, target, blend);
+        _eye.SetOffset(pilot, _cameraOffset, eye);
+        _eye.SetPvsScale((pilot, eye), 1.75f);
+        SyncCameraOffset(pilotChanged);
     }
 
     private void Bind(CommandBinds.BindingsBuilder binds, BoundKeyFunction key, VertibirdControlInput input)
@@ -55,6 +111,55 @@ public sealed class VertibirdPilotInputSystem : EntitySystem
         }
 
         return false;
+    }
+
+    private bool TryGetActiveVertibird(EntityUid pilot, out Entity<VertibirdComponent> result)
+    {
+        var query = EntityQueryEnumerator<VertibirdComponent>();
+        while (query.MoveNext(out var uid, out var vertibird))
+        {
+            if (vertibird.Pilot != pilot || vertibird.State == VertibirdFlightState.Grounded)
+                continue;
+
+            result = (uid, vertibird);
+            return true;
+        }
+
+        result = default;
+        return false;
+    }
+
+    private void ResetCamera()
+    {
+        if (_cameraPilot is { } pilot)
+        {
+            if (TryComp<EyeComponent>(pilot, out var eye))
+            {
+                _eye.SetOffset(pilot, Vector2.Zero, eye);
+                _eye.SetPvsScale((pilot, eye), 1f);
+            }
+
+            RaiseNetworkEvent(new VertibirdCameraOffsetMessage(Vector2.Zero));
+        }
+
+        _cameraPilot = null;
+        _cameraOffset = Vector2.Zero;
+        _lastSentCameraOffset = Vector2.Zero;
+        _nextCameraSync = TimeSpan.Zero;
+    }
+
+    private void SyncCameraOffset(bool force)
+    {
+        if (!force && (_timing.CurTime < _nextCameraSync ||
+            Vector2.DistanceSquared(_cameraOffset, _lastSentCameraOffset) <
+            CameraSyncThreshold * CameraSyncThreshold))
+        {
+            return;
+        }
+
+        RaiseNetworkEvent(new VertibirdCameraOffsetMessage(_cameraOffset));
+        _lastSentCameraOffset = _cameraOffset;
+        _nextCameraSync = _timing.CurTime + CameraSyncInterval;
     }
 
     private sealed class VertibirdMovementHandler(VertibirdPilotInputSystem system, VertibirdControlInput input)

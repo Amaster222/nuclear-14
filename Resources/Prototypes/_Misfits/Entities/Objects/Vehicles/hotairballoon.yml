@@ -1,15 +1,15 @@
-# #Misfits Add: Decorative Vertibird wreck for mapping and scene dressing.
+# #Misfits Add - Hot air balloon reusing the vertibird aircraft mechanics (VertibirdComponent).
 
 - type: entity
   parent: BaseStructure
-  id: N14VehicleVertibirdWreck
-  name: grounded vertibird
-  description: A grounded pre-War tilt-rotor aircraft with enough bulk to dominate the skyline.
+  id: N14VehicleHotAirBalloonWreck
+  name: grounded hot air balloon
+  description: A collapsed post-war hot air balloon, its torn envelope draped over a bus that was cut in half.
   suffix: Mapping
   components:
   - type: Sprite
-    sprite: _Misfits/N14/Objects/Vehicles/vertibird.rsi
-    state: vertibird
+    sprite: _Misfits/N14/Objects/Vehicles/legionballoon.rsi
+    state: balloon
     drawdepth: Mobs
     noRot: true
     offset: 0, 1.8
@@ -21,7 +21,7 @@
       fix1:
         shape:
           !type:PhysShapeAabb
-          bounds: "-1.6,-0.6,1.6,0.6"
+          bounds: "-1.5,-1.2,1.5,1.2"
         density: 100
         mask:
         - MachineMask
@@ -35,7 +35,7 @@
     thresholds:
     - trigger:
         !type:DamageTrigger
-        damage: 250
+        damage: 200
       behaviors:
       - !type:PlaySoundBehavior
         sound:
@@ -45,47 +45,74 @@
 
 - type: entity
   parent: BaseStructureDynamic
-  id: N14VehicleVertibird
-  name: vertibird
-  description: A heavy tilt-rotor aircraft rigged for short-range wasteland flight.
+  id: N14VehicleHotAirBalloon
+  name: hot air balloon
+  description: A pre-War hot air balloon, its patched envelope ready to catch the wasteland winds.
   suffix: Flyable, Wendover
   components:
   - type: Vertibird
     mapConfigId: Wendover
-    startupDuration: 55
-    hoverAltitude: 0.85
-    verticalSpeed: 0.75
-    thrustAcceleration: 6
-    reverseAcceleration: 2
-    maxFlightSpeed: 12
-    flightDrag: 0.75
-    turnSpeedDegrees: 90
+    startupDuration: 45
+    hoverAltitude: 1.0
+    verticalSpeed: 0.4
+    thrustAcceleration: 1.6
+    reverseAcceleration: 0.6
+    maxFlightSpeed: 4
+    flightDrag: 1.1
+    turnSpeedDegrees: 30
     altitudeTransitionDuration: 5
-    seatCount: 6
-    fuelSolution: vertibirdFuel
-    fuelUsePerSecond: 0.5
+    fuelSolution: balloonFuel
+    fuelUsePerSecond: 1.0
     minimumTakeoffFuel: 30
+    seatCount: 6
+    groundedSpriteState: legionballoon-open
+    flyingSpriteState: legionballoon
+    flightEffectPrototype: HotAirBalloonBurnerEffect
+    flightEffectOffsets:
+    - "0, 0.4"
+    flightEffectInterval: 0.35
+    startupSound: null
+    flightLoopSound:
+      path: /Audio/Effects/fire.ogg
+      params:
+        volume: -4
+        loop: true
+        maxDistance: 15
+    landingSound: null
+    startupEmote: balloon-rp-startup
+    startupProgressEmotes:
+    - balloon-rp-startup-switches
+    - balloon-rp-startup-avionics
+    - balloon-rp-startup-rotors
+    - balloon-rp-startup-throttle
+    takeoffEmote: balloon-rp-takeoff
+    landingEmote: balloon-rp-landing
+    zUpEmote: balloon-rp-z-up
+    zDownEmote: balloon-rp-z-down
+    fuelEmergencyEmote: balloon-rp-fuel-emergency
+    pilotDisconnectedEmote: balloon-rp-pilot-disconnected
+    windowTitleLocId: balloon-window-title
   - type: SolutionContainerManager
     solutions:
-      vertibirdFuel:
-        maxVol: 250
+      balloonFuel:
+        maxVol: 200
         reagents:
         - ReagentId: WeldingFuel
-          Quantity: 250
+          Quantity: 200
   - type: RefillableSolution
-    solution: vertibirdFuel
+    solution: balloonFuel
   - type: ExaminableSolution
-    solution: vertibirdFuel
+    solution: balloonFuel
   - type: MZPhysics
     bounciness: 0.05
   - type: AircraftImpactDamage
-    minimumSpeed: 4
+    minimumSpeed: 1.5
     damage:
       types:
-        Structural: 10
-    speedDamageFactor: 0.5
-    velocityRetention: 0.25
-    damageCooldown: 0.65
+        Structural: 15
+    speedDamageFactor: 0.8
+    velocityRetention: 0.1
+    damageCooldown: 0.8
   - type: Appearance
   - type: CanMoveInAir
   - type: MovementAlwaysTouching
@@ -97,9 +124,10 @@
   - type: ActivatableUI
     key: enum.VertibirdUiKey.Key
   - type: Sprite
-    sprite: _Misfits/N14/Objects/Vehicles/vertibird.rsi
+    sprite: _Misfits/N14/Objects/Vehicles/legionballoon.rsi
     drawdepth: Mobs
-    noRot: false
+    # Keep the balloon visually upright while its hidden heading changes for steering.
+    noRot: true
     offset: 0, 1.8
     scale: 0.6, 0.6
     layers:
@@ -110,7 +138,7 @@
       scale: 8, 4
       color: "#00000055"
       visible: false
-    - state: vertibird
+    - state: legionballoon-open
       map: [ enum.VertibirdVisualLayers.Base ]
   - type: Strap
     position: Stand
@@ -137,7 +165,7 @@
       fix1:
         shape:
           !type:PhysShapeAabb
-          bounds: "-1.6,-0.6,1.6,0.6"
+          bounds: "-1.5,-1.2,1.5,1.2"
         density: 100
         mask:
         - MachineMask
