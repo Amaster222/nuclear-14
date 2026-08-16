@@ -10212,3 +10212,10 @@ Entries:
   id: 6327
   time: '2026-08-15T23:37:58.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1757
+- author: Oli
+  changes:
+    - type: Add
+      message: Exiles armors and uniforms.
+  id: 6328
+  time: '2026-08-16T03:37:30.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1758
