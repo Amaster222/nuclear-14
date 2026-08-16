@@ -27,7 +27,8 @@ public sealed partial class GunSystem
     [Dependency] IRobustRandom _rng = default!;
     private ISawmill _logCart = default!;
     public CartridgeSettings CartridgeVisualsSetting;
-    private const string Proto = "ClientCartridge";
+    private const string Proto_Physics = "ClientCartridgePhysics";
+    private const string Proto_Static = "ClientCartridgeStatic";
     public enum CartridgeSettings
     {
         CART_VISUAL_OFF = 1,
@@ -100,27 +101,38 @@ public sealed partial class GunSystem
     private static RSI _cRSI = new(_cSPRITE_SIZE, _cRSI_FAIL);
     private static StateId _constSpentID = new("base-spent");
     private static StateId _constBaseID = new("base");
-    private EntityUid SpawnClientCart(MapCoordinates coord, Angle angle, string? cartProto, NetUserId? source = null)
+    /// <summary>
+    /// Main method for spawning a client side spent cartridge visual.
+    /// Use prototype to spawn an unit copy of the cartridge to get its RSI
+    /// and check if its spent cart sprite has the states we need
+    /// </summary>
+    /// <param name="baseCoord">should be coordinates where spent cartridge came from</param>
+    /// <param name="curAngle">Usually the angle the 'shooter' was facing</param>
+    /// <param name="cartProto">cartridge prototype we spawn the casing from</param>
+    /// <param name="source">original source of networked spentCartEvent. null if server</param>
+    /// <returns>entUID of spent cartridge</returns>
+    private EntityUid SpawnClientCart(MapCoordinates baseCoord, Angle curAngle, string? cartProto, NetUserId? source = null)
     {
         if (!(_entMan.CreateEntityUninitialized(cartProto) is EntityUid dummyCart)
             || Comp<SpriteComponent>(dummyCart).BaseRSI is not RSI rsi)
         {
             _logCart.Warning($"Supplied cartridge prototype null or invalid protoId: {cartProto}");
-            return SpawnCartPhysics(coord, angle, _constSpentID, _cRSI);
+            return SpawnCartPhysics(baseCoord, curAngle, _constSpentID, _cRSI);
         }
 
-        // This is prolly dumb when I just need some data that's prolly already cache'd somewhere
-        // but I dunno yet how to efficently look that up. so like enjoy the syntax sugar i guesssss
-        var stateId = rsi.TryGetState(_constSpentID, out var _) ? _constSpentID :
+        // This is prolly dumb when I just need some data that's prolly already cache'd somewhere(or read the proto)
+        // but I dunno yet how to efficently look that up. so we just look at a spawend copy
+        var stateId = rsi.TryGetState(_constSpentID, out var _) ? _constSpentID : // check for spent-base, else base else null
                       rsi.TryGetState(_constBaseID, out var _) ? _constBaseID : null;
+        // TODO: remove this when refactoring all ammo cart protos to follow da rulez
         if (stateId == null)
         {
             _logCart.Error($"cartridge prototype null rsi or doesnt use correct texture State: {cartProto}");
-            return SpawnCartPhysics(coord, angle, _constSpentID, _cRSI);
+            return SpawnCartPhysics(baseCoord, curAngle, _constSpentID, _cRSI);
         }
 
-        var spentCartVisual = CartridgeVisualsSetting == OLD_SCHOOL ? SpawnCartOldSchool(coord, angle, stateId, rsi) :
-                                                             SpawnCartPhysics(coord, angle, stateId, rsi);
+        var spentCartVisual = CartridgeVisualsSetting == OLD_SCHOOL ? SpawnCartOldSchool(baseCoord, stateId, rsi) :
+                                                             SpawnCartPhysics(baseCoord, curAngle, stateId, rsi);
 
         DoEjectSound(dummyCart, source, spentCartVisual);
         Del(dummyCart);
@@ -142,11 +154,15 @@ public sealed partial class GunSystem
     private const float DistMin = .25f;
     private const float LandAngleMax = 6.3f; // little over 2*Pi
     private const float SpinMax = 1f;
+    /// <summary>
+    /// method where we achully spawn the cart. Prototype already has comp to
+    /// make the visual work on the client without the server, so we just spawn it
+    /// and apply a PULSE(what TryThrow does basically) using some rng
+    /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private EntityUid SpawnCartPhysics(MapCoordinates basePos, Angle baseAngle, StateId state, RSI rsi)
     {
-
-        var cartVisual = Spawn(Proto, basePos, rotation: _rng.NextAngle(LandAngleMax));
+        var cartVisual = Spawn(Proto_Physics, basePos, rotation: _rng.NextAngle(LandAngleMax));
         _sprite.LayerSetRsi(cartVisual, 0, rsi, state);
         var angleRng = _rng.NextAngle(MinArc, MaxArc) + baseAngle;
 
@@ -154,10 +170,15 @@ public sealed partial class GunSystem
         _physics.ApplyAngularImpulse(cartVisual, _rng.NextFloat(SpinMax));
         return cartVisual;
     }
-    private EntityUid SpawnCartOldSchool(MapCoordinates basePos, Angle baseAngle, StateId state, RSI rsi, int seed = 666)
+    /// <summary>
+    /// Alt version of above where we just spawn static cartridges to save on preformance
+    /// this spawns cartridges in a radius rather than throwing them at an angle
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private EntityUid SpawnCartOldSchool(MapCoordinates basePos, StateId state, RSI rsi, int seed = 666)
     {
         var (posEjectRNG, angleEjectRNG) = GetRandVectAngle(seed, _timing.CurTime.Nanoseconds);
-        var cartVisual = Spawn(Proto, basePos.Offset(posEjectRNG), rotation: angleEjectRNG);
+        var cartVisual = Spawn(Proto_Static, basePos.Offset(posEjectRNG), rotation: angleEjectRNG);
         _sprite.LayerSetRsi(cartVisual, 0, rsi, state);
         return cartVisual;
     }

@@ -1,5 +1,5 @@
 - type: entity
-  id: ClientCartridge
+  id: ClientCartridgePhysics
   categories: [ HideSpawnMenu ]
   components:
   - type: Sprite
@@ -43,3 +43,34 @@
     lifetime: 10
 # not sure if I really need to ensure netsync is off for every comp
 # but I dont like seeing that "networked comps" list in debug
+
+
+- type: entity
+  id: ClientCartridgeStatic
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Sprite
+    visible: true
+    sprite: _Misfits/Objects/Weapons/Guns/Ammunition/SpentCartDefault.rsi
+    state: base
+    drawdepth: Items
+    netsync: false
+  - type: Tag
+    tags:
+      - HideContextMenu
+  - type: MetaData
+  - type: Fixtures
+      hard: false
+  - type: Transform
+    netsync: false
+  - type: EmitSoundOnLand
+    sound:
+      path: /Audio/Weapons/Guns/Casings/casing_fall_1.ogg
+      params:
+        volume: -1
+    netsync: false
+  - type: Physics
+    bodyType: Static
+    netsync: false
+  - type: TimedDespawn
+    lifetime: 10
