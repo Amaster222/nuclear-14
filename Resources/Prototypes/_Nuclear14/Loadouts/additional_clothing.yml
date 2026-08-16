@@ -134,6 +134,7 @@
     - !type:CharacterDepartmentRequirement
       departments:
         - BrotherhoodOfSteel
+        - BrotherhoodOfSteelLancers
   items:
     - N14ClothingHeadHatHoodScribeTabard
 
@@ -324,6 +325,7 @@
     - !type:CharacterDepartmentRequirement
       departments:
         - BrotherhoodOfSteel
+        - BrotherhoodOfSteelLancers
   items:
     - N14ClothingNeckCloakBrotherhoodWashington
 
@@ -382,6 +384,7 @@
     - !type:CharacterDepartmentRequirement
       departments:
         - BrotherhoodOfSteel
+        - BrotherhoodOfSteelLancers
   items:
     - N14ClothingNeckMantleBrotherhoodWashington
 
@@ -679,6 +682,7 @@
     - !type:CharacterDepartmentRequirement
       departments:
         - BrotherhoodOfSteel
+        - BrotherhoodOfSteelLancers
   items:
     - N14ClothingUniformBosRecon
 
@@ -692,6 +696,7 @@
     - !type:CharacterDepartmentRequirement
       departments:
         - BrotherhoodOfSteel
+        - BrotherhoodOfSteelLancers
   items:
     - N14ClothingUniformJumpskirtBOSBlack
 
@@ -705,6 +710,7 @@
     - !type:CharacterDepartmentRequirement
       departments:
         - BrotherhoodOfSteel
+        - BrotherhoodOfSteelLancers
   items:
     - N14ClothingUniformJumpskirtBOSGold
 
@@ -718,6 +724,7 @@
     - !type:CharacterDepartmentRequirement
       departments:
         - BrotherhoodOfSteel
+        - BrotherhoodOfSteelLancers
   items:
     - N14ClothingUniformJumpskirtBOSSilver
 
@@ -747,6 +754,7 @@
     - !type:CharacterDepartmentRequirement
       departments:
         - BrotherhoodOfSteel
+        - BrotherhoodOfSteelLancers
   items:
     - N14ClothingUniformJumpsuitBOSBlack
 
@@ -760,6 +768,7 @@
     - !type:CharacterDepartmentRequirement
       departments:
         - BrotherhoodOfSteel
+        - BrotherhoodOfSteelLancers
   items:
     - N14ClothingUniformJumpsuitBOSGreen
 
@@ -773,6 +782,7 @@
     - !type:CharacterDepartmentRequirement
       departments:
         - BrotherhoodOfSteel
+        - BrotherhoodOfSteelLancers
   items:
     - N14ClothingUniformJumpsuitBOSRed
 
@@ -786,6 +796,7 @@
     - !type:CharacterDepartmentRequirement
       departments:
         - BrotherhoodOfSteel
+        - BrotherhoodOfSteelLancers
   items:
     - N14ClothingUniformJumpsuitBOSScribe
 
@@ -799,6 +810,7 @@
     - !type:CharacterDepartmentRequirement
       departments:
         - BrotherhoodOfSteel
+        - BrotherhoodOfSteelLancers
   items:
     - N14ClothingUniformJumpsuitBOSSilver
 
@@ -812,6 +824,7 @@
     - !type:CharacterDepartmentRequirement
       departments:
         - BrotherhoodOfSteel
+        - BrotherhoodOfSteelLancers
   items:
     - N14ClothingUniformJumpsuitBOSWashingtonFieldScribe
 

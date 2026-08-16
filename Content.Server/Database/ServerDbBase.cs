@@ -1824,20 +1824,19 @@ INSERT INTO player_round (players_id, rounds_id) VALUES ({players[player]}, {id}
 
         #region Currency
 
-        public async Task<int> GetCharacterCurrencyAsync(
+        public async Task<CharacterCurrency?> GetCharacterCurrencyAsync(
             Guid playerId, string characterName, CancellationToken cancel = default)
         {
             await using var db = await GetDb(cancel);
 
-            var row = await db.DbContext.CharacterCurrency
+            return await db.DbContext.CharacterCurrency
                 .Where(c => c.PlayerId == playerId && c.CharacterName == characterName)
                 .SingleOrDefaultAsync(cancel);
-
-            return row?.Bottlecaps ?? 0;
         }
 
         public async Task UpsertCharacterCurrencyAsync(
-            Guid playerId, string characterName, int bottlecaps)
+            Guid playerId, string characterName, int bottlecaps,
+            int ncrDollars = 0, int silver = 0, int gold = 0)
         {
             await using var db = await GetDb();
 
@@ -1848,6 +1847,9 @@ INSERT INTO player_round (players_id, rounds_id) VALUES ({players[player]}, {id}
             if (existing != null)
             {
                 existing.Bottlecaps = bottlecaps;
+                existing.NcrDollars = ncrDollars; // #Cythisiax Add
+                existing.Silver = silver; // #Cythisiax Add
+                existing.Gold = gold; // #Cythisiax Add
             }
             else
             {
@@ -1856,6 +1858,9 @@ INSERT INTO player_round (players_id, rounds_id) VALUES ({players[player]}, {id}
                     PlayerId = playerId,
                     CharacterName = characterName,
                     Bottlecaps = bottlecaps,
+                    NcrDollars = ncrDollars, // #Cythisiax Add
+                    Silver = silver, // #Cythisiax Add
+                    Gold = gold, // #Cythisiax Add
                 });
             }
 
@@ -2292,7 +2297,7 @@ INSERT INTO player_round (players_id, rounds_id) VALUES ({players[player]}, {id}
             return await db.DbContext.Supporter.ToListAsync(cancel);
         }
 
-        public async Task UpsertSupporterAsync(Guid userId, string username, string? title, string? nameColor)
+        public async Task UpsertSupporterAsync(Guid userId, string username, string? title, string? nameColor, int tier = 0)
         {
             await using var db = await GetDb();
 
@@ -2305,6 +2310,7 @@ INSERT INTO player_round (players_id, rounds_id) VALUES ({players[player]}, {id}
                 existing.Username = username;
                 existing.Title = title;
                 existing.NameColor = nameColor;
+                existing.Tier = tier; // #Cythisiax Added - persist Patreon tier
             }
             else
             {
@@ -2314,6 +2320,7 @@ INSERT INTO player_round (players_id, rounds_id) VALUES ({players[player]}, {id}
                     Username = username,
                     Title = title,
                     NameColor = nameColor,
+                    Tier = tier, // #Cythisiax Added - persist Patreon tier
                 });
             }
 
@@ -2333,6 +2340,115 @@ INSERT INTO player_round (players_id, rounds_id) VALUES ({players[player]}, {id}
                 db.DbContext.Supporter.Remove(existing);
                 await db.DbContext.SaveChangesAsync();
             }
+        }
+
+        #endregion
+
+        // #Cythisiax Add - Free market persistence
+
+        #region Market
+
+        public async Task<List<MarketListing>> GetActiveMarketListingsAsync(CancellationToken cancel = default)
+        {
+            await using var db = await GetDb(cancel);
+            return await db.DbContext.MarketListing
+                .Where(l => l.Status == "Active")
+                .ToListAsync(cancel);
+        }
+
+        public async Task<MarketListing?> GetMarketListingByIdAsync(Guid listingId, CancellationToken cancel = default)
+        {
+            await using var db = await GetDb(cancel);
+            return await db.DbContext.MarketListing
+                .Where(l => l.ListingId == listingId)
+                .SingleOrDefaultAsync(cancel);
+        }
+
+        public async Task UpsertMarketListingAsync(MarketListing listing)
+        {
+            await using var db = await GetDb();
+
+            var existing = await db.DbContext.MarketListing
+                .Where(l => l.ListingId == listing.ListingId)
+                .SingleOrDefaultAsync();
+
+            if (existing != null)
+            {
+                existing.Status = listing.Status;
+                existing.SoldToCharacter = listing.SoldToCharacter;
+                existing.SoldAt = listing.SoldAt;
+                existing.SoldItemTag = listing.SoldItemTag;
+            }
+            else
+            {
+                db.DbContext.MarketListing.Add(listing);
+            }
+
+            await db.DbContext.SaveChangesAsync();
+        }
+
+        public async Task DeleteExpiredMarketListingsAsync(CancellationToken cancel = default)
+        {
+            await using var db = await GetDb(cancel);
+
+            var expired = await db.DbContext.MarketListing
+                .Where(l => l.Status == "Active" && l.ExpiresAt < DateTime.UtcNow)
+                .ToListAsync(cancel);
+
+            foreach (var listing in expired)
+                listing.Status = "Purged";
+
+            if (expired.Count > 0)
+                await db.DbContext.SaveChangesAsync(cancel);
+        }
+
+        public async Task AddMarketPricePointAsync(MarketPriceHistory point)
+        {
+            await using var db = await GetDb();
+            db.DbContext.MarketPriceHistory.Add(point);
+            await db.DbContext.SaveChangesAsync();
+        }
+
+        public async Task<List<MarketPriceHistory>> GetMarketPriceHistoryAsync(
+            string prototypeId, int days = 30, CancellationToken cancel = default)
+        {
+            await using var db = await GetDb(cancel);
+            var since = DateTime.UtcNow.AddDays(-days);
+            return await db.DbContext.MarketPriceHistory
+                .Where(p => p.PrototypeId == prototypeId && p.Timestamp >= since)
+                .OrderBy(p => p.Timestamp)
+                .ToListAsync(cancel);
+        }
+
+        public async Task AddMarketSaleAsync(MarketSale sale)
+        {
+            await using var db = await GetDb();
+            db.DbContext.MarketSale.Add(sale);
+            await db.DbContext.SaveChangesAsync();
+        }
+
+        public async Task<List<MarketSale>> GetRecentMarketSalesAsync(int days = 14, CancellationToken cancel = default)
+        {
+            await using var db = await GetDb(cancel);
+            var since = DateTime.UtcNow.AddDays(-days);
+            return await db.DbContext.MarketSale
+                .Where(s => s.SoldAt >= since)
+                .OrderByDescending(s => s.SoldAt)
+                .ToListAsync(cancel);
+        }
+
+        public async Task<bool> IsItemMarketSoldAsync(string soldTag, CancellationToken cancel = default)
+        {
+            await using var db = await GetDb(cancel);
+            return await db.DbContext.MarketSoldItem
+                .AnyAsync(s => s.SoldTag == soldTag, cancel);
+        }
+
+        public async Task AddMarketSoldItemAsync(string soldTag)
+        {
+            await using var db = await GetDb();
+            db.DbContext.MarketSoldItem.Add(new MarketSoldItem { SoldTag = soldTag });
+            await db.DbContext.SaveChangesAsync();
         }
 
         #endregion

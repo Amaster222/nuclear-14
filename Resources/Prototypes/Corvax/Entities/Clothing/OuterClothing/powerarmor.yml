@@ -43,6 +43,12 @@
         Piercing: 0.60
         Heat: 0.60
         Radiation: 0.60
+  - type: Reflect # #Misfits Add - explicit NCR T-51 ricochet: small-caliber rounds bounce at 20% (overrides inherited 0.4 from the T-45NCR line)
+    reflects:
+      - SmallCaliber
+    reflectProb: 0.2
+    innate: true
+    spread: 90
   - type: ClothingSpeedModifier # #Misfits Tweak - standalone 35% slowdown, no fusion core required
     walkModifier: 0.70
     sprintModifier: 0.70

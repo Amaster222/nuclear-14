@@ -130,6 +130,18 @@
   - type: PresetIdCard
     job: NCRRO
 
+#Misfits Add - Prisoner ID dogtag: NCR prisoners had no ID slot item, so they never got a
+#station general record and were missing from the crew manifest. This fixes that.
+- type: entity
+  parent: N14IDNCRDogtag
+  id: N14IDNCRDogtagPrisoner
+  name: prisoner's dogtags
+  description: An ID dogtag worn by NCR prisoners.
+  suffix: Prisoner
+  components:
+  - type: PresetIdCard
+    job: NCRPrisoner
+
 - type: entity
   parent: N14IDPassportPhoto
   id: N14IDNCRPassportCitizen

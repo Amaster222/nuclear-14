@@ -7,7 +7,8 @@
   - type: Vehicle
   - type: Motorbike
   - type: Damageable
-    damageContainer: Inorganic
+    # #Cythisiax Fixed - was Inorganic, which ignored Structural/Caustic/Radiation damage and made motorbikes take zero damage from plasma (BulletPlasma deals Caustic + Radiation + Structural). StructuralInorganic matches the windows.yml fix.
+    damageContainer: StructuralInorganic
     damageModifierSet: Motorbike
   - type: Repairable
     fuelCost: 10

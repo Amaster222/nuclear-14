@@ -130,3 +130,37 @@
   - type: Clothing
     sprite: _Misfits/Clothing/Uniforms/FalloutSuits/whitelegsuniform.rsi
 
+#Exiles
+
+- type: entity
+  parent: N14ClothingUniformBase
+  id: M14ClothingUniformDesertersNCRUniform
+  name: disheveled NCR fatigues
+  description: A disheveled and modified duty uniform resembling NCR fatigues.
+  components:
+  - type: Sprite
+    sprite: _Misfits/Clothing/Uniforms/FalloutSuits/ncr_exile_uniform.rsi
+  - type: Clothing
+    sprite: _Misfits/Clothing/Uniforms/FalloutSuits/ncr_exile_uniform.rsi
+
+- type: entity
+  parent: N14ClothingUniformBase
+  id: M14ClothingUniformDesertersLegionUniform
+  name: disheveled Legion fatigues
+  description: A disheveled and modified uniform resembling Legion standard fatigues.
+  components:
+  - type: Sprite
+    sprite: _Misfits/Clothing/Uniforms/FalloutSuits/legion_exile_uniform.rsi
+  - type: Clothing
+    sprite: _Misfits/Clothing/Uniforms/FalloutSuits/legion_exile_uniform.rsi
+
+- type: entity
+  parent: N14ClothingUniformBase
+  id: M14ClothingUniformDesertersVaultUniform
+  name: disheveled dweller jumpsuit
+  description: A disheveled and torn uniform resembling a Vault-Tech standard Jumpsuit.
+  components:
+  - type: Sprite
+    sprite: _Misfits/Clothing/Uniforms/FalloutSuits/vault_exile_uniform.rsi
+  - type: Clothing
+    sprite: _Misfits/Clothing/Uniforms/FalloutSuits/vault_exile_uniform.rsi

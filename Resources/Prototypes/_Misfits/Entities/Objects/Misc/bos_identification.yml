@@ -275,6 +275,17 @@
   - type: PresetIdCard
     job: BoSMidPaladinCommander
 
+# #Cythisiax Added - Paladin Commander personal-whitelist holotag.
+- type: entity
+  parent: N14IDBrotherhoodOfSteelHolotagBase
+  id: N14IDBrotherhoodOfSteelHolotagPaladinCommander
+  name: paladin commander's holotags
+  description: An ID holotag worn by the Paladin Commander of the Brotherhood of Steel.
+  suffix: Paladin Commander
+  components:
+  - type: PresetIdCard
+    job: BoSPaladinCommander
+
 - type: entity
   parent: N14IDBrotherhoodOfSteelHolotagBase
   id: N14IDBrotherhoodOfSteelHolotagElder

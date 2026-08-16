@@ -466,7 +466,8 @@ loadout-name-Magazine762AmmoShort = 7.62 short magazine
 loadout-name-Magazine762Rifle = 7.62 rifle magazine
 loadout-name-ClipMagazine308Rifle = .308 rifle clip
 loadout-name-MagazineBox10mm = 10mm ammo box
-loadout-name-MagazineBox12 = 12-gauge ammo box
+# Cythisiax Fixed - MagazineBox12 is the 12.7mm box (was mislabeled as 12-gauge)
+loadout-name-MagazineBox12 = 12.7mm ammo box
 loadout-name-MagazineBox12gauge = 12-gauge ammo box
 loadout-name-MagazineBox20gauge = 20-gauge ammo box
 loadout-name-MagazineBox22 = .22 ammo box
@@ -774,7 +775,7 @@ loadout-name-N14LoadoutUniversalUniformNCRSnow = NCR trooper uniform
 loadout-name-N14LoadoutUniversalUniformJumpskirtBOSBlack = Black Brotherhood of Steel uniform
 loadout-name-N14LoadoutUniversalUniformJumpskirtBOSGold = Brotherhood of Steel uniform
 loadout-name-N14LoadoutUniversalUniformJumpskirtBOSSilver = Brotherhood of Steel uniform
-loadout-name-N14LoadoutUniversalUniformJumpskirtRDFormal = research director's formal dress
+loadout-name-N14LoadoutUniversalUniformJumpskirtRDFormal = formal brown dress
 loadout-name-N14LoadoutUniversalUniformJumpsuitBOSBlack = Black Washington BoS uniform
 loadout-name-N14LoadoutUniversalUniformJumpsuitBOSGreen = Brotherhood of Steel uniform
 loadout-name-N14LoadoutUniversalUniformJumpsuitBOSRed = Washington BoS undersuit
@@ -788,7 +789,7 @@ loadout-name-N14LoadoutUniversalUniformJumpsuitEnclave = enclave uniform
 loadout-name-N14LoadoutUniversalUniformJumpsuitFudd = fudd clothes
 loadout-name-N14LoadoutUniversalUniformJumpsuitMilUniform = prewar military uniform
 loadout-name-N14LoadoutUniversalUniformJumpsuitRCMP = RCMP uniform
-loadout-name-N14LoadoutUniversalUniformJumpsuitRDFormal = research director's formal suit
+loadout-name-N14LoadoutUniversalUniformJumpsuitRDFormal = formal brown outfit
 loadout-name-N14LoadoutUniversalUniformJumpsuitTownGuard = the Guard's uniform
 loadout-name-N14LoadoutUniversalUniformJumpsuitTownGuardLight = the Guard's uniform
 loadout-name-N14LoadoutUniversalUniformJumpsuitVancouver = vancouver preventor uniform
@@ -850,3 +851,9 @@ loadout-name-LoadoutNCRRangerFoxArmor = fox ranger combat armor
 loadout-name-MisfitsLoadoutHeadAntlerSkull = antler skullcap
 loadout-name-MisfitsLoadoutBoSMidwestCommanderPowerArmor = BoS Commander Power Armor
 loadout-name-MisfitsLoadoutFollowerResponderDuster = Follower Responder Duster
+
+# #Cythisiax Add - Patreon supporter loadout names/category
+loadout-category-Patreon = Patreon
+loadout-name-LoadoutPatreonSilverUniformVaultJumpsuit = vault jumpsuit (Patreon)
+loadout-name-LoadoutPatreonGoldCombatBoots = combat boots (Patreon)
+loadout-name-LoadoutPatreonNuclearPistol10mm = 10mm pistol (Patreon)

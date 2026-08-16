@@ -659,7 +659,7 @@ undecided-loadout-category-misfits-ncra-captain-marksman-description =
 undecided-loadout-category-misfits-ncra-captain-service-rifle-name = Captain Field Officer Kit
 undecided-loadout-category-misfits-ncra-captain-service-rifle-description =
     Includes NCR officer armor, an NCR belt,
-    a scoped service rifle with 6 magazines,
+    a marksman carbine with 4 magazines,
     a 9mm pistol with 3 magazines, a handheld radio,
     2 smoke grenades, a stick of dynamite, a C ration MRE,
     a stimpak, 2 super stimpaks, a RadAway blood bag,

@@ -78,6 +78,7 @@ public sealed partial class HolotapeWindow : DefaultWindow
     private bool _hasLinkSource;
     private bool _hasOverwatch;
     private OverwatchConsoleState? _overwatchState;
+    private OverwatchWatchingComponent? _overwatchWatch;
     private IEye? _overwatchSourceEye;
     private readonly Dictionary<string, bool> _overwatchGroupExpanded = new();
     private readonly FixedEye _overwatchDefaultEye = new();
@@ -363,9 +364,10 @@ public sealed partial class HolotapeWindow : DefaultWindow
         RefreshOverwatchView();
     }
 
-    public void UpdateOverwatch(OverwatchConsoleState? state, IEye? eye)
+    public void UpdateOverwatch(OverwatchConsoleState? state, OverwatchWatchingComponent? watch, IEye? eye)
     {
         _overwatchState = state;
+        _overwatchWatch = watch;
         _overwatchSourceEye = eye;
         _hasOverwatch = state != null;
 
@@ -375,6 +377,7 @@ public sealed partial class HolotapeWindow : DefaultWindow
         if (state == null)
         {
             _overwatchSourceEye = null;
+            OverwatchViewersLabel.Visible = false;
             UpdateOverwatchCamera(null);
             if (OverwatchPanel.Visible)
                 SwitchToDataTab();
@@ -383,8 +386,19 @@ public sealed partial class HolotapeWindow : DefaultWindow
         }
 
         OverwatchHeaderLabel.Text = state.MonitorTitle;
+        UpdateOverwatchViewers(state);
         UpdateOverwatchCamera(eye);
         RefreshOverwatchView();
+    }
+
+    private void UpdateOverwatchViewers(OverwatchConsoleState state)
+    {
+        OverwatchViewersLabel.Visible = state.Viewers.Count > 0;
+        if (state.Viewers.Count == 0)
+            return;
+
+        var names = string.Join(", ", state.Viewers.Select(FormattedMessage.EscapeText));
+        SetTerminalMarkup(OverwatchViewersLabel, $"[color={TermDimGreen}]Viewing: {names}[/color]");
     }
 
     // ── Notes Rendering ──────────────────────────────────────────────────────
@@ -503,18 +517,18 @@ public sealed partial class HolotapeWindow : DefaultWindow
                 .ToList();
 
         OverwatchNoPersonnelLabel.Visible = visibleEntries.Count == 0;
-        OverwatchStopWatchingButton.Disabled = _overwatchState.WatchedNumber == null;
+        OverwatchStopWatchingButton.Disabled = _overwatchWatch?.WatchedNumber == null;
         SetTerminalMarkup(OverwatchRosterSummaryLabel,
             _overwatchState.Personnel.Count == 0
                 ? $"[color={TermDimGreen}]No linked personnel detected.[/color]"
                 : $"[color={TermGreen}]{visibleEntries.Count} of {_overwatchState.Personnel.Count} linked personnel visible.[/color]");
 
         var hasCurrent = false;
-        if (_overwatchState.WatchedNumber != null)
+        if (_overwatchWatch?.WatchedNumber != null)
         {
             foreach (var entry in _overwatchState.Personnel)
             {
-                if (entry.Number != _overwatchState.WatchedNumber.Value)
+                if (entry.Number != _overwatchWatch.WatchedNumber.Value)
                     continue;
 
                 hasCurrent = true;
@@ -527,7 +541,7 @@ public sealed partial class HolotapeWindow : DefaultWindow
             SetTerminalMarkup(OverwatchStatusLabel,
                 $"[color={TermGreen}]SOUND[/color] live   [color={TermGreen}]CAMERA[/color] live");
         }
-        else if (_overwatchState.WatchedNumber != null && HasLastKnownOverwatchPosition())
+        else if (_overwatchWatch?.WatchedNumber != null && HasLastKnownOverwatchPosition())
         {
             SetTerminalMarkup(OverwatchStatusLabel,
                 $"[color={TermGreen}]SOUND[/color] lost   [color={TermGreen}]CAMERA[/color] lost   [color={TermDimGreen}]Last known:[/color] {FormattedMessage.EscapeText(GetLastKnownOverwatchText())}");
@@ -580,7 +594,7 @@ public sealed partial class HolotapeWindow : DefaultWindow
             {
                 HorizontalExpand = true,
                 BodyVisible = !_overwatchGroupExpanded.TryGetValue(groupName, out var expanded)
-                    ? string.IsNullOrWhiteSpace(search) || group.Any(entry => entry.IsCurrentTarget)
+                    ? string.IsNullOrWhiteSpace(search) || group.Any(entry => entry.Number == _overwatchWatch?.WatchedNumber)
                     : expanded,
             };
 
@@ -591,7 +605,7 @@ public sealed partial class HolotapeWindow : DefaultWindow
 
     private Control MakeOverwatchRow(OverwatchConsoleEntry entry)
     {
-        var active = entry.IsCurrentTarget;
+        var active = entry.Number == _overwatchWatch?.WatchedNumber;
         var rowStyle = new StyleBoxFlat
         {
             BackgroundColor = Color.FromHex(active ? "#0a130a" : "#050805"),
@@ -680,7 +694,7 @@ public sealed partial class HolotapeWindow : DefaultWindow
         OverwatchCameraFallback.Visible = !hasFeed;
 
         var hasCurrent = TryGetCurrentOverwatchEntry(out _);
-        var hasLastKnown = _overwatchState?.WatchedNumber != null && HasLastKnownOverwatchPosition();
+        var hasLastKnown = _overwatchWatch?.WatchedNumber != null && HasLastKnownOverwatchPosition();
         OverwatchCameraFallbackLabel.Text = hasCurrent
             ? "CAMERA FEED UNAVAILABLE"
             : hasLastKnown
@@ -712,12 +726,12 @@ public sealed partial class HolotapeWindow : DefaultWindow
     {
         entry = default;
 
-        if (_overwatchState?.WatchedNumber == null)
+        if (_overwatchState == null || _overwatchWatch?.WatchedNumber == null)
             return false;
 
         foreach (var personnel in _overwatchState.Personnel)
         {
-            if (personnel.Number != _overwatchState.WatchedNumber.Value)
+            if (personnel.Number != _overwatchWatch.WatchedNumber.Value)
                 continue;
 
             entry = personnel;
@@ -729,21 +743,21 @@ public sealed partial class HolotapeWindow : DefaultWindow
 
     private bool HasLastKnownOverwatchPosition()
     {
-        return _overwatchState?.LastKnownX != null &&
-               _overwatchState.LastKnownY != null &&
-               !string.IsNullOrWhiteSpace(_overwatchState.LastKnownTimestamp);
+        return _overwatchWatch?.LastKnownX != null &&
+               _overwatchWatch.LastKnownY != null &&
+               !string.IsNullOrWhiteSpace(_overwatchWatch.LastKnownTimestamp);
     }
 
     private string GetLastKnownOverwatchText()
     {
-        if (_overwatchState?.LastKnownX == null ||
-            _overwatchState.LastKnownY == null ||
-            string.IsNullOrWhiteSpace(_overwatchState.LastKnownTimestamp))
+        if (_overwatchWatch?.LastKnownX == null ||
+            _overwatchWatch.LastKnownY == null ||
+            string.IsNullOrWhiteSpace(_overwatchWatch.LastKnownTimestamp))
         {
             return "UNAVAILABLE";
         }
 
-        return $"{_overwatchState.LastKnownX.Value:0.0}, {_overwatchState.LastKnownY.Value:0.0} @ {_overwatchState.LastKnownTimestamp}";
+        return $"{_overwatchWatch.LastKnownX.Value:0.0}, {_overwatchWatch.LastKnownY.Value:0.0} @ {_overwatchWatch.LastKnownTimestamp}";
     }
 
     private void UpdateHealthBarStyle(ProgressBar bar, float health, MobState state)
@@ -961,9 +975,10 @@ public sealed partial class HolotapeWindow : DefaultWindow
             var capId = f.FolderId;
             var capName = f.Name;
             var deleted = f.Deleted;
-            // #Misfits Add - Admin-marked folders can only be deleted/restored by Admin tier.
             var isAdmin = f.IsAdmin;
-            var canModify = isAdmin ? _databaseState.CanAdmin : _databaseState.CanLeadership;
+            // #Misfits Change - All deletion/restore is reserved for the database's
+            // highest configured rank, regardless of entry protection or authorship.
+            var canModify = _databaseState.CanAdmin;
 
             var row = new BoxContainer { Orientation = BoxContainer.LayoutOrientation.Horizontal, SeparationOverride = 6, HorizontalExpand = true };
             // #Misfits Tweak - Prefix with faction admin label badge for marked folders.
@@ -984,15 +999,13 @@ public sealed partial class HolotapeWindow : DefaultWindow
             row.AddChild(btn);
 
             // #Misfits Change - Delete/restore gated on Leadership (or Admin if marked).
-            var isAuthor = _viewerUserId != null && f.CreatedByUserId.HasValue
-                && _viewerUserId.Value.UserId == f.CreatedByUserId.Value;
             if (!deleted && canModify)
             {
                 var del = new Button { Text = "[ DEL ]", MinWidth = 60 };
                 del.OnPressed += _ => OnDeleteDatabaseFolder?.Invoke(capId, null);
                 row.AddChild(del);
             }
-            if (!deleted && (_databaseState!.CanAdmin || isAuthor))
+            if (!deleted && _databaseState!.CanAdmin)
             {
                 var permDel = new Button { Text = "[ PERM DELETE ]", MinWidth = 110 };
                 permDel.OnPressed += _ => OnPermanentDeleteDatabaseEntry?.Invoke(capId, null, null, null);
@@ -1004,7 +1017,7 @@ public sealed partial class HolotapeWindow : DefaultWindow
                 rest.OnPressed += _ => OnRestoreDatabaseEntry?.Invoke(capId, null, null, null);
                 row.AddChild(rest);
             }
-            if (deleted && (_databaseState!.CanAdmin || isAuthor))
+            if (deleted && _databaseState!.CanAdmin)
             {
                 var permDel = new Button { Text = "[ PERM DELETE ]", MinWidth = 110 };
                 permDel.OnPressed += _ => OnPermanentDeleteDatabaseEntry?.Invoke(capId, null, null, null);
@@ -1063,10 +1076,7 @@ public sealed partial class HolotapeWindow : DefaultWindow
             var capSub = s.SubfolderId;
             var deleted = s.Deleted;
             // #Misfits Add - Subfolder lives under a root folder; inherits its Admin gating.
-            var canModify = folder.IsAdmin ? _databaseState.CanAdmin : _databaseState.CanLeadership;
-            // #Misfits Add - Check if viewer is the original author of this subfolder.
-            var isAuthor = _viewerUserId != null && s.CreatedByUserId.HasValue
-                && _viewerUserId.Value.UserId == s.CreatedByUserId.Value;
+            var canModify = _databaseState.CanAdmin;
             var row = new BoxContainer { Orientation = BoxContainer.LayoutOrientation.Horizontal, SeparationOverride = 6, HorizontalExpand = true };
             var btn = new Button
             {
@@ -1088,7 +1098,7 @@ public sealed partial class HolotapeWindow : DefaultWindow
                 del.OnPressed += _ => OnDeleteDatabaseFolder?.Invoke(folder.FolderId, capSub);
                 row.AddChild(del);
             }
-            if (!deleted && (_databaseState!.CanAdmin || isAuthor))
+            if (!deleted && _databaseState!.CanAdmin)
             {
                 var permDel = new Button { Text = "[ PERM DELETE ]", MinWidth = 110 };
                 permDel.OnPressed += _ => OnPermanentDeleteDatabaseEntry?.Invoke(null, folder.FolderId, capSub, null);
@@ -1100,7 +1110,7 @@ public sealed partial class HolotapeWindow : DefaultWindow
                 rest.OnPressed += _ => OnRestoreDatabaseEntry?.Invoke(null, folder.FolderId, capSub, null);
                 row.AddChild(rest);
             }
-            if (deleted && (_databaseState!.CanAdmin || isAuthor))
+            if (deleted && _databaseState!.CanAdmin)
             {
                 var permDel = new Button { Text = "[ PERM DELETE ]", MinWidth = 110 };
                 permDel.OnPressed += _ => OnPermanentDeleteDatabaseEntry?.Invoke(null, folder.FolderId, capSub, null);
@@ -1172,11 +1182,7 @@ public sealed partial class HolotapeWindow : DefaultWindow
         // #Misfits Add - Doc inherits Admin gating from its parent root folder OR its own IsAdmin flag.
         var parentFolder = FindFolder(folderId);
         var parentIsAdmin = parentFolder?.IsAdmin ?? false;
-        var effectiveAdmin = parentIsAdmin || d.IsAdmin;
-        var canModify = effectiveAdmin ? _databaseState!.CanAdmin : _databaseState!.CanLeadership;
-        // #Misfits Add - Check if viewer is the original author of this document.
-        var isAuthor = _viewerUserId != null && d.CreatedByUserId.HasValue
-            && _viewerUserId.Value.UserId == d.CreatedByUserId.Value;
+        var canModify = _databaseState!.CanAdmin;
         var row = new BoxContainer { Orientation = BoxContainer.LayoutOrientation.Horizontal, SeparationOverride = 6, HorizontalExpand = true };
 
         // #Misfits Add - Admin badge prefix on the doc row when this doc is independently Admin-protected
@@ -1199,7 +1205,7 @@ public sealed partial class HolotapeWindow : DefaultWindow
             del.OnPressed += _ => OnDeleteDatabaseDocument?.Invoke(capId);
             row.AddChild(del);
         }
-        if (!deleted && (_databaseState!.CanAdmin || isAuthor))
+        if (!deleted && _databaseState!.CanAdmin)
         {
             var permDel = new Button { Text = "[ PERM DELETE ]", MinWidth = 110 };
             permDel.OnPressed += _ => OnPermanentDeleteDatabaseEntry?.Invoke(null, null, null, capId);
@@ -1211,7 +1217,7 @@ public sealed partial class HolotapeWindow : DefaultWindow
             rest.OnPressed += _ => OnRestoreDatabaseEntry?.Invoke(null, null, null, capId);
             row.AddChild(rest);
         }
-        if (deleted && (_databaseState!.CanAdmin || isAuthor))
+        if (deleted && _databaseState!.CanAdmin)
         {
             var permDel = new Button { Text = "[ PERM DELETE ]", MinWidth = 110 };
             permDel.OnPressed += _ => OnPermanentDeleteDatabaseEntry?.Invoke(null, null, null, capId);
@@ -1267,11 +1273,8 @@ public sealed partial class HolotapeWindow : DefaultWindow
         };
         DatabaseActionsBar.AddChild(back);
 
-        // #Misfits Add - Permanent delete button in document viewer. Available to the
-        // original author OR Admin tier only (server enforces the same).
-        var docIsAuthor = _viewerUserId != null && doc.CreatedByUserId.HasValue
-            && _viewerUserId.Value.UserId == doc.CreatedByUserId.Value;
-        if (_databaseState.CanAdmin || docIsAuthor)
+        // #Misfits Change - Destructive controls are highest-rank only.
+        if (_databaseState.CanAdmin)
         {
             var capDocId = doc.DocumentId;
             var permDel = new Button
