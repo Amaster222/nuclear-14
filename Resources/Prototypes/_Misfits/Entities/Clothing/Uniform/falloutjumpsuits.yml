@@ -154,7 +154,7 @@
   - type: Clothing
     sprite: _Misfits/Clothing/Uniforms/FalloutSuits/legion_exile_uniform.rsi
 
-  - type: entity
+- type: entity
   parent: N14ClothingUniformBase
   id: M14ClothingUniformDesertersVaultUniform
   name: disheveled dweller jumpsuit
