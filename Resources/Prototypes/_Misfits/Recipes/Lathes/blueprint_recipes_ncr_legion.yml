@@ -1433,7 +1433,7 @@
 
 - type: latheRecipe
   id: N14BPNCRAmmoBoxOver308
-  result: N14NCRAmmoBoxOver308
+  result: N14AmmoBoxOver308
   category: N14BlueprintNCRAmmoT4
   completetime: 8
   requiresBlueprint: true
@@ -2462,14 +2462,14 @@
   requiresBlueprint: true
   availableFaction:
   - CaesarLegion
-  materials:
-    Lead: 1000
+  materials: # #Burger - mat costs was absurdly high compared to non BP recipe (you could misclick it)
+    Lead: 75 # #Burger - (was 1000)
 
-    N14Brass: 300
+    N14Brass: 75 # #Burger - (was 300)
 
-    N14Gunpowder: 500
+    N14Gunpowder: 75 # #Burger - (was 500)
 
-    Steel: 1000
+    Steel: 100 # #Burger - (was 1000)
 
 
 - type: latheRecipe
@@ -2535,8 +2535,22 @@
 
     Lead: 500
 
-    N14Gunpowder: 750
+    N14Gunpowder: 75
 
+- type: latheRecipe
+  id: N14BPLegionAmmoBoxOver308
+  result: N14AmmoBoxOver308
+  category: N14BlueprintLegionAmmoT4
+  completetime: 8
+  requiresBlueprint: true
+  availableFaction:
+  - CaesarLegion
+  materials:
+    Steel: 150
+
+    N14Brass: 75
+
+    N14Gunpowder: 125
 
 # =====================================================================
 # #Misfits Add - HELMET RECIPES

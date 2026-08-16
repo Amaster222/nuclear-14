@@ -31,7 +31,7 @@
 
 - type: entity
   parent: MagazineBoxOver308
-  id: N14NCRAmmoBoxOver308
+  id: N14AmmoBoxOver308
 
 - type: entity
   parent: SpeedLoader45-70
