@@ -58,7 +58,11 @@ public sealed class MarketSystem : EntitySystem
         // Refresh market UIs when deposit storage contents change (grid drag-drop)
         SubscribeLocalEvent<EntInsertedIntoContainerMessage>(OnDepositContainerChanged);
         SubscribeLocalEvent<EntRemovedFromContainerMessage>(OnDepositContainerChanged);
-        SubscribeLocalEvent<StackComponent, StackCountChangedEvent>(OnStackCountChanged);
+        // #Cythisiax Fixed - Removed SubscribeLocalEvent<StackComponent, StackCountChangedEvent>:
+        // it duplicated the pre-existing _NC StoreStructuredSystem directed subscription, and the
+        // event bus allows only one directed subscription per component+event pair (server crashed
+        // with "Duplicate Subscriptions" on startup). Stack split/merge inside market storage is
+        // still covered by the container insert/remove subscriptions above.
         Subs.BuiEvents<MarketTerminalComponent>(MarketUiKey.Key, subs =>
         {
             subs.Event<CreateOrderMessage>(OnCreateOrder);
@@ -146,25 +150,11 @@ public sealed class MarketSystem : EntitySystem
         }
     }
 
-    private void OnStackCountChanged(Entity<StackComponent> ent, ref StackCountChangedEvent args)
-    {
-        if (_openMarketUis.Count == 0)
-            return;
-
-        // #Cythisiax Add - Only refresh when a stack changes inside market storage.
-        if (!_container.TryGetContainingContainer((ent.Owner, null, null), out var container))
-            return;
-
-        var containerEntity = container.Owner;
-        foreach (var storage in _playerStorage.Values)
-        {
-            if (storage != containerEntity)
-                continue;
-
-            RefreshAllMarketStates();
-            return;
-        }
-    }
+    // #Cythisiax Fixed - Removed the OnStackCountChanged handler: its
+    // StackComponent/StackCountChangedEvent subscription duplicated the pre-existing
+    // _NC StoreStructuredSystem subscription (one directed subscription per
+    // component+event pair). Market UI refresh on stack changes is handled by
+    // OnDepositContainerChanged (container insert/remove) above.
 
     // ── Deposit Storage ───────────────────────────────────────────────────────
 
