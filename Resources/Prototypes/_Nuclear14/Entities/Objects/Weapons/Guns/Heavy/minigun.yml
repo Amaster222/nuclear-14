@@ -17,7 +17,6 @@
   - type: Clothing
     sprite: _Nuclear14/Objects/Weapons/Guns/Heavy/minigun.rsi
     quickEquip: false
-
     slots:
     - Back
     - suitStorage
