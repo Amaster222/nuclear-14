@@ -9,8 +9,6 @@ namespace Content.Shared._Misfits.Trade.Market;
 [RegisterComponent, NetworkedComponent]
 public sealed partial class MarketTerminalComponent : Component
 {
-    [DataField]
-    public Dictionary<Guid, EntityUid> PlayerStorage = new();
 }
 
 // ── UI Key ────────────────────────────────────────────────────────────────────
@@ -37,6 +35,8 @@ public sealed class MarketOrder
     public DateTime ExpiresAt;
     public string Status = "Active"; // Active, Fulfilled, Cancelled, Expired
     public int FulfilledQty;
+    public string? RequestedItemId;
+    public string? RequestedItemName;
 }
 
 /// <summary>Grouped order-book entry for a single item prototype (bid/ask depth).</summary>
@@ -110,6 +110,14 @@ public sealed class CancelOrderMessage(string orderId) : BoundUserInterfaceMessa
     public string OrderId = orderId;
 }
 
+/// <summary>Purchase a quantity directly from an active market listing.</summary>
+[Serializable, NetSerializable]
+public sealed class PurchaseListingMessage(string orderId, int quantity) : BoundUserInterfaceMessage
+{
+    public string OrderId = orderId;
+    public int Quantity = quantity;
+}
+
 /// <summary>Claim escrowed items/currency from a fulfilled order.</summary>
 [Serializable, NetSerializable]
 public sealed class ClaimEscrowMessage(string orderId) : BoundUserInterfaceMessage
@@ -147,6 +155,14 @@ public sealed class SelectOrderBookMessage(string prototypeId) : BoundUserInterf
 public sealed class ProtoSearchResults(List<(string Id, string Name)> results) : BoundUserInterfaceMessage
 {
     public List<(string Id, string Name)> Results = results;
+}
+
+/// <summary>Immediate feedback for a market action that succeeded or failed.</summary>
+[Serializable, NetSerializable]
+public sealed class MarketActionResult(string message, bool success) : BoundUserInterfaceMessage
+{
+    public string Message = message;
+    public bool Success = success;
 }
 
 // ── Server → Client State ─────────────────────────────────────────────────────

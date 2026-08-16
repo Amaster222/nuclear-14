@@ -15,7 +15,8 @@ public sealed class MarketBoundUi(EntityUid owner, Enum uiKey) : BoundUserInterf
         _window = new MarketWindow();
         _window.OnClose += Close;
         _window.OnListRequest += msg => SendMessage(msg);
-        _window.OnBuyRequest += (id, _) => SendMessage(new SelectOrderBookMessage(id));
+        _window.OnViewRequest += id => SendMessage(new SelectOrderBookMessage(id));
+        _window.OnPurchase += (id, quantity) => SendMessage(new PurchaseListingMessage(id, quantity));
         _window.OnClaim += orderId => SendMessage(new ClaimEscrowMessage(orderId));
         _window.OnCancel += orderId => SendMessage(new CancelOrderMessage(orderId));
         _window.OnProtoSearch += query => SendMessage(new ProtoSearchMessage(query));
@@ -47,10 +48,15 @@ public sealed class MarketBoundUi(EntityUid owner, Enum uiKey) : BoundUserInterf
     {
         base.ReceiveMessage(message);
 
-        if (message is not ProtoSearchResults results)
-            return;
-
-        _window?.OnSearchResults(results.Results);
+        switch (message)
+        {
+            case ProtoSearchResults results:
+                _window?.OnSearchResults(results.Results);
+                break;
+            case MarketActionResult result:
+                _window?.ShowActionResult(result.Message, result.Success);
+                break;
+        }
     }
 
     protected override void Dispose(bool disposing)

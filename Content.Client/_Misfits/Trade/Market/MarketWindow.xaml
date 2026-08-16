@@ -12,6 +12,7 @@
             <Label Name="CapsLabel" Text="Caps: 0" />
             <Label Name="NcrLabel" Text="NCR: 0" />
         </BoxContainer>
+        <Label Name="ActionResultLabel" Text="" StyleClasses="LabelSubText" />
 
         <!-- Tab bar -->
         <BoxContainer Name="TabBar" Orientation="Horizontal" SeparationOverride="2" Margin="0 2">
@@ -63,10 +64,6 @@
                         <Label Name="SelectedProtoLabel" Text="(select from storage or search)" VerticalAlignment="Center" />
                     </BoxContainer>
                     <BoxContainer Orientation="Horizontal" SeparationOverride="8">
-                        <Label Text="Type:" MinWidth="80" VerticalAlignment="Center" />
-                        <OptionButton Name="OrderTypeBtn" MinWidth="120" />
-                    </BoxContainer>
-                    <BoxContainer Orientation="Horizontal" SeparationOverride="8">
                         <Label Text="Currency:" MinWidth="80" VerticalAlignment="Center" />
                         <OptionButton Name="OrderCurrencyBtn" MinWidth="120" />
                     </BoxContainer>
@@ -78,7 +75,6 @@
                         <Label Name="OrderFeeLabel" Text="" VerticalAlignment="Center" />
                     </BoxContainer>
                     <Button Name="SubmitOrderBtn" Text="PLACE LISTING" MinWidth="140" />
-
                     <!-- Barter item search (visible when Barter selected) -->
                     <BoxContainer Name="BarterSearchBox" Orientation="Vertical" SeparationOverride="4" Visible="False">
                         <Label Text="{Loc 'market-barter-request-heading'}" StyleClasses="LabelHeading" />
