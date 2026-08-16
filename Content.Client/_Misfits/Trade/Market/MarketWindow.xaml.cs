@@ -12,7 +12,8 @@ namespace Content.Client._Misfits.Trade.Market;
 public sealed partial class MarketWindow : DefaultWindow
 {
     public event Action<CreateOrderMessage>? OnListRequest;
-    public event Action<string, int>? OnBuyRequest;
+    public event Action<string>? OnViewRequest;
+    public event Action<string, int>? OnPurchase;
     public event Action<string>? OnClaim;
     public event Action<string>? OnCancel;
     public event Action<string>? OnProtoSearch;
@@ -21,6 +22,7 @@ public sealed partial class MarketWindow : DefaultWindow
     private string? _selectedProtoId;
     private string? _selectedProtoName;
     private string? _selectedBarterId;
+    private List<MarketItemSummary> _itemSummaries = new();
 
     public MarketWindow()
     {
@@ -31,12 +33,7 @@ public sealed partial class MarketWindow : DefaultWindow
         TabMyOrdersBtn.OnPressed += _ => SwitchTab(2);
         TabActivityBtn.OnPressed += _ => SwitchTab(3);
 
-        OrderTypeBtn.AddItem("Sell Order"); OrderTypeBtn.SetItemMetadata(0, false);
-        OrderTypeBtn.AddItem("Buy Order"); OrderTypeBtn.SetItemMetadata(1, true);
-        OrderTypeBtn.SelectId(0);
-        OrderTypeBtn.OnItemSelected += args => OrderTypeBtn.SelectId(args.Id);
-
-        foreach (var c in new[] { "Bottlecaps", "NCRDollars", "Barter" })
+        foreach (var c in new[] { "Bottlecaps", "Barter" })
         {
             OrderCurrencyBtn.AddItem(c);
             OrderCurrencyBtn.SetItemMetadata(OrderCurrencyBtn.ItemCount - 1, c);
@@ -54,7 +51,8 @@ public sealed partial class MarketWindow : DefaultWindow
 
         OrderPrice.OnTextChanged += _ => UpdateFeeLabel();
         SubmitOrderBtn.OnPressed += _ => SubmitOrder();
-        ProtoSearchBtn.OnPressed += _ => OnProtoSearch?.Invoke(ProtoSearch.Text.Trim());
+        ProtoSearchBtn.OnPressed += _ => ApplyMarketSearch();
+        ProtoSearch.OnTextChanged += _ => ApplyMarketSearch();
         BarterSearchBtn.OnPressed += _ => OnBarterSearch?.Invoke(BarterSearch.Text.Trim());
 
         UpdateBarterLabel();
@@ -83,6 +81,19 @@ public sealed partial class MarketWindow : DefaultWindow
 
     public void UpdateItemSummaries(List<MarketItemSummary> summaries)
     {
+        _itemSummaries = summaries;
+        ApplyMarketSearch();
+    }
+
+    private void ApplyMarketSearch()
+    {
+        var query = ProtoSearch.Text.Trim();
+        var summaries = string.IsNullOrWhiteSpace(query)
+            ? _itemSummaries
+            : _itemSummaries.Where(s =>
+                s.PrototypeName.Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                s.PrototypeId.Contains(query, StringComparison.OrdinalIgnoreCase)).ToList();
+
         ItemDirectory.RemoveAllChildren();
         ItemDirectory.AddChild(new Label { Text = "Item Directory", StyleClasses = { "LabelHeading" }, Margin = new Thickness(0, 0, 0, 4) });
 
@@ -99,7 +110,7 @@ public sealed partial class MarketWindow : DefaultWindow
             row.AddChild(new Label { Text = s.BestAsk > 0 ? s.BestAsk.ToString() : "-", MinWidth = 40 });
             row.AddChild(new Label { Text = s.BestBid > 0 ? s.BestBid.ToString() : "-", MinWidth = 40 });
             var btn = new Button { Text = "View", MinWidth = 50 };
-            btn.OnPressed += _ => OnBuyRequest?.Invoke(s.PrototypeId, 0);
+            btn.OnPressed += _ => OnViewRequest?.Invoke(s.PrototypeId);
             row.AddChild(btn);
             ItemDirectory.AddChild(row);
         }
@@ -124,10 +135,11 @@ public sealed partial class MarketWindow : DefaultWindow
         OrderBookContainer.AddChild(new Label { Text = $"{book.PrototypeName} Order Book", StyleClasses = { "LabelHeading" }, Margin = new Thickness(0, 0, 0, 4) });
 
         var sellHeader = new BoxContainer { Orientation = BoxContainer.LayoutOrientation.Horizontal, SeparationOverride = 4 };
-        sellHeader.AddChild(new Label { Text = "Sells", MinWidth = 120, StyleClasses = { "LabelSubText" } });
+        sellHeader.AddChild(new Label { Text = "Listings", MinWidth = 120, StyleClasses = { "LabelSubText" } });
         sellHeader.AddChild(new Label { Text = "Qty", MinWidth = 40, StyleClasses = { "LabelSubText" } });
         sellHeader.AddChild(new Label { Text = "Price", MinWidth = 60, StyleClasses = { "LabelSubText" } });
         sellHeader.AddChild(new Label { Text = "Currency", MinWidth = 80, StyleClasses = { "LabelSubText" } });
+        sellHeader.AddChild(new Label { Text = "Buy qty", MinWidth = 35, StyleClasses = { "LabelSubText" } });
         OrderBookContainer.AddChild(sellHeader);
 
         foreach (var o in book.SellOrders)
@@ -135,29 +147,27 @@ public sealed partial class MarketWindow : DefaultWindow
             var row = new BoxContainer { Orientation = BoxContainer.LayoutOrientation.Horizontal, SeparationOverride = 4 };
             row.AddChild(new Label { Text = o.OwnerName, MinWidth = 120 });
             row.AddChild(new Label { Text = (o.Quantity - o.FulfilledQty).ToString(), MinWidth = 40 });
-            row.AddChild(new Label { Text = o.Price.ToString(), MinWidth = 60 });
+            row.AddChild(new Label
+            {
+                Text = o.Currency == "Barter"
+                    ? $"{o.Price}x {o.RequestedItemName ?? o.RequestedItemId ?? "item"}"
+                    : o.Price.ToString(),
+                MinWidth = 60,
+            });
             row.AddChild(new Label { Text = o.Currency, MinWidth = 80 });
+            var qty = new LineEdit { Text = "1", MinWidth = 35 };
+            row.AddChild(qty);
+            var buy = new Button { Text = "Buy", MinWidth = 45 };
+            var orderId = o.OrderId;
+            buy.OnPressed += _ =>
+            {
+                var amount = int.TryParse(qty.Text, out var parsed) ? parsed : 1;
+                OnPurchase?.Invoke(orderId, amount);
+            };
+            row.AddChild(buy);
             OrderBookContainer.AddChild(row);
         }
 
-        OrderBookContainer.AddChild(new Control { MinHeight = 4 });
-
-        var buyHeader = new BoxContainer { Orientation = BoxContainer.LayoutOrientation.Horizontal, SeparationOverride = 4 };
-        buyHeader.AddChild(new Label { Text = "Buys", MinWidth = 120, StyleClasses = { "LabelSubText" } });
-        buyHeader.AddChild(new Label { Text = "Qty", MinWidth = 40, StyleClasses = { "LabelSubText" } });
-        buyHeader.AddChild(new Label { Text = "Price", MinWidth = 60, StyleClasses = { "LabelSubText" } });
-        buyHeader.AddChild(new Label { Text = "Currency", MinWidth = 80, StyleClasses = { "LabelSubText" } });
-        OrderBookContainer.AddChild(buyHeader);
-
-        foreach (var o in book.BuyOrders)
-        {
-            var row = new BoxContainer { Orientation = BoxContainer.LayoutOrientation.Horizontal, SeparationOverride = 4 };
-            row.AddChild(new Label { Text = o.OwnerName, MinWidth = 120 });
-            row.AddChild(new Label { Text = (o.Quantity - o.FulfilledQty).ToString(), MinWidth = 40 });
-            row.AddChild(new Label { Text = o.Price.ToString(), MinWidth = 60 });
-            row.AddChild(new Label { Text = o.Currency, MinWidth = 80 });
-            OrderBookContainer.AddChild(row);
-        }
     }
 
     public void UpdateDepositedItems(List<MarketDepositEntry> items, Action<string>? onWithdraw)
@@ -200,11 +210,20 @@ public sealed partial class MarketWindow : DefaultWindow
         foreach (var o in orders)
         {
             var row = new BoxContainer { Orientation = BoxContainer.LayoutOrientation.Horizontal, SeparationOverride = 8, Margin = new Thickness(0, 1) };
-            row.AddChild(new Label { Text = $"{(o.IsBuyOrder ? "BUY" : "SELL")} {o.PrototypeName} x{o.Quantity} @ {o.Price}/ea {o.Currency} — {o.FulfilledQty}/{o.Quantity} filled", HorizontalExpand = true });
+            var price = o.Currency == "Barter"
+                ? $"{o.Price}x {o.RequestedItemName ?? o.RequestedItemId ?? "item"}/ea"
+                : $"{o.Price}/ea {o.Currency}";
+            row.AddChild(new Label { Text = $"SELL {o.PrototypeName} x{o.Quantity} for {price} — {o.FulfilledQty}/{o.Quantity} sold", HorizontalExpand = true });
             var cb = new Button { Text = "Cancel", MinWidth = 60 };
             var oid = o.OrderId;
             cb.OnPressed += _ => OnCancel?.Invoke(oid);
             row.AddChild(cb);
+            if (o.Currency == "Barter" && o.FulfilledQty > 0)
+            {
+                var claim = new Button { Text = "Claim", MinWidth = 60 };
+                claim.OnPressed += _ => OnClaim?.Invoke(oid);
+                row.AddChild(claim);
+            }
             MyOrdersContainer.AddChild(row);
         }
 
@@ -214,11 +233,14 @@ public sealed partial class MarketWindow : DefaultWindow
         foreach (var o in completed)
         {
             var row = new BoxContainer { Orientation = BoxContainer.LayoutOrientation.Horizontal, SeparationOverride = 8, Margin = new Thickness(0, 1) };
-            row.AddChild(new Label { Text = $"{(o.IsBuyOrder ? "BUY" : "SELL")} {o.PrototypeName} x{o.Quantity} @ {o.Price}/ea {o.Currency} — Fulfilled", HorizontalExpand = true });
-            var cb = new Button { Text = "Claim", MinWidth = 60 };
-            var oid = o.OrderId;
-            cb.OnPressed += _ => OnClaim?.Invoke(oid);
-            row.AddChild(cb);
+            row.AddChild(new Label { Text = $"SELL {o.PrototypeName} x{o.Quantity} — Sold", HorizontalExpand = true });
+            if (o.Currency == "Barter")
+            {
+                var cb = new Button { Text = "Claim", MinWidth = 60 };
+                var oid = o.OrderId;
+                cb.OnPressed += _ => OnClaim?.Invoke(oid);
+                row.AddChild(cb);
+            }
             MyCompletedContainer.AddChild(row);
         }
     }
@@ -259,12 +281,37 @@ public sealed partial class MarketWindow : DefaultWindow
 
     private void SubmitOrder()
     {
-        var isBuy = (bool?)OrderTypeBtn.SelectedMetadata ?? false;
         var cur = (string?)OrderCurrencyBtn.SelectedMetadata ?? "Bottlecaps";
-        if (!int.TryParse(OrderPrice.Text, out var price) || price <= 0) return;
-        if (!int.TryParse(OrderQty.Text, out var qty) || qty <= 0) qty = 1;
-        if (_selectedProtoId == null) return;
-        OnListRequest?.Invoke(new CreateOrderMessage(_selectedProtoId, qty, cur, price, isBuy, _selectedBarterId, _selectedBarterId == null ? 0 : 1));
+        if (!int.TryParse(OrderPrice.Text, out var price) || price <= 0)
+        {
+            ShowActionResult("Enter a price greater than zero.", false);
+            return;
+        }
+        if (!int.TryParse(OrderQty.Text, out var qty) || qty <= 0)
+        {
+            ShowActionResult("Enter a quantity greater than zero.", false);
+            return;
+        }
+        if (_selectedProtoId == null)
+        {
+            ShowActionResult("Select an item from market storage first.", false);
+            return;
+        }
+        if (cur == "Barter" && _selectedBarterId == null)
+        {
+            ShowActionResult("Select the item requested in barter first.", false);
+            return;
+        }
+
+        OnListRequest?.Invoke(new CreateOrderMessage(_selectedProtoId, qty, cur, price, false,
+            _selectedBarterId, cur == "Barter" ? price : 0));
+        ShowActionResult("Submitting listing...", true);
+    }
+
+    public void ShowActionResult(string message, bool success)
+    {
+        ActionResultLabel.Text = message;
+        ActionResultLabel.Modulate = success ? Color.LightGreen : Color.LightCoral;
     }
 
     private void UpdateBarterLabel()

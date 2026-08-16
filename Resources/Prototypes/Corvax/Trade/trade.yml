@@ -80,9 +80,8 @@
   - type: ActivatableUI
     key: enum.MarketUiKey.Key
   - type: MarketTerminal
-  - type: AccessReader
-    access:
-    - [ "TownieShopkeeper" ]
+  # #Cythisiax Removed - The player market is public; listings are no longer
+  # restricted to TownieShopkeeper access.
   - type: Sprite
     sprite: _NF/Structures/Machines/VendingMachines/yarrrdrobe.rsi
     layers:

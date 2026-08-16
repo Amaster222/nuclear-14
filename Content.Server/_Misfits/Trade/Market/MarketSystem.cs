@@ -33,10 +33,11 @@ public sealed class MarketSystem : EntitySystem
 
     private ISawmill _log = default!;
     private readonly Dictionary<string, MarketOrder> _activeOrders = new();
-    private readonly Dictionary<(Guid, string), int> _escrowCurrency = new();
-    private readonly Dictionary<(Guid, string), (string ProtoId, int Qty)> _escrowItems = new();
-    private readonly HashSet<EntityUid> _openMarketUis = new();
+    private readonly Dictionary<Guid, EntityUid> _playerStorage = new();
+    private readonly Dictionary<EntityUid, HashSet<EntityUid>> _openMarketUis = new();
+    private EntityUid? _escrowHost;
     private const string ListingSlotPrefix = "market_slot_";
+    private const string ProceedsContainerPrefix = "market_proceeds_";
     private float _purgeTimer;
     private readonly List<MarketFeedEntry> _activityFeed = new();
     private const int MaxFeedEntries = 50;
@@ -57,9 +58,15 @@ public sealed class MarketSystem : EntitySystem
         // Refresh market UIs when deposit storage contents change (grid drag-drop)
         SubscribeLocalEvent<EntInsertedIntoContainerMessage>(OnDepositContainerChanged);
         SubscribeLocalEvent<EntRemovedFromContainerMessage>(OnDepositContainerChanged);
+        // #Cythisiax Fixed - Removed SubscribeLocalEvent<StackComponent, StackCountChangedEvent>:
+        // it duplicated the pre-existing _NC StoreStructuredSystem directed subscription, and the
+        // event bus allows only one directed subscription per component+event pair (server crashed
+        // with "Duplicate Subscriptions" on startup). Stack split/merge inside market storage is
+        // still covered by the container insert/remove subscriptions above.
         Subs.BuiEvents<MarketTerminalComponent>(MarketUiKey.Key, subs =>
         {
             subs.Event<CreateOrderMessage>(OnCreateOrder);
+            subs.Event<PurchaseListingMessage>(OnPurchaseListing);
             subs.Event<CancelOrderMessage>(OnCancelOrder);
             subs.Event<ClaimEscrowMessage>(OnClaimEscrow);
             subs.Event<MarketWithdrawItemMessage>(OnWithdrawItem);
@@ -103,12 +110,20 @@ public sealed class MarketSystem : EntitySystem
         if (!TryComp<ActorComponent>(user, out _)) return;
         if (!_ui.IsUiOpen(terminal.Owner, MarketUiKey.Key, user))
             _ui.OpenUi(terminal.Owner, MarketUiKey.Key, user);
-        _openMarketUis.Add(user);
+        if (!_openMarketUis.TryGetValue(terminal.Owner, out var users))
+        {
+            users = new HashSet<EntityUid>();
+            _openMarketUis[terminal.Owner] = users;
+        }
+        users.Add(user);
         RefreshMarketState(terminal);
     }
 
-    private void OnUiClosed(Entity<MarketTerminalComponent> ent, ref BoundUIClosedEvent args) =>
-        _openMarketUis.Remove(args.Actor);
+    private void OnUiClosed(Entity<MarketTerminalComponent> ent, ref BoundUIClosedEvent args)
+    {
+        if (_openMarketUis.TryGetValue(ent.Owner, out var users))
+            users.Remove(args.Actor);
+    }
 
     /// <summary>
     /// When a deposit storage container changes (grid drag-drop), refresh that player's market UI.
@@ -116,56 +131,30 @@ public sealed class MarketSystem : EntitySystem
     private void OnDepositContainerChanged(EntInsertedIntoContainerMessage ev)
     {
         var containerEntity = ev.Container.Owner;
-        var terminalQuery = EntityQueryEnumerator<MarketTerminalComponent>();
-        while (terminalQuery.MoveNext(out var terminalUid, out var comp))
+        foreach (var storage in _playerStorage.Values)
         {
-            foreach (var (playerId, storage) in comp.PlayerStorage)
-            {
-                if (storage != containerEntity) continue;
-                RefreshMarketState((terminalUid, comp));
-                return;
-            }
+            if (storage != containerEntity) continue;
+            RefreshAllMarketStates();
+            return;
         }
     }
 
     private void OnDepositContainerChanged(EntRemovedFromContainerMessage ev)
     {
         var containerEntity = ev.Container.Owner;
-        var terminalQuery = EntityQueryEnumerator<MarketTerminalComponent>();
-        while (terminalQuery.MoveNext(out var terminalUid, out var comp))
+        foreach (var storage in _playerStorage.Values)
         {
-            foreach (var (playerId, storage) in comp.PlayerStorage)
-            {
-                if (storage != containerEntity) continue;
-                RefreshMarketState((terminalUid, comp));
-                return;
-            }
+            if (storage != containerEntity) continue;
+            RefreshAllMarketStates();
+            return;
         }
     }
 
-    private void OnStackCountChanged(Entity<StackComponent> ent, ref StackCountChangedEvent args)
-    {
-        if (_openMarketUis.Count == 0)
-            return;
-
-        // #Cythisiax Add - Only refresh when a stack changes inside market storage.
-        if (!_container.TryGetContainingContainer((ent.Owner, null, null), out var container))
-            return;
-
-        var containerEntity = container.Owner;
-        var terminalQuery = EntityQueryEnumerator<MarketTerminalComponent>();
-        while (terminalQuery.MoveNext(out var terminalUid, out var comp))
-        {
-            foreach (var (_, storage) in comp.PlayerStorage)
-            {
-                if (storage != containerEntity)
-                    continue;
-
-                RefreshMarketState((terminalUid, comp));
-                return;
-            }
-        }
-    }
+    // #Cythisiax Fixed - Removed the OnStackCountChanged handler: its
+    // StackComponent/StackCountChangedEvent subscription duplicated the pre-existing
+    // _NC StoreStructuredSystem subscription (one directed subscription per
+    // component+event pair). Market UI refresh on stack changes is handled by
+    // OnDepositContainerChanged (container insert/remove) above.
 
     // ── Deposit Storage ───────────────────────────────────────────────────────
 
@@ -173,11 +162,9 @@ public sealed class MarketSystem : EntitySystem
     {
         if (!TryComp<ActorComponent>(user, out var actor)) return EntityUid.Invalid;
         var userId = actor.PlayerSession.UserId.UserId;
-        var comp = Comp<MarketTerminalComponent>(terminal);
-        if (comp.PlayerStorage.TryGetValue(userId, out var existing) && Exists(existing)) return existing;
+        if (_playerStorage.TryGetValue(userId, out var existing) && Exists(existing)) return existing;
         var storage = Spawn("MarketDepositStorage", Transform(terminal).Coordinates);
-        comp.PlayerStorage[userId] = storage;
-        Dirty(terminal, comp);
+        _playerStorage[userId] = storage;
         return storage;
     }
 
@@ -195,7 +182,7 @@ public sealed class MarketSystem : EntitySystem
         var storage = GetOrCreateDepositStorage(terminal, user);
         if (storage == EntityUid.Invalid || !TryComp<StorageComponent>(storage, out var sc)) return;
         if (!_container.Insert(item, sc.Container)) return;
-        if (_openMarketUis.Contains(user)) RefreshMarketState((terminal, Comp<MarketTerminalComponent>(terminal)));
+        RefreshAllMarketStates();
     }
 
     private void OnWithdrawItem(Entity<MarketTerminalComponent> terminal, ref MarketWithdrawItemMessage msg)
@@ -204,8 +191,7 @@ public sealed class MarketSystem : EntitySystem
             return;
 
         var user = msg.Actor;
-        var comp = terminal.Comp;
-        if (!comp.PlayerStorage.TryGetValue(actor.PlayerSession.UserId.UserId, out var storage) || !Exists(storage)
+        if (!_playerStorage.TryGetValue(actor.PlayerSession.UserId.UserId, out var storage) || !Exists(storage)
             || !TryComp<StorageComponent>(storage, out var sc)) return;
         EntityUid? toRemove = null;
         foreach (var c in sc.Container.ContainedEntities)
@@ -223,7 +209,7 @@ public sealed class MarketSystem : EntitySystem
         _container.Remove(toRemove.Value, sc.Container);
         if (!_hands.TryPickupAnyHand(user, toRemove.Value))
             _xform.DropNextTo(toRemove.Value, user);
-        RefreshMarketState(terminal);
+        RefreshAllMarketStates();
     }
 
     private void OnProtoSearch(Entity<MarketTerminalComponent> terminal, ref ProtoSearchMessage msg)
@@ -279,7 +265,7 @@ public sealed class MarketSystem : EntitySystem
         RefreshMarketState(terminal);
     }
 
-    // ── Order Matching Engine ──────────────────────────────────────────────────
+    // ── Listings and direct purchases ─────────────────────────────────────────
 
     private void OnCreateOrder(Entity<MarketTerminalComponent> terminal, ref CreateOrderMessage msg)
     {
@@ -288,113 +274,195 @@ public sealed class MarketSystem : EntitySystem
 
         var session = actor.PlayerSession;
         var user = session.AttachedEntity;
-        if (user == null || user == null || user == EntityUid.Invalid) return;
+        if (user == null || user == EntityUid.Invalid) return;
         var userId = session.UserId;
-        var charName = session.Name;
+        var charName = MetaData(user.Value).EntityName;
         var orderId = Guid.NewGuid().ToString();
 
         if (msg.IsBuyOrder)
         {
-            var totalCost = msg.Price * msg.Quantity;
-            if (!TryDeductFee(user.Value, msg.Currency, totalCost + totalCost / 10)) return;
-            _escrowCurrency[(userId.UserId, orderId)] = totalCost;
+            SendResult(terminal, msg.Actor, "Buy orders are no longer used. Purchase an active listing from the Market Exchange tab.", false);
+            return;
         }
-        else
-        {
-            var comp = terminal.Comp;
-            if (!comp.PlayerStorage.TryGetValue(userId.UserId, out var storageUid) || !Exists(storageUid)
-                || !TryComp<StorageComponent>(storageUid, out var sc)) return;
-            EntityUid? item = null;
-            EntityUid escrowItem;
-            foreach (var c in sc.Container.ContainedEntities)
-            {
-                if (MetaData(c).EntityPrototype?.ID != msg.PrototypeId)
-                    continue;
 
-                item = c;
-                break;
-            }
-            if (item == null) return;
-            var escrowContainer = _container.EnsureContainer<ContainerSlot>(terminal.Owner, $"{ListingSlotPrefix}{orderId}");
-            if (TryComp(item.Value, out StackComponent? stack) && stack.Count > msg.Quantity)
+        if (msg.Quantity <= 0 || msg.Price <= 0 || msg.Price > int.MaxValue / msg.Quantity
+            || msg.Currency is not ("Bottlecaps" or "Barter"))
+        {
+            SendResult(terminal, msg.Actor, "Choose a valid quantity, price, and payment type.", false);
+            return;
+        }
+
+        if (_activeOrders.Values.Count(o => o.OwnerId == userId.UserId && o.Status == "Active") >= 3)
+        {
+            SendResult(terminal, msg.Actor, "You already have the maximum of 3 active listings.", false);
+            return;
+        }
+
+        if (msg.Currency == "Barter" && (string.IsNullOrWhiteSpace(msg.RequestedItemId)
+            || !_proto.TryIndex<EntityPrototype>(msg.RequestedItemId, out _)))
+        {
+            SendResult(terminal, msg.Actor, "Select a valid barter item before listing.", false);
+            return;
+        }
+
+        if (!_playerStorage.TryGetValue(userId.UserId, out var storageUid) || !Exists(storageUid)
+            || !TryComp<StorageComponent>(storageUid, out var storage))
+        {
+            SendResult(terminal, msg.Actor, "Deposit the item into market storage first.", false);
+            return;
+        }
+
+        var prototypeId = msg.PrototypeId;
+        var item = storage.Container.ContainedEntities.FirstOrDefault(c =>
+            MetaData(c).EntityPrototype?.ID == prototypeId);
+        if (item == EntityUid.Invalid)
+        {
+            SendResult(terminal, msg.Actor, "That item is no longer in market storage.", false);
+            return;
+        }
+
+        EntityUid escrowItem;
+        if (TryComp(item, out StackComponent? stack) && stack != null)
+        {
+            if (stack.Count < msg.Quantity)
             {
-                var split = _stack.Split(item.Value, msg.Quantity, Transform(storageUid).Coordinates, stack);
+                SendResult(terminal, msg.Actor, "The stored stack does not contain that quantity.", false);
+                return;
+            }
+
+            if (stack.Count > msg.Quantity)
+            {
+                var split = _stack.Split(item, msg.Quantity, Transform(storageUid).Coordinates, stack);
                 if (split == null)
+                {
+                    SendResult(terminal, msg.Actor, "The item stack could not be split.", false);
                     return;
+                }
 
                 escrowItem = split.Value;
             }
             else
             {
-                if (TryComp(item.Value, out StackComponent? sourceStack) && sourceStack.Count < msg.Quantity)
-                    return;
-
-                _container.Remove(item.Value, sc.Container);
-                escrowItem = item.Value;
+                _container.Remove(item, storage.Container);
+                escrowItem = item;
+            }
+        }
+        else
+        {
+            if (msg.Quantity != 1)
+            {
+                SendResult(terminal, msg.Actor, "Non-stackable items must be listed one at a time.", false);
+                return;
             }
 
-            if (!_container.Insert(escrowItem, escrowContainer))
-                return;
-            _escrowItems[(userId.UserId, orderId)] = (msg.PrototypeId, msg.Quantity);
+            _container.Remove(item, storage.Container);
+            escrowItem = item;
+        }
+
+        var escrowHost = GetOrCreateEscrowHost(terminal.Owner);
+        var escrowContainer = _container.EnsureContainer<ContainerSlot>(escrowHost, $"{ListingSlotPrefix}{orderId}");
+        if (!_container.Insert(escrowItem, escrowContainer))
+        {
+            _container.Insert(escrowItem, storage.Container);
+            SendResult(terminal, msg.Actor, "The market could not escrow that item.", false);
+            return;
         }
 
         var protoName = _proto.TryIndex<EntityPrototype>(msg.PrototypeId, out var p) ? p.Name : msg.PrototypeId;
+        var requestedName = msg.RequestedItemId != null && _proto.TryIndex<EntityPrototype>(msg.RequestedItemId, out var requested)
+            ? requested.Name
+            : msg.RequestedItemId;
         var order = new MarketOrder
         {
             OrderId = orderId, PrototypeId = msg.PrototypeId, PrototypeName = protoName,
             Quantity = msg.Quantity, Price = msg.Price, Currency = msg.Currency,
             IsBuyOrder = msg.IsBuyOrder, OwnerName = charName, OwnerId = userId.UserId,
             CreatedAt = DateTime.UtcNow, ExpiresAt = DateTime.UtcNow.AddDays(3),
+            RequestedItemId = msg.Currency == "Barter" ? msg.RequestedItemId : null,
+            RequestedItemName = msg.Currency == "Barter" ? requestedName : null,
         };
 
-        MatchOrder(order);
-        if (order.Status != "Fulfilled") _activeOrders[orderId] = order;
+        _activeOrders[orderId] = order;
         _selectedProtoByUser[userId.UserId] = msg.PrototypeId;
-        if (order.FulfilledQty > 0) PushFeed(msg.IsBuyOrder
-            ? $"{charName} bought {order.FulfilledQty}x {order.PrototypeId} @ {order.Price} {order.Currency}"
-            : $"{charName} sold {order.FulfilledQty}x {order.PrototypeId} @ {order.Price} {order.Currency}");
-        RefreshMarketState(terminal);
+        PushFeed($"{charName} listed {order.Quantity}x {order.PrototypeName}");
+        SendResult(terminal, msg.Actor, "Listing placed on the main market.", true);
+        RefreshAllMarketStates();
     }
 
-    private void MatchOrder(MarketOrder o) { if (o.IsBuyOrder) MatchBuy(o); else MatchSell(o); }
-
-    private void MatchBuy(MarketOrder buy)
+    private void OnPurchaseListing(Entity<MarketTerminalComponent> terminal, ref PurchaseListingMessage msg)
     {
-        var sells = _activeOrders.Values
-            .Where(o => o.Status == "Active" && !o.IsBuyOrder && o.PrototypeId == buy.PrototypeId && o.Price <= buy.Price)
-            .OrderBy(o => o.Price).ToList();
-        var rem = buy.Quantity;
-        foreach (var s in sells)
+        if (!TryComp<ActorComponent>(msg.Actor, out var actor) || actor.PlayerSession.AttachedEntity is not { } buyer)
+            return;
+        if (!_activeOrders.TryGetValue(msg.OrderId, out var order) || order.Status != "Active")
         {
-            if (rem <= 0) break;
-            var avail = s.Quantity - s.FulfilledQty;
-            if (avail <= 0) continue;
-            var fill = Math.Min(rem, avail);
-            s.FulfilledQty += fill; buy.FulfilledQty += fill; rem -= fill;
-            var proceeds = s.Price * fill;
-            _ = CreditSellerAsync(s.OwnerId, s.OwnerName, s.Currency, proceeds - proceeds / 10);
-            if (s.FulfilledQty >= s.Quantity) s.Status = "Fulfilled";
+            SendResult(terminal, msg.Actor, "That listing is no longer available.", false);
+            return;
         }
-        buy.Status = buy.FulfilledQty >= buy.Quantity ? "Fulfilled" : "Active";
-    }
+        var buyerId = actor.PlayerSession.UserId.UserId;
+        var remaining = order.Quantity - order.FulfilledQty;
+        if (order.OwnerId == buyerId || msg.Quantity <= 0 || msg.Quantity > remaining)
+        {
+            SendResult(terminal, msg.Actor, order.OwnerId == buyerId
+                ? "You cannot purchase your own listing."
+                : $"Choose a quantity between 1 and {remaining}.", false);
+            return;
+        }
 
-    private void MatchSell(MarketOrder sell)
-    {
-        var buys = _activeOrders.Values
-            .Where(o => o.Status == "Active" && o.IsBuyOrder && o.PrototypeId == sell.PrototypeId && o.Price >= sell.Price)
-            .OrderByDescending(o => o.Price).ToList();
-        var rem = sell.Quantity;
-        foreach (var b in buys)
+        if (_escrowHost is not { } escrowHost || !Exists(escrowHost)
+            || !_container.TryGetContainer(escrowHost, $"{ListingSlotPrefix}{order.OrderId}", out var listingContainer)
+            || listingContainer is not ContainerSlot slot || slot.ContainedEntity is not { } listedItem)
         {
-            if (rem <= 0) break;
-            var avail = b.Quantity - b.FulfilledQty;
-            if (avail <= 0) continue;
-            var fill = Math.Min(rem, avail);
-            b.FulfilledQty += fill; sell.FulfilledQty += fill; rem -= fill;
-            _ = CreditSellerAsync(sell.OwnerId, sell.OwnerName, sell.Currency, b.Price * fill - (b.Price * fill) / 10);
-            if (b.FulfilledQty >= b.Quantity) b.Status = "Fulfilled";
+            SendResult(terminal, msg.Actor, "The listing escrow is unavailable; no payment was taken.", false);
+            return;
         }
-        sell.Status = sell.FulfilledQty >= sell.Quantity ? "Fulfilled" : "Active";
+
+        var total = checked(order.Price * msg.Quantity);
+        if (order.Currency == "Bottlecaps")
+        {
+            if (!TryDeductCurrency(buyer, order.Currency, total))
+            {
+                SendResult(terminal, msg.Actor, "You do not have enough caps for that purchase.", false);
+                return;
+            }
+        }
+        else if (!TryTakeBarterPayment(buyerId, order, msg.Quantity, escrowHost))
+        {
+            SendResult(terminal, msg.Actor,
+                $"Deposit {total}x {order.RequestedItemName ?? order.RequestedItemId} in market storage first.", false);
+            return;
+        }
+
+        EntityUid purchased;
+        if (TryComp(listedItem, out StackComponent? stack) && stack.Count > msg.Quantity)
+        {
+            var split = _stack.Split(listedItem, msg.Quantity, Transform(escrowHost).Coordinates, stack);
+            if (split == null)
+            {
+                if (order.Currency == "Bottlecaps") RefundCurrency(buyer, order.Currency, total);
+                SendResult(terminal, msg.Actor, "The listed stack could not be split; payment was refunded.", false);
+                return;
+            }
+            purchased = split.Value;
+        }
+        else
+        {
+            _container.Remove(listedItem, slot);
+            purchased = listedItem;
+        }
+
+        if (!_hands.TryPickupAnyHand(buyer, purchased))
+            _xform.DropNextTo(purchased, buyer);
+
+        order.FulfilledQty += msg.Quantity;
+        if (order.FulfilledQty >= order.Quantity)
+            order.Status = "Fulfilled";
+
+        if (order.Currency == "Bottlecaps")
+            CreditSeller(order.OwnerId, order.OwnerName, order.Currency, total - total / 10);
+
+        PushFeed($"{MetaData(buyer).EntityName} bought {msg.Quantity}x {order.PrototypeName}");
+        SendResult(terminal, msg.Actor, $"Purchased {msg.Quantity}x {order.PrototypeName}.", true);
+        RefreshAllMarketStates();
     }
 
     private void OnCancelOrder(Entity<MarketTerminalComponent> terminal, ref CancelOrderMessage msg)
@@ -403,22 +471,20 @@ public sealed class MarketSystem : EntitySystem
             return;
 
         var user = actor.PlayerSession.AttachedEntity;
-        if (user == null || user == null || user == EntityUid.Invalid) return;
+        if (user == null || user == EntityUid.Invalid) return;
         if (!_activeOrders.TryGetValue(msg.OrderId, out var order) || order.Status != "Active") return;
         if (order.OwnerId != actor.PlayerSession.UserId.UserId) return;
-        order.Status = "Cancelled"; _activeOrders.Remove(msg.OrderId);
-        if (order.IsBuyOrder)
-        {
-            if (_escrowCurrency.TryGetValue((order.OwnerId, order.OrderId), out var refund))
-            { RefundCurrency(user.Value, order.Currency, refund); _escrowCurrency.Remove((order.OwnerId, order.OrderId)); }
-        }
-        else
+        order.Status = "Cancelled";
+        if (_escrowHost is { } escrowHost && Exists(escrowHost))
         {
             var sn = $"{ListingSlotPrefix}{msg.OrderId}";
-            if (_container.TryGetContainer(terminal.Owner, sn, out var c) && c is ContainerSlot slot && slot.ContainedEntity is { } item)
+            if (_container.TryGetContainer(escrowHost, sn, out var c) && c is ContainerSlot slot && slot.ContainedEntity is { } item)
             { _container.Remove(item, slot); if (!_hands.TryPickupAnyHand(user.Value, item)) _xform.DropNextTo(item, user.Value); }
         }
-        RefreshMarketState(terminal);
+        if (order.Currency == "Barter" && order.FulfilledQty > 0)
+            MoveBarterProceedsToPlayer(order, terminal.Owner, user.Value);
+        SendResult(terminal, msg.Actor, "Listing cancelled; the unsold item was returned.", true);
+        RefreshAllMarketStates();
     }
 
     private void OnClaimEscrow(Entity<MarketTerminalComponent> terminal, ref ClaimEscrowMessage msg)
@@ -427,27 +493,91 @@ public sealed class MarketSystem : EntitySystem
             return;
 
         var user = actor.PlayerSession.AttachedEntity;
-        if (user == null || user == null || user == EntityUid.Invalid) return;
+        if (user == null || user == EntityUid.Invalid) return;
         if (!_activeOrders.TryGetValue(msg.OrderId, out var order)) return;
-        if (order.OwnerId != actor.PlayerSession.UserId.UserId || order.Status != "Fulfilled") return;
-        if (order.IsBuyOrder)
+        if (order.OwnerId != actor.PlayerSession.UserId.UserId || order.Status is not ("Active" or "Fulfilled")
+            || order.Currency != "Barter" || !MoveBarterProceedsToPlayer(order, terminal.Owner, user.Value)) return;
+        if (order.Status == "Fulfilled")
+            order.Status = "Claimed";
+        SendResult(terminal, msg.Actor, "Barter payment moved to your market storage.", true);
+        RefreshAllMarketStates();
+    }
+
+    private bool MoveBarterProceedsToPlayer(MarketOrder order, EntityUid terminal, EntityUid user)
+    {
+        if (_escrowHost is not { } escrowHost || !Exists(escrowHost)
+            || !_container.TryGetContainer(escrowHost, $"{ProceedsContainerPrefix}{order.OrderId}", out var proceeds)
+            || proceeds.ContainedEntities.Count == 0)
+            return false;
+
+        var storageUid = GetOrCreateDepositStorage(terminal, user);
+        if (!TryComp<StorageComponent>(storageUid, out var storage))
+            return false;
+        foreach (var item in proceeds.ContainedEntities.ToList())
         {
-            var sn = $"{ListingSlotPrefix}{msg.OrderId}";
-            if (_container.TryGetContainer(terminal.Owner, sn, out var c) && c is ContainerSlot slot && slot.ContainedEntity is { } item)
-            { _container.Remove(item, slot); if (!_hands.TryPickupAnyHand(user.Value, item)) _xform.DropNextTo(item, user.Value); }
-            else { var s = Spawn(order.PrototypeId, Transform(user.Value).Coordinates); if (!_hands.TryPickupAnyHand(user.Value, s)) _xform.DropNextTo(s, user.Value); }
+            _container.Remove(item, proceeds);
+            if (!_container.Insert(item, storage.Container) && !_hands.TryPickupAnyHand(user, item))
+                _xform.DropNextTo(item, user);
         }
-        else
+        return true;
+    }
+
+    private EntityUid GetOrCreateEscrowHost(EntityUid terminal)
+    {
+        if (_escrowHost is { } existing && Exists(existing))
+            return existing;
+        _escrowHost = Spawn("MarketDepositStorage", Transform(terminal).Coordinates);
+        return _escrowHost.Value;
+    }
+
+    private bool TryTakeBarterPayment(Guid buyerId, MarketOrder order, int purchaseQuantity, EntityUid escrowHost)
+    {
+        if (order.RequestedItemId == null || !_playerStorage.TryGetValue(buyerId, out var storageUid)
+            || !Exists(storageUid) || !TryComp<StorageComponent>(storageUid, out var storage))
+            return false;
+
+        var required = checked(order.Price * purchaseQuantity);
+        var matches = storage.Container.ContainedEntities
+            .Where(e => MetaData(e).EntityPrototype?.ID == order.RequestedItemId).ToList();
+        var available = matches.Sum(e => TryComp<StackComponent>(e, out var stack) ? stack.Count : 1);
+        if (available < required)
+            return false;
+
+        var proceeds = _container.EnsureContainer<Container>(escrowHost, $"{ProceedsContainerPrefix}{order.OrderId}");
+        var remaining = required;
+        foreach (var paymentItem in matches)
         {
-            if (_escrowCurrency.TryGetValue((order.OwnerId, order.OrderId), out var proceeds))
-            { RefundCurrency(user.Value, order.Currency, proceeds); _escrowCurrency.Remove((order.OwnerId, order.OrderId)); }
+            if (remaining <= 0)
+                break;
+            var count = TryComp<StackComponent>(paymentItem, out var stack) ? stack.Count : 1;
+            var take = Math.Min(count, remaining);
+            EntityUid moved;
+            if (stack != null && count > take)
+            {
+                var split = _stack.Split(paymentItem, take, Transform(storageUid).Coordinates, stack);
+                if (split == null)
+                    return false;
+                moved = split.Value;
+            }
+            else
+            {
+                _container.Remove(paymentItem, storage.Container);
+                moved = paymentItem;
+            }
+
+            if (!_container.Insert(moved, proceeds))
+            {
+                _container.Insert(moved, storage.Container);
+                return false;
+            }
+            remaining -= take;
         }
-        order.Status = "Claimed"; RefreshMarketState(terminal);
+        return remaining == 0;
     }
 
     // ── Currency Helpers ──────────────────────────────────────────────────────
 
-    private bool TryDeductFee(EntityUid user, string currency, int amount)
+    private bool TryDeductCurrency(EntityUid user, string currency, int amount)
     {
         if (amount <= 0) return true;
         var ct = currency switch { "Bottlecaps" => CurrencyType.Bottlecaps, "NCRDollars" => CurrencyType.NCRDollars, _ => (CurrencyType?)null };
@@ -470,7 +600,35 @@ public sealed class MarketSystem : EntitySystem
             _ = _db.UpsertCharacterCurrencyAsync(pid, w.CharacterName, w.Bottlecaps, w.NcrDollars, w.Silver, w.Gold);
     }
 
-    private async Task CreditSellerAsync(Guid sellerId, string name, string currency, int amount)
+    private void CreditSeller(Guid sellerId, string name, string currency, int amount)
+    {
+        if (amount <= 0) return;
+        var actors = EntityQueryEnumerator<ActorComponent>();
+        while (actors.MoveNext(out var uid, out var actor))
+        {
+            if (actor.PlayerSession.UserId.UserId != sellerId || !TryComp<PersistentCurrencyComponent>(uid, out var wallet))
+                continue;
+
+            if (currency == "Bottlecaps") wallet.Bottlecaps += amount;
+            else if (currency == "NCRDollars") wallet.NcrDollars += amount;
+            Dirty(uid, wallet);
+            _ = PersistCurrencyAsync(sellerId, name, wallet.Bottlecaps, wallet.NcrDollars, wallet.Silver, wallet.Gold);
+            return;
+        }
+
+        _ = CreditOfflineSellerAsync(sellerId, name, currency, amount);
+    }
+
+    private async Task PersistCurrencyAsync(Guid sellerId, string name, int caps, int ncr, int silver, int gold)
+    {
+        try
+        {
+            await _db.UpsertCharacterCurrencyAsync(sellerId, name, caps, ncr, silver, gold);
+        }
+        catch (Exception ex) { _log.Error($"PersistCurrencyAsync failed: {ex}"); }
+    }
+
+    private async Task CreditOfflineSellerAsync(Guid sellerId, string name, string currency, int amount)
     {
         if (amount <= 0) return;
         try
@@ -482,7 +640,7 @@ public sealed class MarketSystem : EntitySystem
             var gld = row?.Gold ?? 0;
             await _db.UpsertCharacterCurrencyAsync(sellerId, name, caps, ncr, sil, gld);
         }
-        catch (Exception ex) { _log.Error($"CreditSellerAsync failed: {ex}"); }
+        catch (Exception ex) { _log.Error($"CreditOfflineSellerAsync failed: {ex}"); }
     }
 
     // ── Feed & State ──────────────────────────────────────────────────────────
@@ -493,9 +651,26 @@ public sealed class MarketSystem : EntitySystem
         if (_activityFeed.Count > MaxFeedEntries) _activityFeed.RemoveAt(_activityFeed.Count - 1);
     }
 
+    private void SendResult(Entity<MarketTerminalComponent> terminal, EntityUid actor, string message, bool success)
+    {
+        _ui.ServerSendUiMessage(terminal.Owner, MarketUiKey.Key, new MarketActionResult(message, success), actor);
+    }
+
+    private void RefreshAllMarketStates()
+    {
+        foreach (var terminal in _openMarketUis.Keys.ToList())
+        {
+            if (!TryComp<MarketTerminalComponent>(terminal, out var component))
+                continue;
+            RefreshMarketState((terminal, component));
+        }
+    }
+
     private void RefreshMarketState(Entity<MarketTerminalComponent> terminal)
     {
-        foreach (var user in _openMarketUis.ToList())
+        if (!_openMarketUis.TryGetValue(terminal.Owner, out var openUsers))
+            return;
+        foreach (var user in openUsers.ToList())
         {
             if (!_ui.IsUiOpen(terminal.Owner, MarketUiKey.Key, user)) continue;
             _ui.SetUiState(terminal.Owner, MarketUiKey.Key, BuildState(terminal, user));
@@ -530,8 +705,7 @@ public sealed class MarketSystem : EntitySystem
                 state.SelectedOrderBook = BuildOrderBook(selectedProtoId, state.SelectedProtoName, activeOrders);
             }
 
-            var comp = terminal.Comp;
-            if (comp.PlayerStorage.TryGetValue(uid, out var storage) && Exists(storage)
+            if (_playerStorage.TryGetValue(uid, out var storage) && Exists(storage)
                 && TryComp<StorageComponent>(storage, out var sc) && sc.Container != null)
             {
                 foreach (var item in sc.Container.ContainedEntities)
@@ -545,6 +719,7 @@ public sealed class MarketSystem : EntitySystem
                         ProtoId = meta.EntityPrototype?.ID ?? "",
                         ProtoName = meta.EntityPrototype?.Name ?? meta.EntityName,
                         StackCount = TryComp<StackComponent>(item, out var stack) ? stack.Count : 0,
+                        Quantity = TryComp<StackComponent>(item, out var quantityStack) ? quantityStack.Count : 1,
                     });
                 }
             }
@@ -628,7 +803,12 @@ public sealed class MarketSystem : EntitySystem
     private void OnRoundStarted(RoundStartedEvent args)
     {
         _activeOrders.Clear(); _openMarketUis.Clear(); _activityFeed.Clear();
-        _escrowCurrency.Clear(); _escrowItems.Clear();
+        foreach (var storage in _playerStorage.Values)
+            if (Exists(storage)) QueueDel(storage);
+        _playerStorage.Clear();
+        if (_escrowHost is { } escrow && Exists(escrow)) QueueDel(escrow);
+        _escrowHost = null;
         _searchResultsByUser.Clear();
+        _selectedProtoByUser.Clear();
     }
 }
