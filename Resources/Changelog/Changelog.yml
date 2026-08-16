@@ -10241,3 +10241,10 @@ Entries:
   id: 6330
   time: '2026-08-16T12:03:50.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1760
+- author: RedBookcase
+  changes:
+    - type: Tweak
+      message: Increased Junior and Regular Enclave Scientist slots from 1 to 2
+  id: 6331
+  time: '2026-08-16T12:04:29.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1761
