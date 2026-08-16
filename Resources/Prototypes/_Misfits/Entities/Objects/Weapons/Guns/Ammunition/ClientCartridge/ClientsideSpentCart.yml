@@ -1,3 +1,6 @@
+# not sure if I really need to ensure netsync is off for every comp
+# but I dont like seeing that "networked comps" list in debug
+
 - type: entity
   id: ClientCartridgePhysics
   categories: [ HideSpawnMenu ]
@@ -41,8 +44,7 @@
     netsync: false
   - type: TimedDespawn
     lifetime: 10
-# not sure if I really need to ensure netsync is off for every comp
-# but I dont like seeing that "networked comps" list in debug
+
 
 
 - type: entity
@@ -60,7 +62,7 @@
       - HideContextMenu
   - type: MetaData
   - type: Fixtures
-      hard: false
+    hard: false
   - type: Transform
     netsync: false
   - type: EmitSoundOnLand
