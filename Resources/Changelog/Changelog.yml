@@ -10248,3 +10248,24 @@ Entries:
   id: 6331
   time: '2026-08-16T12:04:29.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1761
+- author: BurgerMoth
+  changes:
+    - type: Tweak
+      message: Minigun ROF increased to 15
+    - type: Tweak
+      message: Minigun spread nearly doubled (rate of rise in spread tripled)
+    - type: Tweak
+      message: Minigun crafting cost slightly increased
+    - type: Tweak
+      message: Avenger variant ROF increased to 15
+    - type: Tweak
+      message: Avenger variant spread slightly increased
+    - type: Tweak
+      message: 5mm drum crafting cost from NCR T4 BP nearly tripled
+    - type: Tweak
+      message: '5mm drum size in bag doubled to 4x4 '
+    - type: Tweak
+      message: 5mm projectile changed from "SmallCaliber" to "MediumCaliber"
+  id: 6332
+  time: '2026-08-16T19:24:15.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1743
