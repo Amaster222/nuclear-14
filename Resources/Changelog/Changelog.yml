@@ -10226,3 +10226,18 @@ Entries:
   id: 6329
   time: '2026-08-16T03:38:01.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1740
+- author: cythisiax
+  changes:
+    - type: Fix
+      message: >-
+        enclave whitelist function not working@4hour timer grant to Enlisted &
+        Junior Scientist paths
+    - type: Fix
+      message: >-
+        Terminal system for faction specific database received critical fixes of
+        anyone able to delete any folder & message.
+    - type: Fix
+      message: 'market system functionality '
+  id: 6330
+  time: '2026-08-16T12:03:50.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1760
