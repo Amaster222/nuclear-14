@@ -1,19 +1,12 @@
-using System.Numerics;
-
 using Content.Shared.Damage;
 using Content.Shared.Damage.Events;
 using Content.Shared.Examine;
-using Content.Shared.Players;
 using Content.Shared.Projectiles;
-using Content.Shared.Sound.Components;
 using Content.Shared.Weapons.Ranged.Components;
-using Lidgren.Network;
-using Microsoft.VisualBasic;
 using Robust.Server.Player;
 using Robust.Shared.Map;
 using Robust.Shared.Network;
 using Robust.Shared.Player;
-using static Robust.Shared.Utility.SpriteSpecifier;
 
 namespace Content.Server.Weapons.Ranged.Systems;
 
@@ -32,6 +25,10 @@ public sealed partial class GunSystem
     // server to clients
     public override void EjectSpentCart(MapCoordinates coord, Angle angle, string? cartProto, ICommonSession? player = null)
     {
+
+        if (cartProto is null || !ProtoMan.HasIndex(cartProto))
+            return;
+
         NetUserId? shooterID = player?.UserId;
         Filter filter = Filter.Empty().AddPlayersByPvs(coord);
         if (shooterID is not null) { filter.RemovePlayer(_net.GetSessionById(shooterID.Value)); }

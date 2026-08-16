@@ -8,18 +8,19 @@
     state: base
     drawdepth: Items
     netsync: false
+  - type: CollisionWake
+    netsync: false
   - type: Physics
     bodyType: Dynamic
     netsync: false
     fixedRotation: false
-  - type: PredictedClientPhysics # misfit: based on/stolen RMC PredictedProjectileClientComponent
-                                          # but does less and server only relays events for client to only visualize
-    netsync: false
+  - type: VisualPhys
   - type: EmitSoundOnLand
     sound:
       path: /Audio/Weapons/Guns/Casings/casing_fall_1.ogg
       params:
         volume: -1
+    netsync: false
   - type: Fixtures
     netsync: false
     fixtures:
@@ -35,7 +36,10 @@
   - type: Tag
     tags:
       - HideContextMenu
+  - type: MetaData
+  - type: Transform
     netsync: false
   - type: TimedDespawn
     lifetime: 10
-    netsync: false
+# not sure if I really need to ensure netsync is off for every comp
+# but I dont like seeing that "networked comps" list in debug

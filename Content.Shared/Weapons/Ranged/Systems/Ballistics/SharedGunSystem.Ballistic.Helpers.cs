@@ -100,12 +100,13 @@ public abstract partial class SharedGunSystem
     /// Is this valid entity allowed to give more than 1 ammo?
     /// </summary>
     private bool CanInstantFill(EntityUid giver) => HasComp<SpeedLoaderComponent>(giver);
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void PlaceNextToRot(Entity<TransformComponent?> freshSpawn, Entity<TransformComponent?> originEnt, Angle rot)
     {
         _xform.PlaceNextTo(freshSpawn, originEnt);
         _xform.SetLocalRotation(freshSpawn.Owner, rot);
-        FlagPredicted(freshSpawn.Owner);
+        FlagPredicted(freshSpawn.Owner); // this is what "predictedSpawn" does
     }
     /// <summary>
     /// Big method of ingame popups
@@ -149,6 +150,9 @@ public abstract partial class SharedGunSystem
         }
         return false;
     }
+    /// <summary>
+    /// Big method 2
+    /// </summary>
     private bool PopupCancels(BallisticAmmoProviderComponent recieverComp, EntityUid recieverUid,
                                 BallisticAmmoProviderComponent giverComp, EntityUid giverUid,
                                 EntityUid user)
