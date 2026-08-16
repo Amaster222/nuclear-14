@@ -10219,3 +10219,10 @@ Entries:
   id: 6328
   time: '2026-08-16T03:37:30.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1758
+- author: aftemath434
+  changes:
+    - type: Add
+      message: Heavy assault rifle & T-60 pistol
+  id: 6329
+  time: '2026-08-16T03:38:01.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1740
