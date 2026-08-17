@@ -13,6 +13,7 @@ using Content.Shared.Chemistry.Components;
 using Content.Shared.Chemistry.EntitySystems;
 using Content.Shared.Construction.EntitySystems;
 using Content.Shared.Damage;
+using Content.Shared.Damage.Prototypes;
 using Content.Shared.DoAfter;
 using Content.Shared.FixedPoint;
 using Content.Shared.IdentityManagement;
@@ -29,6 +30,7 @@ using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
 using Robust.Shared.Physics.Components;
 using Robust.Shared.Physics.Systems;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
 using Robust.Server.GameObjects;
 using Robust.Shared.Player;
@@ -40,6 +42,8 @@ public sealed partial class VertibirdSystem : EntitySystem
     private const float PilotCameraMaxOffset = 10f;
     private const float PilotCameraPvsScale = 1.75f;
     private const float BoardingDuration = 5f;
+
+    private static readonly ProtoId<DamageTypePrototype> FallDamageType = "Blunt";
 
     private static readonly Vector2[] LandingFootprintSamples =
     [
@@ -59,6 +63,8 @@ public sealed partial class VertibirdSystem : EntitySystem
     [Dependency] private SharedAudioSystem _audio = default!;
     [Dependency] private SharedBuckleSystem _buckle = default!;
     [Dependency] private ChatSystem _chat = default!;
+    [Dependency] private DamageableSystem _damageable = default!;
+    [Dependency] private IPrototypeManager _proto = default!;
     [Dependency] private SharedDoAfterSystem _doAfter = default!;
     [Dependency] private SharedEyeSystem _eye = default!;
     [Dependency] private IGameTiming _timing = default!;
@@ -96,11 +102,16 @@ public sealed partial class VertibirdSystem : EntitySystem
         SubscribeLocalEvent<PlayerDetachedEvent>(OnPlayerDetached);
         SubscribeNetworkEvent<VertibirdControlInputMessage>(OnControlInput);
         SubscribeNetworkEvent<VertibirdCameraOffsetMessage>(OnCameraOffset);
+
+        InitializeTurret();
+        InitializeCombatDrop();
     }
 
     public override void Update(float frameTime)
     {
         base.Update(frameTime);
+
+        UpdateTurretEyes();
 
         var query = EntityQueryEnumerator<VertibirdComponent, MZPhysicsComponent, PhysicsComponent, TransformComponent>();
         while (query.MoveNext(out var uid, out var vertibird, out var mzPhysics, out var physics, out var xform))
@@ -183,6 +194,9 @@ public sealed partial class VertibirdSystem : EntitySystem
             AddPilotActions(occupant, ent);
         }
 
+        RefreshTurretSeat(ent, seatIndex, occupant);
+        RefreshCombatDropSeat(ent, occupant, boarding: true);
+
         Dirty(ent);
         UpdateUi(ent);
     }
@@ -193,6 +207,16 @@ public sealed partial class VertibirdSystem : EntitySystem
         // immediately unlock the cabin for egress; waiting for the final
         // Grounded tick left occupants trapped through the landing sequence.
         if (ent.Comp.State is VertibirdFlightState.Landing or VertibirdFlightState.Grounded)
+            return;
+
+        // #Misfits Add - power armour combat drop unbuckles deliberately while airborne.
+        if (args.Buckle.Owner == _combatDropUnbuckling)
+            return;
+
+        // #Misfits Add - stepping out under your own power is allowed at any altitude;
+        // the fall in OnUnstrapped is the price. Being thrown out by someone else is not,
+        // so a passenger cannot be murdered by whoever is sitting next to them.
+        if (args.User == args.Buckle.Owner)
             return;
 
         args.Cancelled = true;
@@ -207,9 +231,14 @@ public sealed partial class VertibirdSystem : EntitySystem
         {
             var seat = GetSeatIndex(ent.Comp, args.Buckle.Owner);
             if (seat != null)
+            {
                 ent.Comp.SeatOccupants[seat.Value] = null;
+                RefreshTurretSeat(ent, seat.Value, null);
+            }
 
+            RefreshCombatDropSeat(ent, args.Buckle.Owner, boarding: false);
             UnhideOccupant(args.Buckle.Owner);
+            DropUnbuckledOccupant(ent, args.Buckle.Owner);
             Dirty(ent);
             UpdateUi(ent);
             return;
@@ -221,11 +250,101 @@ public sealed partial class VertibirdSystem : EntitySystem
 
         var pilotSeat = GetSeatIndex(ent.Comp, args.Buckle.Owner);
         if (pilotSeat != null)
+        {
             ent.Comp.SeatOccupants[pilotSeat.Value] = null;
+            RefreshTurretSeat(ent, pilotSeat.Value, null);
+        }
 
+        RefreshCombatDropSeat(ent, args.Buckle.Owner, boarding: false);
         UnhideOccupant(args.Buckle.Owner);
+        DropUnbuckledOccupant(ent, args.Buckle.Owner);
+
+        // The pilot just stepped out of a flying craft. Same outcome as losing them
+        // to a disconnect, so route it through the same automatic descent.
+        if (TryComp(ent.Owner, out TransformComponent? craftXform))
+            HandlePilotLost(ent.Owner, ent.Comp, craftXform);
+
         Dirty(ent);
         UpdateUi(ent);
+    }
+
+    /// <summary>
+    /// Sends someone who left an airborne craft down to ground level, hurt in proportion
+    /// to how far they fell. Depth drives both, so a craft hovering at ground level or
+    /// parked on an upper level drops nobody.
+    /// </summary>
+    private void DropUnbuckledOccupant(Entity<VertibirdComponent> ent, EntityUid occupant)
+    {
+        // The combat drop unbuckles as part of its own controlled descent: one level,
+        // no damage. Letting this run as well would slam them to ground level first
+        // and then drop them a further level below that.
+        if (occupant == _combatDropUnbuckling)
+            return;
+
+        if (!IsAirborne(ent.Comp.State))
+            return;
+
+        if (!TryComp(ent.Owner, out TransformComponent? xform) ||
+            xform.MapUid is not { } mapUid ||
+            !TryComp<MZMapComponent>(mapUid, out var zMap) ||
+            zMap.Depth <= 0)
+        {
+            return;
+        }
+
+        var depth = zMap.Depth;
+
+        // Land where the craft is rather than where the occupant's transform sits, so a
+        // seat offset cannot drop someone through a wall on the level below.
+        if (!_multiZ.TryMove(occupant, -depth, worldPosition: _transform.GetWorldPosition(xform)))
+            return;
+
+        var damage = ent.Comp.FallDamagePerLevel * depth;
+        if (damage > 0f && HasComp<DamageableComponent>(occupant))
+        {
+            _damageable.TryChangeDamage(
+                occupant,
+                new DamageSpecifier(_proto.Index(FallDamageType), damage),
+                origin: ent.Owner);
+        }
+
+        _popup.PopupEntity(Loc.GetString("vertibird-fall-landed"), occupant, occupant);
+        SendVertibirdEmote(ent.Owner, "vertibird-rp-occupant-fell");
+    }
+
+    /// <summary>
+    /// Resolves the map directly below the craft, but only while it is genuinely above
+    /// ground level. At depth 0 the map below is the underground, so putting a gunner's
+    /// eye or a dropping passenger down there would place them beneath the world.
+    /// </summary>
+    private bool TryGetLevelBelow(EntityUid vertibird, out Entity<MZMapComponent> belowMap, out Vector2 worldPosition)
+    {
+        belowMap = default;
+        worldPosition = Vector2.Zero;
+
+        if (!TryComp(vertibird, out TransformComponent? xform) ||
+            xform.MapUid is not { } mapUid ||
+            !TryComp<MZMapComponent>(mapUid, out var zMap) ||
+            zMap.Depth <= 0 ||
+            !_multiZ.TryMapOffset(mapUid, -1, out var below))
+        {
+            return false;
+        }
+
+        belowMap = below.Value;
+        worldPosition = _transform.GetWorldPosition(xform);
+        return true;
+    }
+
+    /// <summary>
+    /// Whether the craft is off the deck. Grounded and Starting both sit on the ground.
+    /// </summary>
+    private static bool IsAirborne(VertibirdFlightState state)
+    {
+        return state is VertibirdFlightState.TakingOff
+            or VertibirdFlightState.Cruising
+            or VertibirdFlightState.ChangingAltitude
+            or VertibirdFlightState.Landing;
     }
 
     private void OnFlightAction(Entity<VertibirdComponent> ent, ref VertibirdFlightActionEvent args)
@@ -346,7 +465,7 @@ public sealed partial class VertibirdSystem : EntitySystem
     {
         SendStartupProgressEmotes(ent);
 
-        if (_timing.CurTime < ent.Comp.StartupFinishedAt)
+        if (!ent.Comp.DebugInstantFlight && _timing.CurTime < ent.Comp.StartupFinishedAt)
             return;
 
         StartTakeoffLift(ent);
@@ -437,7 +556,9 @@ public sealed partial class VertibirdSystem : EntitySystem
 
     private void UpdateTakeoff(EntityUid uid, VertibirdComponent vertibird, MZPhysicsComponent mzPhysics, float frameTime)
     {
-        var next = MathF.Min(vertibird.HoverAltitude, mzPhysics.LocalPosition + vertibird.VerticalSpeed * frameTime);
+        var next = vertibird.DebugInstantFlight
+            ? vertibird.HoverAltitude
+            : MathF.Min(vertibird.HoverAltitude, mzPhysics.LocalPosition + vertibird.VerticalSpeed * frameTime);
         mzPhysics.LocalPosition = next;
         mzPhysics.Velocity = 0f;
         RemComp<MZFallingComponent>(uid);
@@ -464,7 +585,9 @@ public sealed partial class VertibirdSystem : EntitySystem
     {
         vertibird.DriftVelocity = Vector2.Zero;
 
-        var next = MathF.Max(0f, mzPhysics.LocalPosition - vertibird.VerticalSpeed * frameTime);
+        var next = vertibird.DebugInstantFlight
+            ? 0f
+            : MathF.Max(0f, mzPhysics.LocalPosition - vertibird.VerticalSpeed * frameTime);
         mzPhysics.LocalPosition = next;
         mzPhysics.Velocity = 0f;
         RemComp<MZFallingComponent>(uid);
@@ -581,7 +704,7 @@ public sealed partial class VertibirdSystem : EntitySystem
         mzPhysics.Velocity = 0f;
         vertibird.DriftVelocity = Vector2.Zero;
 
-        if (_timing.CurTime < vertibird.AltitudeTransitionFinishedAt)
+        if (!vertibird.DebugInstantFlight && _timing.CurTime < vertibird.AltitudeTransitionFinishedAt)
             return;
 
         if (vertibird.AltitudeTargetMap is not { } targetMap ||
@@ -657,6 +780,9 @@ public sealed partial class VertibirdSystem : EntitySystem
 
     private bool TryConsumeFuel(EntityUid uid, VertibirdComponent vertibird, float frameTime)
     {
+        if (vertibird.DebugInfiniteFuel)
+            return true;
+
         if (!_solution.TryGetSolution(uid, vertibird.FuelSolution, out var fuelEntity, out var fuelSolution))
             return false;
 
@@ -680,7 +806,8 @@ public sealed partial class VertibirdSystem : EntitySystem
 
     private bool HasMinimumTakeoffFuel(Entity<VertibirdComponent> ent)
     {
-        return TryGetFuel(ent, out var fuel, out _) && fuel >= ent.Comp.MinimumTakeoffFuel;
+        return ent.Comp.DebugInfiniteFuel ||
+               TryGetFuel(ent, out var fuel, out _) && fuel >= ent.Comp.MinimumTakeoffFuel;
     }
 
     private bool TryGetFuel(Entity<VertibirdComponent> ent, out FixedPoint2 fuel, out FixedPoint2 capacity)
@@ -745,6 +872,10 @@ public sealed partial class VertibirdSystem : EntitySystem
 
     private void UpdateFuelWarnings(Entity<VertibirdComponent> ent)
     {
+        // A craft that cannot run out has nothing to warn about, even on an empty tank.
+        if (ent.Comp.DebugInfiniteFuel)
+            return;
+
         if (!TryGetFuel(ent, out var fuel, out var capacity) || capacity <= FixedPoint2.Zero)
             return;
 
@@ -842,25 +973,39 @@ public sealed partial class VertibirdSystem : EntitySystem
             if (vertibird.Pilot != args.Entity)
                 continue;
 
-            if (vertibird.State == VertibirdFlightState.Starting)
-            {
-                CancelStartup((uid, vertibird));
-                return;
-            }
-
-            if (vertibird.State is VertibirdFlightState.Grounded or VertibirdFlightState.Landing)
-                return;
-
-            if (!vertibird.EmergencyLandingActive)
-                SendVertibirdEmote(uid, vertibird.PilotDisconnectedEmote);
-
-            vertibird.EmergencyLandingActive = true;
-            vertibird.HeldInputs = VertibirdControlInput.None;
-            vertibird.DriftVelocity = Vector2.Zero;
-            Dirty(uid, vertibird);
-            HandleEmergencyLanding((uid, vertibird), xform);
+            HandlePilotLost(uid, vertibird, xform);
             return;
         }
+    }
+
+    /// <summary>
+    /// Puts a craft that has lost its pilot into an automatic descent, whether they
+    /// disconnected or stepped out in flight. Boarding requires the craft to be
+    /// grounded, so without this an abandoned craft would hover unreachable forever.
+    /// </summary>
+    private void HandlePilotLost(EntityUid uid, VertibirdComponent vertibird, TransformComponent xform)
+    {
+        // Admin debug: hold altitude through the pilot's player leaving the body.
+        if (vertibird.DebugIgnorePilotLoss)
+            return;
+
+        if (vertibird.State == VertibirdFlightState.Starting)
+        {
+            CancelStartup((uid, vertibird));
+            return;
+        }
+
+        if (vertibird.State is VertibirdFlightState.Grounded or VertibirdFlightState.Landing)
+            return;
+
+        if (!vertibird.EmergencyLandingActive)
+            SendVertibirdEmote(uid, vertibird.PilotDisconnectedEmote);
+
+        vertibird.EmergencyLandingActive = true;
+        vertibird.HeldInputs = VertibirdControlInput.None;
+        vertibird.DriftVelocity = Vector2.Zero;
+        Dirty(uid, vertibird);
+        HandleEmergencyLanding((uid, vertibird), xform);
     }
 
     private void UpdateFuelUi(Entity<VertibirdComponent> ent)
@@ -916,12 +1061,9 @@ public sealed partial class VertibirdSystem : EntitySystem
         if (!IsValidSeat(ent.Comp, seatIndex))
             return;
 
-        if (ent.Comp.State != VertibirdFlightState.Grounded)
-        {
-            _popup.PopupEntity(Loc.GetString("vertibird-seat-airborne-blocked"), ent, user);
-            return;
-        }
-
+        // #Misfits Change - boarding is no longer gated on the craft being grounded.
+        // Reach is the real gate: the buckle and do-after range checks already stop
+        // anyone climbing aboard a craft they cannot physically get to.
         if (ent.Comp.SeatOccupants[seatIndex] != null)
             return;
 
@@ -948,6 +1090,10 @@ public sealed partial class VertibirdSystem : EntitySystem
                 ent.Comp.Pilot = user;
                 AddPilotActions(user, ent);
             }
+
+            // Swapping seats never unbuckles, so the turret has to be handed over here.
+            RefreshTurretSeat(ent, currentSeat.Value, null);
+            RefreshTurretSeat(ent, seatIndex, user);
 
             Dirty(ent);
             UpdateUi(ent);
@@ -982,8 +1128,7 @@ public sealed partial class VertibirdSystem : EntitySystem
         var user = args.User;
         var seatIndex = args.SeatIndex;
 
-        if (ent.Comp.State != VertibirdFlightState.Grounded ||
-            !IsValidSeat(ent.Comp, seatIndex) ||
+        if (!IsValidSeat(ent.Comp, seatIndex) ||
             ent.Comp.SeatOccupants[seatIndex] != null ||
             GetSeatIndex(ent.Comp, user) != null ||
             seatIndex == 0 && !HasComp<VertibirdPilotPerkComponent>(user))
