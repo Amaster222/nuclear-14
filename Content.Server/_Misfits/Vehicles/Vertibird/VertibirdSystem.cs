@@ -554,6 +554,8 @@ public sealed partial class VertibirdSystem : EntitySystem
 
         if (!TryComp(ent.Owner, out TransformComponent? xform) ||
             xform.MapUid is not { } mapUid ||
+            !TryComp<MZMapComponent>(mapUid, out var currentZMap) ||
+            currentZMap.Depth + offset < 0 ||
             !_multiZ.TryMapOffset(mapUid, offset, out var targetMap) ||
             targetMap is not { } resolvedTargetMap ||
             !HasComp<MapComponent>(resolvedTargetMap.Owner))
