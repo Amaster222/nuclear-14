@@ -10305,3 +10305,10 @@ Entries:
   id: 6336
   time: '2026-08-17T02:45:05.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1767
+- author: Oli
+  changes:
+    - type: Tweak
+      message: Military Cowboy + Steel-tipped boots now can hold knives and pistols.
+  id: 6337
+  time: '2026-08-17T21:35:42.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1771
