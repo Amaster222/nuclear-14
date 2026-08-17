@@ -10269,3 +10269,10 @@ Entries:
   id: 6332
   time: '2026-08-16T19:24:15.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1743
+- author: aftemath434
+  changes:
+    - type: Add
+      message: Enclave BP
+  id: 6333
+  time: '2026-08-17T00:42:05.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1763
