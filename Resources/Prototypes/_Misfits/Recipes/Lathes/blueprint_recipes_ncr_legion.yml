@@ -1491,6 +1491,21 @@
 
 
 # --- NCR Tier 4 Ammo ---
+# #Misfits Add - Vertibird turret ammunition belt.
+- type: latheRecipe
+  id: N14BPNCRAmmoVertibirdGunBelt
+  result: N14VertibirdGunBelt
+  category: N14BlueprintNCRAmmoT4
+  completetime: 15
+  requiresBlueprint: true
+  availableFaction:
+  - NCR
+  materials:
+    Lead: 1200
+    N14Brass: 600
+    N14Gunpowder: 600
+    Steel: 400
+
 - type: latheRecipe
   id: N14BPNCRAmmoBox50
   result: N14AmmoBox50
