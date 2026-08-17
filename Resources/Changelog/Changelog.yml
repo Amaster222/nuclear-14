@@ -10276,3 +10276,14 @@ Entries:
   id: 6333
   time: '2026-08-17T00:42:05.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1763
+- author: Squagg
+  changes:
+    - type: Remove
+      message: >-
+        Removed PA from Enclave Vertibird Pilots. Temporarily given Zulu gear
+        until pilot gear is in.
+    - type: Remove
+      message: Removed the ability for Enclave to detonate themselves via a hotkey.
+  id: 6334
+  time: '2026-08-17T00:42:30.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1765
