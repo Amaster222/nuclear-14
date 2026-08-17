@@ -94,7 +94,7 @@ public sealed class StorageUIController : UIController, IOnSystemChanged<Storage
         {
             return;
         }
-
+        // TODO: fix this
         // UISystemDependency not injected at this point so do it the old fashion way, I love ordering issues.
         var uiSystem = EntityManager.System<SharedUserInterfaceSystem>();
 
@@ -206,8 +206,7 @@ public sealed class StorageUIController : UIController, IOnSystemChanged<Storage
     {
         _input.FirstChanceOnKeyEvent -= OnMiddleMouse;
     }
-    /// why shit code emo
-
+    // TODO: talk to emo and clean
     /// One might ask, Hey Emo, why are you parsing raw keyboard input just to rotate a rectangle?
     /// The answer is, that input bindings regarding mouse inputs are always intercepted by the UI,
     /// thus, if i want to be able to rotate my damn piece anywhere on the screen,
@@ -255,7 +254,7 @@ public sealed class StorageUIController : UIController, IOnSystemChanged<Storage
         if (IsDragging || UIManager.CurrentlyHovered is StorageWindow)
             keyEvent.Handle();
     }
-    /// why shit code
+    // TODO: clean
     private void OnPiecePressed(GUIBoundKeyEventArgs args, StorageWindow window, ItemGridPiece control)
     {
         if (IsDragging || !window.IsOpen)
@@ -352,10 +351,7 @@ public sealed class StorageUIController : UIController, IOnSystemChanged<Storage
         _menuDragHelper.EndDrag();
         args.Handle();
     }
-    public static void Offset(Vector2 offset, ref Vector2 value)
-    {
-        value -= offset;
-    }
+
     /// Misfit: mostly follows what orignal did but with less if nesting
     /// I dont plan on touching UI code any more than this.
     /// modifications still couple with already existing system
@@ -374,6 +370,9 @@ public sealed class StorageUIController : UIController, IOnSystemChanged<Storage
             new ItemStorageLocation(Angle.Zero, new Vector2i(-100, -100))));
             return;
         }
+        //TODO: finish up implementing this math. I am leaving this math in lol.
+        // if someone can suggest be a FREE app to do this stuff
+        // on PC or even mobile pls
 
         // bottomLeft = (b1,b2) as new origin
         // (bxn,byn) being n points done wrt to b1,b2(we pretending b1,b2 is origin)
@@ -397,7 +396,8 @@ public sealed class StorageUIController : UIController, IOnSystemChanged<Storage
         // [-sin()xb+cos()yb+b2]= B2
         //
         var posFloat = targetStorage.MouseToGridFloat();
-        Offset(draggingGhost.BoundingBox.Center.Floored(), ref posFloat);
+        posFloat -= draggingGhost.BoundingBox.Center.Floored();
+
         var posGrid = posFloat.Floored();
         var newLocation = new ItemStorageLocation(DraggingRotation, posGrid);
 
@@ -429,6 +429,10 @@ public sealed class StorageUIController : UIController, IOnSystemChanged<Storage
         var vMax = box.TopRight.X + box.TopRight.Y * gridCol;
         return !isNeg && vMin >= 0 && vMax <= gridMax;
     }
+    // TODO: due for a rewrite
+    /// <summary>
+    ///
+    /// </summary>
 
     private static IEnumerable<bool> NoItemOverlap(IReadOnlyList<Box2i> shapes, int gridCol, StorageWindow win)
     {
