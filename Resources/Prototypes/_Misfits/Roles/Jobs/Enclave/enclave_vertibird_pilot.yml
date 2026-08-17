@@ -39,10 +39,11 @@
 - type: startingGear
   id: EnclaveVertibirdPilotGear
   equipment:
-    head: N14ClothingHeadHatEnclaveOfficer
+    head: N14ClothingHeadHatEnclaveZuluCombatHelmet
+    mask: N14ClothingMaskBreather
     back: N14ClothingBackpackMilitary
     jumpsuit: N14ClothingUniformJumpsuitEnclave
-    outerClothing: N14ClothingOuterPowerArmorAdvanced1
+    outerClothing: N14ClothingOuterEnclaveZuluAdvancedCombatArmor
     shoes: N14ClothingBootsCombatFilled
     gloves: N14ClothingHandsGlovesCombat
     eyes: N14ClothingEyesGlassesPilot
