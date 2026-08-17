@@ -22,7 +22,7 @@ public abstract partial class SharedGunSystem
     /// </summary>
     private static Dictionary<int, int> _log2 = new Dictionary<int, int>
     {
-        [1] = 1, // avoid 0 value
+        [1] = 1, // avoid 0
         [2] = 1,
         [3] = 2,
         [7] = 3,
@@ -45,6 +45,7 @@ public abstract partial class SharedGunSystem
     /// <summary>
     /// Bit manipulate int to correlate with its rounded down Log2 value as an estimate
     /// that hpefully runs faster than getting its log the normal way
+    /// (TODO: use actual bit manip algo to get log10)
     /// ie.. log2(x) = 2^n
     /// we get 2^n(2^n is just nth bit) which then maps to above dict to give us log2(x)
     /// </summary>
@@ -79,36 +80,26 @@ public abstract partial class SharedGunSystem
     // if ur not a nerd floats lie to you, they are just huge combos of binary
     // that roughly estimate to a desired value. They are decent at lying, having 23 bits to do so
     // if you do not consider the sign and exponent bits
-    private const float FloatMinConst = 0.125f;
+    private const float FloatMinConst = 0.125f; // min float to stop angle from settling on 0(does this alot lol)
     /// <summary>
-    /// Offshoots the local position and rotation of spawnedEntUID by some hashed algorithim
-    /// sequenced by count and seeded by seedUID
-    /// Done so give a random seeming spread to spawned ent that both the client and server can agree on
-    /// ie... no jitters/desync between client and server
+    /// "random" local position and rotation by some hashed algorithim given a sequence and seed
+    /// seed needs to be something that's the same between client and server(use a spawned thing's netID)
+    /// seed prevents jitters/desync
     /// </summary>
-    /// <param name="run"> do we run this or exit early?</param>
-    /// <param name="seedUID">netEnt whose ID value we use as a seed both the server and client agree on</param>
-    /// <param name="spawnedEntUID">ent whose coords we are setting, AFTER it's been properly spawned with
-    ///                             existing map coords(not in null space, not in 0,0 ideally. we just offshoot it)</param>
-    /// <param name="count">sequence/count that corresponds to call(initially here it's used for ammo carts)</param>
-    /// <param name="baseCoord">the existing coords of spawnedEntUID we use as a base to offshoot by</param>
-
-
-    /// Summary of how this works at bottom of page
-    public void RandomVector(bool run, NetEntity seedUID, EntityUid spawnedEntUID, int count, Vector2 baseCoord)
+    /// <param name="seed">seed value that's the SAME ON SERVER AND CLIENT(usually just NetEnt.Id)</param>
+    /// <param name="sequence">sequence/count that corresponds to nth call</param>
+    /// <remarks> Should be super fast with little overhead(dont call log, dont do division, no modulo, only fast cpu math)
+    /// Summary of how this REALLY works at bottom of page
+    public static (Vector2, Angle) GetRandVectAngle(int seed, int sequence)
     {
-
-        if (!run || seedUID == NetEntity.Invalid)
-            return;
-
         // casting should be free
         // roughly equiv to n*log(n) which roughly is the nth prime number. Makes stuff seem randomerrr
-        uint primeApprox = (uint) (count * Log2Floor(count));
+        uint primeApprox = (uint) (sequence * Log2Floor(sequence));
 
         // shift/rotate bit pattern by count. Rotate is circular version of shift
         // ex.. 1010_1010_1010_1100_0011_0100_0010_1010 (shift by 1) => 0101_0101_0101_1000_0110_1000_0101_0101
         // we apply shifted ExpoPattern here with ExpoBaseMask
-        var fullExpoBits = (BitOperations.RotateLeft(ExpoPattern, count) & ExpoPatternMask) | ExpoBaseMask;
+        var fullExpoBits = (BitOperations.RotateLeft(ExpoPattern, sequence) & ExpoPatternMask) | ExpoBaseMask;
 
         // right shift primeApprox to fit inside mantissa(by num trailingzero) and
         // also so we can left shift it to same place everytime
@@ -119,16 +110,13 @@ public abstract partial class SharedGunSystem
         var radius = BitConverter.UInt32BitsToSingle(float_bits);
 
         // casting should be free
-        uint theta = primeApprox + (uint) seedUID.Id;
+        uint theta = primeApprox + (uint) seed;
 
         var x = radius * MathF.Cos(theta);
         var y = radius * MathF.Sin(theta);
-        var pos = baseCoord + new Vector2(x, y);
-        // Min to ensure that we rarely get ugly flat rotated bullets that break up the illusion
-        // of a random scattered mess. Happens supsringly alot without this
+        var pos = new Vector2(x, y);
         var rot = new Angle(primeApprox * PiOvrTwelve + FloatMinConst);
-        // setting both pos and rot at once so we only get one move event call
-        _xform.SetLocalPositionRotation(spawnedEntUID, pos, rot);
+        return (pos, rot);
     }
 
 }
@@ -136,6 +124,8 @@ public abstract partial class SharedGunSystem
 /// summary of how hash works!!!!!! skim through or skip if you do not need stuff
 /// like bit manipulation, IEEE floating point standard, or ect explained
 /// mostly done for fun
+/// (ik for some this is painfully basic or overly complicated to do a basic thing or both)
+///
 
 /// everything is mostly 32 bits, including count and netEnt.ID
 ///
