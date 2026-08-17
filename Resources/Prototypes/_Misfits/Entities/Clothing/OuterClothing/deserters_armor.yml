@@ -5,9 +5,9 @@
   description: A modified detoriated armor kit consisting of brotherhood combat armor and scrap metal.
   components:
   - type: Sprite
-    sprite: _Misfits\Clothing\OuterClothing\Armor\bos_exile_armor.rsi
+    sprite: _Misfits/Clothing/OuterClothing/Armor/bos_exile_armor.rsi
   - type: Clothing
-    sprite: _Misfits\Clothing\OuterClothing\Armor\bos_exile_armor.rsi
+    sprite: _Misfits/Clothing/OuterClothing/Armor/bos_exile_armor.rsi
 
 - type: entity
   parent: N14ClothingOuterCombatArmor
@@ -16,9 +16,9 @@
   description: A modified detoriated armor kit consisting of NCR gear and scrap metal.
   components:
   - type: Sprite
-    sprite: _Misfits\Clothing\OuterClothing\Armor\ncr_exile_armor.rsi
+    sprite: _Misfits/Clothing/OuterClothing/Armor/ncr_exile_armor.rsi
   - type: Clothing
-    sprite: _Misfits\Clothing\OuterClothing\Armor\ncr_exile_armor.rsi
+    sprite: _Misfits/Clothing/OuterClothing/Armor/ncr_exile_armor.rsi
 
 - type: entity
   parent: N14ClothingOuterCombatArmor
@@ -27,6 +27,6 @@
   description: A modified detoriated armor kit consisting of Legion gear and scrap metal.
   components:
   - type: Sprite
-    sprite: _Misfits\Clothing\OuterClothing\Armor\legion_exile_armor.rsi
+    sprite: _Misfits/Clothing/OuterClothing/Armor/legion_exile_armor.rsi
   - type: Clothing
-    sprite: _Misfits\Clothing\OuterClothing\Armor\legion_exile_armor.rsi
+    sprite: _Misfits/Clothing/OuterClothing/Armor/legion_exile_armor.rsi
