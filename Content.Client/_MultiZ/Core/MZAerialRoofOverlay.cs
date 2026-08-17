@@ -21,8 +21,11 @@ namespace Content.Client._MultiZ.Core;
 /// </summary>
 public sealed class MZAerialRoofOverlay : Overlay
 {
-    private static readonly Color RoofPanel = Color.Black;
-    private static readonly Color RoofSeam = Color.FromHex("#101010");
+    // Near-black and mostly opaque: enough structure bleeds through to read the
+    // footprint from altitude, while interiors remain deliberately unattractive
+    // as landing targets.
+    private static readonly Color RoofPanel = Color.FromHex("#080808E8");
+    private static readonly Color RoofSeam = Color.FromHex("#202020F2");
 
     [Dependency] private readonly IConfigurationManager _cfg = default!;
     [Dependency] private readonly IEntityManager _entMan = default!;
@@ -33,9 +36,8 @@ public sealed class MZAerialRoofOverlay : Overlay
     private readonly SharedRoofSystem _roof;
     private readonly SharedTransformSystem _transform;
 
-    // Draw after the lower world and its lighting. This makes roofed cells an
-    // actual opaque mask instead of merely tinting the light buffer, which can
-    // still leave interior sprites visible from the sky layer.
+    // Draw after the lower world and its lighting. This makes roofed cells a
+    // near-opaque mask instead of merely tinting the light buffer.
     public override OverlaySpace Space => OverlaySpace.WorldSpaceBelowFOV;
 
     public MZAerialRoofOverlay()
