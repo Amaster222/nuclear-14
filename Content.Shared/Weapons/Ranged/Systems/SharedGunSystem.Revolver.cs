@@ -3,10 +3,6 @@ using Content.Shared.Verbs;
 using Content.Shared.Weapons.Ranged.Components;
 using Content.Shared.Weapons.Ranged.Events;
 using Robust.Shared.Containers;
-using Robust.Shared.GameStates;
-using Robust.Shared.Serialization;
-using Robust.Shared.Utility;
-using System.Linq;
 using Content.Shared.Interaction.Events;
 using JetBrains.Annotations;
 
@@ -362,8 +358,9 @@ public partial class SharedGunSystem
 
                     if (TryComp<CartridgeAmmoComponent>(uid, out var cartridge))
                         SetCartridgeSpent(uid, cartridge, !(bool) chamber);
-
-                    EjectCartridge(uid);
+                    // misfit fix deuplicated spent carts
+                    var sender = _player.TryGetSessionByEntity(user!.Value, out var session) ? session : _player.LocalSession;
+                    EjectCartridge(uid, userSession: sender);
                 }
 
                 component.Chambers[i] = null;
@@ -376,7 +373,9 @@ public partial class SharedGunSystem
                 component.Chambers[i] = null;
                 // Misfit removed: if (!_netManager.IsClient)
                 //                 prediction handled in EjectCartridge
-                EjectCartridge(slot.Value);
+                // msifit fix duplicated spent carts
+                var sender = _player.TryGetSessionByEntity(user!.Value, out var session) ? session : _player.LocalSession;
+                EjectCartridge(slot.Value, userSession: sender);
 
 
                 anyEmpty = true;

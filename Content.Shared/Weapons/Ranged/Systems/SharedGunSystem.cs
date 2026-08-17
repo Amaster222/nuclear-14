@@ -801,7 +801,7 @@ public abstract partial class SharedGunSystem : EntitySystem
         cartridge.Spent = spent;
         Appearance.SetData(uid, AmmoVisuals.Spent, spent);
     }
-    /// TODO Misfit: refactor spent cartridges
+    /// TODO Misfit: Get rid of useless params like angle, playsound, ect... and replace with something else
     /// Misfit: revamped EjectCartridge
     /// <summary>
     /// Drops a single cartridge / shell

@@ -26,7 +26,7 @@ public sealed partial class GunSystem
     [Dependency] private IEntityManager _entMan = default!;
     [Dependency] IRobustRandom _rng = default!;
     private ISawmill _logCart = default!;
-    public CartridgeSettings CartridgeVisualsSetting;
+    public CartridgeSettings CVAR_CartridgeVisuals;
     private const string Proto_Physics = "ClientCartridgePhysics";
     private const string Proto_Static = "ClientCartridgeStatic";
     public enum CartridgeSettings
@@ -42,12 +42,12 @@ public sealed partial class GunSystem
         _logCart = _logMan.GetSawmill("client.gun.cartridge");
         _rng.SetSeed(666); // satan rng
         Subs.CVar(_config, CCVars.SpentCartridgeVisual, OnCartSetting, true);
-        CartridgeVisualsSetting = (CartridgeSettings) _config.GetCVar(CCVars.SpentCartridgeVisual);
+        CVAR_CartridgeVisuals = (CartridgeSettings) _config.GetCVar(CCVars.SpentCartridgeVisual);
     }
 
     private void OnCartSetting(int value)
     {
-        CartridgeVisualsSetting = (CartridgeSettings) value;
+        CVAR_CartridgeVisuals = (CartridgeSettings) value;
     }
     private void OnSpentAmmoAppearance(EntityUid uid, SpentAmmoVisualsComponent component, ref AppearanceChangeEvent args)
     {
@@ -73,7 +73,7 @@ public sealed partial class GunSystem
             sprite.RemoveLayer(AmmoVisualLayers.Tip);
         }
     }
-
+    // TODO: get rid of useless wrappers. Just have whatever uses SpentCartEvent pass the ev ref
     /// <summary>
     /// Client recieves outside event to spawn cart visual
     /// based from other clients(RequestShootEvent)
@@ -88,7 +88,7 @@ public sealed partial class GunSystem
     public override void EjectSpentCart(MapCoordinates coord, Angle angle, string? cartProto, ICommonSession? dontNeedToUseHere = null)
     {
         // client effect called by shared code, so turn off prediction
-        if (!_timing.IsFirstTimePredicted || CartridgeVisualsSetting == CART_VISUAL_OFF)
+        if (!_timing.IsFirstTimePredicted || CVAR_CartridgeVisuals == CART_VISUAL_OFF)
         {
             return;
         }
@@ -131,7 +131,7 @@ public sealed partial class GunSystem
             return SpawnCartPhysics(baseCoord, curAngle, _constSpentID, _cRSI);
         }
 
-        var spentCartVisual = CartridgeVisualsSetting == OLD_SCHOOL ? SpawnCartOldSchool(baseCoord, stateId, rsi) :
+        var spentCartVisual = CVAR_CartridgeVisuals == OLD_SCHOOL ? SpawnCartOldSchool(baseCoord, stateId, rsi) :
                                                              SpawnCartPhysics(baseCoord, curAngle, stateId, rsi);
 
         DoEjectSound(dummyCart, source, spentCartVisual);
