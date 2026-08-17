@@ -10296,3 +10296,12 @@ Entries:
   id: 6335
   time: '2026-08-17T01:08:37.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1766
+- author: cythisiax
+  changes:
+    - type: Fix
+      message: >-
+        vertibird can no longer go under layer 0 on multiz, never layerBelow,
+        only layerAbove for time being
+  id: 6336
+  time: '2026-08-17T02:45:05.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1767
