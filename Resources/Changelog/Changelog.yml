@@ -10287,3 +10287,12 @@ Entries:
   id: 6334
   time: '2026-08-17T00:42:30.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1765
+- author: JohnKieser
+  changes:
+    - type: Add
+      message: >-
+        Spent casing are now a clientside only visual. This lets us have bullet
+        casings WITH PHYSICS!! These can even be adjusted in the graphics menu 
+  id: 6335
+  time: '2026-08-17T01:08:37.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1766
