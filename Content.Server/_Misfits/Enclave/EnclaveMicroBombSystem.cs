@@ -22,7 +22,8 @@ namespace Content.Server._Misfits.Enclave;
 
 /// <summary>
 /// Implants Enclave personnel, handles the local-speech failsafe, and services
-/// the Enclave remote detonator UI.
+/// the Enclave remote detonator UI. The implant grants no action; it can only be
+/// set off by the detonator or by the failsafe word.
 /// </summary>
 public sealed class EnclaveMicroBombSystem : EntitySystem
 {
@@ -51,7 +52,6 @@ public sealed class EnclaveMicroBombSystem : EntitySystem
         SubscribeLocalEvent<PlayerSpawnCompleteEvent>(OnPlayerSpawnComplete);
         SubscribeLocalEvent<ImplantedComponent, EntitySpokeEvent>(OnEntitySpoke);
         SubscribeLocalEvent<MobStateChangedEvent>(OnMobStateChanged);
-        SubscribeLocalEvent<EnclaveMicroBombComponent, ActivateImplantEvent>(OnImplantActivated);
 
         Subs.BuiEvents<EnclaveDetonatorComponent>(EnclaveDetonatorUiKey.Key, subs =>
         {
@@ -97,12 +97,6 @@ public sealed class EnclaveMicroBombSystem : EntitySystem
     {
         if (args.NewMobState == MobState.Dead && TryGetImplant(args.Target, out _, out _))
             UpdateAllDetonators();
-    }
-
-    private void OnImplantActivated(EntityUid uid, EnclaveMicroBombComponent component, ActivateImplantEvent args)
-    {
-        BeginCountdown(uid, component, args.Performer);
-        args.Handled = true;
     }
 
     private void OnDetonatorOpened(Entity<EnclaveDetonatorComponent> ent, ref BoundUIOpenedEvent args)
