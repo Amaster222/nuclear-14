@@ -490,7 +490,6 @@
     jumpsuit: ClothingSuperMutantJumpsuit
     ears: N14ClothingHeadsetEnclave
     id: N14EnclaveTrooperPipboy
-    belt: MisfitsPlasmaCutter
     back: N14SuperSledgeHammer
 - type: playTimeTracker
   id: SuperMutantEnclave
