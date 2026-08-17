@@ -62,7 +62,6 @@
       - HideContextMenu
   - type: MetaData
   - type: Fixtures
-    hard: false
   - type: Transform
     netsync: false
   - type: EmitSoundOnLand
