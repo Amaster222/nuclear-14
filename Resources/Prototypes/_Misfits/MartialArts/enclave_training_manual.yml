@@ -5,13 +5,9 @@
 # grants PowerArmorProficiency and consumes the manual. Only the name, description
 # and cover colours differ.
 #
-# This exists because the base manual is explicitly Brotherhood of Steel branded,
-# which reads wrong coming off an Enclave workbench. Crafted from the
-# N14BlueprintEnclaveBooks blueprint.
+# This exists solely for variety in PA training books
 #
-# Note: all six Enclave jobs already grant PowerArmorProficiency via job specials,
-# so this is not for Enclave personnel themselves - it is a manufacturable manual
-# for training allies and auxiliaries who lack the certification.
+# Note: all six Enclave jobs already grant PowerArmorProficiency via job specials.
 - type: entity
   parent: TrainingManualPowerArmorOperation
   id: TrainingManualEnclavePowerArmorOperation
