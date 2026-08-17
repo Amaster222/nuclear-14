@@ -283,6 +283,7 @@
       shader: unshaded
       map: ["light"]
       visible: false
+  - type: SyncSprite
   - type: SpriteMovement
     movementLayers:
       movement:

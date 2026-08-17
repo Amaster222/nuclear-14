@@ -64,10 +64,6 @@ public sealed class WarperSystem : EntitySystem
 
     private bool TryWarpUser(EntityUid uid, WarperComponent component, EntityUid user, EntityUid target)
     {
-        var warpEntity = user;
-        if (TryComp<MechPilotComponent>(user, out var pilot))
-            warpEntity = pilot.Mech;
-
         if (component.ID is null)
         {
             Log.Debug("Warper has no destination");
@@ -83,26 +79,49 @@ public sealed class WarperSystem : EntitySystem
             return false;
         }
 
-        TryComp(dest.Value, out TransformComponent? destXform);
-        if (destXform is null)
+        if (!HasComp<TransformComponent>(dest.Value))
         {
             Log.Debug($"Warp destination '{component.ID}' has no transform");
             _popupSystem.PopupEntity(Loc.GetString("warper-goes-nowhere", ("warper", target)), user, Filter.Entities(user), true);
             return false;
         }
 
+        // #Misfits Change /Refactor/: the move itself lives in WarpEntityTo so the bunker tunnel
+        // teleporter reuses it rather than duplicating the pull/follower/velocity handling.
+        if (WarpEntityTo(user, dest.Value))
+            return true;
+
+        Log.Debug($"Player tried to warp to '{component.ID}', which is not on a running map");
+        _popupSystem.PopupEntity(Loc.GetString("warper-goes-nowhere", ("warper", target)), user, Filter.Entities(user), true);
+        return false;
+    }
+
+    /// <summary>
+    /// #Misfits Change /Refactor/: moves a user, or the mech they are piloting, onto a destination
+    /// entity — bringing whatever they are pulling and any recruited followers along, and killing
+    /// their velocity so they do not slide on arrival.
+    /// </summary>
+    /// <returns>
+    /// False if the destination has no transform, or its map is not running and the user is not an
+    /// admin ghost.
+    /// </returns>
+    public bool WarpEntityTo(EntityUid user, EntityUid destination)
+    {
+        if (!TryComp(destination, out TransformComponent? destXform))
+            return false;
+
         // Check that the destination map is initialized and return unless in aghost mode.
         var destMap = destXform.MapID;
         if (!_mapSystem.MapExists(destMap) || !_mapSystem.IsInitialized(destMap) || _mapSystem.IsPaused(destMap))
         {
+            // Normal ghosts cannot interact, so if we're here this is already an admin ghost.
             if (!HasComp<GhostComponent>(user))
-            {
-                // Normal ghosts cannot interact, so if we're here this is already an admin ghost.
-                Log.Debug($"Player tried to warp to '{component.ID}', which is not on a running map");
-                _popupSystem.PopupEntity(Loc.GetString("warper-goes-nowhere", ("warper", target)), user, Filter.Entities(user), true);
                 return false;
-            }
         }
+
+        var warpEntity = user;
+        if (TryComp<MechPilotComponent>(user, out var pilot))
+            warpEntity = pilot.Mech;
 
         // Forge-Change-Start
         if (TryComp(warpEntity, out PullerComponent? puller) && puller.Pulling != null)

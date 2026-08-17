@@ -58,24 +58,26 @@
   id: CaesarLegionLegate
   name: id-card-access-level-legion-legate
 
+# #Misfits Fix: Legion access hierarchy rebuilt.
+# Previously EVERY group (including Slave) carried the base CaesarLegion tag AND inherited
+# CaesarLegionSlave, so the base tag matched every Legion ID and rank doors were meaningless.
+# Now: Slaves carry ONLY CaesarLegionSlave; CaesarLegion/CaesarLegionRecruit is the non-slave
+# base; each rank adds its own tag and never inherits CaesarLegionSlave.
 - type: accessGroup
   id: CaesarLegionSlave
   tags:
-  - CaesarLegion
   - CaesarLegionSlave
 
 - type: accessGroup
   id: CaesarLegionRecruit
   tags:
   - CaesarLegion
-  - CaesarLegionSlave
   - CaesarLegionRecruit
 
 - type: accessGroup
   id: CaesarLegionHoundmaster
   tags:
   - CaesarLegion
-  - CaesarLegionSlave
   - CaesarLegionRecruit
   - CaesarLegionHoundmaster
 
@@ -83,7 +85,6 @@
   id: CaesarLegionFrumentarii
   tags:
   - CaesarLegion
-  - CaesarLegionSlave
   - CaesarLegionRecruit
   - CaesarLegionFrumentarii
 
@@ -91,7 +92,6 @@
   id: CaesarLegionVexillarius
   tags:
   - CaesarLegion
-  - CaesarLegionSlave
   - CaesarLegionRecruit
   - CaesarLegionVexillarius
 
@@ -99,7 +99,6 @@
   id: CaesarLegionExplorer
   tags:
   - CaesarLegion
-  - CaesarLegionSlave
   - CaesarLegionRecruit
   - CaesarLegionExplorer
 
@@ -107,7 +106,6 @@
   id: CaesarLegionOptio
   tags:
   - CaesarLegion
-  - CaesarLegionSlave
   - CaesarLegionRecruit
   - CaesarLegionOptio
 
@@ -115,7 +113,6 @@
   id: CaesarLegionLegionnaireRecruit
   tags:
   - CaesarLegion
-  - CaesarLegionSlave
   - CaesarLegionRecruit
   - CaesarLegionLegionnaireRecruit
 
@@ -123,7 +120,6 @@
   id: CaesarLegionLegionnaireWarrior
   tags:
   - CaesarLegion
-  - CaesarLegionSlave
   - CaesarLegionRecruit
   - CaesarLegionLegionnaireRecruit
   - CaesarLegionLegionnaireWarrior
@@ -132,7 +128,6 @@
   id: CaesarLegionLegionnaireVeteran
   tags:
   - CaesarLegion
-  - CaesarLegionSlave
   - CaesarLegionRecruit
   - CaesarLegionLegionnaireRecruit
   - CaesarLegionLegionnaireWarrior
@@ -142,7 +137,6 @@
   id: CaesarLegionDean
   tags:
   - CaesarLegion
-  - CaesarLegionSlave
   - CaesarLegionRecruit
   - CaesarLegionLegionnaireRecruit
   - CaesarLegionLegionnaireWarrior
@@ -153,7 +147,6 @@
   id: CaesarLegionVeteranDecanus
   tags:
   - CaesarLegion
-  - CaesarLegionSlave
   - CaesarLegionRecruit
   - CaesarLegionLegionnaireRecruit
   - CaesarLegionLegionnaireWarrior
@@ -165,7 +158,6 @@
   id: CaesarLegionCenturion
   tags:
   - CaesarLegion
-  - CaesarLegionSlave
   - CaesarLegionRecruit
   - CaesarLegionLegionnaireRecruit
   - CaesarLegionLegionnaireWarrior
@@ -178,7 +170,6 @@
   id: CaesarLegionLegate
   tags:
   - CaesarLegion
-  - CaesarLegionSlave
   - CaesarLegionRecruit
   - CaesarLegionHoundmaster
   - CaesarLegionFrumentarii
@@ -197,12 +188,10 @@
   id: CaesarLegionPriestessOfMars
   tags:
   - CaesarLegion
-  - CaesarLegionSlave
   - CaesarLegionRecruit
 
 - type: accessGroup
   id: CaesarLegionAcolyteOfMars
   tags:
   - CaesarLegion
-  - CaesarLegionSlave
   - CaesarLegionRecruit

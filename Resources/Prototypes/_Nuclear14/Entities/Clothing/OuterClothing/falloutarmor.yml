@@ -1376,12 +1376,12 @@
   - type: Clothing
     sprite: _Nuclear14/Clothing/OuterClothing/Armor/BoS_Wash/InitiateArmor.rsi
   - type: Armor
-    modifiers:
+    modifiers: # #Misfits Tweak: Initiate is the lowest BoS rank - weakest armor in the ladder (T2, 0.85/0.80), now below Squire
       coefficients:
-        Blunt: 0.80
-        Slash: 0.80
-        Piercing: 0.75
-        Heat: 0.75
+        Blunt: 0.85
+        Slash: 0.85
+        Piercing: 0.80
+        Heat: 0.80
     priceMultiplier: 0.5
   - type: FireProtection
     reduction: 0.1
@@ -1399,7 +1399,7 @@
   - type: Clothing
     sprite: _Nuclear14/Clothing/OuterClothing/Armor/BoS_Wash/SquireArmor.rsi
   - type: Armor
-    modifiers:
+    modifiers: # #Misfits Tweak: Squire (T3, 0.80/0.75) now outranks Initiate (T2, 0.85/0.80)
       coefficients:
         Blunt: 0.8
         Slash: 0.8
@@ -1553,12 +1553,12 @@
   - type: Clothing
     sprite: _Nuclear14/Clothing/OuterClothing/Armor/BoS_Midw/InitiateArmor.rsi
   - type: Armor
-    modifiers:
+    modifiers: # #Misfits Tweak: Initiate is the lowest BoS rank - weakest armor in the ladder (T2, 0.85/0.80), now below Squire
       coefficients:
-        Blunt: 0.80
-        Slash: 0.80
-        Piercing: 0.75
-        Heat: 0.75
+        Blunt: 0.85
+        Slash: 0.85
+        Piercing: 0.80
+        Heat: 0.80
     priceMultiplier: 0.5
   - type: FireProtection
     reduction: 0.1
@@ -1576,7 +1576,7 @@
   - type: Clothing
     sprite: _Nuclear14/Clothing/OuterClothing/Armor/BoS_Midw/SquireArmor.rsi
   - type: Armor
-    modifiers:
+    modifiers: # #Misfits Tweak: Squire (T3, 0.80/0.75) now outranks Initiate (T2, 0.85/0.80)
       coefficients:
         Blunt: 0.80
         Slash: 0.80

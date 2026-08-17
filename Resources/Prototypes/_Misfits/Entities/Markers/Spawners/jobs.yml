@@ -16,6 +16,15 @@
       - state: green
       - state: commander
 
+# #Cythisiax Added - Paladin Commander personal-whitelist spawn point.
+- type: entity
+  parent: MisfitsSpawnPointBoSMidPaladinCommander
+  id: MisfitsSpawnPointBoSPaladinCommander
+  name: Brotherhood Paladin Commander
+  components:
+  - type: SpawnPoint
+    job_id: BoSPaladinCommander
+
 - type: entity
   parent: MisfitsSpawnPointBoSMidPaladinCommander
   id: MisfitsSpawnPointBoSMidKnight
@@ -27,6 +36,43 @@
     layers:
       - state: green
       - state: knight
+
+# #Misfits Add - Brotherhood Lancers spawn points.
+- type: entity
+  parent: MisfitsSpawnPointBoSMidPaladinCommander
+  id: MisfitsSpawnPointBoSLancerCaptain
+  name: Brotherhood Lancer-Captain
+  components:
+  - type: SpawnPoint
+    job_id: BoSLancerCaptain
+  - type: Sprite
+    layers:
+      - state: green
+      - state: knight
+
+- type: entity
+  parent: MisfitsSpawnPointBoSMidPaladinCommander
+  id: MisfitsSpawnPointBoSLancerKnight
+  name: Brotherhood Lancer-Knight
+  components:
+  - type: SpawnPoint
+    job_id: BoSLancerKnight
+  - type: Sprite
+    layers:
+      - state: green
+      - state: knight
+
+- type: entity
+  parent: MisfitsSpawnPointBoSMidPaladinCommander
+  id: MisfitsSpawnPointBoSLancer
+  name: Brotherhood Lancer
+  components:
+  - type: SpawnPoint
+    job_id: BoSLancer
+  - type: Sprite
+    layers:
+      - state: green
+      - state: squire
 
 - type: entity
   parent: MisfitsSpawnPointBoSMidPaladinCommander
@@ -643,6 +689,19 @@
   components:
   - type: SpawnPoint
     job_id: EnclaveJuniorOfficer
+  - type: Sprite
+    layers:
+      - state: green
+      - state: lt
+
+# #Misfits Add - Vertibird Pilot spawn point.
+- type: entity
+  parent: MisfitsSpawnPointEnclaveCommander
+  id: MisfitsSpawnPointEnclaveVertibirdPilot
+  name: Enclave Vertibird Pilot
+  components:
+  - type: SpawnPoint
+    job_id: EnclaveVertibirdPilot
   - type: Sprite
     layers:
       - state: green

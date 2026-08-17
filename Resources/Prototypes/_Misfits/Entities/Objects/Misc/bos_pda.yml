@@ -6,6 +6,15 @@
   - type: Pda
     id: N14IDBrotherhoodHolotagCommander
 
+# #Cythisiax Added - Paladin Commander personal-whitelist Pip-Boy.
+- type: entity
+  parent: N14BasePipboy
+  id: N14PaladinCommander_PipBoy
+  suffix: Paladin Commander
+  components:
+  - type: Pda
+    id: N14IDBrotherhoodOfSteelHolotagPaladinCommander
+
 - type: entity
   parent: N14BasePipboy
   id: N14HeadScribe_PipBoy

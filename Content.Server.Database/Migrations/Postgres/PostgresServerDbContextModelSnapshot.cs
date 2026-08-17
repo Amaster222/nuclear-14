@@ -1459,6 +1459,19 @@ namespace Content.Server.Database.Migrations.Postgres
                         .HasColumnType("integer")
                         .HasColumnName("bottlecaps");
 
+                    // #Cythisiax Add - Multi-currency columns
+                    b.Property<int>("NcrDollars")
+                        .HasColumnType("integer")
+                        .HasColumnName("ncr_dollars");
+
+                    b.Property<int>("Silver")
+                        .HasColumnType("integer")
+                        .HasColumnName("silver");
+
+                    b.Property<int>("Gold")
+                        .HasColumnType("integer")
+                        .HasColumnName("gold");
+
                     b.Property<string>("CharacterName")
                         .IsRequired()
                         .HasColumnType("text")
@@ -1861,6 +1874,10 @@ namespace Content.Server.Database.Migrations.Postgres
                         .HasColumnType("text")
                         .HasColumnName("name_color");
 
+                    b.Property<int>("Tier")
+                        .HasColumnType("integer")
+                        .HasColumnName("tier");
+
                     b.Property<string>("Title")
                         .HasColumnType("text")
                         .HasColumnName("title");
@@ -1882,6 +1899,214 @@ namespace Content.Server.Database.Migrations.Postgres
                         .HasDatabaseName("IX_supporter_user_id");
 
                     b.ToTable("supporter", (string)null);
+                });
+
+            // #Cythisiax Add - Free market entities
+
+            modelBuilder.Entity("Content.Server.Database.MarketListing", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("market_listing_id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("currency");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expires_at");
+
+                    b.Property<DateTime>("ListedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("listed_at");
+
+                    b.Property<Guid>("ListingId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("listing_id");
+
+                    b.Property<int>("PricePerUnit")
+                        .HasColumnType("integer")
+                        .HasColumnName("price_per_unit");
+
+                    b.Property<string>("PrototypeId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("prototype_id");
+
+                    b.Property<int>("Quantity")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1)
+                        .HasColumnName("quantity");
+
+                    b.Property<string>("RequestedItemId")
+                        .HasColumnType("text")
+                        .HasColumnName("requested_item_id");
+
+                    b.Property<int>("RequestedQuantity")
+                        .HasColumnType("integer")
+                        .HasColumnName("requested_quantity");
+
+                    b.Property<string>("SellerCharacterName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("seller_character_name");
+
+                    b.Property<Guid>("SellerPlayerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("seller_player_id");
+
+                    b.Property<int>("StackCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("stack_count");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text")
+                        .HasDefaultValue("Active")
+                        .HasColumnName("status");
+
+                    b.Property<DateTime?>("SoldAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("sold_at");
+
+                    b.Property<string>("SoldItemTag")
+                        .HasColumnType("text")
+                        .HasColumnName("sold_item_tag");
+
+                    b.Property<string>("SoldToCharacter")
+                        .HasColumnType("text")
+                        .HasColumnName("sold_to_character");
+
+                    b.HasKey("Id")
+                        .HasName("PK_market_listing");
+
+                    b.HasIndex("ListingId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_market_listing_listing_id");
+
+                    b.HasIndex("ExpiresAt")
+                        .HasDatabaseName("IX_market_listing_expires_at");
+
+                    b.HasIndex(new[] { "SellerPlayerId", "Status" })
+                        .HasDatabaseName("IX_market_listing_seller_player_id_status");
+
+                    b.ToTable("market_listing", (string)null);
+                });
+
+            modelBuilder.Entity("Content.Server.Database.MarketPriceHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("market_price_history_id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Demand")
+                        .HasColumnType("integer")
+                        .HasColumnName("demand");
+
+                    b.Property<string>("PrototypeId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("prototype_id");
+
+                    b.Property<int>("ReferencePrice")
+                        .HasColumnType("integer")
+                        .HasColumnName("reference_price");
+
+                    b.Property<int>("Supply")
+                        .HasColumnType("integer")
+                        .HasColumnName("supply");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("timestamp");
+
+                    b.HasKey("Id")
+                        .HasName("PK_market_price_history");
+
+                    b.HasIndex(new[] { "PrototypeId", "Timestamp" })
+                        .HasDatabaseName("IX_market_price_history_prototype_id_timestamp");
+
+                    b.ToTable("market_price_history", (string)null);
+                });
+
+            modelBuilder.Entity("Content.Server.Database.MarketSale", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("market_sale_id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<Guid>("BuyerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("buyer_id");
+
+                    b.Property<string>("BuyerName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("buyer_name");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("currency");
+
+                    b.Property<string>("ItemProto")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("item_proto");
+
+                    b.Property<Guid>("ListingId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("listing_id");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("integer")
+                        .HasColumnName("price");
+
+                    b.Property<Guid>("SellerId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("seller_id");
+
+                    b.Property<string>("SellerName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("seller_name");
+
+                    b.Property<DateTime>("SoldAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("sold_at");
+
+                    b.HasKey("Id")
+                        .HasName("PK_market_sale");
+
+                    b.HasIndex("SoldAt")
+                        .HasDatabaseName("IX_market_sale_sold_at");
+
+                    b.ToTable("market_sale", (string)null);
+                });
+
+            modelBuilder.Entity("Content.Server.Database.MarketSoldItem", b =>
+                {
+                    b.Property<string>("SoldTag")
+                        .HasColumnType("text")
+                        .HasColumnName("sold_tag");
+
+                    b.HasKey("SoldTag")
+                        .HasName("PK_market_sold_item");
+
+                    b.ToTable("market_sold_item", (string)null);
                 });
 
             modelBuilder.Entity("Content.Server.Database.Admin", b =>

@@ -181,9 +181,9 @@
       - EncryptionKeyEnclave
       - EncryptionKeyWastelandGlobal
   - type: Sprite
-    sprite: _Misfits/Clothing/Ears/Headsets/enclave.rsi
+    sprite: _Misfits/Clothing/Ears/Headsets/enclave_headset.rsi
   - type: Clothing
-    sprite: _Misfits/Clothing/Ears/Headsets/enclave.rsi
+    sprite: _Misfits/Clothing/Ears/Headsets/enclave_headset.rsi
 
 - type: entity
   parent: N14ClothingHeadsetAlt

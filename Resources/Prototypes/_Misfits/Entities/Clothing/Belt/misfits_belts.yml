@@ -24,6 +24,17 @@
   - type: Clothing
     sprite: _Misfits/Clothing/Belt/vaultsecuritybelt.rsi
   - type: Appearance
+  # #Cythisiax Fixed - belt could only hold ammo; handcuffs & police baton could not be stored
+  - type: Storage
+    whitelist:
+      tags:
+        - CigPack
+        - N14AmmoCell
+        - Handcuffs
+        - N14PoliceBaton
+      components:
+        - BallisticAmmoProvider
+        - CartridgeAmmo
 
 # #Misfits Add - BoS Squire webbing variants.
 - type: entity

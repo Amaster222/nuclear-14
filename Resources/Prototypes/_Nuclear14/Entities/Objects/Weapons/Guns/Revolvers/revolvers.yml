@@ -3,8 +3,6 @@
   id: N14WeaponRevolverBase
   abstract: true
   components:
-  - type: Wieldable
-    unwieldOnUse: false
   - type: FollowDistance
     backStrength: 6
   - type: StaticPrice
