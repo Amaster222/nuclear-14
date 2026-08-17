@@ -7,6 +7,7 @@ using Content.Shared.Verbs;
 using Content.Shared.Weapons.Ranged.Components;
 using Content.Shared.Weapons.Ranged.Events;
 using Robust.Shared.Containers;
+using Robust.Shared.Player;
 
 namespace Content.Shared.Weapons.Ranged.Systems;
 /*
@@ -15,7 +16,7 @@ Pending refactor
 public abstract partial class SharedGunSystem
 {
     protected const string ChamberSlot = "gun_chamber";
-
+    [Dependency] private ISharedPlayerManager _player = default!;
     protected virtual void InitializeChamberMagazine()
     {
         SubscribeLocalEvent<ChamberMagazineAmmoProviderComponent, ComponentStartup>(OnChamberStartup);
@@ -108,7 +109,9 @@ public abstract partial class SharedGunSystem
         {
             /// Misfit change: <code> if (_netManager.IsServer){ } </code>
             /// prediction handled inside EjectCartridge
-            EjectCartridge(chamberEnt.Value);
+            /// Misfit fix duplicated spent carts:
+            var sender = _player.TryGetSessionByEntity(user!.Value, out var session) ? session : _player.LocalSession;
+            EjectCartridge(chamberEnt.Value, userSession: sender);
         }
 
         if (!CycleCartridge(uid, component, user))
@@ -172,7 +175,16 @@ public abstract partial class SharedGunSystem
             {
                 // Misfit removed: if (_netManager.IsServer)
                 //                 prediction handled in EjectCartridge
-                EjectCartridge(chambered.Value);
+                // Misfit temp fix: shared code duplicates client carts since server doesnt get passed player session
+                // temp because uid is nullable for some reason and there might be edge cases
+                // we are just assuming this shared code is being run by the "user" ent
+                // tho worse case is that the client doesnt get any spent cart visual womp womp
+                // solution maybe is when reworking gun code is to explictly seperate server and client calls
+                // like server only ever reacts to client ejects via events, and only sends its own via npcs in own explicit methods
+                // also code below ugo af
+                var sender = _player.TryGetSessionByEntity(user!.Value, out var session) ? session : _player.LocalSession;
+
+                EjectCartridge(chambered.Value, userSession: sender);
                 UpdateAmmoCount(uid);
             }
 
