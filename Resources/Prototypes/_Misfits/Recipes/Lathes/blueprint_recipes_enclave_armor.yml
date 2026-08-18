@@ -33,10 +33,10 @@
   - Enclave
   materials:
     Steel: 20000
-    N14Iron: 45
-    Circuitry: 45
-    ScrapElectronic: 40
-    N14Brass: 20
+    N14Iron: 450
+    Circuitry: 450
+    ScrapElectronic: 4000
+    N14Brass: 200
 
 # X-02 tesla power armor - 230 steel. A step above the X-01.
 - type: latheRecipe
@@ -49,10 +49,10 @@
   - Enclave
   materials:
     Steel: 23000
-    N14Iron: 55
-    Circuitry: 55
-    ScrapElectronic: 50
-    N14Brass: 25
+    N14Iron: 550
+    Circuitry: 550
+    ScrapElectronic: 5000
+    N14Brass: 250
 
 # =====================================================================
 # ZULU SQUAD COMBAT ARMOR

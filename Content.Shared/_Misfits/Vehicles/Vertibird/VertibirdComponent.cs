@@ -158,6 +158,35 @@ public sealed partial class VertibirdComponent : Component
     [DataField]
     public string MapConfigId = "Wendover";
 
+    /// <summary>
+    /// Blunt damage taken per Z-level when someone steps out of an airborne craft.
+    /// One level up is a survivable but serious landing; higher is progressively worse.
+    /// </summary>
+    [DataField]
+    public float FallDamagePerLevel = 100f;
+
+    // ---- Admin debug toggles (Tricks verb menu). Off on every normal craft. ----
+
+    /// <summary>Fuel never drains and the tank never blocks takeoff.</summary>
+    [DataField]
+    public bool DebugInfiniteFuel;
+
+    /// <summary>Startup, takeoff, landing and Z-changes complete on the next tick.</summary>
+    [DataField]
+    public bool DebugInstantFlight;
+
+    /// <summary>The turret fires without spending or needing charges.</summary>
+    [DataField]
+    public bool DebugInfiniteAmmo;
+
+    /// <summary>
+    /// Keeps the craft airborne when it loses its pilot, instead of descending
+    /// automatically. Lets one tester ghost into a gunner or a target mob without
+    /// the vertibird landing itself the moment they leave the pilot's body.
+    /// </summary>
+    [DataField]
+    public bool DebugIgnorePilotLoss;
+
     // ---- Sprite / visual state (per-vehicle, so balloons/vertibirds use their own RSI states) ----
     /// <summary>RSI state shown while grounded.</summary>
     [DataField]

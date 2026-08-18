@@ -266,6 +266,7 @@
     - N14BPNCRAmmoMag308LMG
     - N14BPNCRAmmoOverMag308
     - N14BPNCRAmmoMagTopSMG12mm
+    - N14BPNCRAmmoVertibirdGunBelt # #Misfits Add - vertibird turret belt
 
 # =====================================================================
 # CAESAR'S LEGION BLUEPRINTS
@@ -678,6 +679,7 @@
     recipes:
     - N14BPBoSAmmoFusionCoreRed
     # #Misfits Change - duplicate FC recipe removed; consolidated to single generic fusion core
+    - N14BPBoSAmmoVertibirdGunBelt # #Misfits Add - vertibird turret belt
 
 # #Misfits Removed - T5 ammo blueprint entity commented out; all T5 energy cells consolidated to generic types at T1
 # - type: entity
