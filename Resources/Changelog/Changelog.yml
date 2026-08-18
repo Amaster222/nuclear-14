@@ -10312,3 +10312,72 @@ Entries:
   id: 6337
   time: '2026-08-17T21:35:42.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1771
+- author: Squagg
+  changes:
+    - type: Add
+      message: >-
+        Vertibirds have a working gunner turret. The crew chief seat can drop
+        into a gunner's sight and strafe the ground below.
+    - type: Add
+      message: >-
+        Vertibird gun belts restock the turret, craftable from Brotherhood, NCR,
+        and Enclave blueprints.
+    - type: Add
+      message: >-
+        Vertibird airframes can be welded back together. Pilots and Lancers
+        repair them twice as fast.
+    - type: Add
+      message: >-
+        Power armoured passengers can combat drop out of a cruising vertibird
+        and land unhurt.
+    - type: Add
+      message: >-
+        Passengers can unbuckle from a vertibird in flight. Above ground level
+        you fall and take 100 blunt per level dropped.
+    - type: Add
+      message: >-
+        Admin debug toggles for vertibirds under the right click Tricks menu:
+        infinite fuel, instant takeoff and landing, infinite ammo, and holding
+        altitude with no pilot.
+    - type: Tweak
+      message: >-
+        Players can now board a vertibird while it is running instead of only
+        while it is parked.
+    - type: Tweak
+      message: >-
+        Nobody can pull a passenger out of a flying vertibird. Only the
+        passenger can unbuckle themselves.
+    - type: Tweak
+      message: >-
+        A vertibird that loses its pilot in flight now brings itself down
+        automatically, whether the pilot disconnected or stepped out.
+    - type: Tweak
+      message: >-
+        The Enclave Vertibird Pilot now wears Zulu advanced combat armour, a
+        Zulu combat helmet and a breather mask instead of power armour.
+    - type: Tweak
+      message: Enclave characters can take the Tribal language trait.
+    - type: Tweak
+      message: >-
+        Nuka-Cola machines no longer stock broken bottles, and rare flavours
+        like Quantum show up far more often.
+    - type: Remove
+      message: >-
+        The Enclave microbomb implant no longer gives the wearer a hotbar button
+        to detonate themselves. The failsafe word and the command detonator
+        still work.
+    - type: Fix
+      message: >-
+        The vertibird turret and combat drop no longer work at ground level,
+        where they would have put you under the map.
+    - type: Fix
+      message: >-
+        Nuka-Cola machines no longer rewrite their whole stock list the first
+        time you buy something.
+    - type: Fix
+      message: Admin ghosts can use workbenches again.
+    - type: Fix
+      message: Ceramic flasks can be poured over people.
+  id: 6338
+  time: '2026-08-18T00:40:06.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1768
