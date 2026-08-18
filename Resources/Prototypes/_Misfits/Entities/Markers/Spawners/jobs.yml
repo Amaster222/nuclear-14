@@ -656,6 +656,56 @@
       - state: green
       - state: recruit
 
+# NCR Office of Science and Industry (OSI) spawn points. # #Misfits Add
+# Spawn near the NCRA labs/medic area like the NCR Doctor.
+- type: entity
+  parent: MisfitsSpawnPointNCRCadet
+  id: MisfitsSpawnPointOSIChiefScientist
+  name: OSI Chief Scientist
+  components:
+  - type: SpawnPoint
+    job_id: OSIChiefScientist
+  - type: Sprite
+    layers:
+      - state: green
+      - state: medic
+
+- type: entity
+  parent: MisfitsSpawnPointNCRCadet
+  id: MisfitsSpawnPointOSIScientist
+  name: OSI Scientist
+  components:
+  - type: SpawnPoint
+    job_id: OSIScientist
+  - type: Sprite
+    layers:
+      - state: green
+      - state: medic
+
+- type: entity
+  parent: MisfitsSpawnPointNCRCadet
+  id: MisfitsSpawnPointOSIAssistant
+  name: OSI Assistant
+  components:
+  - type: SpawnPoint
+    job_id: OSIAssistant
+  - type: Sprite
+    layers:
+      - state: green
+      - state: medic
+
+- type: entity
+  parent: MisfitsSpawnPointNCRCadet
+  id: MisfitsSpawnPointOSIAgent
+  name: OSI Agent
+  components:
+  - type: SpawnPoint
+    job_id: OSIAgent
+  - type: Sprite
+    layers:
+      - state: green
+      - state: ws
+
 # Enclave — expanded 8-role hierarchy (#Misfits Change)
 - type: entity
   parent: SpawnPointJobBase

@@ -77,6 +77,16 @@ job-description-ncr-ranger = Elite scout and combat trooper. Operate independent
 job-name-ncr-ranger-veteran = NCR Ranger Veteran
 job-description-ncr-ranger-veteran = Veteran Ranger. Lead Ranger operations, make tactical decisions, and follow orders when directed by your Squad Leader or mission command.
 
+# #Misfits Add - NCR Office of Science and Industry (OSI) job names and descriptions.
+job-name-osi-chief-scientist = OSI Chief Scientist
+job-description-osi-chief-scientist = Lead the NCR Office of Science and Industry detachment. Direct research, industry, and field studies, and coordinate your scientists with the NCR command chain.
+job-name-osi-scientist = OSI Scientist
+job-description-osi-scientist = Conduct research, maintain industrial systems, and provide technical expertise for the NCR. Follow orders from the OSI Chief Scientist.
+job-name-osi-assistant = OSI Assistant
+job-description-osi-assistant = Support OSI scientists and help keep the lab, clinic, and field work running. Follow orders from the scientists above you.
+job-name-osi-agent = OSI Agent
+job-description-osi-agent = Field operative of the Office of Science and Industry. Protect OSI personnel and assets, escort expeditions, and handle threats to the Republic's scientific mission.
+
 # Rangers
 job-name-ranger-patrol = Patrol Ranger
 job-description-ranger-patrol = Scout ahead, patrol the frontier, and prove you belong among the Rangers.
