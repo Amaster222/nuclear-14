@@ -26,7 +26,7 @@ public sealed class StorageWindow : BaseWindow
 {
     [Dependency] private readonly IEntityManager _entity = default!;
     private readonly StorageUIController _storageController;
-    // the entityUid of the storage whose windows this is ie... backpack
+
     public EntityUid? StorageEntity;
 
     private readonly GridContainer _pieceGrid;
@@ -293,7 +293,7 @@ public sealed class StorageWindow : BaseWindow
             _sidebar.AddChild(craftContainer);
         }
         // Corvax-Change-End
-        // TODO: clean code up.
+
         if (_entity.System<StorageSystem>().NestedStorage && rows > 0)
         {
             _backButton = new TextureButton
@@ -418,8 +418,6 @@ public sealed class StorageWindow : BaseWindow
         control.OnPieceUnpressed -= OnPieceUnpressed;
     }
 
-    // TODO: I dont get UI yet, but we rebuild grid start to finish and do these
-    // checks when it is dirtied. Better way to do this? Cant this just be
     public void BuildItemPieces()
     {
         if (!_entity.EntityExists(StorageEntity))
@@ -430,7 +428,7 @@ public sealed class StorageWindow : BaseWindow
 
         if (storageComp.Grid.Count == 0)
             return;
-
+        // so fucking dumb TODO make not shit
         var ItemSys = _entity.System<SharedItemSystem>();
         var boundingGrid = storageComp.Grid.GetBoundingBox();
         var size = _emptyTexture!.Size * 2;
@@ -521,8 +519,7 @@ public sealed class StorageWindow : BaseWindow
             }
         }
     }
-    // TODO: clean up frameupdate
-    // Filled with notes so when I get back to this i'll remember where I left off
+
     protected override void FrameUpdate(FrameEventArgs args)
     {
         base.FrameUpdate(args);
@@ -537,11 +534,6 @@ public sealed class StorageWindow : BaseWindow
         }
 
         var containerSystem = _entity.System<SharedContainerSystem>();
-        // TODO: smelly code needs cleaning. I feel like this can be reduced to one branch
-        // if not even just one operation. Seems to depend on very static and easy to predict data
-        // so why do these redundant checks every FRAME????
-        //
-        // Also NestedStorage is a cvar. just checks if we are in a nested storage
 
         if (_backButton != null)
         {
@@ -563,8 +555,7 @@ public sealed class StorageWindow : BaseWindow
                 _backButton.Visible = false;
             }
         }
-        // why cant these just be normal dependencies???????????????????????????????
-        // why literally alloc them for a frame loop????????????
+
         var itemSystem = _entity.System<ItemSystem>();
         var storageSystem = _entity.System<StorageSystem>();
         var handsSystem = _entity.System<HandsSystem>();
@@ -576,18 +567,13 @@ public sealed class StorageWindow : BaseWindow
 
         if (UserInterfaceManager.CurrentlyHovered is StorageWindow con && con != this)
             return;
-        // so we can have a null storage ent(null check earlier)
-        // and one that doesnt even have the correct comp
-        // but we still render the storage boxes??? what??
-        // what else that isnt a storagecomp renders storage boxes??
+
         if (!_entity.TryGetComponent<StorageComponent>(StorageEntity, out var storageComponent))
             return;
-        // check are we dragging item, are we holding item and hovering over ui ect..?
-        EntityUid currentEnt; // this can be the thing we are dragging or holding
-        ItemStorageLocation currentLocation; // loc of item dragging/holding
+
+        EntityUid currentEnt;
+        ItemStorageLocation currentLocation;
         var usingInHand = false;
-        // todo: itll be interesting to branch this logic
-        //
         if (_storageController.IsDragging && _storageController.DraggingGhost is { } dragging)
         {
             currentEnt = dragging.Entity;
@@ -597,7 +583,6 @@ public sealed class StorageWindow : BaseWindow
                  storageSystem.CanInsert(StorageEntity.Value, handEntity, out _, storageComp: storageComponent, ignoreLocation: true))
         {
             currentEnt = handEntity;
-
             currentLocation = new ItemStorageLocation(_storageController.DraggingRotation, Vector2i.Zero);
             usingInHand = true;
         }
@@ -605,12 +590,24 @@ public sealed class StorageWindow : BaseWindow
         {
             return;
         }
-        // why only check now
+
         if (!_entity.TryGetComponent<ItemComponent>(currentEnt, out var itemComp))
             return;
 
+        var origin = GetMouseGridPieceLocation((currentEnt, itemComp), currentLocation);
 
-        // TODO: this handles ?????
+        var itemShape = itemSystem.GetAdjustedItemShape(
+            (currentEnt, itemComp),
+            currentLocation.Rotation,
+            origin);
+        var itemBounding = itemShape.GetBoundingBox();
+
+        var validLocation = storageSystem.ItemFitsInGridLocation(
+            (currentEnt, itemComp),
+            (StorageEntity.Value, storageComponent),
+            origin,
+            currentLocation.Rotation);
+
         foreach (var locations in storageComponent.SavedLocations)
         {
             if (!_entity.TryGetComponent<MetaDataComponent>(currentEnt, out var meta) || meta.EntityName != locations.Key)
@@ -645,27 +642,6 @@ public sealed class StorageWindow : BaseWindow
             }
         }
 
-        // Seperate thing
-        /*
-        var posFloat = targetStorage.MouseToGridFloat();
-        Offset(draggingGhost.BoundingBox.Center.Floored(), ref posFloat);
-        var posGrid = posFloat.Floored();
-        */
-        var origin = GetMouseGridPieceLocation((currentEnt, itemComp), currentLocation);
-
-        var itemShape = itemSystem.GetAdjustedItemShape(
-            currentEnt,
-            currentLocation.Rotation,
-            origin);
-        var itemBounding = itemShape.GetBoundingBox();
-
-        var validLocation = storageSystem.ItemFitsInGridLocation(
-            (currentEnt, itemComp),
-            (StorageEntity.Value, storageComponent),
-            origin,
-            currentLocation.Rotation);
-        // TODO: this handles green squares when dragging
-
         var validColor = usingInHand ? Color.Goldenrod : Color.FromHex("#1E8000");
 
         for (var y = itemBounding.Bottom; y <= itemBounding.Top; y++)
@@ -692,40 +668,28 @@ public sealed class StorageWindow : BaseWindow
 
         return DragMode.None;
     }
-    /// Misfit: Wraps GetMouseGridPieceLocation renamed-> FallBackGridPieceLocMethod
-    /// <summary>
-    /// Gets mouse position in terms of the box (x,y) it is pointing
-    /// for the current storage window. Doesnt mean it'll be within the storage window ie.. returns (-1,0)
-    /// For now wrap around old method in case they had a reason to make stuff nullable
-    /// also to make compatible with current code for now
-    /// </summary>
-    /// <returns>Mouse position in terms of storage window's grids</returns>
-    // TODO: consider removing, location param and just have pass item comp
+
     public Vector2i GetMouseGridPieceLocation(Entity<ItemComponent?> entity, ItemStorageLocation location)
     {
-        if (entity.Comp?.Shape is null)
-            return FallBackGridPieceLocMethod(entity.Owner, location);
+        var origin = Vector2i.Zero;
 
-        var posMouse = this.MouseToGridFloat() - entity.Comp.Shape.GetBoundingBox().Center.Floored();
-        return posMouse.Floored();
-    }
-    /// Temporary. this doesnt use the item comp at all, but still insists on having it as a nullable
-    /// so we use it incase it actually is null
-    private Vector2i FallBackGridPieceLocMethod(EntityUid entity, ItemStorageLocation location)
-    {
+        if (StorageEntity != null)
+            origin = _entity.GetComponent<StorageComponent>(StorageEntity.Value).Grid.GetBoundingBox().BottomLeft;
+        // (16,16)*2 = (32,32) TODO: Make this not based on emptytexture size wtf so shit
         var textureSize = (Vector2) _emptyTexture!.Size * 2;
-
+        //
         var position = ((UserInterfaceManager.MousePositionScaled.Position
                          - _backgroundGrid.GlobalPosition
                          - ItemGridPiece.GetCenterOffset(entity, location, _entity) * 2
                          + textureSize / 2f)
-                        / textureSize).Floored();
+                        / textureSize).Floored() + origin;
         return position;
     }
     public Vector2 MouseToGridFloat()
     {
         // UIscale is Real pixels / Virtual . So every fake pixel for every real
         // only do dis by virtual
+        // todo: rewrite color thing too
         var textureSize = _backgroundGrid.Children[0].Size;
         var posInPixels = UserInterfaceManager.MousePositionScaled.Position - _backgroundGrid.GlobalPixelPosition / Root!.UIScale;
         var posPixelToGrid = posInPixels / textureSize;

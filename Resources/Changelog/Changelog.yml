@@ -10430,3 +10430,10 @@ Entries:
   id: 6341
   time: '2026-08-18T12:57:23.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1777
+- author: Cythisiax
+  changes:
+    - type: Tweak
+      message: 'X-01 and X-02 renamed to APA MK I and APA MK II respectively. '
+  id: 6342
+  time: '2026-08-18T23:01:52.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1779
