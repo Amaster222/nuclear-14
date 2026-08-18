@@ -51,6 +51,9 @@
         Slash: 0.775
         Piercing: 0.775
         Heat: 0.775
+  - type: ExplosionResistance
+    damageCoefficient: 0.9
+
 
 - type: entity
   parent: MisfitsClothingOuterKhansArmoredJacket
