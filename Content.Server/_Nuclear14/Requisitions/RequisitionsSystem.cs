@@ -84,8 +84,72 @@ public sealed partial class RequisitionsSystem : SharedRequisitionsSystem
 
     private void OnComputerMapInit(Entity<RequisitionsComputerComponent> ent, ref MapInitEvent args)
     {
-        ent.Comp.Account = GetAccount(ent.Comp.Group, ent.Comp.AccountProto);
+        var account = GetAccount(ent.Comp.Group, ent.Comp.AccountProto);
+        ent.Comp.Account = account;
+
+        if (ent.Comp.BountyPool is { } pool)
+            RefillBounties(account, pool, ent.Comp.MaxActiveBounties);
+
         Dirty(ent);
+    }
+
+    /// <summary>
+    /// Tops the account's bounty board back up to <paramref name="max"/> by drawing random
+    /// prototypes from <paramref name="pool"/>, skipping anything already posted or completed.
+    /// If every candidate has been used it allows repeats rather than leaving the board short.
+    /// </summary>
+    private void RefillBounties(Entity<RequisitionsAccountComponent> account, string pool, int max)
+    {
+        var comp = account.Comp;
+        if (comp.ActiveBounties.Count >= max)
+            return;
+
+        var candidates = new List<RequisitionsBountyPrototype>();
+        var fallback = new List<RequisitionsBountyPrototype>();
+        foreach (var proto in _prototypeManager.EnumeratePrototypes<RequisitionsBountyPrototype>())
+        {
+            if (proto.Pools.Count > 0 && !proto.Pools.Contains(pool))
+                continue;
+
+            fallback.Add(proto);
+
+            if (comp.CompletedBounties.Contains(proto.ID))
+                continue;
+
+            if (comp.ActiveBounties.Any(b => b.Id == proto.ID))
+                continue;
+
+            candidates.Add(proto);
+        }
+
+        if (fallback.Count == 0)
+            return;
+
+        var changed = false;
+        while (comp.ActiveBounties.Count < max)
+        {
+            RequisitionsBountyPrototype picked;
+            if (candidates.Count > 0)
+            {
+                picked = _random.Pick(candidates);
+                candidates.Remove(picked);
+            }
+            else
+            {
+                // Pool exhausted - allow a repeat so the board never sits empty.
+                var repeatable = fallback.Where(p => comp.ActiveBounties.All(b => b.Id != p.ID)).ToList();
+                if (repeatable.Count == 0)
+                    break;
+
+                picked = _random.Pick(repeatable);
+            }
+
+            comp.ActiveBounties.Add(picked.ToBounty());
+            changed = true;
+        }
+
+        if (changed)
+            Dirty(account);
     }
 
     private void OnComputerBeforeActivatableUIOpen(Entity<RequisitionsComputerComponent> computer, ref BeforeActivatableUIOpenEvent args)
@@ -693,21 +757,38 @@ public sealed partial class RequisitionsSystem : SharedRequisitionsSystem
         var group = elevator.Comp.Group;
         var query = EntityQueryEnumerator<RequisitionsComputerComponent>();
         List<RequisitionsBounty>? bounties = null;
+        string? pool = null;
+        var maxActive = 0;
         while (query.MoveNext(out _, out var comp))
         {
             if (comp.Group != group)
                 continue;
 
-            bounties = comp.Bounties;
+            // A console with a pool drives a rotating board on the account; otherwise the
+            // console's own hand-written list is used, unchanged.
+            if (comp.BountyPool is { } configured)
+            {
+                pool = configured;
+                maxActive = comp.MaxActiveBounties;
+                bounties = account.Comp.ActiveBounties;
+            }
+            else
+            {
+                bounties = comp.Bounties;
+            }
+
             break;
         }
 
         if (bounties == null || bounties.Count == 0)
             return 0;
 
+        var finished = pool != null ? new List<string>() : null;
+
         var reward = 0;
         var changed = false;
-        foreach (var bounty in bounties)
+        // Copied because completing a pooled bounty removes it from the live list.
+        foreach (var bounty in bounties.ToList())
         {
             if (account.Comp.CompletedBounties.Contains(bounty.Id))
                 continue;
@@ -739,6 +820,7 @@ public sealed partial class RequisitionsSystem : SharedRequisitionsSystem
                 {
                     account.Comp.CompletedBounties.Add(bounty.Id);
                     account.Comp.BountyProgress.Remove(bounty.Id);
+                    finished?.Add(bounty.Id);
                 }
 
                 _adminLogs.Add(LogType.Action,
@@ -749,6 +831,14 @@ public sealed partial class RequisitionsSystem : SharedRequisitionsSystem
                 account.Comp.BountyProgress[bounty.Id] = progress;
             }
 
+            changed = true;
+        }
+
+        // Pull completed jobs off the board and post fresh ones in their place.
+        if (pool != null && finished is { Count: > 0 })
+        {
+            account.Comp.ActiveBounties.RemoveAll(b => finished.Contains(b.Id));
+            RefillBounties(account, pool, maxActive);
             changed = true;
         }
 
