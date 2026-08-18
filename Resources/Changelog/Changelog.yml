@@ -10419,3 +10419,14 @@ Entries:
   id: 6340
   time: '2026-08-18T12:56:55.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1776
+- author: Oli
+  changes:
+    - type: Add
+      message: >-
+        Khanbat, Battlecoats, Vests and Full Helmet. Battlecoat, Jacket + Vest,
+        Full Helmet added to Loadouts.
+    - type: Tweak
+      message: armored vest out of loadouts replaced with jacket and vest.
+  id: 6341
+  time: '2026-08-18T12:57:23.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1777
