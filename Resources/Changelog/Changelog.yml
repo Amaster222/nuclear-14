@@ -10390,3 +10390,32 @@ Entries:
   id: 6339
   time: '2026-08-18T12:17:27.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1775
+- author: Squagg
+  changes:
+    - type: Add
+      message: >-
+        Vertibirds now have a cargo bay. Drag a closed crate onto one, or use
+        the Load button on the flight console, and it goes aboard with
+        everything still packed inside it.
+    - type: Add
+      message: >-
+        The vertibird flight console lists whatever crates are stowed and can
+        unload them, and stored crates can also be pulled out with an alt click
+        on the aircraft.
+    - type: Tweak
+      message: >-
+        Unloading a crate while the vertibird is airborne lowers it to the
+        ground directly below instead of into the cabin.
+    - type: Fix
+      message: >-
+        Radio messages now carry between z-levels of the same station instead of
+        stopping at the level they were sent from. Telecom servers cover every
+        level too, so channels that need one work from anywhere on the station.
+    - type: Fix
+      message: >-
+        Pip-Boy messages now reach people on other z-levels and other maps
+        instead of quietly failing to send. Telecomm blackouts and jammers still
+        block them.
+  id: 6340
+  time: '2026-08-18T12:56:55.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1776
