@@ -55,10 +55,22 @@
   items:
     - MisfitsClothingHeadKhanHelmet
 
+- type: loadout
+  id: MisfitsLoadoutHeadKhanFullHelmet
+  category: Head
+  cost: 2 #following the N14ClothingHeadHatCombatHelmet loadout points
+  exclusive: true
+  requirements:
+    - !type:CharacterDepartmentRequirement
+      departments:
+        - Wastelander
+  items:
+    - MisfitsClothingHeadKhanFullHelmet
+
 # Armors / Outerwear
 
 - type: loadout
-  id: MisfitsLoadoutOuterKhanLeather
+  id: MisfitsLoadoutOuterKhansJacket
   category: Outer
   cost: 2
   exclusive: true
@@ -69,7 +81,35 @@
       departments:
         - Wastelander
   items:
-    -  M14ClothingOuterKhanLeather
+    -  MisfitsClothingOuterKhansJacket
+
+- type: loadout
+  id: MisfitsLoadoutOuterKhansVest
+  category: Outer
+  cost: 2
+  exclusive: true
+  requirements:
+    - !type:CharacterItemGroupRequirement
+      group: N14LoadoutOuter
+    - !type:CharacterDepartmentRequirement
+      departments:
+        - Wastelander
+  items:
+    -  MisfitsClothingOuterKhansVest
+
+- type: loadout
+  id: MisfitsLoadoutOuterKhansBattlecoatBlack
+  category: Outer
+  cost: 6
+  exclusive: true
+  requirements:
+    - !type:CharacterItemGroupRequirement
+      group: N14LoadoutOuter
+    - !type:CharacterDepartmentRequirement
+      departments:
+        - Wastelander
+  items:
+    -  MisfitsClothingOuterKhansBattlecoatBlack
 
 # === Outer: Wasteland jackets and coats ===
 
