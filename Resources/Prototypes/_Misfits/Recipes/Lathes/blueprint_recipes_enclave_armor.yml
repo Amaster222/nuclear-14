@@ -1,5 +1,5 @@
 # #Misfits Add - Enclave power armor blueprint recipes.
-# X-01 and X-02 Tesla advanced power armor. Both require the N14BlueprintEnclaveArmor
+# APA MK I and APA MK II Tesla advanced power armor. Both require the N14BlueprintEnclaveArmor
 # blueprint item placed in a workbench, plus Enclave faction access.
 #
 # Each suit carries a ToggleableClothing component, so crafting the outerClothing
@@ -22,7 +22,7 @@
 # ENCLAVE POWER ARMOR RECIPES
 # =====================================================================
 
-# X-01 advanced power armor - 200 steel. Enclave enlisted/NCO issue.
+# APA MK I advanced power armor - 200 steel. Enclave enlisted/NCO issue.
 - type: latheRecipe
   id: N14BPEnclaveArmorPowerArmorX01
   result: N14ClothingOuterPowerArmorAdvanced1
@@ -38,7 +38,7 @@
     ScrapElectronic: 4000
     N14Brass: 200
 
-# X-02 tesla power armor - 230 steel. A step above the X-01.
+# APA MK II tesla power armor - 230 steel. A step above the APA MK I.
 - type: latheRecipe
   id: N14BPEnclaveArmorPowerArmorX02Tesla
   result: N14ClothingOuterPowerArmorAdvanced2Tesla

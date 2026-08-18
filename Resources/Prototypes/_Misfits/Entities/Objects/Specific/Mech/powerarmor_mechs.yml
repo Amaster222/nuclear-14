@@ -132,8 +132,9 @@
 - type: entity
   id: N14MechPowerArmorMutantX01
   parent: BasePowerArmorMech
-  name: Experimental X-01 Power Armor Suit
-  description: An exosuit refit built around the plating of an experimental X-01 Power Armor Suit.
+  # #Misfits Change - Renamed to APA MK I (removed 'Experimental' prefix per rebalance)
+  name: APA MK I Power Armor Suit
+  description: An exosuit refit built around the plating of an APA MK I Power Armor Suit.
   components:
   - type: Sprite
     drawdepth: Mobs
@@ -276,8 +277,9 @@
 - type: entity
   id: N14MechPowerArmorX01
   parent: BasePowerArmorMech
-  name: X-01 Power Armor Suit
-  description: An exosuit refit built around the plating of an X-01 Power Armor Suit.
+  # #Misfits Change - Renamed X-01 -> APA MK I
+  name: APA MK I Power Armor Suit
+  description: An exosuit refit built around the plating of an APA MK I Power Armor Suit.
   components:
   - type: Sprite
     drawdepth: Mobs
@@ -312,7 +314,8 @@
 - type: entity
   id: N14MechPowerArmorX02
   parent: BasePowerArmorMech
-  name: X-02 Power Armor Suit
+  # #Misfits Change - Renamed X-02 -> APA MK II
+  name: APA MK II Power Armor Suit
   description: An exosuit refit built around the plating of an X-02 Power Armor Suit.
   components:
   - type: Sprite
@@ -662,6 +665,565 @@
 - type: entity
   id: N14MechPowerArmorHellfireAPABattery
   parent: N14MechPowerArmorHellfireAPA
+  suffix: Battery
+  components:
+  - type: ContainerFill
+    containers:
+      mech-battery-slot:
+      - PowerCellHigh
+
+# #Misfits Add - Mech variants for power armor suits that previously had none.
+# Completes the power armor -> mech coverage so every wearable PA variant has an
+# enterable exosuit form. Pattern matches powerarmor_mechs.yml: each mech inherits
+# BasePowerArmorMech (size/scale 1.2 + 0.40 fixture radius, speed, mech stats) and
+# overrides only its suit + helmet sprite layers and its tier's integrity/damage set.
+#
+# Tier reference (maxIntegrity / damageModifierSet):
+#   T45 tier  -> 400 / MisfitsMechPowerArmorT45 (base default)
+#   T51 tier  -> 480 / MisfitsMechPowerArmorT51
+#   T60 tier  -> 445 / MisfitsMechPowerArmorT60
+#   APA MK I  -> 460 / MisfitsMechPowerArmorX01
+#   APA MK II -> 485 / MisfitsMechPowerArmorX02
+#   T51BC     -> 490 / MisfitsMechPowerArmorT51BC
+#   Midwest Cmd -> 485 / MisfitsMechPowerArmorMidwestCommander
+#   Legion    -> 350 / base (salvaged, deliberately lighter)
+
+# --- T-45 [BoS] ---
+- type: entity
+  id: N14MechPowerArmorT45BOS
+  parent: BasePowerArmorMech
+  name: T-45 Power Armor [BoS] Suit
+  description: An exosuit refit built around the plating of a Brotherhood of Steel maintained T-45 Power Armor Suit.
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    noRot: true
+    layers:
+    - sprite: _Nuclear14/Clothing/OuterClothing/PowerArmor/t45.rsi
+      map: [ "enum.MechVisualLayers.Base" ]
+      state: equipped-OUTERCLOTHING
+    - sprite: _Nuclear14/Clothing/Head/PowerArmorHelmets/t45.rsi
+      state: off-equipped-HELMET
+    - sprite: _Nuclear14/Clothing/Head/PowerArmorHelmets/t45.rsi
+      state: equipped-HELMET-unshaded
+      shader: unshaded
+    - map: [ "enum.PaperLabelVisuals.Layer" ]
+      sprite: Structures/Storage/Crates/labels.rsi
+      state: paper
+  - type: Mech
+    maxIntegrity: 400
+
+- type: entity
+  id: N14MechPowerArmorT45BOSBattery
+  parent: N14MechPowerArmorT45BOS
+  suffix: Battery
+  components:
+  - type: ContainerFill
+    containers:
+      mech-battery-slot:
+      - PowerCellHigh
+
+# --- Raider ---
+- type: entity
+  id: N14MechPowerArmorRaider
+  parent: BasePowerArmorMech
+  name: Raider Power Armor Suit
+  description: An exosuit refit built around the plating of a Raider Power Armor Suit.
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    noRot: true
+    layers:
+    - sprite: _Nuclear14/Clothing/OuterClothing/PowerArmor/raider.rsi
+      map: [ "enum.MechVisualLayers.Base" ]
+      state: equipped-OUTERCLOTHING
+    - sprite: _Nuclear14/Clothing/Head/PowerArmorHelmets/t45.rsi
+      state: off-equipped-HELMET
+    - sprite: _Nuclear14/Clothing/Head/PowerArmorHelmets/t45.rsi
+      state: equipped-HELMET-unshaded
+      shader: unshaded
+    - map: [ "enum.PaperLabelVisuals.Layer" ]
+      sprite: Structures/Storage/Crates/labels.rsi
+      state: paper
+  - type: Mech
+    maxIntegrity: 400
+
+- type: entity
+  id: N14MechPowerArmorRaiderBattery
+  parent: N14MechPowerArmorRaider
+  suffix: Battery
+  components:
+  - type: ContainerFill
+    containers:
+      mech-battery-slot:
+      - PowerCellHigh
+
+# --- Midwest Silver (T60 tier) ---
+- type: entity
+  id: N14MechPowerArmorMidwestSilver
+  parent: BasePowerArmorMech
+  name: Midwest Silver Power Armor Suit
+  description: An exosuit refit built around the plating of a Midwest Silver Power Armor Suit.
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    noRot: true
+    layers:
+    - sprite: _Misfits/Clothing/OuterClothing/PowerArmor/midwest_silver_pa.rsi
+      map: [ "enum.MechVisualLayers.Base" ]
+      state: equipped-OUTERCLOTHING
+    - sprite: _Misfits/Clothing/Head/PowerArmorHelmets/midwest_silver_helmet.rsi
+      state: off-equipped-HELMET
+    - sprite: _Misfits/Clothing/Head/PowerArmorHelmets/midwest_silver_helmet.rsi
+      state: equipped-HELMET-unshaded
+      shader: unshaded
+    - map: [ "enum.PaperLabelVisuals.Layer" ]
+      sprite: Structures/Storage/Crates/labels.rsi
+      state: paper
+  - type: Mech
+    maxIntegrity: 445
+  - type: Damageable
+    damageModifierSet: MisfitsMechPowerArmorT60
+
+- type: entity
+  id: N14MechPowerArmorMidwestSilverBattery
+  parent: N14MechPowerArmorMidwestSilver
+  suffix: Battery
+  components:
+  - type: ContainerFill
+    containers:
+      mech-battery-slot:
+      - PowerCellHigh
+
+# --- NCR T-45 Salvaged ---
+- type: entity
+  id: N14MechPowerArmorT45NCR
+  parent: BasePowerArmorMech
+  name: NCR T-45 Salvaged Power Armor Suit
+  description: An exosuit refit built around the plating of an NCR T-45 Salvaged Power Armor Suit.
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    noRot: true
+    layers:
+    - sprite: _Nuclear14/Clothing/OuterClothing/PowerArmor/t45ncr.rsi
+      map: [ "enum.MechVisualLayers.Base" ]
+      state: equipped-OUTERCLOTHING
+    - sprite: _Nuclear14/Clothing/Head/PowerArmorHelmets/t45ncr.rsi
+      state: off-equipped-HELMET
+    - sprite: _Nuclear14/Clothing/Head/PowerArmorHelmets/t45ncr.rsi
+      state: equipped-HELMET-unshaded
+      shader: unshaded
+    - map: [ "enum.PaperLabelVisuals.Layer" ]
+      sprite: Structures/Storage/Crates/labels.rsi
+      state: paper
+  - type: Mech
+    maxIntegrity: 400
+
+- type: entity
+  id: N14MechPowerArmorT45NCRBattery
+  parent: N14MechPowerArmorT45NCR
+  suffix: Battery
+  components:
+  - type: ContainerFill
+    containers:
+      mech-battery-slot:
+      - PowerCellHigh
+
+# --- T-45 Salvaged NCR Trooper ---
+- type: entity
+  id: N14MechPowerArmorT45NCRSalvaged
+  parent: BasePowerArmorMech
+  name: T-45 Salvaged NCR Trooper Power Armor Suit
+  description: An exosuit refit built around the plating of a T-45 Salvaged NCR Trooper Power Armor Suit.
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    noRot: true
+    layers:
+    - sprite: _Nuclear14/Clothing/OuterClothing/PowerArmor/t45ncr.rsi
+      map: [ "enum.MechVisualLayers.Base" ]
+      state: equipped-OUTERCLOTHING
+    - sprite: _Nuclear14/Clothing/Head/PowerArmorHelmets/t45ncr.rsi
+      state: off-equipped-HELMET
+    - sprite: _Nuclear14/Clothing/Head/PowerArmorHelmets/t45ncr.rsi
+      state: equipped-HELMET-unshaded
+      shader: unshaded
+    - map: [ "enum.PaperLabelVisuals.Layer" ]
+      sprite: Structures/Storage/Crates/labels.rsi
+      state: paper
+  - type: Mech
+    maxIntegrity: 400
+
+- type: entity
+  id: N14MechPowerArmorT45NCRSalvagedBattery
+  parent: N14MechPowerArmorT45NCRSalvaged
+  suffix: Battery
+  components:
+  - type: ContainerFill
+    containers:
+      mech-battery-slot:
+      - PowerCellHigh
+
+# --- T-51 NCR Salvaged (T51 tier) ---
+- type: entity
+  id: N14MechPowerArmorT51NCR
+  parent: BasePowerArmorMech
+  name: T-51 NCR Salvaged Power Armor Suit
+  description: An exosuit refit built around the plating of a T-51 NCR Salvaged Power Armor Suit.
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    noRot: true
+    layers:
+    - sprite: Corvax/Clothing/OuterClothing/PowerArmor/t51NCR.rsi
+      map: [ "enum.MechVisualLayers.Base" ]
+      state: equipped-OUTERCLOTHING
+    - sprite: Corvax/Clothing/Head/PowerArmorHelmets/t51NCR.rsi
+      state: off-equipped-HELMET
+    - sprite: Corvax/Clothing/Head/PowerArmorHelmets/t51NCR.rsi
+      state: equipped-HELMET-unshaded
+      shader: unshaded
+    - map: [ "enum.PaperLabelVisuals.Layer" ]
+      sprite: Structures/Storage/Crates/labels.rsi
+      state: paper
+  - type: Mech
+    maxIntegrity: 480
+  - type: Damageable
+    damageModifierSet: MisfitsMechPowerArmorT51
+
+- type: entity
+  id: N14MechPowerArmorT51NCRBattery
+  parent: N14MechPowerArmorT51NCR
+  suffix: Battery
+  components:
+  - type: ContainerFill
+    containers:
+      mech-battery-slot:
+      - PowerCellHigh
+
+# --- T-60 NCR (T60 tier) ---
+- type: entity
+  id: N14MechPowerArmorT60NCR
+  parent: BasePowerArmorMech
+  name: T-60 NCR Power Armor Suit
+  description: An exosuit refit built around the plating of a T-60 NCR Power Armor Suit.
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    noRot: true
+    layers:
+    - sprite: Corvax/Clothing/OuterClothing/PowerArmor/t60NCR.rsi
+      map: [ "enum.MechVisualLayers.Base" ]
+      state: equipped-OUTERCLOTHING
+    - sprite: Corvax/Clothing/Head/PowerArmorHelmets/t60NCR.rsi
+      state: off-equipped-HELMET
+    - sprite: Corvax/Clothing/Head/PowerArmorHelmets/t60NCR.rsi
+      state: equipped-HELMET-unshaded
+      shader: unshaded
+    - map: [ "enum.PaperLabelVisuals.Layer" ]
+      sprite: Structures/Storage/Crates/labels.rsi
+      state: paper
+  - type: Mech
+    maxIntegrity: 445
+  - type: Damageable
+    damageModifierSet: MisfitsMechPowerArmorT60
+
+- type: entity
+  id: N14MechPowerArmorT60NCRBattery
+  parent: N14MechPowerArmorT60NCR
+  suffix: Battery
+  components:
+  - type: ContainerFill
+    containers:
+      mech-battery-slot:
+      - PowerCellHigh
+
+# --- APA MK I NCR (x-01 NCR) ---
+- type: entity
+  id: N14MechPowerArmorX01NCR
+  parent: BasePowerArmorMech
+  name: APA MK I NCR Power Armor Suit
+  description: An exosuit refit built around the plating of an NCR-modified APA MK I Power Armor Suit.
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    noRot: true
+    layers:
+    - sprite: Corvax/Clothing/OuterClothing/PowerArmor/advanced1NCR.rsi
+      map: [ "enum.MechVisualLayers.Base" ]
+      state: equipped-OUTERCLOTHING
+    - sprite: Corvax/Clothing/Head/PowerArmorHelmets/x01NCR.rsi
+      state: off-equipped-HELMET
+    - sprite: Corvax/Clothing/Head/PowerArmorHelmets/x01NCR.rsi
+      state: equipped-HELMET-unshaded
+      shader: unshaded
+    - map: [ "enum.PaperLabelVisuals.Layer" ]
+      sprite: Structures/Storage/Crates/labels.rsi
+      state: paper
+  - type: Mech
+    maxIntegrity: 460
+  - type: Damageable
+    damageModifierSet: MisfitsMechPowerArmorX01
+
+- type: entity
+  id: N14MechPowerArmorX01NCRBattery
+  parent: N14MechPowerArmorX01NCR
+  suffix: Battery
+  components:
+  - type: ContainerFill
+    containers:
+      mech-battery-slot:
+      - PowerCellHigh
+
+# --- APA MK II Tesla (x-02 Tesla) ---
+- type: entity
+  id: N14MechPowerArmorX02Tesla
+  parent: BasePowerArmorMech
+  name: APA MK II Tesla Power Armor Suit
+  description: An exosuit refit built around the plating of an APA MK II Tesla Power Armor Suit.
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    noRot: true
+    layers:
+    - sprite: Corvax/Clothing/OuterClothing/PowerArmor/advanced2Tesla.rsi
+      map: [ "enum.MechVisualLayers.Base" ]
+      state: equipped-OUTERCLOTHING
+    - sprite: Corvax/Clothing/Head/PowerArmorHelmets/x02Tesla.rsi
+      state: off-equipped-HELMET
+    - sprite: Corvax/Clothing/Head/PowerArmorHelmets/x02Tesla.rsi
+      state: equipped-HELMET-unshaded
+      shader: unshaded
+    - map: [ "enum.PaperLabelVisuals.Layer" ]
+      sprite: Structures/Storage/Crates/labels.rsi
+      state: paper
+  - type: Mech
+    maxIntegrity: 485
+  - type: Damageable
+    damageModifierSet: MisfitsMechPowerArmorX02
+
+- type: entity
+  id: N14MechPowerArmorX02TeslaBattery
+  parent: N14MechPowerArmorX02Tesla
+  suffix: Battery
+  components:
+  - type: ContainerFill
+    containers:
+      mech-battery-slot:
+      - PowerCellHigh
+
+# --- T-45 Sierra ---
+- type: entity
+  id: N14MechPowerArmorT45Sierra
+  parent: BasePowerArmorMech
+  name: T-45 Sierra Power Armor Suit
+  description: An exosuit refit built around the plating of a T-45 Sierra Power Armor Suit.
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    noRot: true
+    layers:
+    - sprite: Corvax/Clothing/OuterClothing/PowerArmor/T45Siera.rsi
+      map: [ "enum.MechVisualLayers.Base" ]
+      state: equipped-OUTERCLOTHING
+    - sprite: Corvax/Clothing/Head/PowerArmorHelmets/T45Siera.rsi
+      state: off-equipped-HELMET
+    - sprite: Corvax/Clothing/Head/PowerArmorHelmets/T45Siera.rsi
+      state: equipped-HELMET-unshaded
+      shader: unshaded
+    - map: [ "enum.PaperLabelVisuals.Layer" ]
+      sprite: Structures/Storage/Crates/labels.rsi
+      state: paper
+  - type: Mech
+    maxIntegrity: 400
+
+- type: entity
+  id: N14MechPowerArmorT45SierraBattery
+  parent: N14MechPowerArmorT45Sierra
+  suffix: Battery
+  components:
+  - type: ContainerFill
+    containers:
+      mech-battery-slot:
+      - PowerCellHigh
+
+# --- Chinese (T-51 China) ---
+- type: entity
+  id: N14MechPowerArmorT51China
+  parent: BasePowerArmorMech
+  name: Chinese Power Armor Suit
+  description: An exosuit refit built around the plating of a Chinese T-51 Power Armor Suit.
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    noRot: true
+    layers:
+    - sprite: Corvax/Clothing/OuterClothing/PowerArmor/t51china.rsi
+      map: [ "enum.MechVisualLayers.Base" ]
+      state: equipped-OUTERCLOTHING
+    - sprite: Corvax/Clothing/Head/PowerArmorHelmets/t51сhina.rsi
+      state: off-equipped-HELMET
+    - sprite: Corvax/Clothing/Head/PowerArmorHelmets/t51сhina.rsi
+      state: equipped-HELMET-unshaded
+      shader: unshaded
+    - map: [ "enum.PaperLabelVisuals.Layer" ]
+      sprite: Structures/Storage/Crates/labels.rsi
+      state: paper
+  - type: Mech
+    maxIntegrity: 480
+  - type: Damageable
+    damageModifierSet: MisfitsMechPowerArmorT51
+
+- type: entity
+  id: N14MechPowerArmorT51ChinaBattery
+  parent: N14MechPowerArmorT51China
+  suffix: Battery
+  components:
+  - type: ContainerFill
+    containers:
+      mech-battery-slot:
+      - PowerCellHigh
+
+# --- Legion Gravis Pattern (salvaged, deliberately lighter) ---
+- type: entity
+  id: N14MechPowerArmorLegion
+  parent: BasePowerArmorMech
+  name: Gravis Pattern Power Armor Suit
+  description: An exosuit refit built around the plating of a Legion Gravis Pattern Power Armor Suit.
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    noRot: true
+    layers:
+    - sprite: _Misfits/Clothing/CaesarLegion/legionpa.rsi
+      map: [ "enum.MechVisualLayers.Base" ]
+      state: equipped-OUTERCLOTHING
+    - sprite: _Misfits/Clothing/CaesarLegion/legionpahelmet.rsi
+      state: off-equipped-HELMET
+    - sprite: _Misfits/Clothing/CaesarLegion/legionpahelmet.rsi
+      state: equipped-HELMET-unshaded
+      shader: unshaded
+    - map: [ "enum.PaperLabelVisuals.Layer" ]
+      sprite: Structures/Storage/Crates/labels.rsi
+      state: paper
+  - type: Mech
+    maxIntegrity: 350
+
+- type: entity
+  id: N14MechPowerArmorLegionBattery
+  parent: N14MechPowerArmorLegion
+  suffix: Battery
+  components:
+  - type: ContainerFill
+    containers:
+      mech-battery-slot:
+      - PowerCellHigh
+
+# --- 509th BoS Elder (T-51bc tier) ---
+- type: entity
+  id: N14MechPowerArmorT51BC509Elder
+  parent: BasePowerArmorMech
+  name: 509th BoS Elder T-51bc Power Armor Suit
+  description: An exosuit refit built around the plating of a 509th BoS Elder T-51bc Power Armor Suit.
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    noRot: true
+    layers:
+    - sprite: _Misfits/Clothing/OuterClothing/PowerArmor/bos509_elder_t51bc.rsi
+      map: [ "enum.MechVisualLayers.Base" ]
+      state: equipped-OUTERCLOTHING
+    - sprite: _Nuclear14/Clothing/Head/PowerArmorHelmets/t51bc.rsi
+      state: off-equipped-HELMET
+    - sprite: _Nuclear14/Clothing/Head/PowerArmorHelmets/t51bc.rsi
+      state: equipped-HELMET-unshaded
+      shader: unshaded
+    - map: [ "enum.PaperLabelVisuals.Layer" ]
+      sprite: Structures/Storage/Crates/labels.rsi
+      state: paper
+  - type: Mech
+    maxIntegrity: 490
+  - type: Damageable
+    damageModifierSet: MisfitsMechPowerArmorT51BC
+
+- type: entity
+  id: N14MechPowerArmorT51BC509ElderBattery
+  parent: N14MechPowerArmorT51BC509Elder
+  suffix: Battery
+  components:
+  - type: ContainerFill
+    containers:
+      mech-battery-slot:
+      - PowerCellHigh
+
+# --- 509th BoS Head Paladin (T-51bc tier) ---
+- type: entity
+  id: N14MechPowerArmorT51BC509HeadPaladin
+  parent: BasePowerArmorMech
+  name: 509th BoS Head Paladin T-51bc Power Armor Suit
+  description: An exosuit refit built around the plating of a 509th BoS Head Paladin T-51bc Power Armor Suit.
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    noRot: true
+    layers:
+    - sprite: _Misfits/Clothing/OuterClothing/PowerArmor/bos509_headpaladin_t51bc.rsi
+      map: [ "enum.MechVisualLayers.Base" ]
+      state: equipped-OUTERCLOTHING
+    - sprite: _Nuclear14/Clothing/Head/PowerArmorHelmets/t51bc.rsi
+      state: off-equipped-HELMET
+    - sprite: _Nuclear14/Clothing/Head/PowerArmorHelmets/t51bc.rsi
+      state: equipped-HELMET-unshaded
+      shader: unshaded
+    - map: [ "enum.PaperLabelVisuals.Layer" ]
+      sprite: Structures/Storage/Crates/labels.rsi
+      state: paper
+  - type: Mech
+    maxIntegrity: 490
+  - type: Damageable
+    damageModifierSet: MisfitsMechPowerArmorT51BC
+
+- type: entity
+  id: N14MechPowerArmorT51BC509HeadPaladinBattery
+  parent: N14MechPowerArmorT51BC509HeadPaladin
+  suffix: Battery
+  components:
+  - type: ContainerFill
+    containers:
+      mech-battery-slot:
+      - PowerCellHigh
+
+# --- Jacksontownley (Midwest Commander tier) ---
+- type: entity
+  id: N14MechPowerArmorJacksontownley
+  parent: BasePowerArmorMech
+  name: Jacksontownley Power Armor Suit
+  description: An exosuit refit built around the plating of a Jacksontownley Power Armor Suit.
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    noRot: true
+    layers:
+    - sprite: _Misfits/Clothing/OuterClothing/PowerArmor/jacksontownley_pa.rsi
+      map: [ "enum.MechVisualLayers.Base" ]
+      state: equipped-OUTERCLOTHING
+    - sprite: _Misfits/Clothing/Head/PowerArmorHelmets/jacksontownley_helmet.rsi
+      state: off-equipped-HELMET
+    - sprite: _Misfits/Clothing/Head/PowerArmorHelmets/jacksontownley_helmet.rsi
+      state: equipped-HELMET-unshaded
+      shader: unshaded
+    - map: [ "enum.PaperLabelVisuals.Layer" ]
+      sprite: Structures/Storage/Crates/labels.rsi
+      state: paper
+  - type: Mech
+    maxIntegrity: 485
+  - type: Damageable
+    damageModifierSet: MisfitsMechPowerArmorMidwestCommander
+
+- type: entity
+  id: N14MechPowerArmorJacksontownleyBattery
+  parent: N14MechPowerArmorJacksontownley
   suffix: Battery
   components:
   - type: ContainerFill
