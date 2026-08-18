@@ -105,6 +105,7 @@ public sealed partial class VertibirdSystem : EntitySystem
 
         InitializeTurret();
         InitializeCombatDrop();
+        InitializeCargo();
     }
 
     public override void Update(float frameTime)
@@ -1245,6 +1246,13 @@ public sealed partial class VertibirdSystem : EntitySystem
             altitude = zMap.Depth;
         }
 
+        var stored = _sharedVertibird.GetCargo(ent);
+        var cargo = new VertibirdCargoUiState[stored.Count];
+        for (var i = 0; i < cargo.Length; i++)
+        {
+            cargo[i] = new VertibirdCargoUiState(GetNetEntity(stored[i]), Name(stored[i]));
+        }
+
         return new VertibirdSeatBoundUserInterfaceState(
             Loc.GetString(vertibird.WindowTitleLocId),
             vertibird.State,
@@ -1253,7 +1261,9 @@ public sealed partial class VertibirdSystem : EntitySystem
             capacity.Float(),
             integrity,
             maxIntegrity,
-            seats);
+            seats,
+            cargo,
+            vertibird.CargoCapacity);
     }
 
     private void SendVertibirdEmote(EntityUid vertibird, string locId)

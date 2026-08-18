@@ -19,6 +19,8 @@ public sealed class VertibirdBoundUserInterface : BoundUserInterface
 
         _window = this.CreateWindow<VertibirdWindow>();
         _window.OnSeatSelected += seatIndex => SendMessage(new VertibirdSelectSeatMessage(seatIndex));
+        _window.OnLoadCargo += () => SendMessage(new VertibirdLoadCargoMessage());
+        _window.OnUnloadCargo += crate => SendMessage(new VertibirdUnloadCargoMessage(crate));
     }
 
     protected override void UpdateState(BoundUserInterfaceState state)

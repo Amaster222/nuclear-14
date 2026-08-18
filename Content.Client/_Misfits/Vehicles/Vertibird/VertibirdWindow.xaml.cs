@@ -10,10 +10,14 @@ namespace Content.Client._Misfits.Vehicles.Vertibird;
 public sealed partial class VertibirdWindow : FancyWindow
 {
     public event Action<int>? OnSeatSelected;
+    public event Action? OnLoadCargo;
+    public event Action<NetEntity>? OnUnloadCargo;
 
     public VertibirdWindow()
     {
         RobustXamlLoader.Load(this);
+
+        LoadCargoButton.OnPressed += _ => OnLoadCargo?.Invoke();
     }
 
     public void SetState(VertibirdSeatBoundUserInterfaceState state)
@@ -49,6 +53,58 @@ public sealed partial class VertibirdWindow : FancyWindow
             var list = seat.Index <= 1 ? FlightCrewList : PassengerList;
             list.AddChild(BuildSeatRow(seat, state.FlightState));
         }
+
+        CargoLabel.Text = Loc.GetString("vertibird-window-cargo-count",
+            ("stored", state.Cargo.Length),
+            ("capacity", state.CargoCapacity));
+
+        CargoList.RemoveAllChildren();
+        if (state.Cargo.Length == 0)
+        {
+            CargoList.AddChild(new Label
+            {
+                Text = Loc.GetString("vertibird-cargo-empty"),
+                HorizontalExpand = true,
+            });
+        }
+        else
+        {
+            foreach (var crate in state.Cargo)
+            {
+                CargoList.AddChild(BuildCargoRow(crate));
+            }
+        }
+
+        LoadCargoButton.Disabled = state.Cargo.Length >= state.CargoCapacity;
+    }
+
+    private Control BuildCargoRow(VertibirdCargoUiState crate)
+    {
+        var row = new BoxContainer
+        {
+            Orientation = BoxContainer.LayoutOrientation.Horizontal,
+            HorizontalExpand = true,
+            Margin = new Thickness(0, 0, 0, 6),
+        };
+
+        row.AddChild(new Label
+        {
+            Text = crate.Name,
+            HorizontalExpand = true,
+            ClipText = true,
+            VerticalAlignment = VAlignment.Center,
+        });
+
+        var button = new Button
+        {
+            Text = Loc.GetString("vertibird-cargo-unload"),
+            MinWidth = 84,
+        };
+
+        button.OnPressed += _ => OnUnloadCargo?.Invoke(crate.Crate);
+
+        row.AddChild(button);
+        return row;
     }
 
     private Control BuildSeatRow(VertibirdSeatUiState seat, VertibirdFlightState flightState)

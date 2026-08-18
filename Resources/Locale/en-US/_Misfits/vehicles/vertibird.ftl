@@ -80,3 +80,12 @@ vertibird-drop-not-cruising = The vertibird has to be cruising before you can dr
 vertibird-drop-needs-power-armor = Without a suit, that fall would kill you.
 vertibird-drop-no-ground = There is no level beneath the vertibird to drop onto.
 vertibird-rp-combat-drop = disgorges an armoured figure that drops away toward the ground below.
+
+# #Misfits Add - Cargo bay. Crates travel with everything still packed inside them.
+vertibird-window-cargo = CARGO BAY
+vertibird-window-cargo-count = {$stored} / {$capacity} crates
+vertibird-cargo-load = Load pulled crate
+vertibird-cargo-unload = Unload
+vertibird-cargo-empty = The cargo bay is empty.
+vertibird-cargo-nothing-pulled = You are not pulling a crate to load.
+vertibird-cargo-will-not-fit = That will not fit in the cargo bay. Crates have to be closed.
