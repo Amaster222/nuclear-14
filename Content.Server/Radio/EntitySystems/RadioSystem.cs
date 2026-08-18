@@ -4,6 +4,8 @@ using Content.Server.Language;
 using Content.Server.Power.Components;
 using Content.Server.Radio.Components;
 using Content.Shared._Misfits.Special;
+using Content.Shared._MultiZ.Core.Components;
+using Content.Server._MultiZ.Core;
 using Content.Shared.Chat;
 using Content.Shared.Database;
 using Content.Shared.Language;
@@ -12,7 +14,6 @@ using Content.Shared.Radio;
 using Content.Shared.Radio.Components;
 using Content.Shared.Speech;
 using Content.Shared.Ghost; // Nuclear-14
-using Robust.Shared.Map;
 using Robust.Shared.Network;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
@@ -35,6 +36,9 @@ public sealed class RadioSystem : EntitySystem
     [Dependency] private readonly ChatSystem _chat = default!;
     [Dependency] private readonly LanguageSystem _language = default!;
     [Dependency] private readonly SharedSpecialSystem _special = default!;
+    // Inject the concrete MZSystem: MZSharedSystem has two server subtypes, so Robust
+    // refuses to resolve the supertype.
+    [Dependency] private readonly MZSystem _multiZ = default!;
 
     // set used to prevent radio feedback loops.
     private readonly HashSet<string> _messages = new();
@@ -161,8 +165,9 @@ public sealed class RadioSystem : EntitySystem
         RaiseLocalEvent(radioSource, ref sendAttemptEv);
         var canSend = !sendAttemptEv.Cancelled;
 
-        var sourceMapId = Transform(radioSource).MapID;
-        var hasActiveServer = HasActiveServer(sourceMapId, channel.ID);
+        var sourceMap = Transform(radioSource).MapUid;
+        var sourceZNetwork = GetZNetwork(sourceMap);
+        var hasActiveServer = HasActiveServer(sourceMap, sourceZNetwork, channel.ID);
         var hasMicro = HasComp<RadioMicrophoneComponent>(radioSource);
 
         var speakerQuery = GetEntityQuery<RadioSpeakerComponent>();
@@ -183,7 +188,7 @@ public sealed class RadioSystem : EntitySystem
             if (!HasComp<GhostComponent>(receiver) && GetFrequency(receiver, channel) != frequency)
                 continue;
 
-            if (!channel.LongRange && transform.MapID != sourceMapId && !radio.GlobalReceive)
+            if (!channel.LongRange && !InRadioRange(sourceMap, sourceZNetwork, transform.MapUid) && !radio.GlobalReceive)
                 continue;
 
             // don't need telecom server for long range channels or handheld radios and intercoms
@@ -259,8 +264,9 @@ public sealed class RadioSystem : EntitySystem
         RaiseLocalEvent(radioSource, ref sendAttemptEv);
         var canSend = !sendAttemptEv.Cancelled;
 
-        var sourceMapId = Transform(radioSource).MapID;
-        var hasActiveServer = HasActiveServer(sourceMapId, channel.ID);
+        var sourceMap = Transform(radioSource).MapUid;
+        var sourceZNetwork = GetZNetwork(sourceMap);
+        var hasActiveServer = HasActiveServer(sourceMap, sourceZNetwork, channel.ID);
         var hasMicro = HasComp<RadioMicrophoneComponent>(radioSource);
         var frequency = GetFrequency(messageSource, channel);
 
@@ -279,7 +285,7 @@ public sealed class RadioSystem : EntitySystem
             if (!HasComp<GhostComponent>(receiver) && GetFrequency(receiver, channel) != frequency)
                 continue;
 
-            if (!channel.LongRange && transform.MapID != sourceMapId && !radio.GlobalReceive)
+            if (!channel.LongRange && !InRadioRange(sourceMap, sourceZNetwork, transform.MapUid) && !radio.GlobalReceive)
                 continue;
 
             var needServer = !channel.LongRange && (!hasMicro || !speakerQuery.HasComponent(receiver));
@@ -340,13 +346,37 @@ public sealed class RadioSystem : EntitySystem
             ("language", languageDisplay));
     }
 
+    /// <summary>
+    /// Gets the Z-level network the given map belongs to, if any. Resolve this once per broadcast:
+    /// the lookup falls back to scanning every network when the map isn't part of one.
+    /// </summary>
+    private Entity<MZNetworkComponent>? GetZNetwork(EntityUid? map)
+    {
+        if (map == null)
+            return null;
+
+        return _multiZ.TryGetZNetwork(map.Value, out var network) ? network : null;
+    }
+
+    /// <summary>
+    /// Every Z-level of a station is its own map, so a radio on another level of the same
+    /// Z-network counts as being on the source map.
+    /// </summary>
+    private bool InRadioRange(EntityUid? sourceMap, Entity<MZNetworkComponent>? sourceZNetwork, EntityUid? map)
+    {
+        if (map == sourceMap)
+            return true;
+
+        return map != null && sourceZNetwork is { } network && _multiZ.IsMapInNetwork(network, map.Value);
+    }
+
     /// <inheritdoc cref="TelecomServerComponent"/>
-    private bool HasActiveServer(MapId mapId, string channelId)
+    private bool HasActiveServer(EntityUid? sourceMap, Entity<MZNetworkComponent>? sourceZNetwork, string channelId)
     {
         var servers = EntityQuery<TelecomServerComponent, EncryptionKeyHolderComponent, ApcPowerReceiverComponent, TransformComponent>();
         foreach (var (_, keys, power, transform) in servers)
         {
-            if (transform.MapID == mapId &&
+            if (InRadioRange(sourceMap, sourceZNetwork, transform.MapUid) &&
                 power.Powered &&
                 keys.Channels.Contains(channelId))
             {

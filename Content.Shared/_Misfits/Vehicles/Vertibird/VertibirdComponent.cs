@@ -31,6 +31,13 @@ public sealed partial class VertibirdComponent : Component
     [ViewVariables]
     public EntityUid?[] SeatOccupants = [];
 
+    /// <summary>
+    /// How many crates the cargo bay holds. Crates are dragged aboard and travel
+    /// with everything still packed inside them.
+    /// </summary>
+    [DataField]
+    public int CargoCapacity = 2;
+
     [DataField, AutoNetworkedField]
     public EntityUid? FlightActionEntity;
 
@@ -284,6 +291,8 @@ public sealed class VertibirdSeatBoundUserInterfaceState : BoundUserInterfaceSta
     public readonly float StructuralIntegrity;
     public readonly float MaxStructuralIntegrity;
     public readonly VertibirdSeatUiState[] Seats;
+    public readonly VertibirdCargoUiState[] Cargo;
+    public readonly int CargoCapacity;
 
     public VertibirdSeatBoundUserInterfaceState(
         string title,
@@ -293,8 +302,12 @@ public sealed class VertibirdSeatBoundUserInterfaceState : BoundUserInterfaceSta
         float maxFuel,
         float structuralIntegrity,
         float maxStructuralIntegrity,
-        VertibirdSeatUiState[] seats)
+        VertibirdSeatUiState[] seats,
+        VertibirdCargoUiState[] cargo,
+        int cargoCapacity)
     {
+        Cargo = cargo;
+        CargoCapacity = cargoCapacity;
         Title = title;
         FlightState = flightState;
         Altitude = altitude;
@@ -308,6 +321,27 @@ public sealed class VertibirdSeatBoundUserInterfaceState : BoundUserInterfaceSta
 
 [Serializable, NetSerializable]
 public readonly record struct VertibirdSeatUiState(int Index, string Name, string? OccupantName, bool RequiresPilotPerk);
+
+[Serializable, NetSerializable]
+public readonly record struct VertibirdCargoUiState(NetEntity Crate, string Name);
+
+/// <summary>
+/// Loads whatever crate the actor is pulling. The console cannot reach out and pick a
+/// crate for them, so the one they hauled over is the one that goes in.
+/// </summary>
+[Serializable, NetSerializable]
+public sealed class VertibirdLoadCargoMessage : BoundUserInterfaceMessage;
+
+[Serializable, NetSerializable]
+public sealed class VertibirdUnloadCargoMessage : BoundUserInterfaceMessage
+{
+    public readonly NetEntity Crate;
+
+    public VertibirdUnloadCargoMessage(NetEntity crate)
+    {
+        Crate = crate;
+    }
+}
 
 [Serializable, NetSerializable]
 public sealed class VertibirdSelectSeatMessage : BoundUserInterfaceMessage
@@ -344,6 +378,25 @@ public sealed partial class VertibirdBoardDoAfterEvent : DoAfterEvent
     }
 
     public override DoAfterEvent Clone() => new VertibirdBoardDoAfterEvent(SeatIndex);
+}
+
+/// <summary>
+/// Loading a crate into the cargo bay, or hauling one back out. Which one it is
+/// depends on whether the crate is already in the bay when the do-after lands.
+/// The crate rides in the event rather than in DoAfterArgs.Used, because once it is
+/// in the bay it has no broadphase for the args' range check to work against.
+/// </summary>
+[Serializable, NetSerializable]
+public sealed partial class VertibirdCargoDoAfterEvent : DoAfterEvent
+{
+    public NetEntity Crate;
+
+    public VertibirdCargoDoAfterEvent(NetEntity crate)
+    {
+        Crate = crate;
+    }
+
+    public override DoAfterEvent Clone() => new VertibirdCargoDoAfterEvent(Crate);
 }
 
 /// <summary>
