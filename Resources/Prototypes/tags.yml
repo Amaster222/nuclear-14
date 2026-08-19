@@ -1134,6 +1134,9 @@
   id: RCDConstructed
 
 - type: Tag
+  id: radcube #new tag for replacing recipes later
+
+- type: Tag
   id: Radio
 
 - type: Tag
