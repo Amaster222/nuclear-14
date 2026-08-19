@@ -6,7 +6,7 @@
   name: Irradiated Monkey
   parent: N14MobBaseSimple
   id: MisfitsRadMonkey
-  description: A sickly looking, pale green monkey. A source of meat for cooking wasteland meals.
+  description: Once top banana in the kitchen, now a chimp chump.
   components:
   - type: Sprite
     drawdepth: Mobs
