@@ -1,6 +1,7 @@
 ﻿using Content.Goobstation.Maths.FixedPoint;
 using Robust.Shared.Audio;
 using Robust.Shared.GameStates;
+using Robust.Shared.Prototypes;
 
 namespace Content.Shared._Shitmed.Medical.Surgery.Traumas.Components;
 
@@ -27,6 +28,14 @@ public sealed partial class BoneComponent : Component
         { BoneSeverity.Cracked, 10 },
         { BoneSeverity.Broken, 30 },
     };
+
+    /// <summary>
+    /// Legacy per-bone trauma chance adjustments. The active trauma pipeline
+    /// currently reads these from wound inflicters, but preserving the field
+    /// keeps existing bone prototype values valid for a later integration.
+    /// </summary>
+    [DataField]
+    public Dictionary<ProtoId<TraumaTypePrototype>, FixedPoint2> TraumasChances = new();
 
     [DataField]
     public SoundSpecifier BoneBreakSound = new SoundCollectionSpecifier("BoneGone");

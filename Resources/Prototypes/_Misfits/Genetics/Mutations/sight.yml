@@ -82,10 +82,18 @@
       pulseTime: 5 # stays on for ~5s per activation, then fades out
 
 - type: entity
-  parent: ToggleThermalVision
   id: MutationActionThermalVision
+  name: Toggle Thermal Vision
+  description: Toggles thermal vision.
   components:
+  - type: Action
+    itemIconStyle: BigAction
+    priority: -20
+    icon:
+      sprite: Mobs/Species/Human/organs.rsi
+      state: eyeball-l
   - type: InstantAction
+    event: !type:ToggleThermalVisionEvent
     checkCanInteract: false
     useDelay: 25
   - type: EffectAction

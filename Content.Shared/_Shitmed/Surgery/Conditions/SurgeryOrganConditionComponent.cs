@@ -16,4 +16,11 @@ public sealed partial class SurgeryOrganConditionComponent : Component
 
     [DataField]
     public bool Reattaching;
+
+    /// <summary>
+    /// Restricts the condition to an organ slot when a body part can contain
+    /// multiple organs with the same component type (for example, lungs).
+    /// </summary>
+    [DataField]
+    public string? SlotId;
 }

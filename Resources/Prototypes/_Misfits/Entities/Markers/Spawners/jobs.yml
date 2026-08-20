@@ -25,6 +25,15 @@
   - type: SpawnPoint
     job_id: BoSPaladinCommander
 
+# #Cythisiax Added - TOMBSTONE personal-whitelist spawn point.
+- type: entity
+  parent: MisfitsSpawnPointBoSMidPaladinCommander
+  id: MisfitsSpawnPointBoSTombstone
+  name: TOMBSTONE
+  components:
+  - type: SpawnPoint
+    job_id: BoSTombstone
+
 - type: entity
   parent: MisfitsSpawnPointBoSMidPaladinCommander
   id: MisfitsSpawnPointBoSMidKnight

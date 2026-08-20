@@ -51,6 +51,21 @@ public sealed partial class BodyPartComponent : Component, ISurgeryToolComponent
     public float SeverIntegrity = 90f;
 
     /// <summary>
+    /// Compatibility metadata for existing body-part prototypes. Vitality is
+    /// determined by <see cref="BodyPartType"/> flags in the active body system.
+    /// </summary>
+    [DataField("vital")]
+    public bool IsVital;
+
+    /// <summary>
+    /// Legacy body-integrity bands retained while body parts use the Shitmed
+    /// woundable-integrity model. Existing content may still carry these
+    /// values, so keep them serializable during the migration.
+    /// </summary>
+    [DataField]
+    public Dictionary<string, float> IntegrityThresholds = new();
+
+    /// <summary>
     ///     Shitmed Change: What composition does this body part classify as
     /// </summary>
     [DataField]

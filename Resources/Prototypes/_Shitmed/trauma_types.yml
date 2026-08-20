@@ -7,7 +7,7 @@
   traumaEntity: NerveDamage
   causes:
   - !type:WoundSeverityCause
-    damageTypes: [ Blunt, Piercing, Slash, Heat, Ion, Cold, Holy, Shock, Cellular, Caustic, Radiation, Poison ]
+    damageTypes: [ Blunt, Piercing, Slash, Heat, Cold, Holy, Shock, Cellular, Caustic, Radiation, Poison ]
     chance: !type:NerveTraumaChance
 
 - type: traumaType
@@ -52,4 +52,10 @@
   traumaEntity: VeinsDamage
   causes:
   - !type:WoundSeverityCause
-    damageTypes: [ Blunt, Piercing, Slash, Heat, Ion, Cold, Shock, Cellular, Caustic, Radiation, Poison ]
+    damageTypes: [ Blunt, Piercing, Slash, Heat, Cold, Shock, Cellular, Caustic, Radiation, Poison ]
+
+- type: traumaType
+  id: Braindeath
+  target: Organ
+  blocksHealing: true
+  traumaEntity: TraumaBraindeath

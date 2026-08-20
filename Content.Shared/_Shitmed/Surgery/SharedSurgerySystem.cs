@@ -317,6 +317,16 @@ public abstract partial class SharedSurgerySystem : EntitySystem
             if (_body.TryGetBodyPartOrgans(args.Part, reg.Component.GetType(), out var organs)
                 && organs.Count > 0)
             {
+                if (ent.Comp.SlotId is { } slotId)
+                    organs = organs.Where(organ => organ.Organ.SlotId == slotId).ToList();
+
+                if (organs.Count == 0)
+                {
+                    if (!ent.Comp.Inverse)
+                        args.Cancelled = true;
+                    continue;
+                }
+
                 if (ent.Comp.Inverse
                     && (!ent.Comp.Reattaching
                     || ent.Comp.Reattaching

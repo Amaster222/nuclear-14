@@ -13,7 +13,10 @@ namespace Content.Shared._Shitmed.GoliathTentacle;
 public sealed partial class GoliathTentacleComponent : Component
 {
     [DataField(customTypeSerializer: typeof(PrototypeIdSerializer<EntityPrototype>))]
-    public string? Action = "ActionGoliathTentacleCrew";
+    // Misfits intentionally does not import Goob's antag/action tree. A
+    // Goliath heart still carries its normal body behavior, just not the
+    // player-controlled tentacle action that depends on that excluded tree.
+    public string? Action;
 
     [DataField, AutoNetworkedField]
     public EntityUid? ActionEntity;

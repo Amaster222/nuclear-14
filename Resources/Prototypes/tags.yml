@@ -1480,3 +1480,9 @@
 
 - type: Tag # Corvax-Add
   id: Darts
+
+- type: Tag
+  id: Tourniquet # Storage whitelist: ClothingBeltMedical
+
+- type: Tag
+  id: SlowImmune

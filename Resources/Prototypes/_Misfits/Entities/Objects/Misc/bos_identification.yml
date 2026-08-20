@@ -287,6 +287,17 @@
 #  - type: PresetIdCard
 #    job: BoSPaladinCommander
 
+# #Cythisiax Added - TOMBSTONE personal-whitelist holotag.
+- type: entity
+  parent: N14IDBrotherhoodOfSteelHolotagBase
+  id: N14IDBrotherhoodOfSteelHolotagTombstone
+  name: TOMBSTONE holotags
+  description: An ID holotag worn by the wearer of the T-1F 'Tombstone' power armor.
+  suffix: TOMBSTONE
+  components:
+  - type: PresetIdCard
+    job: BoSTombstone
+
 - type: entity
   parent: N14IDBrotherhoodOfSteelHolotagBase
   id: N14IDBrotherhoodOfSteelHolotagElder

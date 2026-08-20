@@ -1,0 +1,62 @@
+# Minimal status-effect prototypes required by MovementModStatusSystem.
+# The broader upstream status-effect catalogue depends on component types that
+# are intentionally not part of this port.
+
+- type: entity
+  abstract: true
+  id: StatusEffectSlowdown
+  name: slowdown
+  components:
+  - type: StatusEffect
+    whitelist:
+      components:
+      - MobState
+      - MovementSpeedModifier
+      requireAll: true
+    blacklist:
+      tags:
+      - SlowImmune
+  - type: MovementModStatusEffect
+
+- type: entity
+  abstract: true
+  id: StatusEffectSpeed
+  name: speed
+  components:
+  - type: StatusEffect
+    whitelist:
+      components:
+      - MobState
+      - MovementSpeedModifier
+      requireAll: true
+  - type: MovementModStatusEffect
+
+- type: entity
+  parent: StatusEffectSpeed
+  id: ReagentSpeedStatusEffect
+  name: reagent speed
+
+- type: entity
+  parent: StatusEffectSlowdown
+  id: VomitingSlowdownStatusEffect
+  name: vomiting slowdown
+
+- type: entity
+  parent: StatusEffectSlowdown
+  id: TaserSlowdownStatusEffect
+  name: shot by taser slowdown
+
+- type: entity
+  parent: StatusEffectSlowdown
+  id: FlashSlowdownStatusEffect
+  name: affected by flash slowdown
+
+- type: entity
+  id: StatusEffectFriction
+  name: friction
+  components:
+  - type: StatusEffect
+    whitelist:
+      components:
+      - MobState
+  - type: FrictionStatusEffect

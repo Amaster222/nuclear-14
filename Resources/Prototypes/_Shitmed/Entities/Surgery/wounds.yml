@@ -269,3 +269,10 @@
   components:
   - type: Trauma
     traumaType: Dismemberment
+
+- type: entity
+  id: TraumaBraindeath
+  components:
+  - type: Trauma
+    traumaType: Braindeath
+  - type: Braindeath
