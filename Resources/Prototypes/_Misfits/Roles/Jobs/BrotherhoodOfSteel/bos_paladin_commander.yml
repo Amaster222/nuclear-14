@@ -1,6 +1,8 @@
-# #Cythisiax Added - "Paladin Commander" personal-whitelist BoS role.
-# Single-player whitelist posting (ckey: southernsaint) that mirrors the Head Paladin
-# loadout but wears the Midwest Commander power armor instead of the T-51b.
+# #Cythisiax Edited - "Brotherhood Deserter" personal-whitelist role (was "Paladin Commander").
+# Single-player whitelist posting (ckey: southernsaint): a Paladin who turned their back on
+# the Brotherhood of Steel. Now tags with the NCR at prisoner level, keeping the spoils of
+# their former life — a re-sprited Midwest MK III ATA power armor suit and an AER-9.
+# Job ID stays BoSPaladinCommander so the existing whitelist entry + playtime tracker are preserved.
 
 - type: job
   id: BoSPaladinCommander
@@ -11,9 +13,9 @@
   weight: 111
   showBorder: true
   canBeAntag: false
-  name: job-name-bos-paladin-commander
-  overwatchCategory: OverwatchBosPaladin
-  description: job-description-bos-paladin-commander
+  name: job-name-bos-deserter # #Cythisiax Edited - rethemed to "Brotherhood Deserter"
+  overwatchCategory: OverwatchNcrCivilian # #Cythisiax Edited - NCR-aligned deserter tracked under NCR civilian overwatch
+  description: job-description-bos-deserter # #Cythisiax Edited
   playTimeTracker: BoSPaladinCommander
   requirements:
     - !type:CharacterSpeciesRequirement
@@ -22,16 +24,17 @@
   startingGear: BoSPaladinCommanderGear
   alwaysUseSpawner: true
   requireAdminNotify: true
-  icon: "JobIconBosMCommander"
-  supervisors: job-supervisors-bos-paladin-commander
-  accessGroups:
-  - BOSHeadPaladin
+  icon: "JobIconWastelander" # #Cythisiax Edited - deserter icon (was BoS Commander)
+  supervisors: job-supervisors-bos-deserter # #Cythisiax Edited
+  access:
+  - NCR # #Cythisiax Edited - prisoner-level NCR access (was BOSHeadPaladin)
   special:
   - !type:AddComponentSpecial
     components:
       - type: NpcFactionMember
         factions:
-          - BrotherhoodOfSteel
+          - Wastelander
+          - NCR
       - type: PowerArmorProficiency
       - type: LanguageKnowledge
         speaks:
@@ -40,23 +43,27 @@
         - English
         - N14BrotherBeep
 
-# #Cythisiax Added - Head Paladin kit with the Midwest Commander armor swapped in for the T-51b.
+# #Cythisiax Edited - Deserter kit: re-sprited Midwest MK III ATA power armor, NCR prisoner
+# dogtags, NCR headset, and an AER-9 (BoS Pip-Boy/holotag/headset/kit removed).
 - type: startingGear
   id: BoSPaladinCommanderGear
   equipment:
-    jumpsuit: N14ClothingUniformBosRecon
+    jumpsuit: M14ClothingUniformDesertersNCRUniform # #Cythisiax Edited - disheveled NCR fatigues (deserter)
     back: N14ClothingBackpackMilitary
     shoes: N14ClothingBootsLeatherFilled
-    head: N14ClothingPaladinBeret
-    outerClothing: N14ClothingOuterPowerArmorJacksontownley # #Cythisiax Edited - Jackson Townley personal Midwest Commander reskin (identical stats)
+    head: N14ClothingHeadHelmetPowerArmorJacksontownley # #Cythisiax Edited - re-sprited MK III ATA helmet (was BoS beret)
+    outerClothing: N14ClothingOuterPowerArmorJacksontownley # #Cythisiax Edited - re-sprited Midwest MK III ATA (identical stats)
     hands: N14ClothingHandsGlovesCombat
-    pocket1: BoSBrotherhoodHeadPaladinKits
-    id: N14PaladinCommander_PipBoy # #Cythisiax Edited - dedicated Paladin Commander Pip-Boy (shows correct holotag job)
-    ears: N14ClothingHeadsetBrotherhoodOfSteel
+    id: N14IDNCRDogtagPrisoner # #Cythisiax Edited - NCR dog tags on prisoner level
+    ears: N14ClothingHeadsetNCR # #Cythisiax Edited - NCR headset (was BoS headset)
     belt: N14ClothingBeltBoSWebbing
   storage:
     back:
     - N14BoxPlasticFilledMilitary
+    - N14WeaponLaserRifleAuto # #Cythisiax Edited - AER-9 auto laser rifle
+    - N14MicrofusionCell
+    - N14MicrofusionCell
+    - N14MicrofusionCell
 
 - type: playTimeTracker
   id: BoSPaladinCommander

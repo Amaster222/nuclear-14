@@ -2,7 +2,8 @@
 job-supervisors-bos-mid-knight = the Head Knight, Head Paladin, and Elder
 job-supervisors-bos-mid = the Elder and the chapter heads
 job-supervisors-bos-mid-commander = the Elder
-job-supervisors-bos-paladin-commander = the Elder
+# #Misfits Edit - Paladin Commander rethemed to Brotherhood Deserter (job ID stays BoSPaladinCommander)
+job-supervisors-bos-deserter = the NCR
 # Misfits Change /Comment-out/: Washington BoS supervisor strings removed — will create new prototypes.
 # job-supervisors-bos-wash-initiate = the Brotherhood chain of command
 # job-supervisors-bos-wash-knight = the Head Knight, Head Paladin, and Elder
