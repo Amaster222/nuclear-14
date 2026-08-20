@@ -1,4 +1,5 @@
-using Content.Shared.Body.Organ;
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
 
@@ -15,7 +16,4 @@ public sealed partial class SurgeryOrganConditionComponent : Component
 
     [DataField]
     public bool Reattaching;
-
-    [DataField(required: true)]
-    public string SlotId = string.Empty;
 }

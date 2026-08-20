@@ -1,19 +1,6 @@
-using Robust.Shared.GameStates;
+// SPDX-License-Identifier: AGPL-3.0-or-later
 
 namespace Content.Shared._Shitmed.Body.Organ;
 
-[RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
-public sealed partial class HeartComponent : Component
-{
-    /// <summary>
-    ///     The base capacity of the heart.
-    /// </summary>
-    [DataField, AutoNetworkedField]
-    public float Capacity;
-
-    /// <summary>
-    ///     The current capacity of the heart.
-    /// </summary>
-    [DataField, AutoNetworkedField]
-    public float CurrentCapacity;
-}
+[RegisterComponent]
+public sealed partial class HeartComponent : Component;

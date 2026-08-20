@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using Robust.Shared.Serialization;
 
 namespace Content.Shared._Shitmed.Autodoc;
@@ -45,6 +47,12 @@ public sealed class AutodocRemoveStepMessage(int program, int step) : BoundUserI
 public sealed class AutodocStartMessage(int program) : BoundUserInterfaceMessage
 {
     public readonly int Program = program;
+}
+
+[Serializable, NetSerializable]
+public sealed class AutodocImportProgramMessage(AutodocProgram program) : BoundUserInterfaceMessage
+{
+    public readonly AutodocProgram Program = program;
 }
 
 [Serializable, NetSerializable]

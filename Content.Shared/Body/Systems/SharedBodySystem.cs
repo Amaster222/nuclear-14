@@ -1,9 +1,16 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using Content.Shared.Damage;
 using Content.Shared.Movement.Systems;
 using Content.Shared.Standing;
 using Robust.Shared.Containers;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
+
+// Shitmed Change
+using Content.Goobstation.Common.Body;
+using Content.Shared.Inventory;
+using Robust.Shared.Random;
 
 namespace Content.Shared.Body.Systems;
 
@@ -35,6 +42,11 @@ public abstract partial class SharedBodySystem : EntitySystem
     [Dependency] protected readonly SharedContainerSystem Containers = default!;
     [Dependency] protected readonly SharedTransformSystem SharedTransform = default!;
     [Dependency] protected readonly StandingStateSystem Standing = default!;
+    // <Shitmed>
+    [Dependency] private readonly CommonInsideBodyPartSystem _insideBodyPart = default!;
+    [Dependency] private readonly IRobustRandom _random = default!;
+    [Dependency] private readonly InventorySystem _inventory = default!;
+    // </Shitmed>
 
     public override void Initialize()
     {
@@ -44,9 +56,8 @@ public abstract partial class SharedBodySystem : EntitySystem
         InitializeParts();
         InitializeOrgans();
         // Shitmed Change Start
-        // To try and mitigate the server load due to integrity checks, we set up a Job Queue.
-        InitializeIntegrityQueue();
         InitializePartAppearances();
+        InitializeRelay();
         // Shitmed Change End
     }
 

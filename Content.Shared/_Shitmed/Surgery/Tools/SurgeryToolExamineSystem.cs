@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 using Content.Shared.Body.Organ;
 using Content.Shared.Body.Part;
 using Content.Shared.Examine;
@@ -26,9 +28,10 @@ public sealed class SurgeryToolExamineSystem : EntitySystem
         SubscribeLocalEvent<DrillComponent, SurgeryToolExaminedEvent>(OnExamined);
         SubscribeLocalEvent<TendingComponent, SurgeryToolExaminedEvent>(OnExamined);
         SubscribeLocalEvent<TweezersComponent, SurgeryToolExaminedEvent>(OnExamined);
-
+        SubscribeLocalEvent<BoneSetterComponent, SurgeryToolExaminedEvent>(OnExamined);
         SubscribeLocalEvent<BodyPartComponent, SurgeryToolExaminedEvent>(OnExamined);
         SubscribeLocalEvent<OrganComponent, SurgeryToolExaminedEvent>(OnExamined);
+        SubscribeLocalEvent<StitchesComponent, SurgeryToolExaminedEvent>(OnExamined);
     }
 
     private void OnGetVerbs(Entity<SurgeryToolComponent> ent, ref GetVerbsEvent<ExamineVerb> args)
@@ -42,11 +45,11 @@ public sealed class SurgeryToolExamineSystem : EntitySystem
         RaiseLocalEvent(ent, ref ev);
 
         _examine.AddDetailedExamineVerb(args, ent.Comp, ev.Message,
-            Loc.GetString("surgery-tool-examinable-verb-text"), "/Textures/Objects/Specific/Medical/Surgery/scalpel.rsi/scalpel.png",
+            Loc.GetString("surgery-tool-examinable-verb-text"), "/Textures/_Shitmed/Interface/Examine/scalpel.png",
             Loc.GetString("surgery-tool-examinable-verb-message"));
     }
 
-    private void OnExamined(EntityUid uid, ISurgeryToolComponent comp, ref SurgeryToolExaminedEvent args)
+    public void OnExamined(EntityUid uid, ISurgeryToolComponent comp, ref SurgeryToolExaminedEvent args)
     {
         var msg = args.Message;
         var color = comp.Speed switch

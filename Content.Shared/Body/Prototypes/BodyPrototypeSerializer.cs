@@ -1,4 +1,6 @@
-﻿using System.Linq;
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+using System.Linq;
 using Content.Shared.Body.Organ;
 using Content.Shared.Prototypes;
 using Robust.Shared.Prototypes;
@@ -116,10 +118,9 @@ public sealed class BodyPrototypeSerializer : ITypeReader<BodyPrototype, Mapping
         var slotNodes = node.Get<MappingDataNode>("slots");
         var allConnections = new Dictionary<string, (string? Part, HashSet<string>? Connections, Dictionary<string, string>? Organs)>();
 
-        foreach (var (keyNode, valueNode) in slotNodes)
+        foreach (var (slotId, valueNode) in slotNodes)
         {
-            var slotId = keyNode;
-            var slot = ((MappingDataNode) valueNode);
+            var slot = (MappingDataNode) valueNode;
 
             string? part = null;
             if (slot.TryGet<ValueDataNode>("part", out var value))
@@ -143,9 +144,9 @@ public sealed class BodyPrototypeSerializer : ITypeReader<BodyPrototype, Mapping
             {
                 organs = new Dictionary<string, string>();
 
-                foreach (var (organKeyNode, organValueNode) in slotOrgansNode)
+                foreach (var (organKey, organValueNode) in slotOrgansNode)
                 {
-                    organs.Add(organKeyNode, ((ValueDataNode) organValueNode).Value);
+                    organs.Add(organKey, ((ValueDataNode) organValueNode).Value);
                 }
             }
 
