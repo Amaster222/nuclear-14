@@ -41,7 +41,7 @@ namespace Content.Server.Administration.Commands
 
 
             if (Enum.TryParse<BodyPartType>(args[3], out var partType) &&
-                bodySystem.TryCreatePartSlotAndAttach(parentId, args[2], childId, partType, BodyPartSymmetry.None))
+                bodySystem.TryCreatePartSlotAndAttach(parentId, args[2], childId, partType))
             {
                 shell.WriteLine($@"Added {childId} to {parentId}.");
             }
