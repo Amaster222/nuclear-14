@@ -32,6 +32,8 @@
         - N14AmmoCell
         - Handcuffs
         - N14PoliceBaton
+        # #Cythisiax Added - belt can store the Wendover map (Document)
+        - Document
       components:
         - BallisticAmmoProvider
         - CartridgeAmmo
