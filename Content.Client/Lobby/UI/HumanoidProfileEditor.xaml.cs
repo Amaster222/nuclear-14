@@ -265,6 +265,13 @@ namespace Content.Client.Lobby.UI
                     _preferencesManager.Preferences?.SelectedCharacterIndex);
             };
 
+            // #Cythisiax Added - End-of-round report anonymity toggle (account-level setting).
+            RoundEndAnonymityCheckBox.OnToggled += args =>
+            {
+                _preferencesManager.SetRoundEndReportAnonymity(args.Pressed);
+            };
+            UpdateRoundEndAnonymityCheckBox();
+
             #region Left
 
             #region Name
@@ -1051,6 +1058,12 @@ namespace Content.Client.Lobby.UI
                 _preferencesManager.Preferences?.SelectedCharacterIndex);
         }
 
+        /// #Cythisiax Added - Keeps the end-of-round anonymity checkbox in sync with the account-level setting.
+        private void UpdateRoundEndAnonymityCheckBox()
+        {
+            RoundEndAnonymityCheckBox.Pressed = _preferencesManager.Preferences?.AnonymousRoundEndReport ?? false;
+        }
+
         /// Sets the editor to the specified profile with the specified slot
         public void SetProfile(HumanoidCharacterProfile? profile, int? slot)
         {
@@ -1086,6 +1099,8 @@ namespace Content.Client.Lobby.UI
             UpdateSpecialControls();
             UpdateRobotAppearanceFieldVisibility(); // #Misfits Add: keep robot-only field visibility consistent after profile load/reset.
             UpdateRobotModelSelector(); // #Misfits Add: keep Robot Model selector in sync after profile load/reset.
+
+            UpdateRoundEndAnonymityCheckBox(); // #Cythisiax Added - sync round-end anonymity toggle
 
             RefreshAntags();
             RefreshJobs();
@@ -3493,9 +3508,55 @@ namespace Content.Client.Lobby.UI
                 owned = false;
 
             Profile = Profile?.WithTraitPreference(traitId, owned);
+
+            // #Cythisiax Fixed - unselecting a perk that is a prerequisite for other selected
+            // perks must also remove the dependents (Swift Learner -> Scrounger -> Educated ->
+            // Nerd Rage -> Fortune's Favor). Without this you can keep Fortune's Favor after
+            // dropping Nerd Rage and save an illegal profile.
+            if (!owned)
+                Profile = PrunePerkPrerequisites(Profile);
+
             IsDirty = true;
             UpdateTraitPreferences();
             SetProfile(Profile, CharacterSlot);
+        }
+
+        // #Cythisiax Added - cascade removal: iterate selected perks and drop any whose
+        // non-inverted CharacterTraitRequirement (perk prerequisite) is no longer owned,
+        // repeating so deep chains are fully pruned. Keeps the perk tree legal.
+        private HumanoidCharacterProfile? PrunePerkPrerequisites(HumanoidCharacterProfile? profile)
+        {
+            if (profile == null)
+                return null;
+
+            var selected = new HashSet<string>(profile.TraitPreferences);
+            bool changed;
+            do
+            {
+                changed = false;
+                foreach (var traitId in selected.ToList())
+                {
+                    if (!_prototypeManager.TryIndex<TraitPrototype>(traitId, out var trait))
+                        continue;
+
+                    foreach (var req in trait.Requirements)
+                    {
+                        if (req is CharacterTraitRequirement { Inverted: false } ctr
+                            && ctr.Traits.Count > 0
+                            && !ctr.Traits.Any(t => selected.Contains(t.ToString())))
+                        {
+                            selected.Remove(traitId);
+                            changed = true;
+                            break;
+                        }
+                    }
+                }
+            } while (changed);
+
+            var result = profile;
+            foreach (var removed in profile.TraitPreferences.Where(id => !selected.Contains(id)).ToList())
+                result = result.WithTraitPreference(removed, false);
+            return result;
         }
 
         // #Cythisiax Added - pets are paid for out of their own point pool with separate size

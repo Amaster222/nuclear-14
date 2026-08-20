@@ -811,6 +811,10 @@ namespace Content.Server.Database.Migrations.Postgres
                         .HasColumnType("text")
                         .HasColumnName("admin_ooc_color");
 
+                    b.Property<bool>("AnonymousRoundEndReport")
+                        .HasColumnType("boolean")
+                        .HasColumnName("anonymous_round_end_report");
+
                     b.Property<int>("SelectedCharacterSlot")
                         .HasColumnType("integer")
                         .HasColumnName("selected_character_slot");
@@ -860,6 +864,10 @@ namespace Content.Server.Database.Migrations.Postgres
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("clothing");
+
+                    b.Property<JsonDocument>("CustomBaseLayers")
+                        .HasColumnType("jsonb")
+                        .HasColumnName("custom_base_layers");
 
                     b.Property<string>("CustomSpecieName")
                         .IsRequired()
