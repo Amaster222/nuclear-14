@@ -10467,3 +10467,10 @@ Entries:
   id: 6345
   time: '2026-08-20T14:05:28.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1783
+- author: Amaster222
+  changes:
+    - type: Tweak
+      message: Monkey cubes replaced with a variant that gives irradiated meat.
+  id: 6346
+  time: '2026-08-20T14:25:33.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1782
