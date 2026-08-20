@@ -67,21 +67,6 @@ namespace Content.Shared.Movement.Systems
             move.Acceleration = acceleration;
             Dirty(uid, move);
         }
-
-        public void RefreshFrictionModifiers(EntityUid uid, MovementSpeedModifierComponent? move = null)
-        {
-            if (!Resolve(uid, ref move, false) || _timing.ApplyingState)
-                return;
-
-            var ev = new RefreshFrictionModifiersEvent
-            {
-                Friction = move.Friction,
-                FrictionNoInput = move.FrictionNoInput ?? move.Friction,
-                Acceleration = move.Acceleration,
-            };
-            RaiseLocalEvent(uid, ref ev);
-            ChangeFriction(uid, ev.Friction, ev.FrictionNoInput, ev.Acceleration, move);
-        }
     }
 
     /// <summary>
@@ -120,23 +105,5 @@ namespace Content.Shared.Movement.Systems
         {
             ModifySpeed(mod, mod);
         }
-    }
-
-    [ByRefEvent]
-    public record struct RefreshFrictionModifiersEvent : IInventoryRelayEvent
-    {
-        public float Friction;
-        public float FrictionNoInput;
-        public float Acceleration;
-
-        public void ModifyFriction(float friction, float noInput)
-        {
-            Friction *= friction;
-            FrictionNoInput *= noInput;
-        }
-
-        public void ModifyFriction(float friction) => ModifyFriction(friction, friction);
-        public void ModifyAcceleration(float acceleration) => Acceleration *= acceleration;
-        SlotFlags IInventoryRelayEvent.TargetSlots => ~SlotFlags.POCKET;
     }
 }
