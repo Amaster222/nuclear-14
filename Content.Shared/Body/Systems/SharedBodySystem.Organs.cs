@@ -1,5 +1,3 @@
-// SPDX-License-Identifier: AGPL-3.0-or-later
-
 using System.Diagnostics.CodeAnalysis;
 using Content.Shared.Body.Components;
 using Content.Shared.Body.Events;
@@ -12,7 +10,6 @@ using Robust.Shared.Containers;
 using Content.Shared.Damage;
 using Content.Shared._Shitmed.BodyEffects;
 using Content.Shared._Shitmed.Body.Organ;
-// #Cythisiax Removed - unused import; Goob's Content.Shared.Heretic does not exist in misfits.
 
 namespace Content.Shared.Body.Systems;
 
@@ -40,7 +37,7 @@ public partial class SharedBodySystem
         EntityUid parentPartUid)
     {
         organEnt.Comp.Body = bodyUid;
-        var addedEv = new OrganAddedEvent(parentPartUid, bodyUid); // Shitmed - add body
+        var addedEv = new OrganAddedEvent(parentPartUid);
         RaiseLocalEvent(organEnt, ref addedEv);
 
         if (organEnt.Comp.Body is not null)
@@ -58,7 +55,7 @@ public partial class SharedBodySystem
 
     private void RemoveOrgan(Entity<OrganComponent> organEnt, EntityUid parentPartUid)
     {
-        var removedEv = new OrganRemovedEvent(parentPartUid, organEnt.Comp.Body); // Shitmed - add body
+        var removedEv = new OrganRemovedEvent(parentPartUid);
         RaiseLocalEvent(organEnt, ref removedEv);
 
         if (organEnt.Comp.Body is { Valid: true } bodyUid)
@@ -71,6 +68,11 @@ public partial class SharedBodySystem
             var removedInBodyEv = new OrganRemovedFromBodyEvent(bodyUid, parentPartUid);
             RaiseLocalEvent(organEnt, ref removedInBodyEv);
         }
+
+        if (parentPartUid is { Valid: true }
+            && TryComp(parentPartUid, out DamageableComponent? damageable)
+            && damageable.TotalDamage > 200)
+            TrySetOrganUsed(organEnt, true, organEnt.Comp);
 
         organEnt.Comp.Body = null;
         Dirty(organEnt, organEnt.Comp);
@@ -85,10 +87,6 @@ public partial class SharedBodySystem
             return null;
 
         Containers.EnsureContainer<ContainerSlot>(parentEnt, GetOrganContainerId(slotId));
-        // Shitmed Change: Don't throw when a slot already exists
-        if (parentEnt.Comp.Organs.TryGetValue(slotId, out var existing))
-            return existing;
-
         var slot = new OrganSlot(slotId);
         parentEnt.Comp.Organs.Add(slotId, slot);
         return slot;
@@ -117,7 +115,6 @@ public partial class SharedBodySystem
         if (!part.Organs.ContainsKey(slotId)
             && !part.Organs.TryAdd(slotId, slot.Value))
             return false;
-        Dirty(parent.Value, part); // WD EDIT
 
         return true;
         // Shitmed Change End
@@ -196,69 +193,37 @@ public partial class SharedBodySystem
 
         foreach (var slotId in part.Organs.Keys)
         {
-            if (InsertOrgan(partId, organId, slotId, part, organ))
-                return true;
+            InsertOrgan(partId, organId, slotId, part, organ);
+            return true;
         }
 
         return false;
     }
 
     /// <summary>
-    /// Returns a list of Entity<<see cref="T"/>, <see cref="OrganComponent"/>>
-    /// for each organ of the body
+    ///     Returns a list of ValueTuples of <see cref="T"/> and OrganComponent on each organ
+    ///     in the given body.
     /// </summary>
-    /// <typeparam name="T">The component that we want to return</typeparam>
-    /// <param name="entity">The body to check the organs of</param>
-    public List<Entity<T, OrganComponent>> GetBodyOrganEntityComps<T>(
-        Entity<BodyComponent?> entity)
-        where T : IComponent
-    {
-        if (!Resolve(entity, ref entity.Comp))
-            return new List<Entity<T, OrganComponent>>();
-
-        // Goobstation start
-        var ev = new GetBodyOrganOverrideEvent<T>();
-        RaiseLocalEvent(entity, ref ev);
-        var result = ev.Organ;
-        if (result != null)
-            return new List<Entity<T, OrganComponent>> {result.Value};
-        // Goobstation end
-
-        var query = GetEntityQuery<T>();
-        var list = new List<Entity<T, OrganComponent>>(3);
-        foreach (var organ in GetBodyOrgans(entity.Owner, entity.Comp))
-        {
-            if (query.TryGetComponent(organ.Id, out var comp))
-                list.Add((organ.Id, comp, organ.Component));
-        }
-
-        return list;
-    }
-
-    // Compatibility surface for existing Misfits server systems. New Shitmed
-    // code uses the entity-bearing variant above.
-    public List<(T Comp, OrganComponent Organ)> GetBodyOrganComponents<T>(EntityUid uid, BodyComponent? body = null)
-        where T : IComponent
-    {
-        if (!Resolve(uid, ref body, false))
-            return new List<(T, OrganComponent)>();
-
-        return GetBodyOrganEntityComps<T>((uid, body))
-            .Select(organ => (organ.Comp1, organ.Comp2))
-            .ToList();
-    }
-
-    public bool TryGetBodyOrganComponents<T>(EntityUid uid,
-        [NotNullWhen(true)] out List<(T Comp, OrganComponent Organ)>? components,
+    /// <param name="uid">The body entity id to check on.</param>
+    /// <param name="body">The body to check for organs on.</param>
+    /// <typeparam name="T">The component to check for.</typeparam>
+    public List<(T Comp, OrganComponent Organ)> GetBodyOrganComponents<T>(
+        EntityUid uid,
         BodyComponent? body = null)
         where T : IComponent
     {
-        components = GetBodyOrganComponents<T>(uid, body);
-        if (components.Count > 0)
-            return true;
+        if (!Resolve(uid, ref body))
+            return new List<(T Comp, OrganComponent Organ)>();
 
-        components = null;
-        return false;
+        var query = GetEntityQuery<T>();
+        var list = new List<(T Comp, OrganComponent Organ)>(3);
+        foreach (var organ in GetBodyOrgans(uid, body))
+        {
+            if (query.TryGetComponent(organ.Id, out var comp))
+                list.Add((comp, organ.Component));
+        }
+
+        return list;
     }
 
     /// <summary>
@@ -270,18 +235,19 @@ public partial class SharedBodySystem
     /// <param name="body">The body to check for organs on.</param>
     /// <typeparam name="T">The component to check for.</typeparam>
     /// <returns>Whether any were found.</returns>
-    public bool TryGetBodyOrganEntityComps<T>(
-        Entity<BodyComponent?> entity,
-        [NotNullWhen(true)] out List<Entity<T, OrganComponent>>? comps)
+    public bool TryGetBodyOrganComponents<T>(
+        EntityUid uid,
+        [NotNullWhen(true)] out List<(T Comp, OrganComponent Organ)>? comps,
+        BodyComponent? body = null)
         where T : IComponent
     {
-        if (!Resolve(entity.Owner, ref entity.Comp))
+        if (!Resolve(uid, ref body))
         {
             comps = null;
             return false;
         }
 
-        comps = GetBodyOrganEntityComps<T>(entity);
+        comps = GetBodyOrganComponents<T>(uid, body);
 
         if (comps.Count != 0)
             return true;
@@ -291,6 +257,17 @@ public partial class SharedBodySystem
     }
 
     // Shitmed Change Start
+
+    public bool TrySetOrganUsed(EntityUid organId, bool used, OrganComponent? organ = null)
+    {
+        if (!Resolve(organId, ref organ)
+            || organ.Used == used)
+            return false;
+
+        organ.Used = used;
+        Dirty(organId, organ);
+        return true;
+    }
 
     private void OnOrganEnableChanged(Entity<OrganComponent> organEnt, ref OrganEnableChangedEvent args)
     {
@@ -334,23 +311,6 @@ public partial class SharedBodySystem
             var ev = new OrganDisabledEvent(organEnt);
             RaiseLocalEvent(organEnt, ref ev);
         }
-    }
-
-    /// <summary>
-    /// Tries to remove the organ if it is inside of a body part.
-    /// </summary>
-    public bool TryRemoveOrgan(EntityUid organId, OrganComponent? organ = null)
-    {
-        if (!Resolve(organId, ref organ))
-            return false;
-
-        var ev = new TryRemoveOrganEvent(organId, organ);
-        RaiseLocalEvent(organId, ref ev);
-
-        if (ev.Cancelled)
-            return false;
-
-        return RemoveOrgan(organId, organ);
     }
 
     // Shitmed Change End

@@ -1,13 +1,11 @@
-// SPDX-License-Identifier: AGPL-3.0-or-later
-
 using Robust.Shared.Prototypes;
 
 namespace Content.Shared.Body.Prototypes;
 
-[Prototype]
+[Prototype("body")]
 public sealed partial class BodyPrototype : IPrototype
 {
-    [IdDataField] public string ID { get; private set; } = default!;
+    [IdDataField] public string ID { get; set; } = default!;
 
     [DataField("name")]
     public string Name { get; private set; } = "";

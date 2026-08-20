@@ -1,12 +1,8 @@
 ﻿using Content.Shared.Damage;
 using Content.Shared.Inventory;
-using Content.Shared.Body.Part;
-using Content.Shared._Shitmed.Medical.Surgery.Traumas;
-using Content.Goobstation.Maths.FixedPoint;
 using Robust.Shared.GameStates;
 using Robust.Shared.Serialization;
 using Robust.Shared.Utility;
-using Robust.Shared.Prototypes;
 
 namespace Content.Shared.Armor;
 
@@ -34,12 +30,6 @@ public sealed partial class ArmorComponent : Component
     /// </summary>
     [DataField, AutoNetworkedField]
     public bool ShowArmorOnExamine = true;
-
-    [DataField]
-    public Dictionary<ProtoId<TraumaTypePrototype>, FixedPoint2> TraumaDeductions = new();
-
-    [DataField]
-    public HashSet<BodyPartType> ArmorCoverage = new();
 }
 
 /// <summary>

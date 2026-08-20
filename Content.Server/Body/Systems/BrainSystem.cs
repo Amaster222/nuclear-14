@@ -1,5 +1,4 @@
 using Content.Server.Body.Components;
-using BrainComponent = Content.Server.Body.Components.BrainComponent;
 using Content.Server.Ghost.Components;
 using Content.Shared.Body.Components;
 using Content.Shared.Body.Events;

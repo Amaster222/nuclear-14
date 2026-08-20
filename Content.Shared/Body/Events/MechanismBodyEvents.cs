@@ -1,5 +1,3 @@
-// SPDX-License-Identifier: MIT
-
 namespace Content.Shared.Body.Events;
 
 // All of these events are raised on a mechanism entity when added/removed to a body in different
@@ -9,7 +7,7 @@ namespace Content.Shared.Body.Events;
 /// Raised on a mechanism when it is added to a body part.
 /// </summary>
 [ByRefEvent]
-public readonly record struct OrganAddedEvent(EntityUid Part, EntityUid Body); // Shitmed - added body
+public readonly record struct OrganAddedEvent(EntityUid Part);
 
 /// <summary>
 /// Raised on a mechanism when it is added to a body part within a body.
@@ -21,7 +19,7 @@ public readonly record struct OrganAddedToBodyEvent(EntityUid Body, EntityUid Pa
 /// Raised on a mechanism when it is removed from a body part.
 /// </summary>
 [ByRefEvent]
-public readonly record struct OrganRemovedEvent(EntityUid OldPart, EntityUid? OldBody); // Shitmed - added body
+public readonly record struct OrganRemovedEvent(EntityUid OldPart);
 
 /// <summary>
 /// Raised on a mechanism when it is removed from a body part within a body.
