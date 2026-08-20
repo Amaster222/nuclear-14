@@ -4,6 +4,7 @@ using Content.Shared.Atmos;
 using Content.Client.UserInterface.Controls;
 using Content.Shared.DeltaV.MedicalRecords; // #Misfits Change
 using Content.Shared._Shitmed.Targeting;
+using Content.Shared._Shitmed.Medical.Surgery.Wounds;
 using Content.Shared.Damage;
 using Content.Shared.Damage.Prototypes;
 using Content.Shared.FixedPoint;
@@ -58,7 +59,7 @@ namespace Content.Client.HealthAnalyzer.UI
             _bodyPartControls = new Dictionary<TargetBodyPart, TextureButton>
             {
                 { TargetBodyPart.Head, HeadButton },
-                { TargetBodyPart.Torso, ChestButton },
+                { TargetBodyPart.Chest, ChestButton },
                 { TargetBodyPart.Groin, GroinButton },
                 { TargetBodyPart.LeftArm, LeftArmButton },
                 { TargetBodyPart.LeftHand, LeftHandButton },
@@ -100,7 +101,7 @@ namespace Content.Client.HealthAnalyzer.UI
                 return;
 
             // Bit of the ole shitcode until we have Groins in the prototypes.
-            OnBodyPartSelected?.Invoke(part == TargetBodyPart.Groin ? TargetBodyPart.Torso : part, _target.Value);
+            OnBodyPartSelected?.Invoke(part == TargetBodyPart.Groin ? TargetBodyPart.Chest : part, _target.Value);
         }
 
         public void ResetBodyPart()
@@ -223,16 +224,20 @@ namespace Content.Client.HealthAnalyzer.UI
                 AlertsContainer.AddChild(bleedingLabel);
             }
 
-            if (msg.MedicalRecord is not { } medicalRecord)
+            // Triage belongs to the station medical record, not the body
+            // itself.  Records are absent for entities without a station
+            // identity, so retain a clean analyzer UI for those entities.
+            var showTriage = msg.ScanMode == true && msg.TriageStatus.HasValue;
+            TriageDivider.Visible = showTriage;
+            TriageControls.Visible = showTriage;
+
+            if (showTriage)
             {
-                TriageControls.Visible = false;
-            }
-            else
-            {
-                TriageControls.Visible = true;
-                _triageControls[medicalRecord.Status].Pressed = true;
-                ClaimButton.Text = medicalRecord.ClaimedName != null
-                    ? Loc.GetString("health-analyzer-window-triage-unclaim", ("claimedBy", medicalRecord.ClaimedName))
+                foreach (var (status, button) in _triageControls)
+                    button.Pressed = status == msg.TriageStatus;
+
+                ClaimButton.Text = msg.ClaimedBy is { } claimedBy
+                    ? Loc.GetString("health-analyzer-window-triage-unclaim", ("claimedBy", claimedBy))
                     : Loc.GetString("health-analyzer-window-triage-claim");
             }
 
@@ -349,7 +354,7 @@ namespace Content.Client.HealthAnalyzer.UI
         /// <summary>
         /// Sets up the Body Doll using Alert Entity to use in Health Analyzer.
         /// </summary>
-        private EntityUid? SetupIcon(Dictionary<TargetBodyPart, TargetIntegrity>? body)
+        private EntityUid? SetupIcon(Dictionary<TargetBodyPart, WoundableSeverity>? body)
         {
             if (body is null)
                 return null;
@@ -368,9 +373,9 @@ namespace Content.Client.HealthAnalyzer.UI
             foreach (var (bodyPart, integrity) in body)
             {
                 // TODO: PartStatusUIController and make it use layers instead of TextureRects when EE refactors alerts.
-                string enumName = Enum.GetName(typeof(TargetBodyPart), bodyPart) ?? "Unknown";
+                var spriteName = bodyPart.GetStatusSpriteName();
                 int enumValue = (int) integrity;
-                var rsi = new SpriteSpecifier.Rsi(new ResPath($"/Textures/_Shitmed/Interface/Targeting/Status/{enumName.ToLowerInvariant()}.rsi"), $"{enumName.ToLowerInvariant()}_{enumValue}");
+                var rsi = new SpriteSpecifier.Rsi(new ResPath($"/Textures/_Shitmed/Interface/Targeting/Status/{spriteName}.rsi"), $"{spriteName}_{enumValue}");
                 // Shitcode with love from Russia :)
                 if (!_spriteSystem.TryGetLayer(spriteEnt, layer, out _, false))
                     _spriteSystem.AddTextureLayer(spriteEnt, _spriteSystem.Frame0(rsi));
