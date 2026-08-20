@@ -10437,3 +10437,17 @@ Entries:
   id: 6342
   time: '2026-08-18T23:01:52.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1779
+- author: Squagg
+  changes:
+    - type: Fix
+      message: >-
+        Crates unloaded from a vertibird by someone in a seat now land on the
+        ground next to the aircraft instead of vanishing under the hull or
+        getting stuck to the vertibird and following it around.
+    - type: Fix
+      message: >-
+        Vertibird gunners can hear people talking in the cabin, talk back, and
+        use their radio while manning the turret.
+  id: 6343
+  time: '2026-08-20T01:52:51.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1781
