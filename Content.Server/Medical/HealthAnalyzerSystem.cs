@@ -28,6 +28,8 @@ using Robust.Shared.Timing;
 using Content.Shared.Body.Part;
 using Content.Shared.Body.Systems;
 using Content.Shared._Shitmed.Targeting;
+using Content.Shared._Shitmed.Medical.Surgery.Wounds;
+using Content.Shared._Shitmed.Medical.Surgery.Wounds.Systems;
 using System.Linq;
 
 namespace Content.Server.Medical;
@@ -179,7 +181,7 @@ public sealed class HealthAnalyzerSystem : EntitySystem
     /// <param name="healthAnalyzer">The health analyzer that should receive the updates</param>
     /// <param name="target">The entity to start analyzing</param>
     /// <param name="part">Shitmed Change: The body part to analyze, if any</param>
-    private void BeginAnalyzingEntity(Entity<HealthAnalyzerComponent> healthAnalyzer, EntityUid target, EntityUid? part = null)
+    public void BeginAnalyzingEntity(Entity<HealthAnalyzerComponent> healthAnalyzer, EntityUid target, EntityUid? part = null)
     {
         //Link the health analyzer to the scanned entity
         healthAnalyzer.Comp.ScannedEntity = target;
@@ -194,7 +196,7 @@ public sealed class HealthAnalyzerSystem : EntitySystem
     /// </summary>
     /// <param name="healthAnalyzer">The health analyzer that's receiving the updates</param>
     /// <param name="target">The entity to analyze</param>
-    private void StopAnalyzingEntity(Entity<HealthAnalyzerComponent> healthAnalyzer, EntityUid target)
+    public void StopAnalyzingEntity(Entity<HealthAnalyzerComponent> healthAnalyzer, EntityUid target)
     {
         //Unlink the analyzer
         healthAnalyzer.Comp.ScannedEntity = null;
@@ -278,9 +280,9 @@ public sealed class HealthAnalyzerSystem : EntitySystem
         }
 
         // Shitmed Change Start
-        Dictionary<TargetBodyPart, TargetIntegrity>? body = null;
+        Dictionary<TargetBodyPart, WoundableSeverity>? body = null;
         if (HasComp<TargetingComponent>(target))
-            body = _bodySystem.GetBodyPartStatus(target);
+            body = EntityManager.System<WoundSystem>().GetWoundableStatesOnBody(target);
         // Shitmed Change End
 
         var medicalRecord = _medicalRecords.GetMedicalRecords(target);
@@ -293,8 +295,9 @@ public sealed class HealthAnalyzerSystem : EntitySystem
             bleeding,
             unrevivable,
             body, // Shitmed Change
-            medicalRecord,
-            part != null ? GetNetEntity(part) : null // Shitmed Change
+            part != null ? GetNetEntity(part) : null, // Shitmed Change
+            medicalRecord?.Status,
+            medicalRecord?.ClaimedName
         ));
     }
 }

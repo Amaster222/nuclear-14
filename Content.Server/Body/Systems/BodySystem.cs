@@ -126,7 +126,9 @@ public sealed class BodySystem : SharedBodySystem
         SoundSpecifier? gibSoundOverride = null,
         // Shitmed Change
         GibType gib = GibType.Gib,
-        GibContentsOption contents = GibContentsOption.Drop)
+        GibContentsOption contents = GibContentsOption.Drop,
+        List<string>? allowedContainers = null,
+        List<string>? excludedContainers = null)
     {
         if (!Resolve(bodyId, ref body, logMissing: false)
             || TerminatingOrDeleted(bodyId)
@@ -141,7 +143,7 @@ public sealed class BodySystem : SharedBodySystem
 
         var gibs = base.GibBody(bodyId, gibOrgans, body, launchGibs: launchGibs,
             splatDirection: splatDirection, splatModifier: splatModifier, splatCone: splatCone,
-            gib: gib, contents: contents); // Shitmed Change
+            gib: gib, contents: contents, allowedContainers: allowedContainers, excludedContainers: excludedContainers); // Shitmed Change
 
         // #Misfits Change Add: full gibbing is a dramatic visible state change worth surfacing in emote chat.
         if (HasComp<MobStateComponent>(bodyId))

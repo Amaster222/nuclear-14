@@ -1,6 +1,7 @@
 using Content.Server.Administration.Logs;
 using Content.Server.Atmos.EntitySystems;
 using Content.Server.Body.Components;
+using LungComponent = Content.Server.Body.Components.LungComponent;
 using Content.Server.Chat.Systems;
 using Content.Server.Chemistry.Containers.EntitySystems;
 using Content.Server.EntityEffects.EffectConditions;

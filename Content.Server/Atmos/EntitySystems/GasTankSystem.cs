@@ -1,4 +1,5 @@
 using Content.Server.Atmos.Components;
+using GasTankComponent = Content.Server.Atmos.Components.GasTankComponent;
 using Content.Server.Body.Components;
 using Content.Server.Body.Systems;
 using Content.Server.Cargo.Systems;
@@ -78,10 +79,7 @@ namespace Content.Server.Atmos.EntitySystems
             _ui.SetUiState(owner, SharedGasTankUiKey.Key,
                 new GasTankBoundUserInterfaceState
                 {
-                    TankPressure = component.Air?.Pressure ?? 0,
-                    OutputPressure = initialUpdate ? component.OutputPressure : null,
-                    InternalsConnected = component.IsConnected,
-                    CanConnectInternals = CanConnectToInternals(component)
+                    TankPressure = component.Air?.Pressure ?? 0
                 });
         }
 
