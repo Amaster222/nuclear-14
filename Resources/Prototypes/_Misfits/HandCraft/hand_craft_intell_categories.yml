@@ -998,6 +998,17 @@
   materials:
     Plastic: 50
 
+# #Cythisiax Added - Binoculars craftable in G menu with basic materials (glass lenses, steel frame, leather strap)
+- type: handCraftIntellRecipe
+  id: N14Binoculars
+  minInt: 7
+  result: N14Binoculars
+  completeTime: 5
+  materials:
+    Steel: 100
+    Glass: 200
+    Leather: 100
+
 # Medicine
 
 - type: handCraftIntellRecipe
