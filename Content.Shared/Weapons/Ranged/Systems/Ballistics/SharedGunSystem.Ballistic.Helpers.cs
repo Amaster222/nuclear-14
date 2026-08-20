@@ -46,6 +46,9 @@ public abstract partial class SharedGunSystem
         {
             Containers.Insert(shotUID!.Value, recieverComp.Container);
         }
+        Dirty(recieverUid, recieverComp);
+        UpdateBallisticAppearance(recieverUid, recieverComp);
+        UpdateAmmoCount(recieverUid);
     }
 
     /// <summary>
@@ -97,7 +100,7 @@ public abstract partial class SharedGunSystem
         }
     }
     /// <summary>
-    /// Is this valid entity allowed to give more than 1 ammo?
+    /// Is this valid entity allowed to give more than 1 ammo at once?
     /// </summary>
     private bool CanInstantFill(EntityUid giver) => HasComp<SpeedLoaderComponent>(giver);
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

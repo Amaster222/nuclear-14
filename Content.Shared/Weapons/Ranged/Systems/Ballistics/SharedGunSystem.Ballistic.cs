@@ -164,7 +164,11 @@ public abstract partial class SharedGunSystem
     private void OnBallisticAmmoFillDoAfter(EntityUid giverUID, BallisticAmmoProviderComponent giverComp, AmmoFillDoAfterEvent args)
     {
         if (Deleted(args.Target) || !TryComp<BallisticAmmoProviderComponent>(args.Target.Value, out var recieverComp))
+        {
+            args.Repeat = false;
             return;
+        }
+
 
 
 
