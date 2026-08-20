@@ -91,6 +91,13 @@
     communicationsJobs:
     - FollowerDoctor
     - SuperMutantFollowerDoctor
+  # #Misfits Fix - Override the OverwatchConsole inherited from N14BrotherhoodTacticalmap
+  # so this map's Overwatch tab only tracks Followers (IdCardFollowers), not Brotherhood
+  # members. The child component replaces the parent's trackedTags.
+  - type: OverwatchConsole
+    monitorTitle: overwatch-monitor-title-followers
+    trackedTags:
+    - IdCardFollowers
   - type: AccessReader
     access: [["FotA"]]
   - type: ActivatableUIRequiresAccess
@@ -122,6 +129,13 @@
     communicationsJobs:
     - FollowerDoctor
     - SuperMutantFollowerDoctor
+  # #Misfits Fix - Override the OverwatchConsole inherited from N14BrotherhoodTacticalmapBroken
+  # (which was repurposed as an NCR map) so this broken Followers map's Overwatch tab only
+  # tracks Followers (IdCardFollowers), not NCR personnel.
+  - type: OverwatchConsole
+    monitorTitle: overwatch-monitor-title-followers
+    trackedTags:
+    - IdCardFollowers
   - type: AccessReader
     access: [["FotA"]]
   - type: ActivatableUIRequiresAccess
