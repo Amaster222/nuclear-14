@@ -85,7 +85,7 @@ public abstract class SharedOnHitSystem : EntitySystem
             {
                 var solution = new Solution(ent.Comp.Reagents);
                 foreach (var reagent in ent.Comp.Reagents)
-                    if (ent.Comp.ReagentLimit != null && _solutionContainers.GetTotalPrototypeQuantity(target, reagent.Reagent.ToString()) >= FixedPoint2.New(ent.Comp.ReagentLimit.Value))
+                    if (ent.Comp.ReagentLimit != null && _solutionContainers.GetTotalPrototypeQuantity(target, reagent.Reagent.ToString()).Value >= FixedPoint2.New(ent.Comp.ReagentLimit.Value).Value)
                         return;
 
                 if (!ent.Comp.NeedsRestrain

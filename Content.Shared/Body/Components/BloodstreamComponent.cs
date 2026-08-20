@@ -15,7 +15,7 @@ namespace Content.Shared.Body.Components;
 /// <summary>
 /// Gives an entity a bloodstream.
 /// </summary>
-[RegisterComponent, NetworkedComponent,]
+[RegisterComponent, ComponentProtoName("GoobBloodstream"), NetworkedComponent]
 [AutoGenerateComponentState(fieldDeltas: true), AutoGenerateComponentPause]
 [Access(typeof(SharedBloodstreamSystem))]
 public sealed partial class BloodstreamComponent : Component
@@ -150,7 +150,7 @@ public sealed partial class BloodstreamComponent : Component
     /// Slime-people might use slime as their blood or something like that.
     /// </remarks>
     [DataField, AutoNetworkedField]
-    public Solution BloodReferenceSolution = new([new("Blood", 300)]);
+    public Solution BloodReferenceSolution = new([new(new ReagentId("Blood", null), 300)]);
 
     /// <summary>
     /// Caches the blood data of an entity.

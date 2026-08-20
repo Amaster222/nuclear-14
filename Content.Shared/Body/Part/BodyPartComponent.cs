@@ -41,6 +41,15 @@ public sealed partial class BodyPartComponent : Component, ISurgeryToolComponent
     [DataField]
     public float Speed { get; set; } = 1f;
 
+    [DataField]
+    public float MinIntegrity;
+
+    [DataField, AutoNetworkedField]
+    public bool CanSever = true;
+
+    [DataField, AutoNetworkedField]
+    public float SeverIntegrity = 90f;
+
     /// <summary>
     ///     Shitmed Change: What composition does this body part classify as
     /// </summary>

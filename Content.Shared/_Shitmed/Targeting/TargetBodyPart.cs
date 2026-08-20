@@ -15,6 +15,8 @@ public enum TargetBodyPart : ushort
 {
     Head = 1,
     Chest = 1 << 1,
+    // Compatibility with legacy armor and surgery prototypes.
+    Torso = Chest,
     Groin = 1 << 2,
     LeftArm = 1 << 3,
     LeftHand = 1 << 4,
@@ -37,4 +39,19 @@ public enum TargetBodyPart : ushort
     All = Head | Chest | Groin | LeftArm | LeftHand | RightArm | RightHand | LeftLeg | LeftFoot | RightLeg | RightFoot,
 
     Vital = Head | Chest | Groin, // Goobstation
+}
+
+/// <summary>
+/// Compatibility names for the existing Shitmed body-doll sprite assets.
+/// The gameplay enum uses the upstream <see cref="TargetBodyPart.Chest"/> name,
+/// while the Fallout body-doll RSI was authored with a <c>torso</c> state.
+/// </summary>
+public static class TargetBodyPartExtensions
+{
+    public static string GetStatusSpriteName(this TargetBodyPart bodyPart)
+    {
+        return bodyPart == TargetBodyPart.Chest
+            ? "torso"
+            : bodyPart.ToString().ToLowerInvariant();
+    }
 }

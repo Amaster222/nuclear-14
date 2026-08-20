@@ -187,7 +187,7 @@ public abstract partial class SharedSurgerySystem : EntitySystem
         if (args.ToolUsed)
         {
             if (_stackQuery.HasComp(tool))
-                _stack.ReduceCount(tool, 1);
+                _stack.Use(tool, 1);
             else
                 PredictedQueueDel(tool);
         }

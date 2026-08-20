@@ -73,7 +73,7 @@ public sealed partial class AddOrganSlot : EntityEffect
     {
         var body = args.EntityManager.System<SharedBodySystem>();
         if (Enum.TryParse<BodyPartType>(Category, true, out var partType))
-            body.TryCreatePartSlot(args.TargetEntity, Category.ToLowerInvariant(), partType, out _);
+            body.TryCreatePartSlot(args.TargetEntity, Category.ToLowerInvariant(), partType, BodyPartSymmetry.None, out _);
         else
             body.TryCreateOrganSlot(args.TargetEntity, Category.ToLowerInvariant(), out _);
     }
@@ -151,7 +151,7 @@ public sealed partial class RegenerateOrgan : EntityEffect
         }
         var system = em.System<SharedBodySystem>();
         var slot = pair.Key;
-        system.TryCreatePartSlot(args.TargetEntity, slot, spawnedPart.PartType, out _, parent);
+        system.TryCreatePartSlot(args.TargetEntity, slot, spawnedPart.PartType, spawnedPart.Symmetry, out _, parent);
         if (!system.AttachPart(args.TargetEntity, slot, spawned, parent, spawnedPart))
             em.QueueDeleteEntity(spawned);
     }

@@ -36,7 +36,9 @@ public abstract class SharedTargetingSystem : EntitySystem
             case TargetBodyPart.Chest:
                 return HumanoidVisualLayers.Chest;
             case TargetBodyPart.Groin:
-                return HumanoidVisualLayers.Groin;
+                // Misfits has no separate groin sprite layer; it is rendered by
+                // the chest layer while remaining a distinct surgery target.
+                return HumanoidVisualLayers.Chest;
             case TargetBodyPart.LeftArm:
                 return HumanoidVisualLayers.LArm;
             case TargetBodyPart.LeftHand:

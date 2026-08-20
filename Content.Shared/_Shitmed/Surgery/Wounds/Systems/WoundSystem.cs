@@ -30,6 +30,18 @@ namespace Content.Shared._Shitmed.Medical.Surgery.Wounds.Systems;
 
 public sealed partial class WoundSystem : EntitySystem
 {
+    // Wound entity IDs share the global entity-prototype namespace. Misfits
+    // already uses "Blunt" for a smokeable, so the wound itself is namespaced
+    // while the medical API continues to accept the normal damage-type ID.
+    private static readonly IReadOnlyDictionary<string, string> WoundPrototypeIds =
+        new Dictionary<string, string>
+        {
+            ["Blunt"] = "WoundBlunt",
+        };
+
+    private static string GetWoundPrototypeId(string damageTypeOrPrototype) =>
+        WoundPrototypeIds.GetValueOrDefault(damageTypeOrPrototype, damageTypeOrPrototype);
+
     private Dictionary<string, DamageGroupPrototype?> _damageTypeToGroup = new();
     [Dependency] private readonly IPrototypeManager _prototype = default!;
     [Dependency] private readonly IComponentFactory _factory = default!;
@@ -138,7 +150,6 @@ public sealed partial class WoundSystem : EntitySystem
             if (TerminatingOrDeleted(ent)
                 || Paused(ent)
                 || body.BodyType == BodyType.Simple
-                || _timing.CurTime - damageable.LastModifiedTime < _minimumTimeBeforeHeal
                 || _timing.CurTime < body.HealAt
                 || _mobState.IsIncapacitated(ent)
                 || !_body.TryGetRootPart(ent, out var rootPart, body: body))
@@ -187,9 +198,9 @@ public sealed partial class WoundSystem : EntitySystem
                 anythingToHeal = true;
 
             if (damageSpecifier.DamageDict.TryGetValue(damageType, out var existingAmount))
-                damageSpecifier.DamageDict[damageType] = existingAmount + adjustedHealAmount;
+                damageSpecifier.DamageDict[damageType] = existingAmount + Content.Shared.FixedPoint.FixedPoint2.FromCents(adjustedHealAmount.Value);
             else
-                damageSpecifier.DamageDict.TryAdd(damageType, adjustedHealAmount);
+                damageSpecifier.DamageDict.TryAdd(damageType, Content.Shared.FixedPoint.FixedPoint2.FromCents(adjustedHealAmount.Value));
         }
 
         if (!anythingToHeal)

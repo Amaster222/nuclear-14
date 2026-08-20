@@ -6,7 +6,6 @@ using Robust.Shared.Prototypes;
 namespace Content.Shared._Shitmed.Medical.Surgery;
 
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
-[EntityCategory("Surgeries")]
 public sealed partial class SurgeryComponent : Component
 {
     [DataField, AutoNetworkedField]

@@ -203,7 +203,6 @@ namespace Content.Goobstation.Maths.FixedPoint
         public static implicit operator FixedPoint2(float n) => FixedPoint2.New(n);
         public static implicit operator FixedPoint2(double n) => FixedPoint2.New(n);
         public static implicit operator FixedPoint2(int n) => FixedPoint2.New(n);
-
         public static explicit operator float(FixedPoint2 n) => n.Float();
         public static explicit operator double(FixedPoint2 n) => n.Double();
         public static explicit operator int(FixedPoint2 n) => n.Int();

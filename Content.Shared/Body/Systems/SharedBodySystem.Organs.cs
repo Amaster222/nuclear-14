@@ -235,6 +235,32 @@ public partial class SharedBodySystem
         return list;
     }
 
+    // Compatibility surface for existing Misfits server systems. New Shitmed
+    // code uses the entity-bearing variant above.
+    public List<(T Comp, OrganComponent Organ)> GetBodyOrganComponents<T>(EntityUid uid, BodyComponent? body = null)
+        where T : IComponent
+    {
+        if (!Resolve(uid, ref body, false))
+            return new List<(T, OrganComponent)>();
+
+        return GetBodyOrganEntityComps<T>((uid, body))
+            .Select(organ => (organ.Comp1, organ.Comp2))
+            .ToList();
+    }
+
+    public bool TryGetBodyOrganComponents<T>(EntityUid uid,
+        [NotNullWhen(true)] out List<(T Comp, OrganComponent Organ)>? components,
+        BodyComponent? body = null)
+        where T : IComponent
+    {
+        components = GetBodyOrganComponents<T>(uid, body);
+        if (components.Count > 0)
+            return true;
+
+        components = null;
+        return false;
+    }
+
     /// <summary>
     ///     Tries to get a list of ValueTuples of <see cref="T"/> and OrganComponent on each organs
     ///     in the given body.

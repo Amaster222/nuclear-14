@@ -12,7 +12,7 @@ using Content.Shared.Pointing;
 
 namespace Content.Shared.Body.Systems
 {
-    public sealed class BrainSystem : EntitySystem
+    public abstract class BrainSystem : EntitySystem
     {
         [Dependency] private readonly SharedMindSystem _mindSystem = default!;
         [Dependency] private readonly SharedBodySystem _bodySystem = default!; // Shitmed Change
@@ -32,15 +32,6 @@ namespace Content.Shared.Body.Systems
                 || TerminatingOrDeleted(args.OldBody))
                 return;
 
-            // goob start
-            var remEv = new BeforeBrainRemovedEvent();
-            RaiseLocalEvent(args.OldBody, ref remEv);
-
-            if (remEv.Blocked)
-                return;
-
-            // goob end
-
             brain.Active = false;
             if (!CheckOtherBrains(args.OldBody))
             {
@@ -55,15 +46,6 @@ namespace Content.Shared.Body.Systems
             if (TerminatingOrDeleted(uid)
                 || TerminatingOrDeleted(args.Body))
                 return;
-
-            // goob start
-            var addEv = new BeforeBrainAddedEvent();
-            RaiseLocalEvent(args.Body, ref addEv);
-
-            if (addEv.Blocked)
-                return;
-
-            // goob end
 
             if (!CheckOtherBrains(args.Body))
             {
@@ -80,9 +62,6 @@ namespace Content.Shared.Body.Systems
 
             EnsureComp<MindContainerComponent>(newEntity);
             EnsureComp<MindContainerComponent>(oldEntity);
-
-            var ghostOnMove = EnsureComp<GhostOnMoveComponent>(newEntity);
-            ghostOnMove.MustBeDead = HasComp<MobStateComponent>(newEntity); // Don't ghost living players out of their bodies.
 
             if (!_mindSystem.TryGetMind(oldEntity, out var mindId, out var mind))
                 return;

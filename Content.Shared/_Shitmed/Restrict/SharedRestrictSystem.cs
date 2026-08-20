@@ -36,7 +36,7 @@ public sealed partial class SharedRestrictSystem : EntitySystem
 
     private void OnAttemptMelee(Entity<RestrictMeleeByUserTagComponent> ent, ref AttemptMeleeEvent args)
     {
-        if(!_tagSystem.HasAllTags(args.User, ent.Comp.Contains) || _tagSystem.HasAnyTag(args.User, ent.Comp.DoesntContain))
+        if(!_tagSystem.HasAllTags(args.PlayerUid, ent.Comp.Contains) || _tagSystem.HasAnyTag(args.PlayerUid, ent.Comp.DoesntContain))
         {
             if(ent.Comp.Messages.Count != 0)
                 args.Message = Loc.GetString(_random.Pick(ent.Comp.Messages));

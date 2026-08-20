@@ -8,7 +8,6 @@ namespace Content.Shared.StatusEffectNew.Components;
 /// Used in conjunction with <see cref="StatusEffectComponent"/> to display an alert when the status effect is present.
 /// </summary>
 [RegisterComponent, NetworkedComponent]
-[EntityCategory("StatusEffects")]
 public sealed partial class StatusEffectAlertComponent : Component
 {
     /// <summary>

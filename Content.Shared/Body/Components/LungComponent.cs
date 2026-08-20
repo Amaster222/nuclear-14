@@ -9,7 +9,7 @@ using Robust.Shared.Prototypes;
 
 namespace Content.Shared.Body.Components;
 
-[RegisterComponent, NetworkedComponent, Access(typeof(LungSystem))]
+[RegisterComponent, ComponentProtoName("GoobLung"), NetworkedComponent, Access(typeof(LungSystem))]
 public sealed partial class LungComponent : Component
 {
     [DataField]

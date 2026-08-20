@@ -174,7 +174,8 @@ public sealed partial class StatusEffectsSystem : EntitySystem
         if (!effectProtoData.TryGetComponent<StatusEffectComponent>(out var effectProtoComp, Factory))
             return false;
 
-        if (!_whitelist.CheckBoth(uid, effectProtoComp.Blacklist, effectProtoComp.Whitelist))
+        if (_whitelist.IsBlacklistPass(effectProtoComp.Blacklist, uid)
+            || _whitelist.IsWhitelistFail(effectProtoComp.Whitelist, uid))
             return false;
 
         var ev = new BeforeStatusEffectAddedEvent(effectProto);

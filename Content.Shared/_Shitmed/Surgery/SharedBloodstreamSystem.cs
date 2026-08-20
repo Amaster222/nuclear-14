@@ -366,7 +366,7 @@ public abstract partial class SharedBloodstreamSystem
         if (!Resolve(ent.Owner, ref ent.Comp))
             return;
 
-        ent.Comp.BloodReferenceSolution.Volume = volume;
+        ent.Comp.BloodReferenceSolution.Volume = Content.Shared.FixedPoint.FixedPoint2.FromCents(volume.Value);
     }
     // end Goobstation: port EE height/width sliders
 }

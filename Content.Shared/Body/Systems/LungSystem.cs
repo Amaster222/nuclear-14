@@ -15,7 +15,7 @@ using InternalsComponent = Content.Shared.Body.Components.InternalsComponent;
 
 namespace Content.Shared.Body.Systems;
 
-public sealed class LungSystem : EntitySystem
+public abstract class LungSystem : EntitySystem
 {
     [Dependency] private readonly SharedAtmosphereSystem _atmos = default!;
     [Dependency] private readonly SharedInternalsSystem _internals = default!;
@@ -33,7 +33,9 @@ public sealed class LungSystem : EntitySystem
 
     private void OnGotUnequipped(Entity<BreathToolComponent> ent, ref GotUnequippedEvent args)
     {
-        _atmos.DisconnectInternals(ent);
+        if (ent.Comp.ConnectedInternalsEntity is { } wearer
+            && TryComp(wearer, out InternalsComponent? internals))
+            _internals.DisconnectBreathTool((wearer, internals), ent);
     }
 
     private void OnGotEquipped(Entity<BreathToolComponent> ent, ref GotEquippedEvent args)
@@ -99,7 +101,7 @@ public sealed class LungSystem : EntitySystem
             if (moles <= 0)
                 continue;
 
-            var reagent = _atmos.GasReagents[i];
+            var reagent = _atmos.GetGas(gasId).Reagent;
             if (reagent is null)
                 continue;
 

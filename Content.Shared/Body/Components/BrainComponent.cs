@@ -2,7 +2,7 @@
 
 namespace Content.Shared.Body.Components;
 
-[RegisterComponent, Access(typeof(BrainSystem))]
+[RegisterComponent, ComponentProtoName("GoobBrain"), Access(typeof(BrainSystem))]
 public sealed partial class BrainComponent : Component
 {
     /// <summary>

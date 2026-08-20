@@ -10,7 +10,9 @@ using Content.Shared._Shitmed.Medical.Surgery.Traumas;
 using Content.Shared.Body.Organ;
 using Content.Shared.Body.Part;
 using Content.Shared.Damage.Components;
+using Content.Shared.Damage;
 using Content.Shared.Humanoid;
+using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.Popups;
 using Robust.Shared.Audio;
@@ -716,7 +718,13 @@ public partial class PainSystem
         if (shouldUpdate
             && _net.IsServer)
         {
-            RaiseNetworkEvent(new MobThresholdChecked(GetNetEntity(body)), body); // Shitcod to handle overlays.
+            if (TryComp<MobStateComponent>(body, out var state)
+                && TryComp<MobThresholdsComponent>(body, out var thresholds)
+                && TryComp<DamageableComponent>(body, out var damageable))
+            {
+                var ev = new MobThresholdChecked(body, state, thresholds, damageable);
+                RaiseLocalEvent(body, ref ev);
+            }
         }
     }
 
@@ -839,7 +847,7 @@ public partial class PainSystem
                     nerveSys,
                     nerveSys.Comp.PainShockAdrenalineTime);
 
-                _stun.TryUpdateParalyzeDuration(body, nerveSys.Comp.PainShockStunTime);
+                _stun.TryParalyze(body, nerveSys.Comp.PainShockStunTime, refresh: true);
                 _jitter.DoJitter(body, nerveSys.Comp.PainShockStunTime, true, 20f, 7f);
 
                 // For the funnies :3
@@ -855,7 +863,7 @@ public partial class PainSystem
                 var agonySpecifier = nerveSys.Comp.AgonyScreams[sex];
                 PlayPainSound(body, nerveSys, agonySpecifier, AudioParams.Default.WithVolume(12f), screamString: shockAgonyString);
 
-                _stun.TryUpdateParalyzeDuration(body, nerveSys.Comp.PainShockStunTime * 1.4);
+                _stun.TryParalyze(body, nerveSys.Comp.PainShockStunTime * 1.4, refresh: true);
                 _jitter.DoJitter(body, nerveSys.Comp.PainShockStunTime * 1.4, true, 20f, 7f);
 
                 _consciousness.ForceConscious(body, nerveSys.Comp.PainShockStunTime * 1.4);

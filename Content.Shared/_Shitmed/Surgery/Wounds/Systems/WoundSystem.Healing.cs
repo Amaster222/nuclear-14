@@ -288,7 +288,7 @@ public sealed partial class WoundSystem
 
         foreach (var (key, value) in damage.DamageDict)
         {
-            if (HealWoundsCore(woundable, -value, key, out var tempHealed, component, ignoreMultipliers, ignoreBlockers))
+            if (HealWoundsCore(woundable, FixedPoint2.FromCents(-value.Value), key, out var tempHealed, component, ignoreMultipliers, ignoreBlockers))
                 healed.Add(key, tempHealed);
         }
 
@@ -408,8 +408,9 @@ public sealed partial class WoundSystem
             || !woundComp.CanBeHealed)
             return FixedPoint2.Zero;
 
-        var woundHealingMultiplier =
-            _prototype.Index(woundComp.DamageType).WoundHealingMultiplier;
+        // Misfits damage prototypes do not carry Goob's per-type multiplier.
+        // Component-level healing multipliers remain in effect below.
+        const float woundHealingMultiplier = 1f;
 
         if (component.HealingMultipliers.Count == 0)
             return severity * woundHealingMultiplier;

@@ -1,5 +1,5 @@
 using Content.Goobstation.Common.Bloodstream;
-using Content.Goobstation.Common.CCVar; // Goobstation
+using Content.Shared._Goobstation.CCVar;
 using Content.Goobstation.Maths.FixedPoint;
 using Content.Shared._Shitmed.Body;
 using Content.Shared._Shitmed.Damage;
@@ -8,6 +8,7 @@ using Content.Shared._Shitmed.Medical.Surgery.Traumas.Components;
 using Content.Shared._Shitmed.Medical.Surgery.Wounds.Components;
 using Content.Shared._Shitmed.Targeting;
 using System.Linq;
+using SharedFixedPoint2 = Content.Shared.FixedPoint.FixedPoint2;
 using Content.Shared.Alert;
 using Content.Shared.Body.Components;
 using Content.Shared.Body.Events;
@@ -16,12 +17,9 @@ using Content.Shared.Chemistry.EntitySystems;
 using Content.Shared.Chemistry.Reaction;
 using Content.Shared.Chemistry.Reagent;
 using Content.Shared.Damage;
-using Content.Shared.EntityEffects.Effects;
 using Content.Goobstation.Maths.FixedPoint;
 using Content.Shared.Drunk;
-using Content.Shared.EntityEffects.Effects.Solution;
 using Content.Shared.Fluids;
-using Content.Shared.Forensics.Components;
 using Content.Shared.HealthExaminable;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.Popups;
@@ -34,7 +32,6 @@ using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
 using System.Linq;
-using Content.Shared.EntityEffects.Effects;
 
 namespace Content.Shared.Body.Systems;
 // todo marty clean up this warzone.
@@ -54,6 +51,8 @@ public abstract partial class SharedBloodstreamSystem : EntitySystem
     [Dependency] private readonly DamageableSystem _damageableSystem = default!;
 
     private float _bloodlossMultiplier = 4f; // Goobstation
+
+    private static FixedPoint2 ToGoob(SharedFixedPoint2 value) => FixedPoint2.FromCents(value.Value);
 
     public override void Initialize()
     {
@@ -113,7 +112,7 @@ public abstract partial class SharedBloodstreamSystem : EntitySystem
 
                     _damageableSystem.TryChangeDamage(uid, amt,
                         ignoreResistances: false, interruptsDoAfters: false,
-                        splitDamage: SplitDamageBehavior.SplitEnsureAll, targetPart: TargetBodyPart.All);
+                        targetPart: TargetBodyPart.All);
                     // Goobstation end
 
                     // Apply dizziness as a symptom of bloodloss.
@@ -129,9 +128,8 @@ public abstract partial class SharedBloodstreamSystem : EntitySystem
                         bloodstream.BloodlossHealDamage * bloodPercentage * _bloodlossMultiplier, // Goobstation
                         ignoreResistances: true,
                         interruptsDoAfters: false,
-                        ignoreBlockers: true,
                         targetPart: TargetBodyPart.All,
-                        splitDamage: SplitDamageBehavior.SplitEnsureAll); // Shitmed Change
+                        doPartDamage: true); // Shitmed Change
 
                     _status.TryRemoveStatusEffect(uid, Bloodloss);
                 }
@@ -172,14 +170,14 @@ public abstract partial class SharedBloodstreamSystem : EntitySystem
                 if (!_consciousness.SetConsciousnessModifier(
                         uid,
                         nerveSys.Value,
-                        -missingBlood / 4,
+                        ToGoob(-missingBlood / 4),
                         identifier: "Bleeding",
                         type: ConsciousnessModType.Pain))
                 {
                     _consciousness.AddConsciousnessModifier(
                         uid,
                         nerveSys.Value,
-                        -missingBlood / 4,
+                        ToGoob(-missingBlood / 4),
                         identifier: "Bleeding",
                         type: ConsciousnessModType.Pain);
                 }
@@ -233,8 +231,9 @@ public abstract partial class SharedBloodstreamSystem : EntitySystem
             {
                 // TODO: Rather than this, ReactionAttempt should allow systems to remove effects from the list before the reaction.
                 // TODO: I think there's a PR up on the repo for this and if there isn't I'll make one -Princess
-                case EntityEffects.Effects.EntitySpawning.SpawnEntity: // Prevent entities from spawning in the bloodstream
-                case AreaReactionEffect: // No spontaneous smoke or foam leaking out of blood vessels.
+                // The local effect model has no shared spawn/area effect base types.
+                // Keep the blood solution from running effects that this fork defines server-side.
+                case Content.Shared._Misfits.EntityEffects.SpawnEntity:
                     args.Cancelled = true;
                     return;
             }
@@ -279,7 +278,10 @@ public abstract partial class SharedBloodstreamSystem : EntitySystem
 
         // some reagents may deal and heal different damage types in the same tick, which means DamageIncreased will be true
         // but we only want to consider the dealt damage when causing bleeding
-        var damage = DamageSpecifier.GetPositive(args.DamageDelta);
+        var damage = new DamageSpecifier();
+        foreach (var (type, value) in args.DamageDelta.DamageDict)
+            if (value > 0)
+                damage.DamageDict[type] = value;
         var bloodloss = DamageSpecifier.ApplyModifierSet(damage, modifiers);
 
         if (bloodloss.Empty)
@@ -298,12 +300,12 @@ public abstract partial class SharedBloodstreamSystem : EntitySystem
 
         // TODO: Replace with RandomPredicted once the engine PR is merged
         // Use both the receiver and the damage causing entity for the seed so that we have different results for multiple attacks in the same tick
-        var seed = SharedRandomExtensions.HashCodeCombine((int)_timing.CurTick.Value, GetNetEntity(ent).Id, GetNetEntity(args.Origin)?.Id ?? 0 );
+        var seed = HashCode.Combine((int)_timing.CurTick.Value, GetNetEntity(ent).Id, GetNetEntity(args.Origin)?.Id ?? 0);
         var rand = new System.Random(seed);
         var prob = Math.Clamp(totalFloat / 25, 0, 1);
         if (totalFloat > 0 && rand.Prob(prob))
         {
-            TryBleedOut(ent.AsNullable(), total / 5);
+            TryBleedOut(ent.AsNullable(), ToGoob(total / 5));
             _audio.PlayPredicted(ent.Comp.InstantBloodSound, ent, args.Origin);
         }
 
@@ -376,7 +378,7 @@ public abstract partial class SharedBloodstreamSystem : EntitySystem
         if (SolutionContainer.ResolveSolution(ent.Owner, ent.Comp.BloodSolutionName, ref ent.Comp.BloodSolution))
         {
             SolutionContainer.RemoveAllSolution(ent.Comp.BloodSolution.Value);
-            TryModifyBloodLevel(ent.AsNullable(), ent.Comp.BloodReferenceSolution.Volume);
+            TryModifyBloodLevel(ent.AsNullable(), ToGoob(ent.Comp.BloodReferenceSolution.Volume));
         }
     }
 
@@ -409,7 +411,7 @@ public abstract partial class SharedBloodstreamSystem : EntitySystem
         foreach (var (reagentId, quantity) in entity.Comp.BloodReferenceSolution.Contents)
         {
             // Ideally we use a different calculation for blood pressure, this just defines how much *usable* blood you have!
-            totalBloodLevel = FixedPoint2.Min(totalBloodLevel, bloodSolution.GetTotalPrototypeQuantity(reagentId.Prototype) / quantity);
+            totalBloodLevel = FixedPoint2.Min(totalBloodLevel, ToGoob(bloodSolution.GetTotalPrototypeQuantity(reagentId.Prototype) / quantity));
         }
 
         return (float)totalBloodLevel;
@@ -462,7 +464,7 @@ public abstract partial class SharedBloodstreamSystem : EntitySystem
             if (ent.Comp.BloodReferenceSolution.ContainsPrototype(reagentId.Prototype) || reagentId.Prototype == excludedReagent)
                 continue;
 
-            var reagentFlushAmount = SolutionContainer.RemoveReagent(ent.Comp.BloodSolution.Value, reagentId, quantity);
+            var reagentFlushAmount = bloodSolution.RemoveReagent(reagentId, SharedFixedPoint2.FromCents(quantity.Value));
             flushedSolution.AddReagent(reagentId, reagentFlushAmount);
         }
 
@@ -502,23 +504,23 @@ public abstract partial class SharedBloodstreamSystem : EntitySystem
             return false;
 
         referenceFactor = Math.Clamp(referenceFactor, 0f, ent.Comp.MaxVolumeModifier);
-        var ratio = amount / ent.Comp.BloodReferenceSolution.Volume;
+        var ratio = amount / ToGoob(ent.Comp.BloodReferenceSolution.Volume);
 
         foreach (var (referenceReagent, referenceQuantity) in ent.Comp.BloodReferenceSolution)
         {
-            var error = referenceQuantity * referenceFactor - bloodSolution.GetTotalPrototypeQuantity(referenceReagent.Prototype);
-            var adjustedAmount = referenceQuantity * ratio;
+            var error = ToGoob(referenceQuantity * referenceFactor - bloodSolution.GetTotalPrototypeQuantity(referenceReagent.Prototype));
+            var adjustedAmount = ToGoob(referenceQuantity) * ratio;
 
             if (error > 0)
             {
                 error = FixedPoint2.Min(error, adjustedAmount);
-                bloodSolution.AddReagent(referenceReagent, error);
+                bloodSolution.AddReagent(referenceReagent, SharedFixedPoint2.FromCents(error.Value));
             }
             else if (error < 0)
             {
                 // invert the error since we're removing reagents...
                 error = FixedPoint2.Min( -error, adjustedAmount);
-                bloodSolution.RemoveReagent(referenceReagent, error);
+                bloodSolution.RemoveReagent(referenceReagent, SharedFixedPoint2.FromCents(error.Value));
             }
         }
 
@@ -554,14 +556,14 @@ public abstract partial class SharedBloodstreamSystem : EntitySystem
             return false;
         }
 
-        var leakedBlood = SolutionContainer.SplitSolution(ent.Comp.BloodSolution.Value, amount);
+        var leakedBlood = SolutionContainer.SplitSolution(ent.Comp.BloodSolution.Value, SharedFixedPoint2.FromCents(amount.Value));
 
         if (!SolutionContainer.ResolveSolution(ent.Owner, ent.Comp.BloodTemporarySolutionName, ref ent.Comp.TemporarySolution, out var tempSolution))
             return true;
 
         tempSolution.AddSolution(leakedBlood, PrototypeManager);
 
-        if (tempSolution.Volume > ent.Comp.BleedPuddleThreshold)
+        if (tempSolution.Volume.Value > ent.Comp.BleedPuddleThreshold.Value)
         {
             // Pass some of the chemstream into the spilled blood.
             if (SolutionContainer.ResolveSolution(ent.Owner, ent.Comp.BloodSolutionName, ref ent.Comp.BloodSolution))
@@ -569,15 +571,6 @@ public abstract partial class SharedBloodstreamSystem : EntitySystem
                 var temp = SolutionContainer.SplitSolution(ent.Comp.BloodSolution.Value, tempSolution.Volume / 10);
                 tempSolution.AddSolution(temp, PrototypeManager);
             }
-
-            // Goobstation start
-            // Set the freshness when the spill is created instead of every time new blood is created
-            foreach (var dna in tempSolution
-                .SelectMany(r => r.Reagent.EnsureReagentData().OfType<DnaData>()))
-            {
-                dna.Freshness = _timing.CurTime;
-            }
-            // Goobstation end
 
             _puddle.TrySpillAt(ent.Owner, tempSolution, out _, sound: false);
 
@@ -660,7 +653,7 @@ public abstract partial class SharedBloodstreamSystem : EntitySystem
     [Obsolete("ChangeBloodReagent is obsolete, please use ChangeBloodReagents.")]
     public void ChangeBloodReagent(Entity<BloodstreamComponent?> ent, ProtoId<ReagentPrototype> reagent)
     {
-        ChangeBloodReagents(ent, new([new(reagent, 1)]));
+        ChangeBloodReagents(ent, new([new(new ReagentId(reagent, null), 1)]));
     }
 
     /// <summary>
@@ -680,20 +673,20 @@ public abstract partial class SharedBloodstreamSystem : EntitySystem
             return;
         }
 
-        var currentVolume = FixedPoint2.Zero;
+        var currentVolume = SharedFixedPoint2.Zero;
         foreach (var reagent in ent.Comp.BloodReferenceSolution)
         {
-            currentVolume += bloodSolution.RemoveReagent(reagent.Reagent, quantity: bloodSolution.Volume, ignoreReagentData: true);
+            currentVolume += bloodSolution.RemoveReagent(reagent.Reagent, quantity: bloodSolution.Volume);
         }
 
         ent.Comp.BloodReferenceSolution = reagents.Clone();
         DirtyField(ent, ent.Comp, nameof(BloodstreamComponent.BloodReferenceSolution));
 
-        if (currentVolume == FixedPoint2.Zero)
+        if (currentVolume == SharedFixedPoint2.Zero)
             return;
 
         var solution = ent.Comp.BloodReferenceSolution.Clone();
-        solution.ScaleSolution(currentVolume / solution.Volume);
+        solution.ScaleSolution((float) (currentVolume / solution.Volume));
         SolutionContainer.AddSolution(ent.Comp.BloodSolution.Value, solution);
     }
 
@@ -713,17 +706,8 @@ public abstract partial class SharedBloodstreamSystem : EntitySystem
     /// </summary>
     protected List<ReagentData> NewEntityBloodData(EntityUid uid)
     {
-        var bloodData = new List<ReagentData>();
-        var dnaData = new DnaData();
-
-        if (TryComp<DnaComponent>(uid, out var donorComp) && donorComp.DNA != null)
-        {
-            dnaData.DNA = donorComp.DNA;
-        }
-        else
-            dnaData.DNA = Loc.GetString("forensics-dna-unknown");
-
-        bloodData.Add(dnaData);
-        return bloodData;
+        // The local chemistry stack has no serialised DNA reagent data. DNA
+        // evidence remains handled by the existing forensics component.
+        return new List<ReagentData>();
     }
 }

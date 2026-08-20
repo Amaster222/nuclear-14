@@ -10,7 +10,7 @@ using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom;
 
 namespace Content.Shared.Body.Components
 {
-    [RegisterComponent, NetworkedComponent, Access(typeof(StomachSystem))]
+    [RegisterComponent, ComponentProtoName("GoobStomach"), NetworkedComponent, Access(typeof(StomachSystem))]
     public sealed partial class StomachComponent : Component
     {
         /// <summary>

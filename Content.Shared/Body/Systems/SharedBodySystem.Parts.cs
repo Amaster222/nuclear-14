@@ -301,7 +301,7 @@ public partial class SharedBodySystem
             return;
 
         var ev = new DropHandItemsEvent();
-        RaiseLocalEvent(bodyEnt, ref ev);
+        RaiseLocalEvent(bodyEnt, ev);
     }
 
     /// <summary>
@@ -486,6 +486,11 @@ public partial class SharedBodySystem
         rootPart = (rootContainedEntity, bodyPartComponent);
         return true;
 
+    }
+
+    public Entity<BodyPartComponent>? GetRootPartOrNull(EntityUid bodyId, BodyComponent? body = null)
+    {
+        return TryGetRootPart(bodyId, out var rootPart, body) ? rootPart : null;
     }
     // ShitMed - WoundMed End
 

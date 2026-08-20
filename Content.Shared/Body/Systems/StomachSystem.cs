@@ -12,7 +12,7 @@ using Robust.Shared.Utility;
 
 namespace Content.Shared.Body.Systems
 {
-    public sealed class StomachSystem : EntitySystem
+public abstract class StomachSystem : EntitySystem
     {
         [Dependency] private readonly IGameTiming _gameTiming = default!;
         [Dependency] private readonly SharedSolutionContainerSystem _solutionContainerSystem = default!;

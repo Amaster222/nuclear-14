@@ -6,7 +6,6 @@ using Robust.Shared.Prototypes;
 namespace Content.Shared._Shitmed.Medical.Surgery.Steps;
 
 [RegisterComponent, NetworkedComponent]
-[EntityCategory("SurgerySteps")]
 public sealed partial class SurgeryStepComponent : Component
 {
 

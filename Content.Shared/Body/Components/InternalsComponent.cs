@@ -7,7 +7,7 @@ namespace Content.Shared.Body.Components;
 /// <summary>
 /// Handles hooking up a mask (breathing tool) / gas tank together and allowing the Owner to breathe through it.
 /// </summary>
-[RegisterComponent, NetworkedComponent, AutoGenerateComponentState(true)]
+[RegisterComponent, ComponentProtoName("GoobInternals"), NetworkedComponent, AutoGenerateComponentState(true)]
 public sealed partial class InternalsComponent : Component
 {
     [DataField, AutoNetworkedField]

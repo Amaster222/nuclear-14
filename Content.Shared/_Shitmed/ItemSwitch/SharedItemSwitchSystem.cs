@@ -96,14 +96,14 @@ public abstract class SharedItemSwitchSystem : EntitySystem
             args.Verbs.Add(new ActivationVerb()
             {
                 Text = Loc.TryGetString(state.Value.Verb, out var title) ? title : state.Value.Verb,
-                Category = VerbCategory.Switch,
+                Category = VerbCategory.Interaction,
                 Act = () => Switch((ent.Owner, ent.Comp), state.Key, user, ent.Comp.Predictable)
             });
             addedVerbs++;
         }
 
         if (addedVerbs > 0)
-            args.ExtraCategories.Add(VerbCategory.Switch);
+            args.ExtraCategories.Add(VerbCategory.Interaction);
     }
 
     private void OnActivate(Entity<ItemSwitchComponent> ent, ref ActivateInWorldEvent args)
@@ -208,7 +208,7 @@ public abstract class SharedItemSwitchSystem : EntitySystem
                 if (!_storage.Insert(container.Owner, uid, out _, null, storage, false))
                     _hands.PickupOrDrop(user, uid, animate: false);
             }
-            else if (HasComp<InventoryComponent>(container.Owner) && _item.GetSizePrototype(item.Size) > _item.GetSizePrototype(InventorySystem.PocketableItemSize))
+            else if (HasComp<InventoryComponent>(container.Owner) && _item.GetSizePrototype(item.Size) > _item.GetSizePrototype("Small"))
             {
                 var enumerator = _inventory.GetSlotEnumerator(container.Owner, SlotFlags.POCKET);
                 while (enumerator.NextItem(out var slotItem))

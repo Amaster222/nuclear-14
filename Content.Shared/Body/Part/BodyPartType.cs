@@ -14,6 +14,8 @@ namespace Content.Shared.Body.Part
         Other = 0,
         // Goobstation start
         Chest = 1 << 0,
+        // Compatibility with legacy Misfits body and armor prototypes.
+        Torso = Chest,
         Groin = 1 << 1,
         Head = 1 << 2,
         Arm = 1 << 3,

@@ -327,8 +327,7 @@ public abstract class SharedAutodocSystem : EntitySystem
             if (error != StepInvalidReason.MissingTool && error != StepInvalidReason.ToolInvalid)
                 throw new AutodocError($"step-invalid-{error}");
 
-            var hands = Comp<HandsComponent>(ent);
-            _hands.SwapHands((ent.Owner, hands));
+            _hands.CycleActiveHand((ent.Owner, Comp<HandsComponent>(ent)));
             if (!_surgery.TryDoSurgeryStep(patient, part, ent, surgeryId, nextStep, out error))
                 throw new AutodocError($"step-invalid-{error}"); // no trying again just fail
         }

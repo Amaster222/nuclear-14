@@ -208,7 +208,7 @@ public abstract partial class SharedSurgerySystem
         foreach (var type in group.DamageTypes)
         {
             if (adjustedDamage.DamageDict.TryGetValue(type, out var current))
-                adjustedDamage.DamageDict[type] = current - bonus;
+                adjustedDamage.DamageDict[type] = current - Content.Shared.FixedPoint.FixedPoint2.FromCents(bonus.Value);
         }
 
         var ev = new SurgeryStepDamageEvent(args.User, args.Body, args.Part, args.Surgery, adjustedDamage, 0.5f);
@@ -650,7 +650,7 @@ public abstract partial class SharedSurgerySystem
             return;
 
         var painToInflict = ent.Comp.Amount;
-        if (Status.HasEffectComp<ForcedSleepingStatusEffectComponent>(args.Body))
+        if (HasComp<ForcedSleepingComponent>(args.Body))
             painToInflict *= ent.Comp.SleepModifier;
 
         if (!_pain.TryChangePainModifier(

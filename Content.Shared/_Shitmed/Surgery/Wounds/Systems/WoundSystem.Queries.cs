@@ -265,13 +265,13 @@ public sealed partial class WoundSystem
                     break;
                 }
 
-                if (damage >= woundable.IntegrityCap)
+                if (damage.Value >= woundable.IntegrityCap.Value)
                 {
                     nearestSeverity = WoundableSeverity.Mangled;
                     break;
                 }
 
-                if (damage > woundable.IntegrityCap - threshold)
+                if (damage.Value > (woundable.IntegrityCap - threshold).Value)
                     continue;
 
                 nearestSeverity = severity;
@@ -449,6 +449,25 @@ public sealed partial class WoundSystem
             || !TryComp(wound.HoldingWoundable, out WoundableComponent? woundable))
             return false;
 
+        // Healing should leave the configured medical scar behind.  Scars are
+        // wounds themselves, so do not convert them again and do not create a
+        // second scar for the same damage type on the same body part.
+        if (!wound.IsScar
+            && wound.ScarWound is { } scarPrototype
+            && !GetWoundableWounds(wound.HoldingWoundable, woundable).Any(existing =>
+                existing.Owner != woundEntity
+                && existing.Comp.IsScar
+                && existing.Comp.DamageType == wound.DamageType))
+        {
+            TryCreateWound(
+                wound.HoldingWoundable,
+                scarPrototype,
+                wound.WoundSeverityPoint,
+                out _,
+                wound.DamageGroup,
+                woundable);
+        }
+
         UpdateWoundableIntegrity(wound.HoldingWoundable, woundable);
         CheckWoundableSeverityThresholds(wound.HoldingWoundable, woundable);
 
@@ -599,8 +618,8 @@ public sealed partial class WoundSystem
 
         foreach (var woundToInduce in damage.DamageDict)
         {
-            if (!TryInduceWound(uid, woundToInduce.Key, woundToInduce.Value *
-                damage.WoundSeverityMultipliers.GetValueOrDefault(woundToInduce.Key, 1), out var woundInduced, woundable))
+            if (!TryInduceWound(uid, woundToInduce.Key,
+                FixedPoint2.FromCents(woundToInduce.Value.Value), out var woundInduced, woundable))
                 return false;
 
             woundsInduced.Add(woundInduced.Value);
@@ -620,12 +639,13 @@ public sealed partial class WoundSystem
         if (!Resolve(uid, ref woundable))
             return false;
 
-        if (TryContinueWound(uid, woundId, severity, out woundInduced, woundable))
+        var woundPrototypeId = GetWoundPrototypeId(woundId);
+        if (TryContinueWound(uid, woundPrototypeId, severity, out woundInduced, woundable))
             return true;
 
         var wound = TryCreateWound(
             uid,
-            woundId,
+            woundPrototypeId,
             severity,
             out woundInduced,
             GetDamageGroupByType(woundId)?.ID,

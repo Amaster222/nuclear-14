@@ -1,4 +1,5 @@
 using System.Linq;
+using Content.Goobstation.Maths.FixedPoint;
 using Content.Shared._Shitmed.DoAfter;
 using Content.Shared._Shitmed.Medical.Surgery.Traumas;
 using Content.Shared._Shitmed.Medical.Surgery.Traumas.Components;
@@ -168,7 +169,7 @@ public sealed partial class WoundSystem
 
     private void OnDamageChanged(EntityUid uid, WoundableComponent component, ref DamageChangedEvent args)
     {
-        if (args.UncappedDamage == null
+        if (args.DamageDelta == null
             || !component.AllowWounds
             || !_timing.IsFirstTimePredicted)
             return;
@@ -180,7 +181,7 @@ public sealed partial class WoundSystem
             && TryComp(uid, out bp)
             && bp.Body.HasValue;
 
-        foreach (var (damageType, damageValue) in args.UncappedDamage.DamageDict)
+        foreach (var (damageType, damageValue) in args.DamageDelta.DamageDict)
         {
             if (damageValue == 0)
                 continue;
@@ -191,11 +192,11 @@ public sealed partial class WoundSystem
 
             if (damageValue < 0)
             {
-                HealWoundsCore(uid, -damageValue, damageType, out _, component, ignoreBlockers: args.IgnoreBlockers);
+                HealWoundsCore(uid, FixedPoint2.FromCents(-damageValue.Value), damageType, out _, component, ignoreBlockers: false);
             }
             else
             {
-                if (!IsWoundPrototypeValid(damageType))
+                if (!IsWoundPrototypeValid(GetWoundPrototypeId(damageType)))
                     continue;
 
                 var woundTarget = uid;
@@ -215,8 +216,7 @@ public sealed partial class WoundSystem
 
                 TryInduceWound(woundTarget,
                     damageType,
-                    damageValue *
-                    args.UncappedDamage.WoundSeverityMultipliers.GetValueOrDefault(damageType, 1),
+                    FixedPoint2.FromCents(damageValue.Value),
                     out _,
                     woundTargetComp);
             }

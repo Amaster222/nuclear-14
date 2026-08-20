@@ -106,7 +106,7 @@ public partial class TraumaSystem
                     reflexSound,
                     AudioParams.Default.WithVolume(6f));
 
-            _stun.TryUpdateParalyzeDuration(body.Value, nerveSys.Value.Comp.OrganDamageStunTime);
+            _stun.TryParalyze(body.Value, nerveSys.Value.Comp.OrganDamageStunTime, refresh: true);
             _movementMod.TryUpdateMovementSpeedModDuration(
                  body.Value,
                  OrgansDamagedSlowdown,

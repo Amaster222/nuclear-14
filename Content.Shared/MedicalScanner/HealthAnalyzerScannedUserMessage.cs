@@ -2,6 +2,7 @@
 
 using Content.Shared._Shitmed.Medical.Surgery.Wounds; // Shitmed Change
 using Content.Shared._Shitmed.Targeting; // Shitmed Change
+using Content.Shared.DeltaV.MedicalRecords;
 using Robust.Shared.Serialization;
 
 namespace Content.Shared.MedicalScanner;
@@ -20,7 +21,20 @@ public sealed class HealthAnalyzerScannedUserMessage : BoundUserInterfaceMessage
     public bool? Unrevivable;
     public Dictionary<TargetBodyPart, WoundableSeverity>? Body; // Shitmed Change
     public NetEntity? Part; // Shitmed Change
-    public HealthAnalyzerScannedUserMessage(NetEntity? targetEntity, float temperature, float bloodLevel, bool? scanMode, bool? bleeding, bool? unrevivable, Dictionary<TargetBodyPart, WoundableSeverity>? body, NetEntity? part = null) // Shitmed Change
+    public TriageStatus? TriageStatus;
+    public string? ClaimedBy;
+
+    public HealthAnalyzerScannedUserMessage(
+        NetEntity? targetEntity,
+        float temperature,
+        float bloodLevel,
+        bool? scanMode,
+        bool? bleeding,
+        bool? unrevivable,
+        Dictionary<TargetBodyPart, WoundableSeverity>? body,
+        NetEntity? part = null,
+        TriageStatus? triageStatus = null,
+        string? claimedBy = null) // Shitmed Change
     {
         TargetEntity = targetEntity;
         Temperature = temperature;
@@ -30,6 +44,8 @@ public sealed class HealthAnalyzerScannedUserMessage : BoundUserInterfaceMessage
         Body = body; // Shitmed Change
         Part = part; // Shitmed Change
         Unrevivable = unrevivable;
+        TriageStatus = triageStatus;
+        ClaimedBy = claimedBy;
     }
 }
 

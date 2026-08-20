@@ -182,15 +182,6 @@ public sealed class MovementModStatusSystem : EntitySystem
 
         _movementSpeedModifier.RefreshMovementSpeedModifiers(uid);
 
-        // Goob edit start
-
-        var ignoreEv = new BeforeTrySlowdownEvent();
-        RaiseLocalEvent(uid, ref ignoreEv);
-
-        if (ignoreEv.Cancelled)
-            return false;
-        // Goob edit end
-
         return true;
     }
 

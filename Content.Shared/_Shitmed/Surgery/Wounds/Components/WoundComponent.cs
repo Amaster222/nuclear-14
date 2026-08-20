@@ -9,7 +9,6 @@ using Robust.Shared.Serialization;
 namespace Content.Shared._Shitmed.Medical.Surgery.Wounds.Components;
 
 [RegisterComponent, NetworkedComponent]
-[EntityCategory("Wounds")]
 public sealed partial class WoundComponent : Component
 {
     /// <summary>

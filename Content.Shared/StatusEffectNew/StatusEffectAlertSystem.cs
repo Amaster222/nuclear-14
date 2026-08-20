@@ -1,5 +1,6 @@
 using Content.Shared.Alert;
 using Content.Shared.StatusEffectNew.Components;
+using Robust.Shared.Timing;
 
 namespace Content.Shared.StatusEffectNew;
 
@@ -9,6 +10,7 @@ namespace Content.Shared.StatusEffectNew;
 public sealed class StatusEffectAlertSystem : EntitySystem
 {
     [Dependency] private readonly AlertsSystem _alerts = default!;
+    [Dependency] private readonly IGameTiming _timing = default!;
 
     private EntityQuery<StatusEffectComponent> _effectQuery;
 
@@ -28,7 +30,10 @@ public sealed class StatusEffectAlertSystem : EntitySystem
         if (!_effectQuery.TryComp(ent, out var effectComp))
             return;
 
-        _alerts.UpdateAlert(args.Target, ent.Comp.Alert, cooldown: ent.Comp.ShowDuration ? effectComp.EndEffectTime : null);
+        (TimeSpan, TimeSpan)? cooldown = ent.Comp.ShowDuration && effectComp.EndEffectTime is { } endTime
+            ? (_timing.CurTime, endTime)
+            : null;
+        _alerts.ShowAlert(args.Target, ent.Comp.Alert, cooldown: cooldown);
     }
 
     private void OnStatusEffectRemoved(Entity<StatusEffectAlertComponent> ent, ref StatusEffectRemovedEvent args)
@@ -38,6 +43,9 @@ public sealed class StatusEffectAlertSystem : EntitySystem
 
     private void OnEndTimeUpdated(Entity<StatusEffectAlertComponent> ent, ref StatusEffectEndTimeUpdatedEvent args)
     {
-        _alerts.UpdateAlert(args.Target, ent.Comp.Alert, cooldown: ent.Comp.ShowDuration ? args.EndTime : null);
+        (TimeSpan, TimeSpan)? cooldown = ent.Comp.ShowDuration && args.EndTime is { } endTime
+            ? (_timing.CurTime, endTime)
+            : null;
+        _alerts.ShowAlert(args.Target, ent.Comp.Alert, cooldown: cooldown);
     }
 }

@@ -211,7 +211,7 @@ public partial class TraumaSystem
     /// </summary>
     public void UpdateBodyBoneAlert(EntityUid body, BodyComponent? bodyComp = null)
     {
-        if (!Resolve(body, ref bodyComp))
+        if (!Resolve(body, ref bodyComp) || bodyComp is null)
             return;
 
         bool hasBrokenBones = false;

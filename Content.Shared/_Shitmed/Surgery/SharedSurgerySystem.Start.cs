@@ -1,4 +1,5 @@
 using Content.Shared._Shitmed.CCVar;
+using Content.Shared.CCVar;
 using Content.Shared._Shitmed.Medical.Surgery.Tools;
 using Content.Shared.Verbs;
 using Robust.Shared.Configuration;
@@ -18,10 +19,10 @@ public abstract partial class SharedSurgerySystem
     {
         _targetQuery = GetEntityQuery<SurgeryTargetComponent>();
 
-        SubscribeLocalEvent<SurgeryToolComponent, GetVerbsEvent<UtilityVerb>>(OnUtilityVerb);
-
-        // cvar is yes var is no, invert it
-        Subs.CVar(_config, SurgeryCVars.CanOperateOnSelf, x => _noSelfOperate = !x, true);
+        // This legacy CVar is server-only. The server remains authoritative for
+        // self-surgery; subscribing on the client would fail before CVar sync.
+        if (!_net.IsClient)
+            Subs.CVar(_config, CCVars.CanOperateOnSelf, x => _noSelfOperate = !x, true);
     }
 
     private void AttemptStartSurgery(Entity<SurgeryToolComponent> ent, EntityUid user, EntityUid target)
