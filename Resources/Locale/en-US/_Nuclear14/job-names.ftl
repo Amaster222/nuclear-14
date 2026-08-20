@@ -1,9 +1,9 @@
 # Brotherhood of Steel
 job-name-bos-mid-paladin-comm = Brotherhood Head Paladin
 job-description-bos-mid-paladin-comm = Lead the martial wing of the Brotherhood chapter and direct field operations.
-# #Misfits Edit - Paladin Commander rethemed to Brotherhood Deserter (job ID stays BoSPaladinCommander)
-job-name-bos-deserter = Brotherhood Deserter
-job-description-bos-deserter = A former Brotherhood of Steel Paladin Commander who turned their back on the chapter.
+# #Misfits Edit - Paladin Commander rethemed to NCR HT Instructor (job ID stays BoSPaladinCommander)
+job-name-bos-deserter = NCR HT Instructor
+job-description-bos-deserter = A former Brotherhood of Steel Paladin who turned their back on the chapter. Now serves as an NCR Heavy Trooper instructor, drilling recruits in power-armor combat.
 job-name-bos-mid-paladin = Brotherhood Senior Paladin
 job-description-bos-mid-paladin = Serve as a veteran field commander and heavy infantry leader for the Brotherhood.
 job-name-bos-mid-knight = Brotherhood Senior Knight

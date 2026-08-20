@@ -16,11 +16,11 @@
       - state: green
       - state: commander
 
-# #Cythisiax Edited - Brotherhood Deserter personal-whitelist spawn point (was Paladin Commander).
+# #Cythisiax Edited - NCR HT Instructor personal-whitelist spawn point (was Paladin Commander).
 - type: entity
   parent: MisfitsSpawnPointBoSMidPaladinCommander
   id: MisfitsSpawnPointBoSPaladinCommander
-  name: Brotherhood Deserter
+  name: NCR HT Instructor
   components:
   - type: SpawnPoint
     job_id: BoSPaladinCommander

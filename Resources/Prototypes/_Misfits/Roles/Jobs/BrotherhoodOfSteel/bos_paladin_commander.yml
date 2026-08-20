@@ -1,7 +1,7 @@
-# #Cythisiax Edited - "Brotherhood Deserter" personal-whitelist role (was "Paladin Commander").
-# Single-player whitelist posting (ckey: southernsaint): a Paladin who turned their back on
-# the Brotherhood of Steel. Now tags with the NCR at prisoner level, keeping the spoils of
-# their former life — a re-sprited Midwest MK III ATA power armor suit and an AER-9.
+# #Cythisiax Edited - "NCR HT Instructor" personal-whitelist role (was "Paladin Commander").
+# Single-player whitelist posting (ckey: southernsaint): a former Paladin who turned their
+# back on the Brotherhood of Steel. Now an NCR Heavy Trooper instructor, keeping the spoils
+# of their former life — a re-sprited Midwest MK III ATA power armor suit ("Penance") and an AER-9.
 # Job ID stays BoSPaladinCommander so the existing whitelist entry + playtime tracker are preserved.
 
 - type: job
@@ -13,7 +13,7 @@
   weight: 111
   showBorder: true
   canBeAntag: false
-  name: job-name-bos-deserter # #Cythisiax Edited - rethemed to "Brotherhood Deserter"
+  name: job-name-bos-deserter # #Cythisiax Edited - rethemed to "NCR HT Instructor"
   overwatchCategory: OverwatchNcrCivilian # #Cythisiax Edited - NCR-aligned deserter tracked under NCR civilian overwatch
   description: job-description-bos-deserter # #Cythisiax Edited
   playTimeTracker: BoSPaladinCommander
