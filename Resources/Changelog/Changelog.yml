@@ -10451,3 +10451,10 @@ Entries:
   id: 6343
   time: '2026-08-20T01:52:51.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1781
+- author: aftemath434
+  changes:
+    - type: Add
+      message: 'Enclave ASRS (automated storage Retrieval system)  (cargo elevator) '
+  id: 6344
+  time: '2026-08-20T01:53:32.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1778
