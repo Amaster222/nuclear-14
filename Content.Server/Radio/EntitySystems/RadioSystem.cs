@@ -15,6 +15,7 @@ using Content.Shared.Radio.Components;
 using Content.Shared.Speech;
 using Content.Shared.Ghost; // Nuclear-14
 using Robust.Shared.Network;
+using Content.Shared.Mind;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
@@ -29,6 +30,7 @@ namespace Content.Server.Radio.EntitySystems;
 public sealed class RadioSystem : EntitySystem
 {
     [Dependency] private readonly INetManager _netMan = default!;
+    [Dependency] private readonly SharedMindSystem _mind = default!; // #Misfits Add - remote pilots keep hearing their radio
     [Dependency] private readonly IReplayRecordingManager _replay = default!;
     [Dependency] private readonly IAdminLogManager _adminLogger = default!;
     [Dependency] private readonly IPrototypeManager _prototype = default!;
@@ -90,17 +92,23 @@ public sealed class RadioSystem : EntitySystem
 
     private void OnIntrinsicReceive(EntityUid uid, IntrinsicRadioReceiverComponent component, ref RadioReceiveEvent args)
     {
-        if (TryComp(uid, out ActorComponent? actor))
-        {
-            // Einstein-Engines - languages mechanic
-            var listener = component.Owner;
-            var msg = args.OriginalChatMsg;
+        // #Misfits Fix - same as the headset case: someone off running a camera remotely has their
+        // session attached to it, so the body carrying the radio has no actor of its own to send to.
+        ICommonSession? session = TryComp(uid, out ActorComponent? actor)
+            ? actor.PlayerSession
+            : _mind.TryGetPilotingSession(uid, out var piloting) ? piloting : null;
 
-            if (listener != null && !_language.CanUnderstand(listener, args.Language.ID))
-                msg = args.LanguageObfuscatedChatMsg;
+        if (session == null)
+            return;
 
-            _netMan.ServerSendMessage(new MsgChatMessage { Message = msg}, actor.PlayerSession.Channel);
-        }
+        // Einstein-Engines - languages mechanic
+        var listener = component.Owner;
+        var msg = args.OriginalChatMsg;
+
+        if (listener != null && !_language.CanUnderstand(listener, args.Language.ID))
+            msg = args.LanguageObfuscatedChatMsg;
+
+        _netMan.ServerSendMessage(new MsgChatMessage { Message = msg}, session.Channel);
     }
 
     /// <summary>
