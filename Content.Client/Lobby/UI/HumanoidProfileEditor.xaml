@@ -35,6 +35,7 @@
                         <Button Name="ResetButton" Disabled="True" Text="Reset"/>
                         <Button Name="ExportImageButton" Text="Export Image"/> <Button Name="OpenImagesButton" Text="Open Folder"/> </BoxContainer>
                 </prefUi:HighlightedContainer>
+                <CheckBox Name="RoundEndAnonymityCheckBox" Text="{Loc humanoid-profile-editor-round-end-anonymity}" HorizontalAlignment="Right" />
             </BoxContainer>
         </BoxContainer>
         <Control MinHeight="10" />
