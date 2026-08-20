@@ -132,7 +132,7 @@ public sealed class SurgeryBui : BoundUserInterface
                 return partType switch
                 {
                     BodyPartType.Head => 1,
-                    BodyPartType.Chest => 2,
+                    BodyPartType.Torso => 2,
                     BodyPartType.Arm => 3,
                     BodyPartType.Hand => 4,
                     BodyPartType.Leg => 5,
@@ -292,8 +292,7 @@ public sealed class SurgeryBui : BoundUserInterface
             || !surgeryComp.CanOperate)
             return;
 
-        var user = _player.LocalEntity ?? Owner;
-        var next = _system.GetNextStep(Owner, _part.Value, _surgery.Value.Ent, user);
+        var next = _system.GetNextStep(Owner, _part.Value, _surgery.Value.Ent);
         var i = 0;
         foreach (var child in _window.Steps.Children)
         {
@@ -322,7 +321,7 @@ public sealed class SurgeryBui : BoundUserInterface
                 stepButton.Button.Modulate = Color.White;
                 if (_player.LocalEntity is { } player
                     && status == StepStatus.Next
-                    && !_system.CanPerformStepWithHeld(player, Owner, _part.Value, stepButton.Step, false, out var popup))
+                    && !_system.CanPerformStep(player, Owner, _part.Value, stepButton.Step, false, out var popup, out var reason, out _))
                     stepButton.ToolTip = popup;
             }
 

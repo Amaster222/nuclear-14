@@ -1,5 +1,3 @@
-// SPDX-License-Identifier: AGPL-3.0-or-later
-
 using Robust.Shared.GameStates;
 
 namespace Content.Shared._Shitmed.Medical.Surgery.Tools;
@@ -7,8 +5,7 @@ namespace Content.Shared._Shitmed.Medical.Surgery.Tools;
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
 public sealed partial class BoneSawComponent : Component, ISurgeryToolComponent
 {
-    public string ToolName => "a bone saw";
-    [DataField]
+    public string ToolName => "Medical Saw"; // Corvax-Localization
     public bool? Used { get; set; } = null;
     [DataField, AutoNetworkedField]
     public float Speed { get; set; } = 1f;

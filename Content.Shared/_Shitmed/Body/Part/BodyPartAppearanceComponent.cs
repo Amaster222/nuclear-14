@@ -1,10 +1,8 @@
-// SPDX-License-Identifier: AGPL-3.0-or-later
-
 using Content.Shared.Humanoid;
 using Content.Shared.Humanoid.Prototypes;
 using Content.Shared.Humanoid.Markings;
+using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototype;
 using Robust.Shared.GameStates;
-using Robust.Shared.Prototypes;
 
 namespace Content.Shared._Shitmed.Body.Part;
 
@@ -14,7 +12,7 @@ public sealed partial class BodyPartAppearanceComponent : Component
     /// <summary>
     ///     HumanoidVisualLayer type for this body part.
     /// </summary>
-    [DataField("visLayers"), AutoNetworkedField] // Goobstation - added visLayers
+    [DataField, AutoNetworkedField]
     public HumanoidVisualLayers Type { get; set; }
 
     /// <summary>
@@ -25,9 +23,10 @@ public sealed partial class BodyPartAppearanceComponent : Component
 
     /// <summary>
     ///     ID of this custom base layer. Must be a <see cref="HumanoidSpeciesSpriteLayer"/>.
+    ///     I don't actually know if these serializer props are necessary. I just lifted this from MS14 lol.
     /// </summary>
-    [DataField, AutoNetworkedField]
-    public ProtoId<HumanoidSpeciesSpriteLayer>? ID { get; set; }
+    [DataField(customTypeSerializer: typeof(PrototypeIdSerializer<HumanoidSpeciesSpriteLayer>)), AutoNetworkedField]
+    public string? ID { get; set; }
 
     /// <summary>
     ///     Color of this custom base layer. Null implies skin colour if the corresponding <see cref="HumanoidSpeciesSpriteLayer"/> is set to match skin.

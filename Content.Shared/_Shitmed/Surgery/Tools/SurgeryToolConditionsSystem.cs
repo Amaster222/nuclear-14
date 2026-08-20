@@ -1,5 +1,3 @@
-// SPDX-License-Identifier: AGPL-3.0-or-later
-
 using Content.Shared.Item.ItemToggle.Components;
 using Content.Shared.Popups;
 using Content.Shared.Smoking;
@@ -28,7 +26,7 @@ public sealed class SurgeryToolConditionsSystem : EntitySystem
 
     private void OnToggleUsed(Entity<ItemToggleComponent> ent, ref SurgeryToolUsedEvent args)
     {
-        if (ent.Comp.Activated || args.IgnoreToggle)
+        if (ent.Comp.Activated)
             return;
 
         _popup.PopupEntity(Loc.GetString("surgery-tool-turn-on"), ent, args.User);
@@ -39,8 +37,6 @@ public sealed class SurgeryToolConditionsSystem : EntitySystem
     {
         var coords = Transform(args.User).Coordinates;
         var ev = new TakeAmmoEvent(1, new List<(EntityUid? Entity, IShootable Shootable)>(), coords, args.User);
-        RaiseLocalEvent(ent, ev);
-
         if (ev.Ammo.Count > 0)
             return;
 

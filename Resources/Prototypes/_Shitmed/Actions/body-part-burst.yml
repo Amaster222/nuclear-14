@@ -1,9 +1,0 @@
-- type: entity
-  parent: ActionBase
-  id: ActionBodyPartBurst
-  name: burst free!
-  description: Dig your way out of the flesh you are trapped in!
-  components:
-  - type: InstantAction
-    useDelay: 15
-    event: !type:BodyPartBurstEvent

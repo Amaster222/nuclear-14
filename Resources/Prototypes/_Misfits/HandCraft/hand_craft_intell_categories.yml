@@ -999,9 +999,10 @@
     Plastic: 50
 
 # #Cythisiax Added - Binoculars craftable in G menu with basic materials (glass lenses, steel frame, leather strap)
+# #Cythisiax Edited - minInt 7 -> 5 so the recipe shows for default-INT characters (G menu hides recipes where playerInt < MinInt)
 - type: handCraftIntellRecipe
   id: N14Binoculars
-  minInt: 7
+  minInt: 5
   result: N14Binoculars
   completeTime: 5
   materials:

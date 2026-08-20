@@ -22,7 +22,7 @@ public sealed partial class TargetingControl : UIWidget
         {
             // TODO: ADD EYE AND MOUTH TARGETING
             { TargetBodyPart.Head, HeadButton },
-            { TargetBodyPart.Chest, ChestButton },
+            { TargetBodyPart.Torso, ChestButton },
             { TargetBodyPart.Groin, GroinButton },
             { TargetBodyPart.LeftArm, LeftArmButton },
             { TargetBodyPart.LeftHand, LeftHandButton },

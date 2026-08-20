@@ -1,5 +1,3 @@
-// SPDX-License-Identifier: AGPL-3.0-or-later
-
 using Content.Shared._Shitmed.Autodoc.Components;
 using Content.Shared.Hands.Components;
 using Content.Shared.Hands.EntitySystems;
@@ -25,7 +23,7 @@ public sealed class HandsFillSystem : EntitySystem
         var coords = Transform(ent).Coordinates;
         foreach (var (name, fill) in ent.Comp.Hands)
         {
-            _hands.AddHand(ent.Owner, name, HandLocation.Middle, hands);
+            _hands.AddHand(ent, name, HandLocation.Middle, hands);
 
             if (fill is not {} id)
                 continue;

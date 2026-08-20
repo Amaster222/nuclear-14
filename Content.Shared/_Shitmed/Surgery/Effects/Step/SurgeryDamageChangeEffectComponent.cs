@@ -1,8 +1,6 @@
-// SPDX-License-Identifier: AGPL-3.0-or-later
-
 using Content.Shared.Damage;
 using Robust.Shared.GameStates;
-
+using Robust.Shared.Prototypes;
 namespace Content.Shared._Shitmed.Medical.Surgery.Effects.Step;
 
 [RegisterComponent, NetworkedComponent]
@@ -16,7 +14,4 @@ public sealed partial class SurgeryDamageChangeEffectComponent : Component
 
     [DataField]
     public bool IsConsumable;
-
-    [DataField]
-    public bool AffectAll;
 }

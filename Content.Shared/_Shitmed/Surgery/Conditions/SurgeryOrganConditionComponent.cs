@@ -1,5 +1,4 @@
-// SPDX-License-Identifier: AGPL-3.0-or-later
-
+using Content.Shared.Body.Organ;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
 
@@ -17,10 +16,6 @@ public sealed partial class SurgeryOrganConditionComponent : Component
     [DataField]
     public bool Reattaching;
 
-    /// <summary>
-    /// Restricts the condition to an organ slot when a body part can contain
-    /// multiple organs with the same component type (for example, lungs).
-    /// </summary>
-    [DataField]
-    public string? SlotId;
+    [DataField(required: true)]
+    public string SlotId = string.Empty;
 }
