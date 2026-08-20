@@ -10458,3 +10458,19 @@ Entries:
   id: 6344
   time: '2026-08-20T01:53:32.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1778
+- author: JohnKieser
+  changes:
+    - type: Fix
+      message: >-
+        Reverted storage UI changes. SHOULD prevent freezes/crashes from opening
+        storage
+  id: 6345
+  time: '2026-08-20T14:05:28.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1783
+- author: Amaster222
+  changes:
+    - type: Tweak
+      message: Monkey cubes replaced with a variant that gives irradiated meat.
+  id: 6346
+  time: '2026-08-20T14:25:33.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1782
