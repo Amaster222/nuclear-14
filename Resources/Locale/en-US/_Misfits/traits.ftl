@@ -113,9 +113,10 @@ trait-description-MisfitsPetEyebotTribe =
 
 trait-name-N14RidingPerk = Riding
 trait-description-N14RidingPerk =
-    You know how to handle wasteland motorcycles.
-    Old engines, bad roads, and improvised frames are familiar enough that you can keep a bike moving without wrecking yourself.
-
+    You know how to handle wasteland motorcycles and ride brahdo.
+    Old engines, the saddle and reins, and old roads are all familiar to you.
+    you can handle brahdo and bikes without crashing or being kicked off.
+    
 trait-name-N14VertibirdPilotPerk = Vertibird Pilot
 trait-description-N14VertibirdPilotPerk =
     You know enough about pre-War tilt-rotor aircraft to get a vertibird off the ground and back down again.

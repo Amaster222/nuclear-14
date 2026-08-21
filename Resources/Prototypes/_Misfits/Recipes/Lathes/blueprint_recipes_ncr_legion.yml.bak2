@@ -1835,6 +1835,21 @@
 
     N14Iron: 5
 
+- type: latheRecipe
+  id: N14BPLegionArmorLightBaseballHelmet
+  result: N14ClothingHeadHatLightBaseballHelmet
+  category: N14BlueprintLegionArmorT2
+  completetime: 8
+  requiresBlueprint: true
+  availableFaction:
+  - CaesarLegion
+  materials:
+    Leather: 5
+
+    Cloth: 5
+
+    Thread: 4
+
 
 - type: latheRecipe
   id: N14BPLegionArmorVexillariusArmor
@@ -1889,6 +1904,44 @@
     Thread: 17
 
     N14Iron: 10
+
+- type: latheRecipe
+  id: N14BPLegionArmorBaseballHelmet
+  result: N14ClothingHeadHatBaseballHelmet
+  category: N14BlueprintLegionArmorT3
+  completetime: 12
+  requiresBlueprint: true
+  availableFaction:
+  - CaesarLegion
+  materials:
+    Leather: 4
+
+    Steel: 35
+
+    Cloth: 2
+
+    Thread: 2
+
+    N14Iron: 2
+
+- type: latheRecipe
+  id: N14BPLegionArmorDeanRecruitHelmet
+  result: N14ClothingHeadHatDeanRecruitHelmet
+  category: N14BlueprintLegionArmorT3
+  completetime: 12
+  requiresBlueprint: true
+  availableFaction:
+  - CaesarLegion
+  materials:
+    Leather: 4
+
+    Steel: 35
+
+    Cloth: 2
+
+    Thread: 2
+
+    N14Iron: 2
 
 
 - type: latheRecipe
