@@ -16,7 +16,6 @@ using Content.Shared.Mobs.Components; // #Misfits Add - for MobState
 using Content.Shared.Mobs; // #Misfits Add - for MobState enum
 using Content.Shared.Dataset; // #Misfits Add - for DatasetPrototype
 using Content.Shared._Shitmed.Targeting; // #Misfits Add - for body part status
-using Content.Shared._Shitmed.Medical.Surgery.Wounds;
 using Robust.Client.GameObjects; // #Misfits Add - for SpriteSystem
 using Content.Shared.DeltaV.NanoChat; // #Misfits Add - for NanoChatCardComponent (PipBoy number)
 
@@ -83,7 +82,7 @@ namespace Content.Client.PDA
             _bodyPartControls = new Dictionary<TargetBodyPart, TextureRect>
             {
                 { TargetBodyPart.Head, DollHead },
-                { TargetBodyPart.Chest, DollTorso },
+                { TargetBodyPart.Torso, DollTorso },
                 { TargetBodyPart.Groin, DollGroin },
                 { TargetBodyPart.LeftArm, DollLeftArm },
                 { TargetBodyPart.LeftHand, DollLeftHand },
@@ -352,16 +351,16 @@ namespace Content.Client.PDA
                     if (!_bodyPartControls.TryGetValue(bodyPart, out var control))
                         continue;
 
-                    var spriteName = bodyPart.GetStatusSpriteName();
+                    var enumName = Enum.GetName(typeof(TargetBodyPart), bodyPart)?.ToLowerInvariant() ?? "torso";
                     var rsi = new SpriteSpecifier.Rsi(
-                        new ResPath($"/Textures/_Shitmed/Interface/Targeting/Status/{spriteName}.rsi"),
-                        $"{spriteName}_{(int) integrity}");
+                        new ResPath($"/Textures/_Shitmed/Interface/Targeting/Status/{enumName}.rsi"),
+                        $"{enumName}_{(int) integrity}");
                     control.Texture = spriteSystem.Frame0(rsi);
                 }
 
                 // Update side labels with per-region integrity colors
                 UpdateBodyPartLabel(LabelHead, Loc.GetString("pipboy-body-head"), targeting.BodyStatus, TargetBodyPart.Head);
-                UpdateBodyPartLabel(LabelTorso, Loc.GetString("pipboy-body-chest"), targeting.BodyStatus, TargetBodyPart.Chest);
+                UpdateBodyPartLabel(LabelTorso, Loc.GetString("pipboy-body-chest"), targeting.BodyStatus, TargetBodyPart.Torso);
                 UpdateBodyPartLabel(LabelLeftArm, Loc.GetString("pipboy-body-left-arm"), targeting.BodyStatus, TargetBodyPart.LeftArm);
                 UpdateBodyPartLabel(LabelRightArm, Loc.GetString("pipboy-body-right-arm"), targeting.BodyStatus, TargetBodyPart.RightArm);
                 UpdateBodyPartLabel(LabelLeftLeg, Loc.GetString("pipboy-body-left-leg"), targeting.BodyStatus, TargetBodyPart.LeftLeg);
@@ -371,20 +370,22 @@ namespace Content.Client.PDA
 
         // #Misfits Add - Set a body part label with color based on integrity
         private static void UpdateBodyPartLabel(RichTextLabel label, string text,
-            Dictionary<TargetBodyPart, WoundableSeverity> status, TargetBodyPart part)
+            Dictionary<TargetBodyPart, TargetIntegrity> status, TargetBodyPart part)
         {
             var color = "lime";
             if (status.TryGetValue(part, out var integrity))
             {
                 color = integrity switch
                 {
-                    WoundableSeverity.Healthy => "lime",
-                    WoundableSeverity.Minor => "greenyellow",
-                    WoundableSeverity.Moderate => "yellow",
-                    WoundableSeverity.Severe => "orange",
-                    WoundableSeverity.Critical => "red",
-                    WoundableSeverity.Mangled => "orangered",
-                    WoundableSeverity.Severed => "darkred",
+                    TargetIntegrity.Healthy => "lime",
+                    TargetIntegrity.LightlyWounded => "greenyellow",
+                    TargetIntegrity.SomewhatWounded => "yellow",
+                    TargetIntegrity.ModeratelyWounded => "orange",
+                    TargetIntegrity.HeavilyWounded => "orangered",
+                    TargetIntegrity.CriticallyWounded => "red",
+                    TargetIntegrity.Severed => "darkred",
+                    TargetIntegrity.Dead => "gray",
+                    TargetIntegrity.Disabled => "gray",
                     _ => "white"
                 };
             }
