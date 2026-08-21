@@ -1,6 +1,4 @@
 using Content.Shared.Weapons.Ranged.Components;
-using Content.Shared.Weapons.Ranged.Events;
-using Robust.Shared.Map;
 
 namespace Content.Client.Weapons.Ranged.Systems;
 
@@ -11,7 +9,9 @@ public sealed partial class GunSystem
         base.InitializeBallistic();
         SubscribeLocalEvent<BallisticAmmoProviderComponent, UpdateAmmoCounterEvent>(OnBallisticAmmoCount);
     }
-
+    /// <summary>
+    /// updates client ui on ammo change
+    /// </summary>
     private void OnBallisticAmmoCount(EntityUid uid, BallisticAmmoProviderComponent component, UpdateAmmoCounterEvent args)
     {
         if (args.Control is DefaultStatusControl control)
@@ -19,7 +19,17 @@ public sealed partial class GunSystem
             control.Update(component.AmmoCount, component.Capacity);
         }
     }
-    // Misfit Change: outdated.Client/Server Implementation in SharedGunSystem.Ballistics
+
+
+
+
+
+
+
+
+
+
+    /// Misfit Change: outdated.Client/Server Implementation in <see cref="SharedGunSystem.Ballistics"/>
     /*
         protected override void Cycle(EntityUid uid, BallisticAmmoProviderComponent component, MapCoordinates coordinates)
         {

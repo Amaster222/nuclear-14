@@ -61,11 +61,12 @@ public sealed partial class GunSystem : SharedGunSystem
     [Dependency] private SharedMapSystem _maps = default!;
     [Dependency] private PhysicsSystem _physics = default!;
     [Dependency] private MisfitsLagCompensationSystem _lagComp = default!; // #Misfits Add — lag compensation tick stamp
-
+    [Dependency] private ILogManager _logMan = default!;
     private readonly HashSet<EntityUid> _lagCompCandidates = [];
     private float _lagCompAabbEnlargement;
     private float _lagCompHitscanSearchPadding;
     private EntityQuery<SpriteComponent> _spriteQuery;
+
 
     [ValidatePrototypeId<EntityPrototype>]
     public const string HitscanProto = "HitscanEffect";
@@ -119,6 +120,7 @@ public sealed partial class GunSystem : SharedGunSystem
 
         // Misfit add: refactoring obsolete sprite methods
         _spriteQuery = GetEntityQuery<SpriteComponent>();
+
     }
 
     private void OnUpdateClientAmmo(EntityUid uid, AmmoCounterComponent ammoComp, ref UpdateClientAmmoEvent args)
@@ -367,8 +369,8 @@ public sealed partial class GunSystem : SharedGunSystem
                     if (!cartridge.DeleteOnSpawn && !Containers.IsEntityInContainer(ent!.Value))
                         EjectCartridge(ent.Value, angle);
 
-                    if (IsClientSide(ent!.Value))
-                        Del(ent.Value);
+                    //if (IsClientSide(ent!.Value))
+                    //    Del(ent.Value);
 
                     break;
                 case AmmoComponent newAmmo:

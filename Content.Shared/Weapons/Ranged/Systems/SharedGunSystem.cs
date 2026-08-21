@@ -49,6 +49,9 @@ using Robust.Shared.Serialization;
 using Robust.Shared.Spawners;
 using Robust.Shared.Timing;
 using Robust.Shared.Utility;
+using System.IO.Compression;
+using MathNet.Numerics.Distributions;
+using System.Diagnostics;
 
 namespace Content.Shared.Weapons.Ranged.Systems;
 
@@ -78,11 +81,14 @@ public abstract partial class SharedGunSystem : EntitySystem
     [Dependency] protected SharedPhysicsSystem Physics = default!;
     [Dependency] protected SharedProjectileSystem Projectiles = default!;
     [Dependency] protected SharedTransformSystem _xform = default!;
-    [Dependency] protected TagSystem TagSystem = default!;
     [Dependency] protected ThrowingSystem ThrowingSystem = default!;
     [Dependency] private UseDelaySystem _useDelay = default!;
     [Dependency] private EntityWhitelistSystem _whitelistSystem = default!;
     [Dependency] private IEntityManager _entManager = default!;
+    [Dependency] private EntityLookupSystem _lookup = default!;
+    [Dependency] private SharedPhysicsSystem _sharedPhysics = default!;
+    [Dependency] private ISharedPlayerManager _sharedPlayer = default!;
+
 
     private const float InteractNextFire = 0.3f;
     private const double SafetyNextFire = 0.5;
@@ -795,52 +801,38 @@ public abstract partial class SharedGunSystem : EntitySystem
         cartridge.Spent = spent;
         Appearance.SetData(uid, AmmoVisuals.Spent, spent);
     }
-
+    /// TODO Misfit: Get rid of useless params like angle, playsound, ect... and replace with something else
+    /// Misfit: revamped EjectCartridge
     /// <summary>
     /// Drops a single cartridge / shell
+    /// Also raises <see cref="EjectSpentCartEvent"> to handle spent cartridges
+    /// to strip its comps(including physics) and ensure no desync issues
     /// </summary>
     protected void EjectCartridge(
-        EntityUid entity,
+        EntityUid cart,
         Angle? angle = null,
-        bool playSound = true)
+        bool playSound = true,
+        ICommonSession? userSession = null)
     {
-        // TODO: Sound limit version.
-        var offsetPos = Random.NextVector2(EjectOffset);
-        var xform = Transform(entity);
+        // Misfit: pending refactor. maybe redundant check
+        if (!TryGetNetEntity(cart, out var netEnt)) return;
+        // Misfit change: changed rng method for better server-client sync
 
-        var coordinates = xform.Coordinates;
-        coordinates = coordinates.Offset(offsetPos);
-
-        _xform.SetLocalRotation(xform, Random.NextAngle());
-        _xform.SetCoordinates(entity, xform, coordinates);
-
-        // decides direction the casing ejects and only when not cycling
-        if (angle != null)
+        var xform = Transform(cart);
+        if (!TryComp<CartridgeAmmoComponent>(cart, out var cartComp) || !cartComp.Spent)
         {
-            Angle ejectAngle = angle.Value;
-            ejectAngle += 3.7f; // 212 degrees; casings should eject slightly to the right and behind of a gun
-            ThrowingSystem.TryThrow(entity, ejectAngle.ToVec().Normalized() / 100, 5f);
+            var (posEjectRNG, angleEjectRNG) = GetRandVectAngle(netEnt.Value.Id, netEnt.Value.Id);
+            _xform.SetLocalPositionRotation(cart, xform.Coordinates.Offset(posEjectRNG).Position, angleEjectRNG, xform);
+            return;
         }
-        if (playSound && TryComp<CartridgeAmmoComponent>(entity, out var cartridge))
-        {
-            Audio.PlayPvs(cartridge.EjectSound, entity, AudioParams.Default.WithVariation(SharedContentAudioSystem.DefaultVariation).WithVolume(-1f));
-        }
+        var (posW, angleW) = _xform.GetWorldPositionRotation(xform);
+        var mapCoord = new MapCoordinates(posW, _xform.GetMapId(cart));
+        var cartProto = MetaData(cart).EntityPrototype?.ID;
+        EjectSpentCart(mapCoord, angleW, cartProto, userSession);
+        PredictedDel(cart);
 
-        // Make spent cartridges unpickable and automatically despawn when ejected.
-        if (TryComp<CartridgeAmmoComponent>(entity, out var cartridge2) && cartridge2.Spent)
-        {
-            var despawn = EnsureComp<TimedDespawnComponent>(entity);
-            despawn.Lifetime = 30f; // #Misfits Tweak - Reduce casing despawn from 5min to 30s to prevent entity buildup during war
-
-            _entManager.RemoveComponent<ItemComponent>(entity);
-
-            // #Misfits Fix - Casings ejected without a throw angle (revolver/manual cycling)
-            // never get ThrownItemComponent, so LandEvent never fires and
-            // CasingPhysicsOptSystem can't strip their physics. Remove it here.
-            if (angle == null)
-                RemCompDeferred<PhysicsComponent>(entity);
-        }
     }
+
 
     protected IShootable EnsureShootable(EntityUid uid)
     {

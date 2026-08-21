@@ -19,6 +19,7 @@
     - /Maps/Misfits/WendoverSky.yml
   mapsBelow:
     - /Maps/Misfits/Vault.yml
+    - /Maps/Misfits/Enclave.yml
   stations:
     Wendover:
       stationProto: FalloutStation
@@ -166,5 +167,5 @@
           EnclaveNCO: [ 2, 2 ]
           EnclaveEnlisted: [ 4, 4 ]
           EnclaveHeadScientist: [ 1, 1 ]
-          EnclaveScientist: [ 1, 1 ]
-          EnclaveJuniorScientist: [ 1, 1 ]
+          EnclaveScientist: [ 2, 2 ]
+          EnclaveJuniorScientist: [ 2, 2 ]
