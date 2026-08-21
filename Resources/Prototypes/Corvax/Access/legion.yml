@@ -27,10 +27,6 @@
   name: id-card-access-level-legion-explorer
 
 - type: accessLevel
-  id: CaesarLegionOptio
-  name: id-card-access-level-legion-optio
-
-- type: accessLevel
   id: CaesarLegionLegionnaireRecruit
   name: id-card-access-level-legion-recruit-legionary
 
@@ -49,6 +45,10 @@
 - type: accessLevel
   id: CaesarLegionVeteranDecanus
   name: id-card-access-level-legion-veteran-decanus
+
+- type: accessLevel
+  id: CaesarLegionOptio
+  name: id-card-access-level-legion-optio
 
 - type: accessLevel
   id: CaesarLegionCenturion
@@ -155,7 +155,7 @@
   - CaesarLegionDean
   - CaesarLegionVeteranDecanus
 
-  - type: accessGroup
+- type: accessGroup
   id: CaesarLegionOptio
   tags:
   - CaesarLegion
