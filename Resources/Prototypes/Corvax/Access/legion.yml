@@ -86,7 +86,15 @@
   tags:
   - CaesarLegion
   - CaesarLegionRecruit
+  - CaesarLegionHoundmaster
   - CaesarLegionFrumentarii
+  - CaesarLegionVexillarius
+  - CaesarLegionExplorer
+  - CaesarLegionLegionnaireRecruit
+  - CaesarLegionLegionnaireWarrior
+  - CaesarLegionLegionnaireVeteran
+  - CaesarLegionDean
+  - CaesarLegionVeteranDecanus # yes frum have access to everyone except cent, legate, and optio. they are the legio cia. wah wah -legate tytos
 
 - type: accessGroup
   id: CaesarLegionVexillarius
@@ -101,13 +109,6 @@
   - CaesarLegion
   - CaesarLegionRecruit
   - CaesarLegionExplorer
-
-- type: accessGroup
-  id: CaesarLegionOptio
-  tags:
-  - CaesarLegion
-  - CaesarLegionRecruit
-  - CaesarLegionOptio
 
 - type: accessGroup
   id: CaesarLegionLegionnaireRecruit
@@ -154,11 +155,33 @@
   - CaesarLegionDean
   - CaesarLegionVeteranDecanus
 
+  - type: accessGroup
+  id: CaesarLegionOptio
+  tags:
+  - CaesarLegion
+  - CaesarLegionRecruit
+  - CaesarLegionHoundmaster
+  - CaesarLegionFrumentarii
+  - CaesarLegionVexillarius
+  - CaesarLegionExplorer
+  - CaesarLegionOptio
+  - CaesarLegionLegionnaireRecruit
+  - CaesarLegionLegionnaireWarrior
+  - CaesarLegionLegionnaireVeteran
+  - CaesarLegionDean
+  - CaesarLegionVeteranDecanus
+
+
 - type: accessGroup
   id: CaesarLegionCenturion
   tags:
   - CaesarLegion
   - CaesarLegionRecruit
+  - CaesarLegionHoundmaster
+  - CaesarLegionFrumentarii
+  - CaesarLegionVexillarius
+  - CaesarLegionExplorer
+  - CaesarLegionOptio
   - CaesarLegionLegionnaireRecruit
   - CaesarLegionLegionnaireWarrior
   - CaesarLegionLegionnaireVeteran
