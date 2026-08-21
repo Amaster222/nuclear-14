@@ -22351,11 +22351,6 @@ entities:
       pos: -23.5,42.5
     - type: GeneticsScanner
       scanner: 18057
-    - type: DeviceLinkSource
-      linkedPorts:
-        18057:
-        - - MedicalScannerSender
-          - MedicalScannerReceiver
 - proto: ConveyorBelt
   entities:
   - uid: 9
