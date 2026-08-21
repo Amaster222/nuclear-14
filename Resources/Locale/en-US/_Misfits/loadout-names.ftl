@@ -128,7 +128,9 @@ loadout-name-MisfitsLoadoutOuterVegabondsVest = vagabond's vest
 loadout-name-MisfitsLoadoutOuterArmorKit = armor kit
 loadout-name-MisfitsLoadoutOuterArmorKitPunk = punk armor kit
 loadout-name-MisfitsLoadoutOuterArmorKitShoulder = shoulder armor kit
-loadout-name-MisfitsLoadoutOuterKhanLeather = great khan leather vest
+loadout-name-MisfitsLoadoutOuterKhansJacket = great khan jacket
+loadout-name-MisfitsLoadoutOuterKhansVest = great khan vest
+loadout-name-MisfitsLoadoutOuterKhansBattlecoatRed = great khan red battlecoat
 
 # Shoes
 loadout-name-ClothingShoesBootsLaceupVault = laceup shoes
@@ -665,6 +667,7 @@ loadout-name-MisfitsLoadoutHeadHeadMarlowHat = marlow hat
 loadout-name-MisfitsLoadoutHeadHeadSchlimmHat = schlimm hat
 loadout-name-MisfitsLoadoutHeadHeadAHPhelmet = highway patrol helmet
 loadout-name-MisfitsLoadoutHeadKhanHelmet = khan helmet
+loadout-name-MisfitsLoadoutHeadKhanFullHelmet = khan full helmet
 # Head — NCR soldiers
 loadout-name-MisfitsLoadoutHeadNCRSidecap = NCR sidecap
 loadout-name-MisfitsLoadoutHeadNCRBeretOfficer = NCR officer beret

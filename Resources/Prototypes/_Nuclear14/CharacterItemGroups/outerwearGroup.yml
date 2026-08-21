@@ -122,7 +122,9 @@
     - type: loadout
       id: MisfitsLoadoutOuterArmorKitShoulder
     - type: loadout
-      id: MisfitsLoadoutOuterKhanLeather
+      id: MisfitsClothingOuterKhansVest
+    - type: loadout
+      id: MisfitsLoadoutOuterKhansBattlecoatBlack
     - type: loadout
       id: MisfitsLoadoutOuterCombatTalon
     - type: loadout

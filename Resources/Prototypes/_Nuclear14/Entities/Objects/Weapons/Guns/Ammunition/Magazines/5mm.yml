@@ -12,7 +12,12 @@
     whitelist:
       tags:
         - N14CartridgePistol5
-    capacity: 200
+    capacity: 500 # #Burger - prior proposed round increase (was 200)
+  - type: Item # #Burger - larger profile in bag to make up for capacity increase
+    size: Normal
+    shape:
+    - 0,0,1,1
+    - 0,1,0,1
   - type: ContainerContainer
     containers:
       ballistic-ammo: !type:Container

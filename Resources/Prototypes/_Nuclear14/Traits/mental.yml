@@ -256,6 +256,7 @@
     - !type:CharacterDepartmentRequirement
       departments:
         - BrotherhoodOfSteel
+        - BrotherhoodOfSteelLancers
   functions:
     # #Misfits Fix - Use TraitSpawnEntity so multiple pet ghost roles can coexist
     - !type:TraitSpawnEntity
@@ -314,6 +315,7 @@
     - !type:CharacterDepartmentRequirement
       departments:
         - BrotherhoodOfSteel
+        - BrotherhoodOfSteelLancers
   functions:
     # #Misfits Fix - Use TraitSpawnEntity so multiple pet ghost roles can coexist
     - !type:TraitSpawnEntity

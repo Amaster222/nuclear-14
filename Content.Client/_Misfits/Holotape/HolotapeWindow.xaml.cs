@@ -975,9 +975,10 @@ public sealed partial class HolotapeWindow : DefaultWindow
             var capId = f.FolderId;
             var capName = f.Name;
             var deleted = f.Deleted;
-            // #Misfits Add - Admin-marked folders can only be deleted/restored by Admin tier.
             var isAdmin = f.IsAdmin;
-            var canModify = isAdmin ? _databaseState.CanAdmin : _databaseState.CanLeadership;
+            // #Misfits Change - All deletion/restore is reserved for the database's
+            // highest configured rank, regardless of entry protection or authorship.
+            var canModify = _databaseState.CanAdmin;
 
             var row = new BoxContainer { Orientation = BoxContainer.LayoutOrientation.Horizontal, SeparationOverride = 6, HorizontalExpand = true };
             // #Misfits Tweak - Prefix with faction admin label badge for marked folders.
@@ -998,15 +999,13 @@ public sealed partial class HolotapeWindow : DefaultWindow
             row.AddChild(btn);
 
             // #Misfits Change - Delete/restore gated on Leadership (or Admin if marked).
-            var isAuthor = _viewerUserId != null && f.CreatedByUserId.HasValue
-                && _viewerUserId.Value.UserId == f.CreatedByUserId.Value;
             if (!deleted && canModify)
             {
                 var del = new Button { Text = "[ DEL ]", MinWidth = 60 };
                 del.OnPressed += _ => OnDeleteDatabaseFolder?.Invoke(capId, null);
                 row.AddChild(del);
             }
-            if (!deleted && (_databaseState!.CanAdmin || isAuthor))
+            if (!deleted && _databaseState!.CanAdmin)
             {
                 var permDel = new Button { Text = "[ PERM DELETE ]", MinWidth = 110 };
                 permDel.OnPressed += _ => OnPermanentDeleteDatabaseEntry?.Invoke(capId, null, null, null);
@@ -1018,7 +1017,7 @@ public sealed partial class HolotapeWindow : DefaultWindow
                 rest.OnPressed += _ => OnRestoreDatabaseEntry?.Invoke(capId, null, null, null);
                 row.AddChild(rest);
             }
-            if (deleted && (_databaseState!.CanAdmin || isAuthor))
+            if (deleted && _databaseState!.CanAdmin)
             {
                 var permDel = new Button { Text = "[ PERM DELETE ]", MinWidth = 110 };
                 permDel.OnPressed += _ => OnPermanentDeleteDatabaseEntry?.Invoke(capId, null, null, null);
@@ -1077,10 +1076,7 @@ public sealed partial class HolotapeWindow : DefaultWindow
             var capSub = s.SubfolderId;
             var deleted = s.Deleted;
             // #Misfits Add - Subfolder lives under a root folder; inherits its Admin gating.
-            var canModify = folder.IsAdmin ? _databaseState.CanAdmin : _databaseState.CanLeadership;
-            // #Misfits Add - Check if viewer is the original author of this subfolder.
-            var isAuthor = _viewerUserId != null && s.CreatedByUserId.HasValue
-                && _viewerUserId.Value.UserId == s.CreatedByUserId.Value;
+            var canModify = _databaseState.CanAdmin;
             var row = new BoxContainer { Orientation = BoxContainer.LayoutOrientation.Horizontal, SeparationOverride = 6, HorizontalExpand = true };
             var btn = new Button
             {
@@ -1102,7 +1098,7 @@ public sealed partial class HolotapeWindow : DefaultWindow
                 del.OnPressed += _ => OnDeleteDatabaseFolder?.Invoke(folder.FolderId, capSub);
                 row.AddChild(del);
             }
-            if (!deleted && (_databaseState!.CanAdmin || isAuthor))
+            if (!deleted && _databaseState!.CanAdmin)
             {
                 var permDel = new Button { Text = "[ PERM DELETE ]", MinWidth = 110 };
                 permDel.OnPressed += _ => OnPermanentDeleteDatabaseEntry?.Invoke(null, folder.FolderId, capSub, null);
@@ -1114,7 +1110,7 @@ public sealed partial class HolotapeWindow : DefaultWindow
                 rest.OnPressed += _ => OnRestoreDatabaseEntry?.Invoke(null, folder.FolderId, capSub, null);
                 row.AddChild(rest);
             }
-            if (deleted && (_databaseState!.CanAdmin || isAuthor))
+            if (deleted && _databaseState!.CanAdmin)
             {
                 var permDel = new Button { Text = "[ PERM DELETE ]", MinWidth = 110 };
                 permDel.OnPressed += _ => OnPermanentDeleteDatabaseEntry?.Invoke(null, folder.FolderId, capSub, null);
@@ -1186,11 +1182,7 @@ public sealed partial class HolotapeWindow : DefaultWindow
         // #Misfits Add - Doc inherits Admin gating from its parent root folder OR its own IsAdmin flag.
         var parentFolder = FindFolder(folderId);
         var parentIsAdmin = parentFolder?.IsAdmin ?? false;
-        var effectiveAdmin = parentIsAdmin || d.IsAdmin;
-        var canModify = effectiveAdmin ? _databaseState!.CanAdmin : _databaseState!.CanLeadership;
-        // #Misfits Add - Check if viewer is the original author of this document.
-        var isAuthor = _viewerUserId != null && d.CreatedByUserId.HasValue
-            && _viewerUserId.Value.UserId == d.CreatedByUserId.Value;
+        var canModify = _databaseState!.CanAdmin;
         var row = new BoxContainer { Orientation = BoxContainer.LayoutOrientation.Horizontal, SeparationOverride = 6, HorizontalExpand = true };
 
         // #Misfits Add - Admin badge prefix on the doc row when this doc is independently Admin-protected
@@ -1213,7 +1205,7 @@ public sealed partial class HolotapeWindow : DefaultWindow
             del.OnPressed += _ => OnDeleteDatabaseDocument?.Invoke(capId);
             row.AddChild(del);
         }
-        if (!deleted && (_databaseState!.CanAdmin || isAuthor))
+        if (!deleted && _databaseState!.CanAdmin)
         {
             var permDel = new Button { Text = "[ PERM DELETE ]", MinWidth = 110 };
             permDel.OnPressed += _ => OnPermanentDeleteDatabaseEntry?.Invoke(null, null, null, capId);
@@ -1225,7 +1217,7 @@ public sealed partial class HolotapeWindow : DefaultWindow
             rest.OnPressed += _ => OnRestoreDatabaseEntry?.Invoke(null, null, null, capId);
             row.AddChild(rest);
         }
-        if (deleted && (_databaseState!.CanAdmin || isAuthor))
+        if (deleted && _databaseState!.CanAdmin)
         {
             var permDel = new Button { Text = "[ PERM DELETE ]", MinWidth = 110 };
             permDel.OnPressed += _ => OnPermanentDeleteDatabaseEntry?.Invoke(null, null, null, capId);
@@ -1281,11 +1273,8 @@ public sealed partial class HolotapeWindow : DefaultWindow
         };
         DatabaseActionsBar.AddChild(back);
 
-        // #Misfits Add - Permanent delete button in document viewer. Available to the
-        // original author OR Admin tier only (server enforces the same).
-        var docIsAuthor = _viewerUserId != null && doc.CreatedByUserId.HasValue
-            && _viewerUserId.Value.UserId == doc.CreatedByUserId.Value;
-        if (_databaseState.CanAdmin || docIsAuthor)
+        // #Misfits Change - Destructive controls are highest-rank only.
+        if (_databaseState.CanAdmin)
         {
             var capDocId = doc.DocumentId;
             var permDel = new Button

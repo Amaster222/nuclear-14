@@ -28,7 +28,7 @@ public sealed class TakeAmmoEvent : EntityEventArgs
     public bool Rng;
 
     public TakeAmmoEvent(int shots, List<(EntityUid? Entity, IShootable Shootable)> ammo,
-                        EntityCoordinates coordinates, EntityUid? user, bool rng = false)
+                        EntityCoordinates coordinates, EntityUid? user = null, bool rng = false)
     {
         Shots = shots;
         Ammo = ammo;

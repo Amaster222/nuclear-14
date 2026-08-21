@@ -103,6 +103,21 @@
   items:
     - ClothingNeckPinEnclaveMasterSergeant
 
+- type: loadout
+  id: LoadoutEnclavePinSergeantMajor
+  category: Roles
+  cost: 1
+  exclusive: true
+  requirements:
+    - !type:CharacterJobRequirement
+      jobs:
+        - EnclaveNCO
+    - !type:CharacterPlaytimeRequirement
+      tracker: EnclaveNCO
+      min: 288000 # 80 hours
+  items:
+    - ClothingNeckPinEnclaveSergeantMajor
+
 # === Junior Officer Ranks (EnclaveJuniorOfficer) ===
 
 - type: loadout
@@ -244,3 +259,123 @@
         - EnclaveHeadScientist
   items:
     - ClothingNeckPinEnclaveHeadScientist
+
+# === Supermutant Ranks (SuperMutantEnclave) ===
+# Mirrors SuperMutantEnclavePins in _Misfits/Enclave/enclave_rank_pin_progressions.yml.
+
+- type: loadout
+  id: LoadoutEnclaveSMPinPrivate
+  category: Roles
+  cost: 1
+  exclusive: true
+  requirements:
+    - !type:CharacterJobRequirement
+      jobs:
+        - SuperMutantEnclave
+  items:
+    - ClothingNeckPinEnclavePrivate
+
+- type: loadout
+  id: LoadoutEnclaveSMPinPFC
+  category: Roles
+  cost: 1
+  exclusive: true
+  requirements:
+    - !type:CharacterJobRequirement
+      jobs:
+        - SuperMutantEnclave
+    - !type:CharacterPlaytimeRequirement
+      tracker: SuperMutantEnclave
+      min: 72000 # 20 hours
+  items:
+    - ClothingNeckPinEnclavePFC
+
+- type: loadout
+  id: LoadoutEnclaveSMPinSpecialist
+  category: Roles
+  cost: 1
+  exclusive: true
+  requirements:
+    - !type:CharacterJobRequirement
+      jobs:
+        - SuperMutantEnclave
+    - !type:CharacterPlaytimeRequirement
+      tracker: SuperMutantEnclave
+      min: 144000 # 40 hours
+  items:
+    - ClothingNeckPinEnclaveSpecialist
+
+- type: loadout
+  id: LoadoutEnclaveSMPinSergeant
+  category: Roles
+  cost: 1
+  exclusive: true
+  requirements:
+    - !type:CharacterJobRequirement
+      jobs:
+        - SuperMutantEnclave
+    - !type:CharacterPlaytimeRequirement
+      tracker: SuperMutantEnclave
+      min: 216000 # 60 hours
+  items:
+    - ClothingNeckPinEnclaveSergeant
+
+- type: loadout
+  id: LoadoutEnclaveSMPinStaffSergeant
+  category: Roles
+  cost: 1
+  exclusive: true
+  requirements:
+    - !type:CharacterJobRequirement
+      jobs:
+        - SuperMutantEnclave
+    - !type:CharacterPlaytimeRequirement
+      tracker: SuperMutantEnclave
+      min: 288000 # 80 hours
+  items:
+    - ClothingNeckPinEnclaveStaffSergeant
+
+- type: loadout
+  id: LoadoutEnclaveSMPinSFC
+  category: Roles
+  cost: 1
+  exclusive: true
+  requirements:
+    - !type:CharacterJobRequirement
+      jobs:
+        - SuperMutantEnclave
+    - !type:CharacterPlaytimeRequirement
+      tracker: SuperMutantEnclave
+      min: 360000 # 100 hours
+  items:
+    - ClothingNeckPinEnclaveSFC
+
+- type: loadout
+  id: LoadoutEnclaveSMPinMasterSergeant
+  category: Roles
+  cost: 1
+  exclusive: true
+  requirements:
+    - !type:CharacterJobRequirement
+      jobs:
+        - SuperMutantEnclave
+    - !type:CharacterPlaytimeRequirement
+      tracker: SuperMutantEnclave
+      min: 432000 # 120 hours
+  items:
+    - ClothingNeckPinEnclaveMasterSergeant
+
+- type: loadout
+  id: LoadoutEnclaveSMPinSergeantMajor
+  category: Roles
+  cost: 1
+  exclusive: true
+  requirements:
+    - !type:CharacterJobRequirement
+      jobs:
+        - SuperMutantEnclave
+    - !type:CharacterPlaytimeRequirement
+      tracker: SuperMutantEnclave
+      min: 504000 # 140 hours
+  items:
+    - ClothingNeckPinEnclaveSergeantMajor

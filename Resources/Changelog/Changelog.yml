@@ -10115,3 +10115,362 @@ Entries:
   id: 6322
   time: '2026-08-15T03:00:16.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1750
+- author: Squagg
+  changes:
+    - type: Fix
+      message: Brotherhood Lancers can now use Brotherhood loadouts and traits.
+  id: 6323
+  time: '2026-08-15T11:56:59.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1754
+- author: Squagg
+  changes:
+    - type: Fix
+      message: >-
+        The vertibird is no longer launched when a power armor wearer sits in a
+        passenger seat.
+    - type: Fix
+      message: >-
+        The vertibird no longer drifts back toward its takeoff point when
+        maneuvering with passengers aboard.
+    - type: Fix
+      message: The vertibird can no longer be shoved around by players walking into it.
+  id: 6324
+  time: '2026-08-15T12:02:30.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1755
+- author: Luckyshotpictures
+  changes:
+    - type: Add
+      message: Enclave
+  id: 6325
+  time: '2026-08-15T15:46:56.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1143
+- author: Squagg
+  changes:
+    - type: Add
+      message: >-
+        Enclave roles now earn their rank pin from time played, instead of
+        always spawning with the same one.
+    - type: Add
+      message: >-
+        Enclave supermutants have their own rank ladder, from Private up to
+        Sergeant Major.
+    - type: Add
+      message: The Enclave supermutant role now has a slot on Wendover.
+    - type: Add
+      message: Enclave rank pins now show a rank title on examine and on your ID.
+    - type: Tweak
+      message: >-
+        Enclave supermutants now spawn in rags with a plasma cutter on the belt
+        and a super sledge on the back, instead of a lab coat and a loadout kit
+        with guns they can't use.
+    - type: Fix
+      message: Enclave rank pins can now be worn by supermutants.
+    - type: Remove
+      message: >-
+        Removed the radiation resistance from the supermutant X-01, since
+        supermutants are already immune.
+  id: 6326
+  time: '2026-08-15T21:36:46.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1756
+- author: Squagg
+  changes:
+    - type: Fix
+      message: >-
+        The genetics console works again. Scanning, sequencing, combining and
+        applying unique enzymes all did nothing after the console announced it
+        had started.
+    - type: Fix
+      message: >-
+        The Webbing mutation now actually lets you craft with the silk it gives
+        you.
+    - type: Fix
+      message: >-
+        Upgrading Rock Eater into Rock Absorber no longer takes away your
+        ability to eat items entirely.
+    - type: Fix
+      message: >-
+        Inexorable now does what it says and keeps you out of crit. It
+        previously had no effect at all.
+    - type: Fix
+      message: >-
+        Mutations that get auto removed for conflicting with another no longer
+        leave their instability behind.
+    - type: Fix
+      message: Mutation popups no longer appear twice.
+    - type: Fix
+      message: >-
+        Bystanders can now see someone being injected with a mutator or linked
+        to a handheld genome scanner.
+    - type: Fix
+      message: >-
+        Clicking a sequence just as another is removed no longer acts on the
+        wrong mutation.
+    - type: Tweak
+      message: >-
+        Combining mutations now takes 10 seconds instead of 5, and plays a sound
+        when it finishes.
+  id: 6327
+  time: '2026-08-15T23:37:58.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1757
+- author: Oli
+  changes:
+    - type: Add
+      message: Exiles armors and uniforms.
+  id: 6328
+  time: '2026-08-16T03:37:30.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1758
+- author: aftemath434
+  changes:
+    - type: Add
+      message: Heavy assault rifle & T-60 pistol
+  id: 6329
+  time: '2026-08-16T03:38:01.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1740
+- author: cythisiax
+  changes:
+    - type: Fix
+      message: >-
+        enclave whitelist function not working@4hour timer grant to Enlisted &
+        Junior Scientist paths
+    - type: Fix
+      message: >-
+        Terminal system for faction specific database received critical fixes of
+        anyone able to delete any folder & message.
+    - type: Fix
+      message: 'market system functionality '
+  id: 6330
+  time: '2026-08-16T12:03:50.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1760
+- author: RedBookcase
+  changes:
+    - type: Tweak
+      message: Increased Junior and Regular Enclave Scientist slots from 1 to 2
+  id: 6331
+  time: '2026-08-16T12:04:29.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1761
+- author: BurgerMoth
+  changes:
+    - type: Tweak
+      message: Minigun ROF increased to 15
+    - type: Tweak
+      message: Minigun spread nearly doubled (rate of rise in spread tripled)
+    - type: Tweak
+      message: Minigun crafting cost slightly increased
+    - type: Tweak
+      message: Avenger variant ROF increased to 15
+    - type: Tweak
+      message: Avenger variant spread slightly increased
+    - type: Tweak
+      message: 5mm drum crafting cost from NCR T4 BP nearly tripled
+    - type: Tweak
+      message: '5mm drum size in bag doubled to 4x4 '
+    - type: Tweak
+      message: 5mm projectile changed from "SmallCaliber" to "MediumCaliber"
+  id: 6332
+  time: '2026-08-16T19:24:15.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1743
+- author: aftemath434
+  changes:
+    - type: Add
+      message: Enclave BP
+  id: 6333
+  time: '2026-08-17T00:42:05.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1763
+- author: Squagg
+  changes:
+    - type: Remove
+      message: >-
+        Removed PA from Enclave Vertibird Pilots. Temporarily given Zulu gear
+        until pilot gear is in.
+    - type: Remove
+      message: Removed the ability for Enclave to detonate themselves via a hotkey.
+  id: 6334
+  time: '2026-08-17T00:42:30.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1765
+- author: JohnKieser
+  changes:
+    - type: Add
+      message: >-
+        Spent casing are now a clientside only visual. This lets us have bullet
+        casings WITH PHYSICS!! These can even be adjusted in the graphics menu 
+  id: 6335
+  time: '2026-08-17T01:08:37.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1766
+- author: cythisiax
+  changes:
+    - type: Fix
+      message: >-
+        vertibird can no longer go under layer 0 on multiz, never layerBelow,
+        only layerAbove for time being
+  id: 6336
+  time: '2026-08-17T02:45:05.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1767
+- author: Oli
+  changes:
+    - type: Tweak
+      message: Military Cowboy + Steel-tipped boots now can hold knives and pistols.
+  id: 6337
+  time: '2026-08-17T21:35:42.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1771
+- author: Squagg
+  changes:
+    - type: Add
+      message: >-
+        Vertibirds have a working gunner turret. The crew chief seat can drop
+        into a gunner's sight and strafe the ground below.
+    - type: Add
+      message: >-
+        Vertibird gun belts restock the turret, craftable from Brotherhood, NCR,
+        and Enclave blueprints.
+    - type: Add
+      message: >-
+        Vertibird airframes can be welded back together. Pilots and Lancers
+        repair them twice as fast.
+    - type: Add
+      message: >-
+        Power armoured passengers can combat drop out of a cruising vertibird
+        and land unhurt.
+    - type: Add
+      message: >-
+        Passengers can unbuckle from a vertibird in flight. Above ground level
+        you fall and take 100 blunt per level dropped.
+    - type: Add
+      message: >-
+        Admin debug toggles for vertibirds under the right click Tricks menu:
+        infinite fuel, instant takeoff and landing, infinite ammo, and holding
+        altitude with no pilot.
+    - type: Tweak
+      message: >-
+        Players can now board a vertibird while it is running instead of only
+        while it is parked.
+    - type: Tweak
+      message: >-
+        Nobody can pull a passenger out of a flying vertibird. Only the
+        passenger can unbuckle themselves.
+    - type: Tweak
+      message: >-
+        A vertibird that loses its pilot in flight now brings itself down
+        automatically, whether the pilot disconnected or stepped out.
+    - type: Tweak
+      message: >-
+        The Enclave Vertibird Pilot now wears Zulu advanced combat armour, a
+        Zulu combat helmet and a breather mask instead of power armour.
+    - type: Tweak
+      message: Enclave characters can take the Tribal language trait.
+    - type: Tweak
+      message: >-
+        Nuka-Cola machines no longer stock broken bottles, and rare flavours
+        like Quantum show up far more often.
+    - type: Remove
+      message: >-
+        The Enclave microbomb implant no longer gives the wearer a hotbar button
+        to detonate themselves. The failsafe word and the command detonator
+        still work.
+    - type: Fix
+      message: >-
+        The vertibird turret and combat drop no longer work at ground level,
+        where they would have put you under the map.
+    - type: Fix
+      message: >-
+        Nuka-Cola machines no longer rewrite their whole stock list the first
+        time you buy something.
+    - type: Fix
+      message: Admin ghosts can use workbenches again.
+    - type: Fix
+      message: Ceramic flasks can be poured over people.
+  id: 6338
+  time: '2026-08-18T00:40:06.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1768
+- author: Bradysgaming
+  changes:
+    - type: Tweak
+      message: >-
+        Edited bos off duty supervisors a bit, now a break in the codex to
+        participate in the bos's operations 
+  id: 6339
+  time: '2026-08-18T12:17:27.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1775
+- author: Squagg
+  changes:
+    - type: Add
+      message: >-
+        Vertibirds now have a cargo bay. Drag a closed crate onto one, or use
+        the Load button on the flight console, and it goes aboard with
+        everything still packed inside it.
+    - type: Add
+      message: >-
+        The vertibird flight console lists whatever crates are stowed and can
+        unload them, and stored crates can also be pulled out with an alt click
+        on the aircraft.
+    - type: Tweak
+      message: >-
+        Unloading a crate while the vertibird is airborne lowers it to the
+        ground directly below instead of into the cabin.
+    - type: Fix
+      message: >-
+        Radio messages now carry between z-levels of the same station instead of
+        stopping at the level they were sent from. Telecom servers cover every
+        level too, so channels that need one work from anywhere on the station.
+    - type: Fix
+      message: >-
+        Pip-Boy messages now reach people on other z-levels and other maps
+        instead of quietly failing to send. Telecomm blackouts and jammers still
+        block them.
+  id: 6340
+  time: '2026-08-18T12:56:55.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1776
+- author: Oli
+  changes:
+    - type: Add
+      message: >-
+        Khanbat, Battlecoats, Vests and Full Helmet. Battlecoat, Jacket + Vest,
+        Full Helmet added to Loadouts.
+    - type: Tweak
+      message: armored vest out of loadouts replaced with jacket and vest.
+  id: 6341
+  time: '2026-08-18T12:57:23.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1777
+- author: Cythisiax
+  changes:
+    - type: Tweak
+      message: 'X-01 and X-02 renamed to APA MK I and APA MK II respectively. '
+  id: 6342
+  time: '2026-08-18T23:01:52.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1779
+- author: Squagg
+  changes:
+    - type: Fix
+      message: >-
+        Crates unloaded from a vertibird by someone in a seat now land on the
+        ground next to the aircraft instead of vanishing under the hull or
+        getting stuck to the vertibird and following it around.
+    - type: Fix
+      message: >-
+        Vertibird gunners can hear people talking in the cabin, talk back, and
+        use their radio while manning the turret.
+  id: 6343
+  time: '2026-08-20T01:52:51.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1781
+- author: aftemath434
+  changes:
+    - type: Add
+      message: 'Enclave ASRS (automated storage Retrieval system)  (cargo elevator) '
+  id: 6344
+  time: '2026-08-20T01:53:32.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1778
+- author: JohnKieser
+  changes:
+    - type: Fix
+      message: >-
+        Reverted storage UI changes. SHOULD prevent freezes/crashes from opening
+        storage
+  id: 6345
+  time: '2026-08-20T14:05:28.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1783
+- author: Amaster222
+  changes:
+    - type: Tweak
+      message: Monkey cubes replaced with a variant that gives irradiated meat.
+  id: 6346
+  time: '2026-08-20T14:25:33.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1782

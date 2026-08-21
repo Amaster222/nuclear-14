@@ -38,6 +38,13 @@ public sealed partial class RequisitionsAccountComponent : Component
     [DataField]
     public List<string> CompletedBounties = new();
 
+    /// <summary>
+    /// Bounties currently posted on this account's board. Only used by consoles with a
+    /// <see cref="Components.RequisitionsComputerComponent.BountyPool"/>.
+    /// </summary>
+    [DataField]
+    public List<RequisitionsBounty> ActiveBounties = new();
+
     [DataField]
     public Dictionary<string, int> BountyProgress = new();
 

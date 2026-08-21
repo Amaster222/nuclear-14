@@ -3,10 +3,6 @@ using Content.Shared.Verbs;
 using Content.Shared.Weapons.Ranged.Components;
 using Content.Shared.Weapons.Ranged.Events;
 using Robust.Shared.Containers;
-using Robust.Shared.GameStates;
-using Robust.Shared.Serialization;
-using Robust.Shared.Utility;
-using System.Linq;
 using Content.Shared.Interaction.Events;
 using JetBrains.Annotations;
 
@@ -129,8 +125,10 @@ public partial class SharedGunSystem
                 return false;
             }
 
-            for (var i = Math.Min(ev.Ammo.Count - 1, component.Capacity - 1); i >= 0; i--)
+            for (var i = 0; i < component.Capacity; i++)
             {
+                if (ev.Ammo.Count == 0)
+                    break;
                 var index = (component.CurrentIndex + i) % component.Capacity;
 
                 if (component.AmmoSlots[index] != null ||
@@ -152,8 +150,7 @@ public partial class SharedGunSystem
                 Containers.Insert(ent.Value, component.AmmoContainer);
                 SetChamber(index, component, uid);
 
-                if (ev.Ammo.Count == 0)
-                    break;
+
             }
 
             DebugTools.Assert(ammo.Count == 0);
@@ -361,8 +358,9 @@ public partial class SharedGunSystem
 
                     if (TryComp<CartridgeAmmoComponent>(uid, out var cartridge))
                         SetCartridgeSpent(uid, cartridge, !(bool) chamber);
-
-                    EjectCartridge(uid);
+                    // misfit fix deuplicated spent carts
+                    var sender = _player.TryGetSessionByEntity(user!.Value, out var session) ? session : _player.LocalSession;
+                    EjectCartridge(uid, userSession: sender);
                 }
 
                 component.Chambers[i] = null;
@@ -373,9 +371,12 @@ public partial class SharedGunSystem
                 component.AmmoSlots[i] = null;
                 Containers.Remove(slot.Value, component.AmmoContainer);
                 component.Chambers[i] = null;
+                // Misfit removed: if (!_netManager.IsClient)
+                //                 prediction handled in EjectCartridge
+                // msifit fix duplicated spent carts
+                var sender = _player.TryGetSessionByEntity(user!.Value, out var session) ? session : _player.LocalSession;
+                EjectCartridge(slot.Value, userSession: sender);
 
-                if (!_netManager.IsClient)
-                    EjectCartridge(slot.Value);
 
                 anyEmpty = true;
             }
