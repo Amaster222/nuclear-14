@@ -3,7 +3,6 @@ using System.Numerics;
 using Content.Client.Examine;
 using Content.Client.Hands.Systems;
 using Content.Client.Interaction;
-using Content.Client.Items.Systems;
 using Content.Client.Storage;
 using Content.Client.Storage.Systems;
 using Content.Client.UserInterface.Systems.Hotbar.Widgets;
@@ -14,13 +13,13 @@ using Content.Shared.CCVar;
 using Content.Shared.Input;
 using Content.Shared.Interaction;
 using Content.Shared.Storage;
-using Robust.Client.Graphics.Clyde;
 using Robust.Client.Input;
 using Robust.Client.Player;
+using Robust.Client.UserInterface;
 using Robust.Client.UserInterface.Controllers;
+using Robust.Client.UserInterface.Controls;
 using Robust.Shared.Configuration;
 using Robust.Shared.Input;
-using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
 // using Content.Shared.Crafting.Events; // #Misfits Remove: Stalker14 crafting system
 
@@ -42,6 +41,7 @@ public sealed class StorageUIController : UIController, IOnSystemChanged<Storage
     [Dependency] private readonly IPlayerManager _player = default!;
     [Dependency] private readonly CloseRecentWindowUIController _closeRecentWindowUIController = default!;
     [UISystemDependency] private readonly StorageSystem _storage = default!;
+
     /// <summary>
     /// Cached positions for opening nested storage.
     /// </summary>
@@ -70,6 +70,7 @@ public sealed class StorageUIController : UIController, IOnSystemChanged<Storage
         base.Initialize();
 
         UIManager.OnScreenChanged += OnScreenChange;
+
         _configuration.OnValueChanged(CCVars.StaticStorageUI, OnStaticStorageChanged, true);
         _configuration.OnValueChanged(CCVars.OpaqueStorageWindow, OnOpaqueWindowChanged, true);
         _configuration.OnValueChanged(CCVars.StorageWindowTitle, OnStorageWindowTitle, true);
@@ -206,7 +207,6 @@ public sealed class StorageUIController : UIController, IOnSystemChanged<Storage
     {
         _input.FirstChanceOnKeyEvent -= OnMiddleMouse;
     }
-    /// why shit code emo
 
     /// One might ask, Hey Emo, why are you parsing raw keyboard input just to rotate a rectangle?
     /// The answer is, that input bindings regarding mouse inputs are always intercepted by the UI,
@@ -250,12 +250,12 @@ public sealed class StorageUIController : UIController, IOnSystemChanged<Storage
         //clamp it to a cardinal.
         DraggingRotation = (DraggingRotation + Math.PI / 2f).GetCardinalDir().ToAngle();
         if (DraggingGhost != null)
-            DraggingGhost.InsertLoc.Rotation = DraggingRotation;
+            DraggingGhost.Location.Rotation = DraggingRotation;
 
         if (IsDragging || UIManager.CurrentlyHovered is StorageWindow)
             keyEvent.Handle();
     }
-    /// why shit code
+
     private void OnPiecePressed(GUIBoundKeyEventArgs args, StorageWindow window, ItemGridPiece control)
     {
         if (IsDragging || !window.IsOpen)
@@ -263,7 +263,7 @@ public sealed class StorageUIController : UIController, IOnSystemChanged<Storage
 
         if (args.Function == ContentKeyFunctions.MoveStoredItem)
         {
-            DraggingRotation = control.InsertLoc.Rotation;
+            DraggingRotation = control.Location.Rotation;
             _menuDragHelper.MouseDown(control);
             _menuDragHelper.Update(0f);
 
@@ -271,7 +271,7 @@ public sealed class StorageUIController : UIController, IOnSystemChanged<Storage
         }
         else if (args.Function == ContentKeyFunctions.SaveItemLocation)
         {
-            if (window.StorageEntity is not { } storage)
+            if (window.StorageEntity is not {} storage)
                 return;
 
             EntityManager.RaisePredictiveEvent(new StorageSaveItemLocationEvent(
@@ -304,7 +304,6 @@ public sealed class StorageUIController : UIController, IOnSystemChanged<Storage
         window.FlagDirty();
     }
 
-
     private void OnPieceUnpressed(GUIBoundKeyEventArgs args, StorageWindow window, ItemGridPiece control)
     {
         if (args.Function != ContentKeyFunctions.MoveStoredItem)
@@ -322,10 +321,9 @@ public sealed class StorageUIController : UIController, IOnSystemChanged<Storage
         window.FlagDirty();
 
         // If we tried to drag it on top of another grid piece then cancel out.
-        if (targetControl is ItemGridPiece || window.StorageEntity is not { } sourceStorage
-        || localPlayer == null)
+        if (targetControl is ItemGridPiece || window.StorageEntity is not { } sourceStorage || localPlayer == null)
         {
-            window.Reclaim(control.InsertLoc, control);
+            window.Reclaim(control.Location, control);
             args.Handle();
             _menuDragHelper.EndDrag();
             return;
@@ -333,13 +331,52 @@ public sealed class StorageUIController : UIController, IOnSystemChanged<Storage
 
         if (_menuDragHelper.IsDragging && DraggingGhost is { } draggingGhost)
         {
-            // Misfit Fix and Change: reworked UI dragging a little to not throw execptions
-            //                        by checking if dragged item grid coords doesnt result
-            //                        in calc'd storage grid to be out of index
-            //
-            //                        Items dragged outside of any storage now
-            //                        drop items by default(redid StorageInteractWithItemEvent a little)
-            DragStuff(targetStorage, window, draggingGhost, control);
+            var dragEnt = draggingGhost.Entity;
+            var dragLoc = draggingGhost.Location;
+
+            // Dragging in the same storage
+            // The existing ItemGridPiece just stops rendering but still exists so check if it's hovered.
+            if (targetStorage == window)
+            {
+                var position = targetStorage.GetMouseGridPieceLocation(dragEnt, dragLoc);
+                var newLocation = new ItemStorageLocation(DraggingRotation, position);
+
+                EntityManager.RaisePredictiveEvent(new StorageSetItemLocationEvent(
+                    EntityManager.GetNetEntity(draggingGhost.Entity),
+                    EntityManager.GetNetEntity(sourceStorage),
+                    newLocation));
+
+                window.Reclaim(newLocation, control);
+            }
+            // Dragging to new storage
+            else if (targetStorage?.StorageEntity != null && targetStorage != window)
+            {
+                var position = targetStorage.GetMouseGridPieceLocation(dragEnt, dragLoc);
+                var newLocation = new ItemStorageLocation(DraggingRotation, position);
+
+                // Check it fits and we can move to hand (no free transfers).
+                if (_storage.ItemFitsInGridLocation(
+                        (dragEnt, null),
+                        (targetStorage.StorageEntity.Value, null),
+                        newLocation))
+                {
+                    // Can drop and move.
+                    EntityManager.RaisePredictiveEvent(new StorageTransferItemEvent(
+                        EntityManager.GetNetEntity(dragEnt),
+                        EntityManager.GetNetEntity(targetStorage.StorageEntity.Value),
+                        newLocation));
+
+                    targetStorage.Reclaim(newLocation, control);
+                    DraggingRotation = Angle.Zero;
+                }
+                else
+                {
+                    // Cancel it (rather than dropping).
+                    window.Reclaim(dragLoc, control);
+                }
+            }
+
+            targetStorage?.FlagDirty();
         }
         // If we just clicked, then take it out of the bag.
         else
@@ -348,116 +385,18 @@ public sealed class StorageUIController : UIController, IOnSystemChanged<Storage
                 EntityManager.GetNetEntity(control.Entity),
                 EntityManager.GetNetEntity(sourceStorage)));
         }
-        DraggingRotation = Angle.Zero;
+
         _menuDragHelper.EndDrag();
         args.Handle();
     }
-    public static void Offset(Vector2 offset, ref Vector2 value)
-    {
-        value -= offset;
-    }
-    /// Misfit: mostly follows what orignal did but with less if nesting
-    /// I dont plan on touching UI code any more than this.
-    /// modifications still couple with already existing system
-    /// so there SHOULD not be much volatility
-    private void DragStuff(StorageWindow? targetStorage, StorageWindow window,
-                            ItemGridPiece draggingGhost, ItemGridPiece control)
-    {
 
-        var dragEnt = draggingGhost.Entity;
-
-        if (targetStorage?.StorageEntity == null)
-        {
-            EntityManager.RaisePredictiveEvent(new StorageTransferItemEvent(
-            EntityManager.GetNetEntity(dragEnt),
-            EntityManager.GetNetEntity(window.StorageEntity!.Value),
-            new ItemStorageLocation(Angle.Zero, new Vector2i(-100, -100))));
-            return;
-        }
-
-        // bottomLeft = (b1,b2) as new origin
-        // (bxn,byn) being n points done wrt to b1,b2(we pretending b1,b2 is origin)
-        //[x0...xn]   [cos,sin,b1] [bx0,...bxn]
-        //[y0...yn] = [-sin,cos,b2][by0,...byn]
-        //[1.....1]   [0,0,1]      [1........1]
-        // tho need ez way to turn x,y points to bx,by points first
-        // [bx0..]   [1,0,xb][xb0..]   map origin x,y wrt to b to translate
-        // [by0..] = [0,1,yb][yb0..]
-        // [1....]   [0,0,1] [1....]
-        // so by sub
-        // [x0..]   [cos,sin,b1]  [1,0,xb][xb0..]
-        // [y0..] = [-sin,cos,b2] [0,1,yb][yb0..]
-        // [1....]  [0,0,1]       [0,0,1] [1....]
-        //
-        // (final x,y)[x0..]   [cos,sin,B1]   [xb0..] (Unaltered x,y)
-        //            [y0..] = [-sin,cos,B2]  [yb0..]
-        //            [1...]   [0,0,1]        [1....]
-        //
-        // [cos()xb+sin()yb+b1] = B1
-        // [-sin()xb+cos()yb+b2]= B2
-        //
-        var posFloat = targetStorage.MouseToGridFloat();
-        Offset(draggingGhost.BoundingBox.Center.Floored(), ref posFloat);
-        var posGrid = posFloat.Floored();
-        var newLocation = new ItemStorageLocation(DraggingRotation, posGrid);
-
-        var gridMax = targetStorage.ControlGridCount() - 1;
-        var columns = targetStorage.GridColumnsNum();
-
-        var shapes = EntityManager.System<ItemSystem>().GetAdjustedItemShape(dragEnt, DraggingRotation, posGrid);
-        var bawx = shapes.GetBoundingBox();
-        var guh = bawx.Center;
-
-        if (InBounds(bawx, gridMax, columns) && !NoItemOverlap(shapes, columns, targetStorage).Any(x => x == false))
-        {
-            targetStorage.Reclaim(newLocation, control);
-            targetStorage.FlagDirty();
-            EntityManager.RaisePredictiveEvent(new StorageTransferItemEvent(
-            EntityManager.GetNetEntity(dragEnt),
-            EntityManager.GetNetEntity(targetStorage.StorageEntity.Value),
-            newLocation));
-            return;
-        }
-        window.Reclaim(control.InsertLoc, control);
-        window.FlagDirty();
-    }
-    private static bool InBounds(Box2i box, int gridMax, int gridCol)
-    {
-        var isNeg = ((box.Left | box.Bottom | box.Right | box.Top) & 0x80_00_00_0) != 0x0;
-
-        var vMin = box.BottomLeft.X + box.BottomLeft.Y * gridCol;
-        var vMax = box.TopRight.X + box.TopRight.Y * gridCol;
-        return !isNeg && vMin >= 0 && vMax <= gridMax;
-    }
-
-    private static IEnumerable<bool> NoItemOverlap(IReadOnlyList<Box2i> shapes, int gridCol, StorageWindow win)
-    {
-
-        foreach (Box2i box in shapes)
-        {
-            var min = box.Left;
-            var max = box.Right;
-            var row = box.Top;
-            var rowMin = box.Bottom;
-            while (row >= rowMin)
-            {
-                var spaces = win.GetControlSlice(min + gridCol * row, max + gridCol * row);
-                if (spaces.Any(space => space.ChildCount > 0))
-                {
-                    yield return false;
-                }
-                row--;
-            }
-        }
-        yield return true;
-    }
     private bool OnMenuBeginDrag()
     {
         if (_menuDragHelper.Dragged is not { } dragged)
             return false;
 
         DraggingGhost!.Orphan();
-        DraggingRotation = dragged.InsertLoc.Rotation;
+        DraggingRotation = dragged.Location.Rotation;
 
         UIManager.PopupRoot.AddChild(DraggingGhost);
         SetDraggingRotation();
@@ -484,7 +423,7 @@ public sealed class StorageUIController : UIController, IOnSystemChanged<Storage
             EntityManager);
 
         // I don't know why it divides the position by 2. Hope this helps! -emo
-        LayoutContainer.SetPosition(DraggingGhost, UIManager.MousePositionScaled.Position / 2 - offset);
+        LayoutContainer.SetPosition(DraggingGhost, UIManager.MousePositionScaled.Position / 2 - offset );
     }
 
     private void OnMenuEndDrag()
@@ -494,7 +433,6 @@ public sealed class StorageUIController : UIController, IOnSystemChanged<Storage
 
         DraggingRotation = Angle.Zero;
     }
-
 
     public override void FrameUpdate(FrameEventArgs args)
     {

@@ -25,3 +25,13 @@ N14DoorCellLocked80s: MisfitsDoorCellLocked80s
 # 14/08/2026
 N14DecorationFlagBrotherhoodMidwest: MisfitsDecorationFlagBoSBonneville509
 N14FlagWallWesternBrotherhood: MisfitsFlagWallBrotherhoodBonneville509
+
+# 19/08/2026 change all monkey and kobold cubes to rad cubes
+# we start the cooking revolution here
+MonkeyCubeBox: RadCubeBox
+MonkeyCubeWrapped: RadCubeWrapped
+MonkeyCube: RadCube
+KoboldCubeBox: RadCubeBox
+KoboldCubeWrapped: RadCubeWrapped
+KoboldCube: RadCube
+VariantCubeBox: RadCubeBox
