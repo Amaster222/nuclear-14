@@ -10563,3 +10563,10 @@ Entries:
   id: 6349
   time: '2026-08-22T03:09:10.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1789
+- author: Lucky
+  changes:
+    - type: Fix
+      message: Spawnpoint mapping error has been fixed.
+  id: 6350
+  time: '2026-08-22T13:57:12.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1792
