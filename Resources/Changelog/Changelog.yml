@@ -10474,3 +10474,39 @@ Entries:
   id: 6346
   time: '2026-08-20T14:25:33.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1782
+- author: Lucky
+  changes:
+    - type: Add
+      message: OSI office
+    - type: Add
+      message: Enclave Helipad, Cargo Elevator, and some science stuff.
+    - type: Add
+      message: Enclave has gotten a fancy front door.
+    - type: Fix
+      message: NCR spawns now with the correct chemdispenser.
+    - type: Tweak
+      message: NCR gates now spawn open.
+    - type: Remove
+      message: Removed the armor and weapons that spawn from all major factions.
+    - type: Tweak
+      message: Tweaked what rocks can spawn, and the chance of enemies.
+    - type: Tweak
+      message: Moved Wastelander Roundstart Spawn a bit around
+    - type: Tweak
+      message: Enclave caves are a tiny bit more interesting now.
+  id: 6347
+  time: '2026-08-21T17:20:03.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1787
+- author: Tytos
+  changes:
+    - type: Add
+      message: >-
+        rope belt recipe, adobe brick sprite, legion helmet recipes, frumentarii
+        and optio locked doors
+    - type: Tweak
+      message: sitting duck is now +4, legion supervisor descriptions tweaked.
+    - type: Fix
+      message: riding perk desc was wrong, optio should now have decanus access
+  id: 6348
+  time: '2026-08-22T01:29:45.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1786

@@ -114,9 +114,10 @@ trait-description-MisfitsPetEyebotTribe =
 # #Misfits Edited - Riding perk also covers riding brahmin/brahdo (horse) mounts, not just motorcycles.
 trait-name-N14RidingPerk = Riding
 trait-description-N14RidingPerk =
-    You know how to handle wasteland motorcycles and ride the beasts of the wastes.
-    Old engines, bad roads, improvised frames, and stubborn brahmin or brahdo are all familiar enough that you can keep moving without wrecking yourself.
-
+    You know how to handle wasteland motorcycles and ride brahdo.
+    Old engines, the saddle and reins, and old roads are all familiar to you.
+    you can handle brahdo and bikes without crashing or being kicked off.
+    
 trait-name-N14VertibirdPilotPerk = Vertibird Pilot
 trait-description-N14VertibirdPilotPerk =
     You know enough about pre-War tilt-rotor aircraft to get a vertibird off the ground and back down again.

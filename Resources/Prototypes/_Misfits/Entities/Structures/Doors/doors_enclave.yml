@@ -1,0 +1,177 @@
+- type: entity
+  parent: N14DoorBunker
+  id: MisfitsDoorBunkerLockedEnclave
+  suffix: Enclave, Locked
+  components:
+  - type: AccessReader
+    access: [["Enclave"]]
+  - type: Wires
+    layoutId: HighSec
+
+- type: entity
+  parent: N14DoorBunkerGlass
+  id: MisfitsDoorBunkerGlassLockedEnclave
+  suffix: Enclave, Locked
+  components:
+  - type: AccessReader
+    access: [["Enclave"]]
+  - type: Wires
+    layoutId: HighSec
+
+- type: entity
+  parent: N14DoorBunker3X
+  id: MisfitsDoorBunker3XLockedEnclave
+  suffix: Enclave, Locked
+  components:
+  - type: AccessReader
+    access: [["Enclave"]]
+  - type: Wires
+    layoutId: HighSec
+
+- type: entity
+  parent: N14DoorBunkerGlass3X
+  id: MisfitsDoorBunkerGlass3XLockedEnclave
+  suffix: Enclave, Locked
+  components:
+  - type: AccessReader
+    access: [["Enclave"]]
+  - type: Wires
+    layoutId: HighSec
+
+- type: entity
+  parent: N14DoorMetalSecure
+  id: MisfitsDoorMetalSecureLockedEnclave
+  suffix: Enclave, Locked
+  components:
+  - type: AccessReader
+    access: [["Enclave"]]
+  - type: Wires
+    layoutId: HighSec
+
+- type: entity
+  parent: N14DoorCellMetal
+  id: MisfitsDoorCellMetalLockedEnclave
+  suffix: Enclave, Locked
+  components:
+  - type: AccessReader
+    access: [["Enclave"]]
+  - type: Wires
+    layoutId: HighSec
+
+- type: entity
+  parent: N14DoorBunker
+  id: MisfitsDoorBunkerLockedEnclaveSecurity
+  suffix: Enclave, Locked, Security
+  components:
+  - type: AccessReader
+    access: [["EnclaveNCO"]]
+  - type: Wires
+    layoutId: HighSec
+
+- type: entity
+  parent: N14DoorBunker
+  id: MisfitsDoorBunkerLockedEnclaveScience
+  suffix: Enclave, Locked, Science
+  components:
+  - type: AccessReader
+    access: [["EnclaveScience"]]
+  - type: Wires
+    layoutId: HighSec
+
+- type: entity
+  parent: N14DoorBunker
+  id: MisfitsDoorBunkerLockedEnclaveCommand
+  suffix: Enclave, Locked, Command
+  components:
+  - type: AccessReader
+    access: [["EnclaveCommand"]]
+  - type: Wires
+    layoutId: HighSec
+
+- type: entity
+  parent: N14DoorMetalSecure
+  id: MisfitsDoorMetalSecureLockedEnclaveSecurity
+  suffix: Enclave, Locked, Security
+  components:
+  - type: AccessReader
+    access: [["EnclaveNCO"]]
+  - type: Wires
+    layoutId: HighSec
+
+- type: entity
+  parent: N14DoorMetalSecure
+  id: MisfitsDoorMetalSecureLockedEnclaveScience
+  suffix: Enclave, Locked, Science
+  components:
+  - type: AccessReader
+    access: [["EnclaveScience"]]
+  - type: Wires
+    layoutId: HighSec
+
+- type: entity
+  parent: N14DoorMetalSecure
+  id: MisfitsDoorMetalSecureLockedEnclaveCommand
+  suffix: Enclave, Locked, Command
+  components:
+  - type: AccessReader
+    access: [["EnclaveCommand"]]
+  - type: Wires
+    layoutId: HighSec
+
+# Role-specific access doors for the expanded Enclave hierarchy.
+
+- type: entity
+  parent: N14DoorBunker
+  id: MisfitsDoorBunkerLockedEnclaveRoleScientist
+  suffix: Enclave, Locked, Role Scientist
+  components:
+  - type: AccessReader
+    access: [["EnclaveRoleScientist"]]
+
+- type: entity
+  parent: N14DoorBunker
+  id: MisfitsDoorBunkerLockedEnclaveRoleHeadScientist
+  suffix: Enclave, Locked, Role Head Scientist
+  components:
+  - type: AccessReader
+    access: [["EnclaveRoleHeadScientist"]]
+
+- type: entity
+  parent: N14DoorBunker
+  id: MisfitsDoorBunkerLockedEnclaveRoleAll
+  suffix: Enclave, Locked, Role All
+  components:
+  - type: AccessReader
+    access: [["EnclaveRoleAll"]]
+
+- type: entity
+  parent: N14DoorBunker
+  id: MisfitsDoorBunkerLockedEnclaveRoleNCO
+  suffix: Enclave, Locked, Role NCO
+  components:
+  - type: AccessReader
+    access: [["EnclaveRoleNCO"]]
+
+- type: entity
+  parent: N14DoorBunker
+  id: MisfitsDoorBunkerLockedEnclaveRoleJuniorOfficer
+  suffix: Enclave, Locked, Role Junior Officer
+  components:
+  - type: AccessReader
+    access: [["EnclaveRoleJuniorOfficer"]]
+
+- type: entity
+  parent: N14DoorBunker
+  id: MisfitsDoorBunkerLockedEnclaveRoleSeniorOfficer
+  suffix: Enclave, Locked, Role Senior Officer
+  components:
+  - type: AccessReader
+    access: [["EnclaveRoleSeniorOfficer"]]
+
+- type: entity
+  parent: N14DoorBunker
+  id: MisfitsDoorBunkerLockedEnclaveRoleCommander
+  suffix: Enclave, Locked, Role Commander
+  components:
+  - type: AccessReader
+    access: [["EnclaveRoleCommander"]]

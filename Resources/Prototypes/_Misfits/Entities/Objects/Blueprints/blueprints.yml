@@ -388,6 +388,7 @@
     # #Misfits Add - paired legionnaire hoods
     - N14BPLegionArmorHelmetTribalHood
     - N14BPLegionArmorHelmetTribalOutcastHood
+    - N14BPLegionArmorLightBaseballHelmet
 
 - type: entity
   parent: N14BlueprintBase
@@ -403,6 +404,8 @@
     - N14BPLegionArmorHelmetTribalHunterHood
     - N14BPLegionArmorHelmetHeadtakerwraps
     - N14BPLegionArmorHelmetMuffaloskull
+    - N14BPLegionArmorDeanRecruitHelmet
+    - N14BPLegionArmorBaseballHelmet
 
 - type: entity
   parent: N14BlueprintBase
