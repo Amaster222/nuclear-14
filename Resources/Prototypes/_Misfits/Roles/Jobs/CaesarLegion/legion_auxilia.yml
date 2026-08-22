@@ -15,7 +15,7 @@
   startingGear: CaesarLegionAuxiliaGear
   alwaysUseSpawner: true
   icon: "JobIconlegionerRecruit"
-  supervisors: job-name-caesar-legion-other
+  supervisors: job-name-caesar-legion-female # changed aux and aom to have their own command chain under priestess.
   canBeAntag: false
   accessGroups:
   - CaesarLegionRecruit

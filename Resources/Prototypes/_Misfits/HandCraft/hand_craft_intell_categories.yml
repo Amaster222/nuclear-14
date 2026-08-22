@@ -998,6 +998,15 @@
   materials:
     Plastic: 50
 
+- type: handCraftIntellRecipe
+  id: N14ClothingBeltRope
+  minInt: 3
+  result: ClothingBeltRope
+  completeTime: 2
+  materials:
+    Thread: 500
+    Cloth: 500
+
 # Medicine
 
 - type: handCraftIntellRecipe

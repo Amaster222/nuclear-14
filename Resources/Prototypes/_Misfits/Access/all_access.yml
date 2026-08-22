@@ -123,12 +123,12 @@
   - CaesarLegionFrumentarii
   - CaesarLegionVexillarius
   - CaesarLegionExplorer
-  - CaesarLegionOptio
   - CaesarLegionLegionnaireRecruit
   - CaesarLegionLegionnaireWarrior
   - CaesarLegionLegionnaireVeteran
   - CaesarLegionDean
   - CaesarLegionVeteranDecanus
+  - CaesarLegionOptio
   - CaesarLegionCenturion
   - CaesarLegionLegate
   # ── N14: BoS Washington ──
