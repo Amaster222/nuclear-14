@@ -25,13 +25,15 @@ N14DoorCellLocked80s: MisfitsDoorCellLocked80s
 # 14/08/2026
 N14DecorationFlagBrotherhoodMidwest: MisfitsDecorationFlagBoSBonneville509
 N14FlagWallWesternBrotherhood: MisfitsFlagWallBrotherhoodBonneville509
+N14DecorationFlagpoleMBOS: MisfitsDecorationFlagpoleBoSBonneville509
 
 # 19/08/2026 change all monkey and kobold cubes to rad cubes
 # we start the cooking revolution here
-MonkeyCubeBox: RadCubeBox
-MonkeyCubeWrapped: RadCubeWrapped
-MonkeyCube: RadCube
-KoboldCubeBox: RadCubeBox
-KoboldCubeWrapped: RadCubeWrapped
-KoboldCube: RadCube
-VariantCubeBox: RadCubeBox
+# MonkeyCubeBox: RadCubeBox
+# MonkeyCubeWrapped: RadCubeWrapped
+# MonkeyCube: RadCube
+# KoboldCubeBox: RadCubeBox
+# KoboldCubeWrapped: RadCubeWrapped
+# KoboldCube: RadCube
+# VariantCubeBox: RadCubeBox
+# Lucky 22/08/2026: Deactivated since it messes with enclave.yml; wendover.yml has been saved with the radmonkeys however.
