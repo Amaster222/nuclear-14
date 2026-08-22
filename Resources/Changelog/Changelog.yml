@@ -10497,3 +10497,16 @@ Entries:
   id: 6347
   time: '2026-08-21T17:20:03.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1787
+- author: Tytos
+  changes:
+    - type: Add
+      message: >-
+        rope belt recipe, adobe brick sprite, legion helmet recipes, frumentarii
+        and optio locked doors
+    - type: Tweak
+      message: sitting duck is now +4, legion supervisor descriptions tweaked.
+    - type: Fix
+      message: riding perk desc was wrong, optio should now have decanus access
+  id: 6348
+  time: '2026-08-22T01:29:45.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1786
