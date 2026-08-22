@@ -230,28 +230,32 @@
   - type: Stack
     lingering: true
 
+# #Cythisiax Fixed - Reverted Tourniquet entity to pre-Goob master (Healing-based); Goob Tourniquet component was removed in 'goob port close' but this block was left referencing it
 - type: entity
   parent: BaseHealingItem
   id: Tourniquet
   name: tourniquet
   description: Stops bleeding! Hopefully.
   components:
-  - type: Item
-    heldPrefix: tourniquet
-  - type: Tourniquet
-    blockedBodyParts:
-    - Head
-    - Chest
-    putOnSound:
-      path: "/Audio/Items/Medical/brutepack_begin.ogg"
-    putOffSound:
-      path: "/Audio/Items/Medical/brutepack_end.ogg"
   - type: Tag
     tags:
     - SecBeltEquip
-    - Tourniquet
   - type: Sprite
     state: tourniquet
+  - type: Healing
+    damageContainers:
+    - Biological
+    damage:
+      groups:
+        Brute: 5 # Tourniquets HURT!
+      types:
+        Asphyxiation: 5 # Essentially Stopping all blood reaching a part of your body
+    bloodlossModifier: -10 # Tourniquets stop bleeding
+    delay: 0.5
+    healingBeginSound:
+      path: "/Audio/Items/Medical/brutepack_begin.ogg"
+    healingEndSound:
+      path: "/Audio/Items/Medical/brutepack_end.ogg"
 
 - type: entity
   name: roll of gauze
