@@ -1,5 +1,4 @@
 using Content.Server.Atmos;
-using IGasMixtureHolder = Content.Server.Atmos.IGasMixtureHolder;
 using Content.Server.NodeContainer.EntitySystems;
 using Content.Server.NodeContainer.NodeGroups;
 using Content.Shared.Atmos;

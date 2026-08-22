@@ -1,5 +1,4 @@
 using Content.Server.Body.Components;
-using StomachComponent = Content.Server.Body.Components.StomachComponent;
 using Content.Server.Body.Systems;
 using Content.Server.Chat.Systems;
 using Content.Server.Chemistry.Containers.EntitySystems;

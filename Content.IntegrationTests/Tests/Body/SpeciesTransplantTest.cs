@@ -34,7 +34,6 @@ namespace Content.IntegrationTests.Tests.Body
                 var humanRecipient = entityManager.SpawnEntity("MobHuman", coordinates);
                 var ghoulRecipient = entityManager.SpawnEntity("N14BaseMobGhoul", coordinates);
 
-                // #Cythisiax Fixed - GetRootPartOrNull returns a (EntityUid, BodyPartComponent)? tuple; use .Value.Entity
                 var humanTorso = bodySystem.GetRootPartOrNull(humanRecipient);
                 var ghoulTorso = bodySystem.GetRootPartOrNull(ghoulRecipient);
 

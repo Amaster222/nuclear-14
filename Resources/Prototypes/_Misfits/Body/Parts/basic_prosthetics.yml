@@ -9,9 +9,6 @@
   components:
   - type: Damageable
     damageContainer: Inorganic
-  - type: Woundable
-    allowWounds: false
-    canBleed: false
   - type: StaticPrice
     price: 2
 

@@ -12,11 +12,6 @@
   - type: Damageable
     damageContainer: Inorganic
     damageModifierSet: Metallic # standard metallic resists; tweaked via mob-level modifier in Phase F
-  - type: Woundable
-    # C-27 parts retain the common limb interface but cannot develop organic
-    # wounds, bleed, or require bone surgery.
-    allowWounds: false
-    canBleed: false
   - type: BodyPart
     severIntegrity: 150
     integrityThresholds:
