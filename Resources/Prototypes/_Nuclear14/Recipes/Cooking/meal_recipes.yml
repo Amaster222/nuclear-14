@@ -664,7 +664,7 @@
   result: N14CookedFoodBakedMuffinCorn
   time: 5
   solids:
-    N14FoodDoughCornmealSlice: 1
+    N14FoodDoughCornmealSlice: 1 # rejoice, they are no longer useless.
 
 - type: microwaveMealRecipe
   id: N14RecipeCreamCheeseBread
