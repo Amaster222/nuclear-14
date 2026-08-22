@@ -46,3 +46,9 @@ job-supervisors-follower-head = yourself and the Followers' founding charter
 job-supervisors-follower-doctor = the Follower Head and the Followers' medical mission
 job-supervisors-follower-guard = the Follower Head and the doctors you are protecting
 job-supervisors-follower-volunteer = the Follower Doctors and Follower Head above you
+
+# #Misfits Add - NCR Office of Science and Industry (OSI) supervisor strings.
+job-supervisors-osi-chief-scientist = NCR high command and your research mandate
+job-supervisors-osi-scientist = the OSI Chief Scientist and the NCR chain of command
+job-supervisors-osi-assistant = the OSI scientists above you
+job-supervisors-osi-agent = the OSI Chief Scientist and the NCR chain of command

@@ -111,6 +111,7 @@ trait-description-MisfitsPetEyebotTribe =
     A military eyebot sporting an animal skull. Its laser rusted over long ago, but you've strapped a knife to it.
     (The trait creates a ghost role for another player. There is no guarantee that someone takes it.)
 
+# #Misfits Edited - Riding perk also covers riding brahmin/brahdo (horse) mounts, not just motorcycles.
 trait-name-N14RidingPerk = Riding
 trait-description-N14RidingPerk =
     You know how to handle wasteland motorcycles and ride brahdo.
