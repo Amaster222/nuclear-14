@@ -27,10 +27,6 @@
   name: id-card-access-level-legion-explorer
 
 - type: accessLevel
-  id: CaesarLegionOptio
-  name: id-card-access-level-legion-optio
-
-- type: accessLevel
   id: CaesarLegionLegionnaireRecruit
   name: id-card-access-level-legion-recruit-legionary
 
@@ -49,6 +45,10 @@
 - type: accessLevel
   id: CaesarLegionVeteranDecanus
   name: id-card-access-level-legion-veteran-decanus
+
+- type: accessLevel
+  id: CaesarLegionOptio
+  name: id-card-access-level-legion-optio
 
 - type: accessLevel
   id: CaesarLegionCenturion
@@ -86,7 +86,15 @@
   tags:
   - CaesarLegion
   - CaesarLegionRecruit
+  - CaesarLegionHoundmaster
   - CaesarLegionFrumentarii
+  - CaesarLegionVexillarius
+  - CaesarLegionExplorer
+  - CaesarLegionLegionnaireRecruit
+  - CaesarLegionLegionnaireWarrior
+  - CaesarLegionLegionnaireVeteran
+  - CaesarLegionDean
+  - CaesarLegionVeteranDecanus # yes frum have access to everyone except cent, legate, and optio. they are the legio cia. wah wah -legate tytos
 
 - type: accessGroup
   id: CaesarLegionVexillarius
@@ -101,13 +109,6 @@
   - CaesarLegion
   - CaesarLegionRecruit
   - CaesarLegionExplorer
-
-- type: accessGroup
-  id: CaesarLegionOptio
-  tags:
-  - CaesarLegion
-  - CaesarLegionRecruit
-  - CaesarLegionOptio
 
 - type: accessGroup
   id: CaesarLegionLegionnaireRecruit
@@ -155,10 +156,32 @@
   - CaesarLegionVeteranDecanus
 
 - type: accessGroup
+  id: CaesarLegionOptio
+  tags:
+  - CaesarLegion
+  - CaesarLegionRecruit
+  - CaesarLegionHoundmaster
+  - CaesarLegionFrumentarii
+  - CaesarLegionVexillarius
+  - CaesarLegionExplorer
+  - CaesarLegionOptio
+  - CaesarLegionLegionnaireRecruit
+  - CaesarLegionLegionnaireWarrior
+  - CaesarLegionLegionnaireVeteran
+  - CaesarLegionDean
+  - CaesarLegionVeteranDecanus
+
+
+- type: accessGroup
   id: CaesarLegionCenturion
   tags:
   - CaesarLegion
   - CaesarLegionRecruit
+  - CaesarLegionHoundmaster
+  - CaesarLegionFrumentarii
+  - CaesarLegionVexillarius
+  - CaesarLegionExplorer
+  - CaesarLegionOptio
   - CaesarLegionLegionnaireRecruit
   - CaesarLegionLegionnaireWarrior
   - CaesarLegionLegionnaireVeteran

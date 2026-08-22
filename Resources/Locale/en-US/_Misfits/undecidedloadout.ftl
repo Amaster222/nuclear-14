@@ -601,6 +601,22 @@ undecided-loadout-category-misfits-enclave-engineering-science-description =
     a filled electrical toolbox, a handheld radio,
     1 stimpak, 1 gauze pack, and 1 flare.
 
+# Misfits NCR Office of Science and Industry (OSI) sets
+undecided-loadout-category-misfits-osi-mechanical-name = Mechanical Branch Kit
+undecided-loadout-category-misfits-osi-mechanical-description =
+    Includes a filled mechanical toolbox, a filled electrical toolbox,
+    a handheld radio, 1 stimpak, 1 gauze pack, and 1 flare.
+
+undecided-loadout-category-misfits-osi-medical-name = Medical Branch Kit
+undecided-loadout-category-misfits-osi-medical-description =
+    Includes a filled combat medkit, 1 super stimpak,
+    1 RadAway blood bag, 2 gauze packs, and a handheld radio.
+
+undecided-loadout-category-misfits-osi-field-name = Field Branch Kit
+undecided-loadout-category-misfits-osi-field-description =
+    Includes a radiation suit, a geiger counter, a filled radiation medkit,
+    a 9mm pistol, 1 stimpak, 1 gauze pack, 1 flare, and a handheld radio.
+
 # Misfits NCR rank sets
 undecided-loadout-category-misfits-ncra-pfc-fireteam-name = Private First Class Fireteam Kit
 undecided-loadout-category-misfits-ncra-pfc-fireteam-description =

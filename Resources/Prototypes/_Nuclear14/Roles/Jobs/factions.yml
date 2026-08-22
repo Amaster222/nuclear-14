@@ -142,6 +142,19 @@
   - NCRMilitaryPoliceSergeant
   - NCRMilitaryPoliceCaptain
 
+# #Misfits Add - NCR Office of Science and Industry (OSI). The Republic's civilian
+# science branch, operating beside the military ladder like the Rangers and MP.
+- type: department
+  id: OSI
+  description: department-OSI-description
+  color: "#26a69a"
+  uiCategory: MajorFaction
+  roles:
+  - OSIChiefScientist # OSI Chief Scientist | _Misfits/Roles/Jobs/OSI/osi_jobs.yml
+  - OSIAgent          # OSI Agent (whitelist-only) | _Misfits/Roles/Jobs/OSI/osi_jobs.yml
+  - OSIScientist      # OSI Scientist | _Misfits/Roles/Jobs/OSI/osi_jobs.yml
+  - OSIAssistant      # OSI Assistant | _Misfits/Roles/Jobs/OSI/osi_jobs.yml
+
 - type: department
   id: Tribe
   description: department-Tribe-description

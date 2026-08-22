@@ -10497,3 +10497,76 @@ Entries:
   id: 6347
   time: '2026-08-21T17:20:03.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1787
+- author: Tytos
+  changes:
+    - type: Add
+      message: >-
+        rope belt recipe, adobe brick sprite, legion helmet recipes, frumentarii
+        and optio locked doors
+    - type: Tweak
+      message: sitting duck is now +4, legion supervisor descriptions tweaked.
+    - type: Fix
+      message: riding perk desc was wrong, optio should now have decanus access
+  id: 6348
+  time: '2026-08-22T01:29:45.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1786
+- author: 'cythisiax '
+  changes:
+    - type: Add
+      message: OSI
+    - type: Add
+      message: Custom base layers (roundstart prosthetics) now persist across rounds
+    - type: Add
+      message: Round-end report anonymity setting
+    - type: Add
+      message: New scar markings for character customization
+    - type: Add
+      message: Binoculars craftable recipe
+    - type: Add
+      message: Loremaster tab local audio upload (volume-capped, nearby-only)
+    - type: Fix
+      message: Robot and C-27 accents/perks now persist on save and apply at spawn
+    - type: Fix
+      message: >-
+        Perk prerequisites can no longer be kept after unselecting the required
+        perk
+    - type: Fix
+      message: >-
+        Faction tactical maps now use their own Overwatch tags (Followers no
+        longer show NCR personnel)
+    - type: Fix
+      message: >-
+        Pip-Boy lock now enforced server-side (password can't be cleared to
+        unlock)
+    - type: Fix
+      message: C-27 chassis now saves/loads its bottle-cap wallet and player data
+    - type: Fix
+      message: Centaur pet no longer locked for Super Mutant/Nightkin characters
+    - type: Fix
+      message: Craftable rugs/mats now have their missing Construction components
+    - type: Tweak
+      message: >-
+        Broadened belt storage whitelists (BoS welders, energy cells, NCR tools,
+        sterilizer)
+    - type: Tweak
+      message: Riding perk text now covers brahmin/brahdo mounts
+    - type: Tweak
+      message: player custom sprites & job description
+    - type: Tweak
+      message: Trade market UI restyled
+    - type: Tweak
+      message: >-
+        Rangers, and OSI their own separate keys. :r = ranger, :o = OSI, o is
+        now :p > for PBS/Broadcast
+    - type: Remove
+      message: Removed the old "notable features" appearance examine
+  id: 6349
+  time: '2026-08-22T03:09:10.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1789
+- author: Lucky
+  changes:
+    - type: Fix
+      message: Spawnpoint mapping error has been fixed.
+  id: 6350
+  time: '2026-08-22T13:57:12.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1792

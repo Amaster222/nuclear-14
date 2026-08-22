@@ -1078,6 +1078,9 @@
   - type: Sprite
     sprite: _Nuclear14/Objects/Specific/Medical/drugs.rsi
     state: ethanol
+  - type: Tag
+    tags:
+    - Bottle # #Cythisiax Added - lets the medical belt store the ethanol bottle
 
 - type: entity
   name: aloe salve

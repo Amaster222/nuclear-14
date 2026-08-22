@@ -28,6 +28,7 @@ humanoid-profile-editor-import-button = Import
 humanoid-profile-editor-export-button = Export
 humanoid-profile-editor-save-button = Save
 humanoid-profile-editor-reset-button = Reset
+humanoid-profile-editor-round-end-anonymity = Hide my characters from other players in the end-of-round report
 humanoid-profile-editor-clothing-label = Clothing:
 humanoid-profile-editor-backpack-label = Backpack:
 humanoid-profile-editor-spawn-priority-label = Spawn priority:

@@ -453,13 +453,70 @@ namespace Content.Server.GameTicking
                 listOfPlayerInfoFinal,
                 sound
             );
-            RaiseNetworkEvent(roundEndMessageEvent);
+
+            // #Cythisiax Added - Record the full, unmasked event for replays (and for the server-side listeners below),
+            // but send a per-recipient copy so players who opted into round-end anonymity have their
+            // characters masked for everyone except themselves and admins.
+            RaiseNetworkEvent(roundEndMessageEvent, Filter.Empty());
+
+            foreach (var session in _playerManager.NetworkedSessions)
+            {
+                var maskedInfo = listOfPlayerInfoFinal;
+                if (!_adminManager.IsAdmin(session))
+                    maskedInfo = MaskRoundEndAnonymity(listOfPlayerInfoFinal, session.UserId);
+
+                if (ReferenceEquals(maskedInfo, listOfPlayerInfoFinal))
+                {
+                    RaiseNetworkEvent(roundEndMessageEvent, session.Channel);
+                    continue;
+                }
+
+                var maskedEvent = new RoundEndMessageEvent(
+                    gamemodeTitle,
+                    roundEndText,
+                    roundDuration,
+                    RoundId,
+                    maskedInfo.Length,
+                    maskedInfo,
+                    sound
+                );
+                RaiseNetworkEvent(maskedEvent, session.Channel);
+            }
+
             RaiseLocalEvent(roundEndMessageEvent);
 
             _replayRoundPlayerInfo = listOfPlayerInfoFinal;
             _replayRoundText = roundEndText;
             RaiseLocalEvent(new RoundEndedEvent(RoundId, roundDuration));
         }
+
+        /// <summary>
+        /// Returns a copy of the round end player list with any player that opted into round-end
+        /// anonymity masked. The viewing player's own entry and admins are left unmasked by the caller.
+        /// </summary>
+        private RoundEndMessageEvent.RoundEndPlayerInfo[] MaskRoundEndAnonymity(
+            RoundEndMessageEvent.RoundEndPlayerInfo[] info, NetUserId viewer)
+        {
+            var result = new RoundEndMessageEvent.RoundEndPlayerInfo[info.Length];
+            for (var i = 0; i < info.Length; i++)
+            {
+                var playerInfo = info[i];
+                if (playerInfo.PlayerGuid == viewer
+                    || playerInfo.PlayerGuid is not { } guid
+                    || !_prefsManager.IsRoundEndReportAnonymous(guid))
+                {
+                    result[i] = playerInfo;
+                    continue;
+                }
+
+                playerInfo.PlayerICName = "Unknown";
+                playerInfo.PlayerNetEntity = null;
+                result[i] = playerInfo;
+            }
+
+            return result;
+        }
+
 
         private async void SendRoundEndDiscordMessage()
         {

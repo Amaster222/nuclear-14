@@ -22,6 +22,11 @@
   id: NCR
   name: id-card-access-level-ncr
 
+# #Misfits Add - Office of Science and Industry records and laboratory access.
+- type: accessLevel
+  id: OSI
+  name: id-card-access-level-osi
+
 - type: accessGroup
   id: NCR
   #Misfits Change /Fix/: Base NCR access should only open base NCR doors.
@@ -34,6 +39,14 @@
   tags:
   - NCR
   - NCRMedic
+
+- type: accessGroup
+  id: OSI
+  # OSI personnel retain ordinary NCR access, plus their own archive/laboratory tag.
+  tags:
+  - NCR
+  - NCRMedic
+  - OSI
 
 - type: accessGroup
   id: NCRSGT

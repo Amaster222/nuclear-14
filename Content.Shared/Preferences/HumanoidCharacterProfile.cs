@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using Content.Shared.CCVar;
 using Content.Shared.Clothing.Loadouts.Prototypes;
 using Content.Shared.Clothing.Loadouts.Systems;
+using Content.Shared.Customization.Systems; // #Cythisiax Fixed - CharacterTraitRequirement for perk prerequisite pruning
 using Content.Shared.GameTicking;
 using Content.Shared.Humanoid;
 using Content.Shared.Humanoid.Prototypes;
@@ -620,6 +621,32 @@ public sealed partial class HumanoidCharacterProfile : ICharacterProfile
                     prototypeManager.Index<TraitPrototype>(t).Category))
                 .ToList();
         }
+
+        // #Cythisiax Fixed - Talent-tree perk prerequisites (Swift Learner -> Scrounger ->
+        // Educated -> Nerd Rage -> Fortune's Favor): a perk whose required perk isn't selected
+        // can't be kept. Iteratively drop selected perks with an unmet non-inverted
+        // CharacterTraitRequirement so hand-edited / pre-fix profiles are normalized and the
+        // server never grants an orphaned perk (e.g. Fortune's Favor without Nerd Rage).
+        bool pruned;
+        do
+        {
+            pruned = false;
+            foreach (var t in traits.ToList())
+            {
+                var proto = prototypeManager.Index<TraitPrototype>(t);
+                foreach (var req in proto.Requirements)
+                {
+                    if (req is CharacterTraitRequirement { Inverted: false } ctr
+                        && ctr.Traits.Count > 0
+                        && !ctr.Traits.Any(pr => traits.Contains(pr.ToString())))
+                    {
+                        traits.Remove(t);
+                        pruned = true;
+                        break;
+                    }
+                }
+            }
+        } while (pruned);
 
         // #Cythisiax Edited - pets have their own separate point pool and size caps
         // (1 large / 2 medium / 3 small / 3 total), independent from perk points. Perk points

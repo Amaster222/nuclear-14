@@ -2,6 +2,24 @@
 # Each pet spawns a separate invisible ghost-role spawner entity via TraitSpawnEntity,
 # allowing multiple pets to each register their own ghost role independently.
 
+# OSI personnel receive this through their job special rather than purchasing it.
+# The job requirement also prevents the companion from appearing in other roles'
+# character setup.
+- type: trait
+  id: MisfitsPetEyebotOSI
+  category: PetsMedium
+  points: -6
+  requirements:
+  - !type:CharacterJobRequirement
+    jobs:
+    - OSIChiefScientist
+    - OSIScientist
+    - OSIAssistant
+  functions:
+  - !type:TraitSpawnEntity
+    prototypes:
+    - MisfitsPetSpawnerEyebotOSI
+
 # Dog Companion — generic wasteland dog, available to all roles, costs 8 pet points (Medium, max 2)
 - type: trait
   id: N14PetDogCompanion
@@ -153,14 +171,20 @@
 
 # Centaur — FEV-warped creature, SUPERMUTANT ONLY (FEVMutants department), costs 8 pet points (Large, max 1)
 # Placeholder — full implementation pending dedicated pet centaur prototype
+# #Misfits Fix - gate by SPECIES (SuperMutant/Nightkin) instead of the FEVMutants department.
+# The department-based CharacterDepartmentRequirement resolved zero roles (reporters saw the
+# centaur locked even on supermutant characters — "none of the roles are considered part of it"),
+# so a supermutant could never take the pet. Species is the same authoritative check the supermutant
+# job prototypes use, and it does not depend on department/job-priority lookup.
 - type: trait
   id: N14PetCentaur
   category: PetsLarge # #Cythisiax Edited - pet size subcategory for the separate Pets points system
   points: -8
   requirements:
-    - !type:CharacterDepartmentRequirement
-      departments:
-        - FEVMutants
+    - !type:CharacterSpeciesRequirement
+      species:
+        - SuperMutant
+        - Nightkin
   functions:
     - !type:TraitSpawnEntity
       prototypes:

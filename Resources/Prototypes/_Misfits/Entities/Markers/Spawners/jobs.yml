@@ -16,14 +16,23 @@
       - state: green
       - state: commander
 
-# #Cythisiax Added - Paladin Commander personal-whitelist spawn point.
+# #Cythisiax Edited - NCR HT Instructor personal-whitelist spawn point (was Paladin Commander).
 - type: entity
   parent: MisfitsSpawnPointBoSMidPaladinCommander
   id: MisfitsSpawnPointBoSPaladinCommander
-  name: Brotherhood Paladin Commander
+  name: NCR HT Instructor
   components:
   - type: SpawnPoint
     job_id: BoSPaladinCommander
+
+# #Cythisiax Added - TOMBSTONE personal-whitelist spawn point.
+- type: entity
+  parent: MisfitsSpawnPointBoSMidPaladinCommander
+  id: MisfitsSpawnPointBoSTombstone
+  name: TOMBSTONE
+  components:
+  - type: SpawnPoint
+    job_id: BoSTombstone
 
 - type: entity
   parent: MisfitsSpawnPointBoSMidPaladinCommander
@@ -655,6 +664,56 @@
     layers:
       - state: green
       - state: recruit
+
+# NCR Office of Science and Industry (OSI) spawn points. # #Misfits Add
+# Spawn near the NCRA labs/medic area like the NCR Doctor.
+- type: entity
+  parent: MisfitsSpawnPointNCRCadet
+  id: MisfitsSpawnPointOSIChiefScientist
+  name: OSI Chief Scientist
+  components:
+  - type: SpawnPoint
+    job_id: OSIChiefScientist
+  - type: Sprite
+    layers:
+      - state: green
+      - state: medic
+
+- type: entity
+  parent: MisfitsSpawnPointNCRCadet
+  id: MisfitsSpawnPointOSIScientist
+  name: OSI Scientist
+  components:
+  - type: SpawnPoint
+    job_id: OSIScientist
+  - type: Sprite
+    layers:
+      - state: green
+      - state: medic
+
+- type: entity
+  parent: MisfitsSpawnPointNCRCadet
+  id: MisfitsSpawnPointOSIAssistant
+  name: OSI Assistant
+  components:
+  - type: SpawnPoint
+    job_id: OSIAssistant
+  - type: Sprite
+    layers:
+      - state: green
+      - state: medic
+
+- type: entity
+  parent: MisfitsSpawnPointNCRCadet
+  id: MisfitsSpawnPointOSIAgent
+  name: OSI Agent
+  components:
+  - type: SpawnPoint
+    job_id: OSIAgent
+  - type: Sprite
+    layers:
+      - state: green
+      - state: ws
 
 # Enclave — expanded 8-role hierarchy (#Misfits Change)
 - type: entity

@@ -1,8 +1,12 @@
 # Brotherhood of Steel
 job-name-bos-mid-paladin-comm = Brotherhood Head Paladin
 job-description-bos-mid-paladin-comm = Lead the martial wing of the Brotherhood chapter and direct field operations.
-job-name-bos-paladin-commander = Paladin Commander
-job-description-bos-paladin-commander = A hand-picked Brotherhood Head Paladin granted honorific to recall your Midwestern roots by Elder Viktoriya Plum of the Bonneville Chapter.
+# #Misfits Edit - Paladin Commander rethemed to NCR HT Instructor (job ID stays BoSPaladinCommander)
+job-name-bos-deserter = NCR HT Instructor
+job-description-bos-deserter = A former Brotherhood of Steel Paladin who turned their back on the chapter. Now serves as an NCR Heavy Trooper instructor, drilling recruits in power-armor combat.
+# #Misfits Add - TOMBSTONE personal-whitelist BoS role
+job-name-bos-tombstone = TOMBSTONE
+job-description-bos-tombstone = Dead and Revived again. Steel protects, and remember the name on the bag.
 job-name-bos-mid-paladin = Brotherhood Senior Paladin
 job-description-bos-mid-paladin = Serve as a veteran field commander and heavy infantry leader for the Brotherhood.
 job-name-bos-mid-knight = Brotherhood Senior Knight
@@ -76,6 +80,18 @@ job-name-ncr-ranger = NCR Ranger
 job-description-ncr-ranger = Elite scout and combat trooper. Operate independently or lead small teams under orders from your Squad Leader and mission command.
 job-name-ncr-ranger-veteran = NCR Ranger Veteran
 job-description-ncr-ranger-veteran = Veteran Ranger. Lead Ranger operations, make tactical decisions, and follow orders when directed by your Squad Leader or mission command.
+
+# #Misfits Add - NCR Office of Science and Industry (OSI) job names and descriptions.
+job-name-osi-chief-scientist = OSI Chief Scientist
+job-description-osi-chief-scientist = Lead the NCR Office of Science and Industry detachment. Direct research, industry, and field studies, and coordinate your scientists with the NCR command chain.
+job-name-osi-scientist = OSI Scientist
+job-description-osi-scientist = Conduct research, maintain industrial systems, and provide technical expertise for the NCR. Follow orders from the OSI Chief Scientist.
+job-name-osi-assistant = OSI Assistant
+job-description-osi-assistant = Support OSI scientists and help keep the lab, clinic, and field work running. Follow orders from the scientists above you.
+job-name-osi-agent = OSI Agent
+job-description-osi-agent = Field operative of the Office of Science and Industry. Protect OSI personnel and assets, escort expeditions, and handle threats to the Republic's scientific mission.
+job-name-osi-eyebot = OSI Eyebot
+job-description-osi-eyebot = Serve the NCR Office of Science and Industry as a loyal robotic research companion.
 
 # Rangers
 job-name-ranger-patrol = Patrol Ranger

@@ -167,3 +167,45 @@
     state: passport
   - type: PresetIdCard
     job: NCRTrader
+
+#Misfits Add - NCR Office of Science and Industry (OSI) rank dogtags. Every OSI billet
+#carries an id-slot dogtag so members appear on the crew manifest like other NCR jobs.
+- type: entity
+  parent: N14IDNCRDogtagOfficer
+  id: N14IDNCRDogtagOSIChiefScientist
+  name: OSI chief scientist's dogtags
+  description: An ID dogtag worn by the NCR Office of Science and Industry's chief scientist.
+  suffix: Chief Scientist
+  components:
+  - type: PresetIdCard
+    job: OSIChiefScientist
+
+- type: entity
+  parent: N14IDNCRDogtag
+  id: N14IDNCRDogtagOSIScientist
+  name: OSI scientist's dogtags
+  description: An ID dogtag worn by a scientist of the NCR Office of Science and Industry.
+  suffix: Scientist
+  components:
+  - type: PresetIdCard
+    job: OSIScientist
+
+- type: entity
+  parent: N14IDNCRDogtag
+  id: N14IDNCRDogtagOSIAssistant
+  name: OSI assistant's dogtags
+  description: An ID dogtag worn by an assistant of the NCR Office of Science and Industry.
+  suffix: Assistant
+  components:
+  - type: PresetIdCard
+    job: OSIAssistant
+
+- type: entity
+  parent: N14IDNCRDogtagOfficer
+  id: N14IDNCRDogtagOSIAgent
+  name: OSI agent's dogtags
+  description: An ID dogtag worn by a field agent of the NCR Office of Science and Industry.
+  suffix: Agent
+  components:
+  - type: PresetIdCard
+    job: OSIAgent
