@@ -2,6 +2,24 @@
 # Each pet spawns a separate invisible ghost-role spawner entity via TraitSpawnEntity,
 # allowing multiple pets to each register their own ghost role independently.
 
+# OSI personnel receive this through their job special rather than purchasing it.
+# The job requirement also prevents the companion from appearing in other roles'
+# character setup.
+- type: trait
+  id: MisfitsPetEyebotOSI
+  category: PetsMedium
+  points: -6
+  requirements:
+  - !type:CharacterJobRequirement
+    jobs:
+    - OSIChiefScientist
+    - OSIScientist
+    - OSIAssistant
+  functions:
+  - !type:TraitSpawnEntity
+    prototypes:
+    - MisfitsPetSpawnerEyebotOSI
+
 # Dog Companion — generic wasteland dog, available to all roles, costs 8 pet points (Medium, max 2)
 - type: trait
   id: N14PetDogCompanion

@@ -90,6 +90,8 @@ job-name-osi-assistant = OSI Assistant
 job-description-osi-assistant = Support OSI scientists and help keep the lab, clinic, and field work running. Follow orders from the scientists above you.
 job-name-osi-agent = OSI Agent
 job-description-osi-agent = Field operative of the Office of Science and Industry. Protect OSI personnel and assets, escort expeditions, and handle threats to the Republic's scientific mission.
+job-name-osi-eyebot = OSI Eyebot
+job-description-osi-eyebot = Serve the NCR Office of Science and Industry as a loyal robotic research companion.
 
 # Rangers
 job-name-ranger-patrol = Patrol Ranger

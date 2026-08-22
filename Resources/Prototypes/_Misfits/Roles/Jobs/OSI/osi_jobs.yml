@@ -37,6 +37,7 @@
   - NCR
   - NCRMedic
   - NCRLT
+  - OSI
   special:
   - !type:AddComponentSpecial
     components:
@@ -45,22 +46,26 @@
           - Wastelander
           - NCR
       - type: CPRTraining
+  - !type:AddTraitSpecial
+    traits: [ TraitSwiftLearner, TraitScrounger, TraitEducated, MisfitsPetEyebotOSI ]
 
 - type: startingGear
   id: OSIChiefScientistGear
   equipment:
-    head: N14ClothingHeadHatNCRBeretOfficer
-    jumpsuit: N14ClothingOfficerUniformNCRDesert
-    outerClothing: N14ClothingOuterCoatLab
+    head: N14ClothingHeadHatNCRBeretMedic
+    jumpsuit: N14ClothingUniformJumpsuitRDFormal
+    outerClothing: N14ClothingOuterCoatFollowersArmored
     back: N14ClothingBackpackNCR
-    shoes: N14ClothingBootsCombatFilled
-    eyes: ClothingEyesGlassesSunglasses
-    belt: ClothingBeltNCR
-    ears: N14ClothingHeadsetNCR
+    shoes: ClothingShoesColorBlack
+    eyes: N14ClothingEyesGlassesWelding
+    belt: ClothingBeltUtility
+    ears: MisfitsClothingHeadsetOSI
+    mask: ClothingMaskSterile
+    gloves: N14ClothingHandsGlovesNitrile
     pocket1: RadioHandheld
     pocket2: OSIloadoutkits
     id: N14IDNCRDogtagOSIChiefScientist
-  innerClothingSkirt: N14ClothingOfficerUniformNCRDesert
+  innerClothingSkirt: N14ClothingUniformJumpskirtRDFormal
   satchel: N14ClothingBackpackSatchelNCRFilled
   storage:
     back:
@@ -97,6 +102,7 @@
   access:
   - NCR
   - NCRMedic
+  - OSI
   special:
   - !type:AddComponentSpecial
     components:
@@ -105,19 +111,25 @@
           - Wastelander
           - NCR
       - type: CPRTraining
+  - !type:AddTraitSpecial
+    traits: [ TraitSwiftLearner, TraitScrounger, TraitEducated, MisfitsPetEyebotOSI ]
 
 - type: startingGear
   id: OSIScientistGear
   equipment:
-    jumpsuit: N14ClothingUniformNCRDesert
+    head: N14ClothingHeadHatNCRBeretMedic
+    jumpsuit: N14ClothingUniformJumpsuitRDFormal
     outerClothing: N14ClothingOuterCoatLab
     back: N14ClothingBackpackNCR
-    shoes: N14ClothingBootsLeatherFilled
-    belt: ClothingBeltNCR
-    ears: N14ClothingHeadsetNCR
+    shoes: ClothingShoesColorBlack
+    eyes: N14ClothingEyesGlassesWelding
+    belt: ClothingBeltMedical
+    ears: MisfitsClothingHeadsetOSI
+    mask: ClothingMaskSterile
+    gloves: N14ClothingHandsGlovesNitrile
     pocket2: OSIloadoutkits
     id: N14IDNCRDogtagOSIScientist
-  innerClothingSkirt: N14ClothingUniformNCRDesert
+  innerClothingSkirt: N14ClothingUniformJumpskirtRDFormal
   satchel: N14ClothingBackpackSatchelNCRFilled
   storage:
     back:
@@ -154,6 +166,7 @@
   access:
   - NCR
   - NCRMedic
+  - OSI
   special:
   - !type:AddComponentSpecial
     components:
@@ -162,19 +175,25 @@
           - Wastelander
           - NCR
       - type: CPRTraining
+  - !type:AddTraitSpecial
+    traits: [ TraitSwiftLearner, TraitScrounger, TraitEducated, MisfitsPetEyebotOSI ]
 
 - type: startingGear
   id: OSIAssistantGear
   equipment:
-    jumpsuit: N14ClothingUniformNCRDesert
+    head: N14ClothingHeadHatNCRBeretMedic
+    jumpsuit: N14ClothingUniformJumpsuitRDFormal
     outerClothing: N14ClothingOuterCoatLab
     back: N14ClothingBackpackNCR
-    shoes: N14ClothingBootsLeatherFilled
-    belt: ClothingBeltNCR
-    ears: N14ClothingHeadsetNCR
+    shoes: ClothingShoesColorBlack
+    eyes: N14ClothingEyesGlassesWelding
+    belt: ClothingBeltMedical
+    ears: MisfitsClothingHeadsetOSI
+    mask: ClothingMaskSterile
+    gloves: N14ClothingHandsGlovesNitrile
     pocket2: OSIloadoutkits
     id: N14IDNCRDogtagOSIAssistant
-  innerClothingSkirt: N14ClothingUniformNCRDesert
+  innerClothingSkirt: N14ClothingUniformJumpskirtRDFormal
   satchel: N14ClothingBackpackSatchelNCRFilled
   storage:
     back:
@@ -210,6 +229,7 @@
   access:
   - NCR
   - NCRMedic
+  - OSI
   special:
   - !type:AddComponentSpecial
     components:
@@ -217,6 +237,8 @@
         factions:
           - Wastelander
           - NCR
+  - !type:AddTraitSpecial
+    traits: [ TraitSwiftLearner, TraitScrounger, TraitEducated ]
 
 - type: startingGear
   id: OSIAgentGear
@@ -227,7 +249,7 @@
     shoes: N14ClothingBootsCombatFilled
     eyes: ClothingEyesGlassesSunglasses
     belt: ClothingBeltNCR
-    ears: N14ClothingHeadsetNCR
+    ears: MisfitsClothingHeadsetOSI
     pocket1: RadioHandheld
     pocket2: OSIloadoutkits
     id: N14IDNCRDogtagOSIAgent
@@ -239,3 +261,16 @@
 
 - type: playTimeTracker
   id: OSIAgent
+
+# Ghost-role tracker for OSI Eyebot companions; not selectable in character setup.
+- type: job
+  id: OSIEyebot
+  setPreference: false
+  canBeAntag: false
+  name: job-name-osi-eyebot
+  overwatchCategory: OverwatchNcrSupport
+  description: job-description-osi-eyebot
+  playTimeTracker: OSIEyebot
+
+- type: playTimeTracker
+  id: OSIEyebot
