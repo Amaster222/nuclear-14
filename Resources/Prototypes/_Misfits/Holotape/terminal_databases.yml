@@ -47,7 +47,6 @@
   leadershipJobs:
   - BoSHeadKnight
   - BoSMidPaladinCommander # "Head Paladin" job id
-  - BoSPaladinCommander # "Paladin Commander" personal whitelist job id # #Cythisiax Added
   - BoSWestScribe          # "Head Scribe" job id
   adminJobs:
   - BoSWestElderCommander  # "Elder Commander" job id

@@ -9,6 +9,7 @@ using Content.Server.Speech;
 using Content.Shared.Chat;
 using Content.Shared.Inventory;
 using Content.Shared.Inventory.Events;
+using Content.Shared.Mind;
 using Content.Shared.Radio;
 using Content.Shared.Radio.Components;
 using Content.Shared.Radio.EntitySystems;
@@ -26,6 +27,7 @@ public sealed class HeadsetSystem : SharedHeadsetSystem
     [Dependency] private readonly LanguageSystem _language = default!;
     [Dependency] private readonly EncryptionKeySystem _encryptionKeys = default!;
     [Dependency] private readonly IPrototypeManager _prototype = default!;
+    [Dependency] private readonly SharedMindSystem _mind = default!; // #Misfits Add - remote pilots keep hearing their radio
 
     public override void Initialize()
     {
@@ -250,15 +252,22 @@ public sealed class HeadsetSystem : SharedHeadsetSystem
     private void OnHeadsetReceive(EntityUid uid, HeadsetComponent component, ref RadioReceiveEvent args)
     {
         var parent = Transform(uid).ParentUid;
-        if (TryComp(parent, out ActorComponent? actor))
+
+        // #Misfits Fix - a wearer off running a camera remotely, like a vertibird gunner, has their
+        // session attached to the camera, so the headset still on their head has no actor to send to.
+        ICommonSession? session = TryComp(parent, out ActorComponent? actor)
+            ? actor.PlayerSession
+            : _mind.TryGetPilotingSession(parent, out var piloting) ? piloting : null;
+
+        if (session == null)
+            return;
+
+        var canUnderstand = _language.CanUnderstand(parent, args.Language.ID);
+        var msg = new MsgChatMessage
         {
-            var canUnderstand = _language.CanUnderstand(parent, args.Language.ID);
-            var msg = new MsgChatMessage
-            {
-                Message = canUnderstand ? args.OriginalChatMsg : args.LanguageObfuscatedChatMsg
-            };
-            _netMan.ServerSendMessage(msg, actor.PlayerSession.Channel);
-        }
+            Message = canUnderstand ? args.OriginalChatMsg : args.LanguageObfuscatedChatMsg
+        };
+        _netMan.ServerSendMessage(msg, session.Channel);
     }
 
     private void OnEmpPulse(EntityUid uid, HeadsetComponent component, ref EmpPulseEvent args)
