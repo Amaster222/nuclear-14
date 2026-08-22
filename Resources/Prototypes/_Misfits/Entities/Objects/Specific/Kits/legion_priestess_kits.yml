@@ -81,7 +81,7 @@
         amount: 2
       - id: N14JunkCeramicFlask
       - id: N14WeaponRifle308Battle
-      - id: N14308Clip
+      - id: ClipMagazine308Rifle
         amount: 2
     sound:
       path: /Audio/Effects/unwrap.ogg
