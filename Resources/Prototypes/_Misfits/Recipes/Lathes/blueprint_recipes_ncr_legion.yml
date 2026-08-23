@@ -1533,11 +1533,11 @@
   availableFaction:
   - NCR
   materials: # #Burger - Decreased cost of ammo boxes to make up for larger size in bag the less use cases that causes.
-    Lead: 150 # #Burger - decreased (was 250)
+    Lead: 150 # #Burger - Decreased (was 250)
 
-    N14Brass: 60 # #Burger - decreased (was 170)
+    N14Brass: 60 # #Burger - Decreased (was 170)
 
-    N14Gunpowder: 100 # #Burger - increased (was 150)
+    N14Gunpowder: 100 # #Burger - Decreased (was 170)
 
 
 - type: latheRecipe
