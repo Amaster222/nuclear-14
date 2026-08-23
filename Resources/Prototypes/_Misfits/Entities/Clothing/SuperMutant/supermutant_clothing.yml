@@ -206,7 +206,7 @@
 
 - type: entity
   parent: ClothingSuperMutantRangerArmor
-  id: ClothingSuperMutantYazovRangerArmor
+  id: ClothingSuperMutantCustomizedCombatArmor
   name: Super Ranger Armor Kit
   description: The remains of fallen Brotherhood armor, the vest is a Knight's breastplate and the leg guard is from a Paladin's power armored greaves. Trophies of past victories, and a mockery of the enemy.
   components:
@@ -240,7 +240,7 @@
 
 - type: entity
   parent: ClothingSuperMutantRangerHat
-  id: ClothingSuperMutantYazovHat
+  id: ClothingSuperMutantRangerHatAlt
   name: Super Ranger Cowboy Hat
   description: Custom made for mutants who earn the right to join the rangers, it has been reinforced with ballistic material. This is the mark of a hero, who fights even when unappreciated.
   components:
@@ -254,7 +254,7 @@
 
 - type: entity
   parent: ClothingSuperMutantNeckTrinket
-  id: ClothingSuperMutantYazovDuster
+  id: ClothingSuperMutantCustomDuster
   name: Super Ranger Trophy Coat
   description: Not many mutants reach the esteemed ranks of the rangers, and this coat is decorated with the armor of defeated enemies. Each piece is a bounty completed, a point of pride.
   components:
@@ -332,7 +332,7 @@
 
 - type: entity
   parent: ClothingSuperRangerGasmask
-  id: ClothingSuperMutantYazovGasmask
+  id: ClothingSuperMutantRangerGasmaskAlt
   name: Super Ranger Recon Mask
   description: An old LAPD riot squad gasmask, customized to fit a super mutant's large head. It no longer functions as a proper mask, but its night vision lenses still work. The red eyepieces have been swapped for yellow lenses.
   components:
