@@ -96,6 +96,42 @@
 
 - type: entity
   parent: N14DoorMetalRedTall
+  id: N14DoorMetalSecureLockedRedLegionFrumentarii
+  suffix: Legion, Locked, Legion Frumentarii
+  components:
+  - type: AccessReader
+    access: [["CaesarLegionFrumentarii"]] # evil ass frum door, frum shit happening inside.
+  - type: Wires
+    layoutId: HighSec
+  - type: Door
+    canPry: false # #Misfits Fix: Legion secure doors cannot be crowbarred.
+
+- type: entity
+  parent: N14DoorMetalRedTall
+  id: N14DoorMetalSecureLockedRedLegionPriestessOfMars
+  suffix: Legion, Locked, Legion Priestess of Mars
+  components:
+  - type: AccessReader
+    access: [["CaesarLegionPriestessOfMars"]] # #Misfits Fix: Requires Priestess of Mars rank or higher.
+  - type: Wires
+    layoutId: HighSec
+  - type: Door
+    canPry: false # #Misfits Fix: Legion secure doors cannot be crowbarred.
+
+- type: entity
+  parent: N14DoorMetalRedTall
+  id: N14DoorMetalSecureLockedRedLegionOptio
+  suffix: Legion, Locked, Legion Optio
+  components:
+  - type: AccessReader
+    access: [["CaesarLegionOptio"]] # #Misfits Fix: Requires Optio rank or higher.
+  - type: Wires
+    layoutId: HighSec
+  - type: Door
+    canPry: false # #Misfits Fix: Legion secure doors cannot be crowbarred.
+
+- type: entity
+  parent: N14DoorMetalRedTall
   id: N14DoorMetalSecureLockedRedLegionCenturion
   suffix: Legion, Locked, Legion Centurion
   components:
@@ -135,3 +171,5 @@
     access: [["TownsPerson"]]
   - type: Wires
     layoutId: HighSec
+
+

@@ -1198,8 +1198,8 @@
 - type: entity
   id: N14MechPowerArmorJacksontownley
   parent: BasePowerArmorMech
-  name: Jacksontownley Power Armor Suit
-  description: An exosuit refit built around the plating of a Jacksontownley Power Armor Suit.
+  name: ATA MK.III 'Penance' Suit
+  description: An exosuit refit built around the plating of an ATA MK.III 'Penance' Power Armor.
   components:
   - type: Sprite
     drawdepth: Mobs

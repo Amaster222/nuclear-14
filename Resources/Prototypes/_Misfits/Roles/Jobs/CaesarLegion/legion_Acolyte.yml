@@ -40,7 +40,7 @@
   startingGear: CaesarLegionAcolyteOfMarsGear
   alwaysUseSpawner: true
   icon: "JobIconlegionerRecruit"
-  supervisors: job-name-caesar-legion-other
+  supervisors: job-name-caesar-legion-female # changed aux and aom to have their own command chain under priestess.
   canBeAntag: false
   accessGroups:
     - CaesarLegionAcolyteOfMars
@@ -67,6 +67,7 @@
     head: N14ClothingHeadHatTribalOutcastHood
     gloves: N14ClothingHandsGlovesTribal
     outerClothing: N14ClothingOuterLegionnaireRecruitArmor
+    pocket1: LegionAcolyteLoadoutKits
     id: N14IDLegionaryBadge
   innerClothingSkirt: N14ClothingUniformJumpsuitLegionnaireOther
   storage:

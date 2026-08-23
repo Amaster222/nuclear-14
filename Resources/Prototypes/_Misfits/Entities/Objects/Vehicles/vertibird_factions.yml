@@ -1,0 +1,113 @@
+# Faction paint schemes inherit the complete Vertibird flight, seating, fuel,
+# MultiZ transfer, combat-drop, turret and repair behavior.  Only the RSI and
+# its stationary/rotor-animation states differ.
+
+- type: entity
+  parent: N14VehicleVertibird
+  id: N14VehicleVertibirdBoS
+  name: Brotherhood of Steel vertibird
+  suffix: Flyable, Wendover
+  components:
+  - type: Vertibird
+    groundedSpriteState: vertibird_bos
+    flyingSpriteState: vertibird_bos_flying
+  - type: Sprite
+    sprite: _Misfits/N14/Objects/Vehicles/vertibird_bos.rsi
+
+- type: entity
+  parent: N14VehicleVertibirdWreck
+  id: N14VehicleVertibirdBoSWreck
+  name: grounded Brotherhood of Steel vertibird
+  suffix: Mapping
+  components:
+  - type: Sprite
+    sprite: _Misfits/N14/Objects/Vehicles/vertibird_bos.rsi
+    state: vertibird_bos
+
+- type: entity
+  parent: N14VehicleVertibird
+  id: N14VehicleVertibird509th
+  name: 509th Brotherhood of Steel vertibird
+  suffix: Flyable, Wendover
+  components:
+  - type: Vertibird
+    groundedSpriteState: vertibird_509th
+    flyingSpriteState: vertibird_509th_flying
+  - type: Sprite
+    sprite: _Misfits/N14/Objects/Vehicles/vertibird_509th.rsi
+
+- type: entity
+  parent: N14VehicleVertibirdWreck
+  id: N14VehicleVertibird509thWreck
+  name: grounded 509th Brotherhood of Steel vertibird
+  suffix: Mapping
+  components:
+  - type: Sprite
+    sprite: _Misfits/N14/Objects/Vehicles/vertibird_509th.rsi
+    state: vertibird_509th
+
+- type: entity
+  parent: N14VehicleVertibird
+  id: N14VehicleVertibirdEnclave
+  name: Enclave vertibird
+  suffix: Flyable, Wendover
+  components:
+  - type: Vertibird
+    groundedSpriteState: vertibird_enclave
+    flyingSpriteState: vertibird_enclave_flying
+  - type: Sprite
+    sprite: _Misfits/N14/Objects/Vehicles/vertibird_enclave.rsi
+
+- type: entity
+  parent: N14VehicleVertibirdWreck
+  id: N14VehicleVertibirdEnclaveWreck
+  name: grounded Enclave vertibird
+  suffix: Mapping
+  components:
+  - type: Sprite
+    sprite: _Misfits/N14/Objects/Vehicles/vertibird_enclave.rsi
+    state: vertibird_enclave
+
+- type: entity
+  parent: N14VehicleVertibird
+  id: N14VehicleVertibirdNCR
+  name: NCR vertibird
+  suffix: Flyable, Wendover
+  components:
+  - type: Vertibird
+    groundedSpriteState: vertibird_ncr
+    flyingSpriteState: vertibird_ncr_flying
+  - type: Sprite
+    sprite: _Misfits/N14/Objects/Vehicles/vertibird_ncr.rsi
+
+- type: entity
+  parent: N14VehicleVertibirdWreck
+  id: N14VehicleVertibirdNCRWreck
+  name: grounded NCR vertibird
+  suffix: Mapping
+  components:
+  - type: Sprite
+    sprite: _Misfits/N14/Objects/Vehicles/vertibird_ncr.rsi
+    state: vertibird_ncr
+
+- type: entity
+  parent: N14VehicleVertibird
+  id: N14VehicleVertibirdVaultTec
+  name: Vault-Tec vertibird
+  suffix: Flyable, Wendover
+  components:
+  - type: Vertibird
+    groundedSpriteState: vertibird_vaulttec
+    flyingSpriteState: vertibird_vaulttec_flying
+  - type: Sprite
+    sprite: _Misfits/N14/Objects/Vehicles/vertibird_vaulttec.rsi
+
+- type: entity
+  parent: N14VehicleVertibirdWreck
+  id: N14VehicleVertibirdVaultTecWreck
+  name: grounded Vault-Tec vertibird
+  suffix: Mapping
+  components:
+  - type: Sprite
+    sprite: _Misfits/N14/Objects/Vehicles/vertibird_vaulttec.rsi
+    state: vertibird_vaulttec

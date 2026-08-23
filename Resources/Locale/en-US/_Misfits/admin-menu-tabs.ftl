@@ -13,6 +13,8 @@ misfits-admin-menu-ticket-stats-tab = Ticket Stats
 ## Fax Manager shortcut
 loremaster-tab-fax-manager = Fax Manager
 loremaster-tab-fax-manager-hint = Open the admin fax panel to read and respond to player faxes
+loremaster-tab-upload-local-audio = Play Local Audio
+loremaster-tab-local-audio-hint = Upload an .ogg to play nearby at a safe volume
 
 ## LoreMaster tab UI strings
 loremaster-tab-faction-label = Faction:

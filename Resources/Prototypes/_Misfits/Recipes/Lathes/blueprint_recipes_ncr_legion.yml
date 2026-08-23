@@ -1713,11 +1713,26 @@
   availableFaction:
   - CaesarLegion
   materials:
-    N14Iron: 1200
+    N14Iron: 600
 
     Leather: 70
 
     Wood: 300
+
+- type: latheRecipe
+  id: N14BPLegionWeaponGladius
+  result: N14Gladius
+  category: N14BlueprintLegionWeaponsT2
+  completetime: 6
+  requiresBlueprint: true
+  availableFaction:
+  - CaesarLegion
+  materials:
+    Steel: 1500
+
+    Leather: 100
+
+    Wood: 500
 
 
 - type: latheRecipe
@@ -1729,7 +1744,7 @@
   availableFaction:
   - CaesarLegion
   materials:
-    Steel: 1000
+    Steel: 600
 
     N14Iron: 300
 
@@ -1745,7 +1760,7 @@
   availableFaction:
   - CaesarLegion
   materials:
-    N14Iron: 1200
+    N14Iron: 600
 
     Wood: 700
 
@@ -1761,7 +1776,7 @@
   availableFaction:
   - CaesarLegion
   materials:
-    N14Iron: 1400
+    N14Iron: 800
 
     Leather: 300
 
@@ -2018,7 +2033,7 @@
   availableFaction:
   - CaesarLegion
   materials:
-    Steel: 6000
+    Steel: 4500
 
     N14Iron: 700
 
@@ -2391,6 +2406,22 @@
 
     N14Iron: 500
 
+- type: latheRecipe
+  id: N14BPLegionArmorLightBaseballHelmet
+  result: N14ClothingHeadHatLightBaseballHelmet
+  category: N14BlueprintLegionArmorT2
+  completetime: 8
+  requiresBlueprint: true
+  availableFaction:
+  - CaesarLegion
+  materials:
+    Leather: 500
+
+    Cloth: 500
+
+    Thread: 400
+
+
 
 - type: latheRecipe
   id: N14BPLegionArmorReconArmor
@@ -2429,6 +2460,44 @@
     Thread: 300
 
     N14Iron: 500
+
+- type: latheRecipe
+  id: N14BPLegionArmorBaseballHelmet
+  result: N14ClothingHeadHatBaseballHelmet
+  category: N14BlueprintLegionArmorT3
+  completetime: 12
+  requiresBlueprint: true
+  availableFaction:
+  - CaesarLegion
+  materials:
+    Leather: 400
+
+    Steel: 3500
+
+    Cloth: 200
+
+    Thread: 200
+
+    N14Iron: 200
+
+- type: latheRecipe
+  id: N14BPLegionArmorDeanRecruitHelmet
+  result: N14ClothingHeadHatDeanRecruitHelmet
+  category: N14BlueprintLegionArmorT3
+  completetime: 12
+  requiresBlueprint: true
+  availableFaction:
+  - CaesarLegion
+  materials:
+    Leather: 400
+
+    Steel: 3500
+
+    Cloth: 200
+
+    Thread: 200
+
+    N14Iron: 200
 
 
 - type: latheRecipe
