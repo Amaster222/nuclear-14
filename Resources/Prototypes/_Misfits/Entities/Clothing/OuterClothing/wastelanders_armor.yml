@@ -182,38 +182,6 @@
   - type: ExplosionResistance
     damageCoefficient: 0.9
 
-#If return to Khan bring to Khans_armor.yml and adjust armor values to bring in line to armored jacket
-- type: entity
-  parent: N14FalloutArmorBase
-  id: M14ClothingOuterKhanLeather
-  name: great khan leather vest
-  description: A black leather jacket. There is an illustration on the back - an aggressive, red-eyed skull wearing a fur hat with horns. The skull has a mongoloid moustache - it's obviously a Great Khans emblem.
-  components:
-  - type: Sprite
-    sprite: _Misfits/Clothing/OuterClothing/Armor/khansaltarmoredjacket.rsi
-  - type: Clothing
-    sprite: _Misfits/Clothing/OuterClothing/Armor/khansaltarmoredjacket.rsi
-  - type: Armor
-    modifiers:
-      coefficients:
-        Blunt: 0.775
-        Slash: 0.775
-        Piercing: 0.775
-        Heat: 0.775
-  - type: ExplosionResistance
-    damageCoefficient: 0.9
-  - type: Storage
-    grid:
-    - 0,0,2,1
-  - type: ContainerContainer
-    containers:
-      storagebase: !type:Container
-        ents: []
-  - type: UserInterface
-    interfaces:
-      enum.StorageUiKey.Key:
-        type: StorageBoundUserInterface
-
 #East Coast /Organization/ Talon Company. Make up the lore as you play them. Why are they west coast? Thats up to you as the player.
 - type: entity
   parent: N14ClothingOuterCombatArmor

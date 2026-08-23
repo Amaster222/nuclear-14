@@ -762,6 +762,10 @@ namespace Content.Server.Database.Migrations.Sqlite
                         .HasColumnType("TEXT")
                         .HasColumnName("admin_ooc_color");
 
+                    b.Property<bool>("AnonymousRoundEndReport")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("anonymous_round_end_report");
+
                     b.Property<int>("SelectedCharacterSlot")
                         .HasColumnType("INTEGER")
                         .HasColumnName("selected_character_slot");
@@ -809,6 +813,10 @@ namespace Content.Server.Database.Migrations.Sqlite
                         .IsRequired()
                         .HasColumnType("TEXT")
                         .HasColumnName("clothing");
+
+                    b.Property<byte[]>("CustomBaseLayers")
+                        .HasColumnType("jsonb")
+                        .HasColumnName("custom_base_layers");
 
                     b.Property<string>("CustomSpecieName")
                         .IsRequired()

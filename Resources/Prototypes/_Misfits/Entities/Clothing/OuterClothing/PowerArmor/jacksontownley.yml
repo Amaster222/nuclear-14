@@ -1,4 +1,5 @@
-# #Misfits Add - Jackson Townley personal Paladin Commander set.
+# #Misfits Add - Jackson Townley personal set, re-sprayed NCR art (sprites by enchantedcrocolisk and baohe).
+# #Cythisiax Edited - rethemed from "Paladin Commander" to the NCR HT Instructor set.
 # Reskin of the Midwest Commander suit (parents directly off it, inheriting ALL
 # Midwest Commander mechanics: Armor, ExplosionResistance, PowerArmorIntegrity,
 # Reflect, WastelandMap HUD, ToggleableClothing, etc.). Only Sprite/Clothing
@@ -9,8 +10,8 @@
 - type: entity
   parent: N14ClothingOuterPowerArmorMidwestCommander
   id: N14ClothingOuterPowerArmorJacksontownley
-  name: Jacksontownley Power Armor
-  description: A personalized and highly customized abomination of Midwestern MK III ATA power armor.
+  name: ATA MK.III 'Penance'
+  description: A personalized and highly customized abomination of Midwestern MK III ATA power armor, known as the "Penance".
   components:
   - type: Sprite
     sprite: _Misfits/Clothing/OuterClothing/PowerArmor/jacksontownley_pa.rsi

@@ -90,9 +90,15 @@
           NCRMilitaryPoliceSergeant: [ 1, 1 ]
           NCRMilitaryPoliceRecruit: [ 2, 2 ]
           NCRMilitaryPoliceCaptain: [ 1, 1 ]
+          # #Misfits Add - NCR Office of Science and Industry (OSI) slots. Agent is whitelist-gated by the job prototype.
+          OSIChiefScientist: [ 1, 1 ]
+          OSIAgent: [ 2, 2 ]
+          OSIScientist: [ 2, 2 ]
+          OSIAssistant: [ 3, 3 ]
           BoSWestElderCommander: [ 1, 0 ] # Misfits Change # #Misfits Tweak - 0 active slots (admin-notify role)
           BoSMidPaladinCommander: [ 1, 1 ]
-          BoSPaladinCommander: [ 1, 1 ] # #Cythisiax Added - personal-whitelist Paladin Commander slot
+          BoSPaladinCommander: [ 1, 1 ] # #Cythisiax Edited - personal-whitelist NCR HT Instructor slot
+          BoSTombstone: [ 1, 1 ] # #Cythisiax Added - personal-whitelist TOMBSTONE slot
           BoSHeadKnight: [ 1, 1 ]  #Misfits Change /Add/: New consolidated BoS jobs
           BoSWestScribe: [ 1, 1 ] # Misfits Change
           BoSMidPaladin: [ 1, 1 ]  #Misfits Tweak: 1 slot — Senior Paladin is a rare rank

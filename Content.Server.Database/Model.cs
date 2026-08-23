@@ -464,6 +464,7 @@ namespace Content.Server.Database
         public Guid UserId { get; set; }
         public int SelectedCharacterSlot { get; set; }
         public string AdminOOCColor { get; set; } = null!;
+        public bool AnonymousRoundEndReport { get; set; } // #Cythisiax Added - hide characters in round-end report
         public List<Profile> Profiles { get; } = new();
     }
 
@@ -494,6 +495,8 @@ namespace Content.Server.Database
         public float Height { get; set; } = 1f;
         public float Width { get; set; } = 1f;
         [Column(TypeName = "jsonb")] public JsonDocument? Markings { get; set; } = null!;
+        // #Cythisiax Added - Persist roundstart prosthetic choices (CustomBaseLayers) so they survive round/server restarts
+        [Column(TypeName = "jsonb")] public JsonDocument? CustomBaseLayers { get; set; } = null!;
         public string HairName { get; set; } = null!;
         public string HairColor { get; set; } = null!;
         public string FacialHairName { get; set; } = null!;

@@ -85,6 +85,21 @@
     bodyType: KinematicController
   - type: MZPhysics
     bounciness: 0.05
+  # #Misfits Add - co-pilot turret. Ammunition is the LimitedCharges below.
+  - type: VertibirdTurret
+  # #Misfits Add - power armoured passengers can drop out while cruising.
+  - type: VertibirdCombatDrop
+  - type: LimitedCharges
+    maxCharges: 12
+    charges: 12
+  # #Misfits Add - airframe repair. Trained crew weld it back together faster.
+  # Heals Structural because that is all the AircraftStructural container carries.
+  - type: VertibirdRepair
+    doAfterDelay: 8
+    fuelCost: 10
+    damage:
+      types:
+        Structural: -60
   - type: AircraftImpactDamage
     minimumSpeed: 4
     damage:
@@ -153,3 +168,25 @@
         - LowImpassable
   - type: Damageable
     damageContainer: AircraftStructural
+
+# #Misfits Add - Turret camera. The gunner's mind occupies this while manning the
+# turret; it is repositioned every tick to sit under the craft on the level below.
+- type: entity
+  id: VertibirdTurretEye
+  name: turret sight
+  description: A gunner's view of the ground below.
+  categories: [ HideSpawnMenu ]
+  components:
+  # Deliberately not a mover: the turret system pins this to the craft every tick,
+  # so any movement input would just fight the tracking.
+  - type: Eye
+    drawFov: false
+  - type: ContentEye
+    maxZoom: 1.44,1.44
+  - type: Input
+    context: "ghost"
+  - type: Examiner
+    skipChecks: true
+  - type: Tag
+    tags:
+    - BypassInteractionRangeChecks

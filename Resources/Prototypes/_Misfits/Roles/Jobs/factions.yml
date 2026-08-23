@@ -67,7 +67,8 @@
   weight: -103
   uiCategory: Whitelist
   roles:
-  - BoSPaladinCommander # Paladin Commander | _Misfits/Roles/Jobs/BrotherhoodOfSteel/bos_paladin_commander.yml
+  - BoSPaladinCommander # #Cythisiax Edited - NCR HT Instructor | _Misfits/Roles/Jobs/BrotherhoodOfSteel/bos_paladin_commander.yml
+  - BoSTombstone # #Cythisiax Added - TOMBSTONE | _Misfits/Roles/Jobs/BrotherhoodOfSteel/bos_tombstone.yml
 
 # #Misfits Add — Caesar's Legion department. Groups all Legion roles for the
 # character-creation screen and for department-based requirements/lookups.

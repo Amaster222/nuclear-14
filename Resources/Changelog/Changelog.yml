@@ -10305,3 +10305,296 @@ Entries:
   id: 6336
   time: '2026-08-17T02:45:05.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1767
+- author: Oli
+  changes:
+    - type: Tweak
+      message: Military Cowboy + Steel-tipped boots now can hold knives and pistols.
+  id: 6337
+  time: '2026-08-17T21:35:42.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1771
+- author: Squagg
+  changes:
+    - type: Add
+      message: >-
+        Vertibirds have a working gunner turret. The crew chief seat can drop
+        into a gunner's sight and strafe the ground below.
+    - type: Add
+      message: >-
+        Vertibird gun belts restock the turret, craftable from Brotherhood, NCR,
+        and Enclave blueprints.
+    - type: Add
+      message: >-
+        Vertibird airframes can be welded back together. Pilots and Lancers
+        repair them twice as fast.
+    - type: Add
+      message: >-
+        Power armoured passengers can combat drop out of a cruising vertibird
+        and land unhurt.
+    - type: Add
+      message: >-
+        Passengers can unbuckle from a vertibird in flight. Above ground level
+        you fall and take 100 blunt per level dropped.
+    - type: Add
+      message: >-
+        Admin debug toggles for vertibirds under the right click Tricks menu:
+        infinite fuel, instant takeoff and landing, infinite ammo, and holding
+        altitude with no pilot.
+    - type: Tweak
+      message: >-
+        Players can now board a vertibird while it is running instead of only
+        while it is parked.
+    - type: Tweak
+      message: >-
+        Nobody can pull a passenger out of a flying vertibird. Only the
+        passenger can unbuckle themselves.
+    - type: Tweak
+      message: >-
+        A vertibird that loses its pilot in flight now brings itself down
+        automatically, whether the pilot disconnected or stepped out.
+    - type: Tweak
+      message: >-
+        The Enclave Vertibird Pilot now wears Zulu advanced combat armour, a
+        Zulu combat helmet and a breather mask instead of power armour.
+    - type: Tweak
+      message: Enclave characters can take the Tribal language trait.
+    - type: Tweak
+      message: >-
+        Nuka-Cola machines no longer stock broken bottles, and rare flavours
+        like Quantum show up far more often.
+    - type: Remove
+      message: >-
+        The Enclave microbomb implant no longer gives the wearer a hotbar button
+        to detonate themselves. The failsafe word and the command detonator
+        still work.
+    - type: Fix
+      message: >-
+        The vertibird turret and combat drop no longer work at ground level,
+        where they would have put you under the map.
+    - type: Fix
+      message: >-
+        Nuka-Cola machines no longer rewrite their whole stock list the first
+        time you buy something.
+    - type: Fix
+      message: Admin ghosts can use workbenches again.
+    - type: Fix
+      message: Ceramic flasks can be poured over people.
+  id: 6338
+  time: '2026-08-18T00:40:06.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1768
+- author: Bradysgaming
+  changes:
+    - type: Tweak
+      message: >-
+        Edited bos off duty supervisors a bit, now a break in the codex to
+        participate in the bos's operations 
+  id: 6339
+  time: '2026-08-18T12:17:27.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1775
+- author: Squagg
+  changes:
+    - type: Add
+      message: >-
+        Vertibirds now have a cargo bay. Drag a closed crate onto one, or use
+        the Load button on the flight console, and it goes aboard with
+        everything still packed inside it.
+    - type: Add
+      message: >-
+        The vertibird flight console lists whatever crates are stowed and can
+        unload them, and stored crates can also be pulled out with an alt click
+        on the aircraft.
+    - type: Tweak
+      message: >-
+        Unloading a crate while the vertibird is airborne lowers it to the
+        ground directly below instead of into the cabin.
+    - type: Fix
+      message: >-
+        Radio messages now carry between z-levels of the same station instead of
+        stopping at the level they were sent from. Telecom servers cover every
+        level too, so channels that need one work from anywhere on the station.
+    - type: Fix
+      message: >-
+        Pip-Boy messages now reach people on other z-levels and other maps
+        instead of quietly failing to send. Telecomm blackouts and jammers still
+        block them.
+  id: 6340
+  time: '2026-08-18T12:56:55.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1776
+- author: Oli
+  changes:
+    - type: Add
+      message: >-
+        Khanbat, Battlecoats, Vests and Full Helmet. Battlecoat, Jacket + Vest,
+        Full Helmet added to Loadouts.
+    - type: Tweak
+      message: armored vest out of loadouts replaced with jacket and vest.
+  id: 6341
+  time: '2026-08-18T12:57:23.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1777
+- author: Cythisiax
+  changes:
+    - type: Tweak
+      message: 'X-01 and X-02 renamed to APA MK I and APA MK II respectively. '
+  id: 6342
+  time: '2026-08-18T23:01:52.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1779
+- author: Squagg
+  changes:
+    - type: Fix
+      message: >-
+        Crates unloaded from a vertibird by someone in a seat now land on the
+        ground next to the aircraft instead of vanishing under the hull or
+        getting stuck to the vertibird and following it around.
+    - type: Fix
+      message: >-
+        Vertibird gunners can hear people talking in the cabin, talk back, and
+        use their radio while manning the turret.
+  id: 6343
+  time: '2026-08-20T01:52:51.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1781
+- author: aftemath434
+  changes:
+    - type: Add
+      message: 'Enclave ASRS (automated storage Retrieval system)  (cargo elevator) '
+  id: 6344
+  time: '2026-08-20T01:53:32.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1778
+- author: JohnKieser
+  changes:
+    - type: Fix
+      message: >-
+        Reverted storage UI changes. SHOULD prevent freezes/crashes from opening
+        storage
+  id: 6345
+  time: '2026-08-20T14:05:28.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1783
+- author: Amaster222
+  changes:
+    - type: Tweak
+      message: Monkey cubes replaced with a variant that gives irradiated meat.
+  id: 6346
+  time: '2026-08-20T14:25:33.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1782
+- author: Lucky
+  changes:
+    - type: Add
+      message: OSI office
+    - type: Add
+      message: Enclave Helipad, Cargo Elevator, and some science stuff.
+    - type: Add
+      message: Enclave has gotten a fancy front door.
+    - type: Fix
+      message: NCR spawns now with the correct chemdispenser.
+    - type: Tweak
+      message: NCR gates now spawn open.
+    - type: Remove
+      message: Removed the armor and weapons that spawn from all major factions.
+    - type: Tweak
+      message: Tweaked what rocks can spawn, and the chance of enemies.
+    - type: Tweak
+      message: Moved Wastelander Roundstart Spawn a bit around
+    - type: Tweak
+      message: Enclave caves are a tiny bit more interesting now.
+  id: 6347
+  time: '2026-08-21T17:20:03.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1787
+- author: Tytos
+  changes:
+    - type: Add
+      message: >-
+        rope belt recipe, adobe brick sprite, legion helmet recipes, frumentarii
+        and optio locked doors
+    - type: Tweak
+      message: sitting duck is now +4, legion supervisor descriptions tweaked.
+    - type: Fix
+      message: riding perk desc was wrong, optio should now have decanus access
+  id: 6348
+  time: '2026-08-22T01:29:45.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1786
+- author: 'cythisiax '
+  changes:
+    - type: Add
+      message: OSI
+    - type: Add
+      message: Custom base layers (roundstart prosthetics) now persist across rounds
+    - type: Add
+      message: Round-end report anonymity setting
+    - type: Add
+      message: New scar markings for character customization
+    - type: Add
+      message: Binoculars craftable recipe
+    - type: Add
+      message: Loremaster tab local audio upload (volume-capped, nearby-only)
+    - type: Fix
+      message: Robot and C-27 accents/perks now persist on save and apply at spawn
+    - type: Fix
+      message: >-
+        Perk prerequisites can no longer be kept after unselecting the required
+        perk
+    - type: Fix
+      message: >-
+        Faction tactical maps now use their own Overwatch tags (Followers no
+        longer show NCR personnel)
+    - type: Fix
+      message: >-
+        Pip-Boy lock now enforced server-side (password can't be cleared to
+        unlock)
+    - type: Fix
+      message: C-27 chassis now saves/loads its bottle-cap wallet and player data
+    - type: Fix
+      message: Centaur pet no longer locked for Super Mutant/Nightkin characters
+    - type: Fix
+      message: Craftable rugs/mats now have their missing Construction components
+    - type: Tweak
+      message: >-
+        Broadened belt storage whitelists (BoS welders, energy cells, NCR tools,
+        sterilizer)
+    - type: Tweak
+      message: Riding perk text now covers brahmin/brahdo mounts
+    - type: Tweak
+      message: player custom sprites & job description
+    - type: Tweak
+      message: Trade market UI restyled
+    - type: Tweak
+      message: >-
+        Rangers, and OSI their own separate keys. :r = ranger, :o = OSI, o is
+        now :p > for PBS/Broadcast
+    - type: Remove
+      message: Removed the old "notable features" appearance examine
+  id: 6349
+  time: '2026-08-22T03:09:10.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1789
+- author: Lucky
+  changes:
+    - type: Fix
+      message: Spawnpoint mapping error has been fixed.
+  id: 6350
+  time: '2026-08-22T13:57:12.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1792
+- author: RedBookcase
+  changes:
+    - type: Add
+      message: >-
+        Added Enclave accent. No more funny boom for saying Enclave - now you'll
+        just say US Army!
+  id: 6351
+  time: '2026-08-23T01:06:24.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1790
+- author: Tytos
+  changes:
+    - type: Add
+      message: added pom and aom access
+    - type: Add
+      message: added terminal to frum room
+    - type: Add
+      message: added optio frum and pom locked doors
+    - type: Add
+      message: added gladius recipe to legion BP
+    - type: Add
+      message: added aom kits
+    - type: Tweak
+      message: a few legion weapon recipes are cheaper now
+    - type: Tweak
+      message: ncr doctors have armored coats now
+  id: 6352
+  time: '2026-08-23T01:06:46.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1793

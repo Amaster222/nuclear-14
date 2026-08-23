@@ -616,6 +616,11 @@ namespace Content.Server.Lathe
 
         private bool CanUseLatheWithIntelligence(EntityUid user)
         {
+            // #Misfits Fix - Ghosts (admin ghosts included) never carry SPECIAL, so the
+            // intelligence gate would lock them out of every workbench.
+            if (!_special.UsesSpecialStats(user))
+                return true;
+
             return TryComp<SpecialComponent>(user, out var special) &&
                    _special.GetEffective(user, SpecialStat.Intelligence, special) > 3;
         }

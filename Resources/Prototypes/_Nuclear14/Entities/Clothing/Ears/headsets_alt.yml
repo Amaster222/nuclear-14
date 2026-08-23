@@ -200,6 +200,32 @@
   - type: Clothing
     sprite: _Misfits/Clothing/Ears/Headsets/ncr.rsi
 
+- type: entity
+  parent: N14ClothingHeadsetNCR
+  id: MisfitsClothingHeadsetOSI
+  name: OSI radio earpiece
+  description: An NCR headset fitted with separate Office of Science and Industry encryption.
+  components:
+  - type: ContainerFill
+    containers:
+      key_slots:
+      - EncryptionKeyNCR
+      - EncryptionKeyOSI
+      - EncryptionKeyWastelandGlobal
+
+- type: entity
+  parent: N14ClothingHeadsetNCR
+  id: MisfitsClothingHeadsetNCRRanger
+  name: NCR Ranger radio earpiece
+  description: An NCR headset fitted with separate Ranger field encryption.
+  components:
+  - type: ContainerFill
+    containers:
+      key_slots:
+      - EncryptionKeyNCR
+      - EncryptionKeyNCRRangers
+      - EncryptionKeyWastelandGlobal
+
 # #Misfits Change - Legion headset
 - type: entity
   parent: N14ClothingHeadsetAlt

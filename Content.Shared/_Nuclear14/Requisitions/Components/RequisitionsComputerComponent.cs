@@ -37,6 +37,20 @@ public sealed partial class RequisitionsComputerComponent : Component
     [DataField, AutoNetworkedField, AlwaysPushInheritance]
     public List<RequisitionsBounty> Bounties = new();
 
+    /// <summary>
+    /// When set, the bounty board is filled with random <see cref="RequisitionsBountyPrototype"/>s
+    /// from this pool and refilled as they are completed. When null the fixed
+    /// <see cref="Bounties"/> list is used as-is.
+    /// </summary>
+    [DataField]
+    public string? BountyPool;
+
+    /// <summary>
+    /// How many pooled bounties are posted at once. Unused when <see cref="BountyPool"/> is null.
+    /// </summary>
+    [DataField]
+    public int MaxActiveBounties = 4;
+
     [AutoNetworkedField]
     public List<string> CompletedBounties = new();
 

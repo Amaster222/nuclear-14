@@ -63,7 +63,7 @@ namespace Content.Server.Database
                 profiles[profile.Slot] = ConvertProfiles(profile);
             }
 
-            return new PlayerPreferences(profiles, prefs.SelectedCharacterSlot, Color.FromHex(prefs.AdminOOCColor));
+            return new PlayerPreferences(profiles, prefs.SelectedCharacterSlot, Color.FromHex(prefs.AdminOOCColor), prefs.AnonymousRoundEndReport);
         }
 
         public async Task SaveSelectedCharacterIndexAsync(NetUserId userId, int index)
@@ -154,7 +154,7 @@ namespace Content.Server.Database
 
             await db.DbContext.SaveChangesAsync();
 
-            return new PlayerPreferences(new[] { new KeyValuePair<int, ICharacterProfile>(0, defaultProfile) }, 0, Color.FromHex(prefs.AdminOOCColor));
+            return new PlayerPreferences(new[] { new KeyValuePair<int, ICharacterProfile>(0, defaultProfile) }, 0, Color.FromHex(prefs.AdminOOCColor), prefs.AnonymousRoundEndReport);
         }
 
         public async Task DeleteSlotAndSetSelectedIndex(NetUserId userId, int deleteSlot, int newSlot)
@@ -178,6 +178,19 @@ namespace Content.Server.Database
 
             await db.DbContext.SaveChangesAsync();
 
+        }
+
+        // #Cythisiax Added - persist the round-end report anonymity toggle.
+        public async Task SaveRoundEndReportAnonymityAsync(NetUserId userId, bool anonymous)
+        {
+            await using var db = await GetDb();
+            var prefs = await db.DbContext
+                .Preference
+                .Include(p => p.Profiles)
+                .SingleAsync(p => p.UserId == userId.UserId);
+            prefs.AnonymousRoundEndReport = anonymous;
+
+            await db.DbContext.SaveChangesAsync();
         }
 
         private static async Task SetSelectedCharacterSlotAsync(NetUserId userId, int newSlot, ServerDbContext db)
@@ -233,6 +246,40 @@ namespace Content.Server.Database
                 }
             }
 
+            // #Cythisiax Added - Restore roundstart prosthetics (CustomBaseLayers) persisted in the DB. Stored as a
+            // list of "{layer}@{id}@{colorHex}" strings, mirroring how Markings are persisted. We deliberately do NOT
+            // resolve the prototype manager here (DB work runs on thread-pool threads without IoC context); instead
+            // the constructor's DEBUG-only prototype assert is caught so removed prototypes are skipped instead of
+            // crashing pref loading. Unknown ids are also safely ignored at roundstart (see RoundstartProstheticSystem).
+            var customBaseLayers = new Dictionary<HumanoidVisualLayers, CustomBaseLayerInfo>();
+            var customBaseLayersRaw = profile.CustomBaseLayers?.Deserialize<List<string>>();
+            if (customBaseLayersRaw != null)
+            {
+                foreach (var entry in customBaseLayersRaw)
+                {
+                    var parts = entry.Split('@');
+                    if (parts.Length < 2
+                        || !Enum.TryParse<HumanoidVisualLayers>(parts[0], true, out var layer)
+                        || string.IsNullOrEmpty(parts[1]))
+                        continue;
+
+                    var id = parts[1];
+                    var color = parts.Length >= 3 && !string.IsNullOrEmpty(parts[2])
+                        && Color.TryFromHex(parts[2], out var parsedColor)
+                        ? parsedColor
+                        : (Color?) null;
+
+                    try
+                    {
+                        customBaseLayers[layer] = new CustomBaseLayerInfo(id, color);
+                    }
+                    catch (DebugAssertException)
+                    {
+                        // Prosthetic prototype no longer exists in content; skip it.
+                    }
+                }
+            }
+
             var barkVoice = profile.BarkVoice ?? SharedHumanoidAppearanceSystem.DefaultBarkVoice; // Corvax-Fallout-Barks
             var speechVerbPreference = string.IsNullOrEmpty(profile.SpeechVerbPreference) ? "Default" : profile.SpeechVerbPreference; // #Misfits Add - vocal style
             var special = SpecialProfile.EnsureValid(new SpecialProfile
@@ -267,7 +314,8 @@ namespace Content.Server.Database
                     Color.FromHex(profile.FacialHairColor),
                     Color.FromHex(profile.EyeColor),
                     Color.FromHex(profile.SkinColor),
-                    markings
+                    markings,
+                    customBaseLayers // #Cythisiax Added - restore roundstart prosthetics from DB
                 ),
                 spawnPriority,
                 jobs,
@@ -298,6 +346,17 @@ namespace Content.Server.Database
                 markingStrings.Add(marking.ToString());
             }
             var markings = JsonSerializer.SerializeToDocument(markingStrings);
+
+            // #Cythisiax Added - Persist roundstart prosthetics (CustomBaseLayers) as "{layer}@{id}@{colorHex}"
+            // strings so they survive round/server restarts (mirrors how Markings are stored).
+            List<string> customBaseLayerStrings = new();
+            foreach (var (layer, info) in appearance.CustomBaseLayers)
+            {
+                if (info.Id is not { } id)
+                    continue;
+                customBaseLayerStrings.Add($"{layer}@{id}@{info.Color?.ToHex() ?? ""}");
+            }
+            profile.CustomBaseLayers = JsonSerializer.SerializeToDocument(customBaseLayerStrings);
 
             profile.CharacterName = humanoid.Name;
             profile.FlavorText = humanoid.FlavorText;

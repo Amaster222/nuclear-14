@@ -267,6 +267,7 @@
     - N14BPNCRAmmoOverMag308
     - N14BPNCRAmmoBoxOver308
     - N14BPNCRAmmoMagTopSMG12mm
+    - N14BPNCRAmmoVertibirdGunBelt # #Misfits Add - vertibird turret belt
 
 # =====================================================================
 # CAESAR'S LEGION BLUEPRINTS
@@ -388,6 +389,7 @@
     # #Misfits Add - paired legionnaire hoods
     - N14BPLegionArmorHelmetTribalHood
     - N14BPLegionArmorHelmetTribalOutcastHood
+    - N14BPLegionArmorLightBaseballHelmet
 
 - type: entity
   parent: N14BlueprintBase
@@ -403,6 +405,8 @@
     - N14BPLegionArmorHelmetTribalHunterHood
     - N14BPLegionArmorHelmetHeadtakerwraps
     - N14BPLegionArmorHelmetMuffaloskull
+    - N14BPLegionArmorDeanRecruitHelmet
+    - N14BPLegionArmorBaseballHelmet
 
 - type: entity
   parent: N14BlueprintBase
@@ -680,6 +684,7 @@
     recipes:
     - N14BPBoSAmmoFusionCoreRed
     # #Misfits Change - duplicate FC recipe removed; consolidated to single generic fusion core
+    - N14BPBoSAmmoVertibirdGunBelt # #Misfits Add - vertibird turret belt
 
 # #Misfits Removed - T5 ammo blueprint entity commented out; all T5 energy cells consolidated to generic types at T1
 # - type: entity

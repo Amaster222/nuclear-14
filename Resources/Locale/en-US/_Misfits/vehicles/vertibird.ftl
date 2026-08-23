@@ -8,9 +8,9 @@ action-name-vertibird-move-down = Descend z-level
 action-description-vertibird-move-down = Move the airborne vertibird to the z-level below.
 
 vertibird-pilot-required = You need the Vertibird Pilot perk to fly this.
-vertibird-unbuckle-blocked = You cannot unbuckle until the vertibird begins landing.
+vertibird-unbuckle-blocked = You cannot pull someone out of the vertibird while it is flying.
+vertibird-fall-landed = You hit the ground hard.
 vertibird-use-seat-manifest = Use the vertibird seat manifest to board.
-vertibird-seat-airborne-blocked = You cannot change seats while the vertibird is airborne.
 vertibird-seat-pilot = Pilot
 vertibird-seat-crew-chief = Crew Chief
 vertibird-seat-passenger = Passenger seat {$number}
@@ -55,3 +55,37 @@ vertibird-rp-z-up = climbs toward the sky for cruising.
 vertibird-rp-z-down = descends toward the ground for ground effect flight.
 vertibird-rp-fuel-emergency = sputters as its fuel supply runs dry and begins an emergency descent.
 vertibird-rp-pilot-disconnected = banks into an automatic emergency descent as the pilot becomes unresponsive.
+vertibird-rp-occupant-fell = drops an occupant clear of the cabin, who falls away toward the ground below.
+
+# #Misfits Add - Co-pilot turret, restocking and airframe repair.
+action-name-vertibird-enter-turret = Man turret
+action-description-vertibird-enter-turret = Drop into the gunner's sight and look down on the level below. Your body stays in the seat.
+action-name-vertibird-exit-turret = Leave turret
+action-description-vertibird-exit-turret = Return to your body in the crew chief seat.
+action-name-vertibird-fire-turret = Fire turret
+action-description-vertibird-fire-turret = Rake the targeted ground with a burst from the chin gun.
+
+vertibird-turret-needs-altitude = The turret only bears on the ground while cruising above a level.
+vertibird-turret-no-ammo = The gun is empty. It needs a fresh belt.
+vertibird-repair-undamaged = The airframe is already sound.
+vertibird-repair-success = You weld the vertibird's airframe back into shape.
+vertibird-restock-full = The gun is already fully loaded.
+vertibird-restock-success = You feed the belt into the gun. {$rounds} bursts loaded.
+
+# #Misfits Add - Power armour combat drop.
+action-name-vertibird-combat-drop = Combat drop
+action-description-vertibird-combat-drop = Step out of the cruising vertibird. Your power armour takes the landing for you.
+
+vertibird-drop-not-cruising = The vertibird has to be cruising before you can drop.
+vertibird-drop-needs-power-armor = Without a suit, that fall would kill you.
+vertibird-drop-no-ground = There is no level beneath the vertibird to drop onto.
+vertibird-rp-combat-drop = disgorges an armoured figure that drops away toward the ground below.
+
+# #Misfits Add - Cargo bay. Crates travel with everything still packed inside them.
+vertibird-window-cargo = CARGO BAY
+vertibird-window-cargo-count = {$stored} / {$capacity} crates
+vertibird-cargo-load = Load pulled crate
+vertibird-cargo-unload = Unload
+vertibird-cargo-empty = The cargo bay is empty.
+vertibird-cargo-nothing-pulled = You are not pulling a crate to load.
+vertibird-cargo-will-not-fit = That will not fit in the cargo bay. Crates have to be closed.
