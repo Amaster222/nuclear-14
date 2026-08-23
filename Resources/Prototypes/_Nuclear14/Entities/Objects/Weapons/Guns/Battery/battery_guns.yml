@@ -1155,6 +1155,20 @@
     - state: mag-unshaded-4
       map: ["enum.GunVisualLayers.MagUnshaded"]
       shader: unshaded
+  - type: ItemToggle
+    soundActivate:
+      path: /Audio/Weapons/spinon.ogg
+      params:
+        volume: 1
+    soundDeactivate:
+      path: /Audio/Weapons/spinoff.ogg
+      params:
+        volume: 1
+  - type: ItemToggleActiveSound
+    activeSound:
+      path: /Audio/Weapons/spinloop.ogg
+  - type: UseDelay
+    delay: 1.5
   - type: Clothing
     sprite: _Nuclear14/Objects/Weapons/Guns/Battery/laser_gatling.rsi
     quickEquip: false
@@ -1177,6 +1191,9 @@
         whitelist:
           tags:
             - N14FusionCore # #Misfits Change - Gatling now only accepts fusion cores, not standard MFCs
+  - type: ItemToggleGun
+    ActivatedFireRate: 8
+    InactiveWeaponFireRate: 1
   - type: Gun
     minAngle: 2
     maxAngle: 12
