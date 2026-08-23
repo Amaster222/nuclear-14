@@ -1,8 +1,8 @@
 - type: entity
   id: Trademachine
   abstract: true
-  name: City Trading Terminal
-  description: Quick supply - it's right nearby. Choose, pay, take.
+  name: Caravan Network Terminal
+  description: Trade terminal of the Caravan Network, their reach goes from the West Coast to the Midwest. Buy, sell, take contracts and grow your legend.
   suffix: vendor, normal
   components:
   - type: UserInterface
@@ -47,8 +47,8 @@
 - type: entity
   id: TrademachineCity
   parent: Trademachine
-  name: City Trading Terminal
-  description: Quick supply - it's right nearby. Choose, pay, take.
+  name: Caravan Network Terminal
+  description: Trade terminal of the Caravan Network, their reach goes from the West Coast to the Midwest. Buy, sell, take contracts and grow your legend.
   suffix: vendor, normal
   components:
   - type: NcStore
@@ -72,14 +72,16 @@
   description: A specialized trading terminal that accepts caravan vouchers in exchange for quality equipment.
   suffix: vendor, Tickets
   components:
-  - type: NcStore
-    buyPresets:
-    - caravan_storetickets
-    sellPresets:
-    - caravan_storetickets_sell
-  - type: AccessReader
-    access:
-    - [ "TownieShopkeeper" ]
+  # #Cythisiax Edit - Free Market Exchange: overrides inherited NcStoreStructuredBoundUi
+  - type: UserInterface
+    interfaces:
+      enum.MarketUiKey.Key:
+        type: MarketBoundUi
+  - type: ActivatableUI
+    key: enum.MarketUiKey.Key
+  - type: MarketTerminal
+  # #Cythisiax Removed - The player market is public; listings are no longer
+  # restricted to TownieShopkeeper access.
   - type: Sprite
     sprite: _NF/Structures/Machines/VendingMachines/yarrrdrobe.rsi
     layers:

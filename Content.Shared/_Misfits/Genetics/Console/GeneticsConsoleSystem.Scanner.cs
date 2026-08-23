@@ -10,8 +10,6 @@ namespace Content.Shared._Misfits.Genetics.Console;
 
 public sealed partial class GeneticsConsoleSystem
 {
-    private List<SequenceState> _sequences = new();
-
     [Dependency] private EntityQuery<GeneticsScannerComponent> _scannerQuery = default!;
 
     private void InitializeScanner()
@@ -67,7 +65,8 @@ public sealed partial class GeneticsConsoleSystem
             ent.Comp.ScanDelay,
             new ScanDoAfterEvent(GetNetEntity(mob)),
             eventTarget: ent,
-            target: mob,
+            // no target: the mob sits inside the linked scanner, so a reach check
+            // against it always hits the scanner's own body. OnScanCheck validates it instead.
             used: ent)
         {
             BreakOnMove = true,
@@ -162,10 +161,10 @@ public sealed partial class GeneticsConsoleSystem
         if (!_scannerQuery.Resolve(ent, ref ent.Comp))
             return;
 
-        _sequences.Clear();
+        var sequences = new List<SequenceState>();
         if (ent.Comp.ScannedMob is {} mob)
-            _genome.AddSequenceStates(mob, _sequences);
-        var state = new GeneticsConsoleState(_sequences);
+            _genome.AddSequenceStates(mob, sequences);
+        var state = new GeneticsConsoleState(sequences);
         _ui.SetUiState(ent.Owner, GeneticsConsoleUiKey.Key, state);
     }
 

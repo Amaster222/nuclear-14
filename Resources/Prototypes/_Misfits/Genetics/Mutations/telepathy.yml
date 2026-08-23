@@ -26,7 +26,7 @@
       state: mindread # close enough and im not using fucking revenant icons
     checkCanAccess: false # MIND POWERS
     range: 7
-    canTargetSelf: false # lol
+    canTargetSelf: true # targeting yourself opens the long-range window with a player list
     whitelist:
       components:
       - MindContainer
@@ -37,5 +37,9 @@
     interfaces:
       enum.TelepathyUiKey.Key:
         type: TelepathyBUI
+        interactionRange: 0 # prevent it being closed immediately
+        requireInputValidation: false # action checks stuff
+      enum.TelepathyUiKey.Far:
+        type: TelepathyFarBUI
         interactionRange: 0 # prevent it being closed immediately
         requireInputValidation: false # action checks stuff

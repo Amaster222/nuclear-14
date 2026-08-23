@@ -21,7 +21,6 @@
     priceMultiplier: 0.5
   - type: Tag
     tags:
-    - HidesHair
     - HidesBeard
 
 - type: entity
@@ -98,6 +97,29 @@
   - type: Item
     size: Tiny
 
+- type: entity
+  parent: ClothingMaskGas
+  id: ClothingMaskCommissar
+  name: commissar gas mask
+  description: An armor plated gas mask used by NCR Commissars.
+  components:
+  - type: Item
+    size: Tiny
+  - type: FlashImmunity
+  - type: EyeProtection
+  - type: Sprite
+    sprite: _Misfits/Clothing/Mask/ncr_commissarmask.rsi
+  - type: Clothing
+    sprite: _Misfits/Clothing/Mask/ncr_commissarmask.rsi
+  - type: Armor
+    modifiers:
+      coefficients:
+        Blunt: 0.95
+        Slash: 0.95
+        Piercing: 0.95
+        Heat: 0.9
+    priceMultiplier: 0.5
+
 # NCR Rangers, Vets
 
 - type: entity
@@ -145,6 +167,13 @@
   - type: Tag
     tags:
     - WhitelistChameleon
+  - type: Armor
+    modifiers:
+      coefficients:
+        Blunt: 0.95
+        Slash: 0.95
+        Piercing: 0.95
+        Heat: 0.95
 
 - type: entity
   parent: ClothingMaskGasCombat
@@ -244,7 +273,7 @@
 - type: entity
   parent: ClothingMaskGas
   id: ClothingMaskGasRangerBroken
-  name: broken riot gas mask
+  name: old riot gas mask
   description: An old riot gas mask, out of use around the time of the war.
   components:
   - type: Item

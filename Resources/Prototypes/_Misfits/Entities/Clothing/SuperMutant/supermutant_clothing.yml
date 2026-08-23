@@ -6,8 +6,8 @@
 - type: entity
   parent: UnsensoredClothingUniformBase
   id: ClothingSuperMutantJumpsuit
-  name: super mutant garb
-  description: A crude set of garments cobbled together from scavenged materials, sized for a super mutant's massive frame.
+  name: super mutant rags
+  description: A tattered jumpsuit made from scavenged cloth, sized for a super mutant's massive frame.
   components:
   - type: Sprite
     sprite: _Misfits/Clothing/SuperMutant/jumpsuit.rsi
@@ -205,6 +205,20 @@
         Piercing: 0.70
 
 - type: entity
+  parent: ClothingSuperMutantRangerArmor
+  id: ClothingSuperMutantCustomizedCombatArmor
+  name: customized combat armor
+  description: A set of salvaged Knight armor along with a leg guard of what seems to be power armor.
+  components:
+  - type: Sprite
+    sprite: _Misfits/Clothing/SuperMutant/customized_combat_armor.rsi
+  - type: Clothing
+    sprite: _Misfits/Clothing/SuperMutant/customized_combat_armor.rsi
+  - type: Tag
+    tags:
+    - SuperMutantWearable
+
+- type: entity
   parent: ClothingHeadBase
   id: ClothingSuperMutantRangerHat
   name: supermutant ranger hat
@@ -223,6 +237,62 @@
         Blunt: 0.85
         Slash: 0.85
         Piercing: 0.80
+
+- type: entity
+  parent: ClothingSuperMutantRangerHat
+  id: ClothingSuperMutantRangerHatAlt
+  name: supermutant ranger cowboy hat
+  description: An XXXXL ranger hat made to fit even the biggest of people.
+  components:
+  - type: Sprite
+    sprite: _Misfits/Clothing/SuperMutant/ranger_hat_alt.rsi
+  - type: Clothing
+    sprite: _Misfits/Clothing/SuperMutant/ranger_hat_alt.rsi
+  - type: Tag
+    tags:
+    - SuperMutantWearable
+
+- type: entity
+  parent: ClothingSuperMutantNeckTrinket
+  id: ClothingSuperMutantCustomDuster
+  name: supermutant customized duster
+  description: An XXXL ranger duster with customized pieces of armor on it.
+  components:
+  - type: Sprite
+    sprite: _Misfits/Clothing/SuperMutant/customized_duster.rsi
+  - type: Clothing
+    sprite: _Misfits/Clothing/SuperMutant/customized_duster.rsi
+  - type: Tag
+    tags:
+    - SuperMutantWearable
+
+- type: entity
+  parent: ClothingShoesBase
+  id: ClothingSuperMutantLeatherBoots
+  name: supermutant leather boots
+  description: Oversized boots fashioned from thick hides, sized for a super mutant's feet.
+  components:
+  - type: Sprite
+    sprite: _Misfits/Clothing/SuperMutant/leatherboots.rsi
+  - type: Clothing
+    sprite: _Misfits/Clothing/SuperMutant/leatherboots.rsi
+  - type: Tag
+    tags:
+    - SuperMutantWearable
+
+- type: entity
+  parent: ClothingHandsBase
+  id: SupermutantBlackGloves
+  name: supermutant black gloves
+  description: Gigantic gloves intended for supermutants to use in the field.
+  components:
+  - type: Sprite
+    sprite: _Misfits/Clothing/SuperMutant/black_gloves.rsi
+  - type: Clothing
+    sprite: _Misfits/Clothing/SuperMutant/black_gloves.rsi
+  - type: Tag
+    tags:
+    - SuperMutantWearable
 
 - type: entity
   parent: ClothingHeadBase
@@ -247,7 +317,7 @@
 - type: entity
   parent: ClothingMaskBase
   id: ClothingSuperRangerGasmask
-  name: Super Mutant Ranger Gasmask
+  name: supermutant ranger gasmask
   description: A larger Ranger gasmask fitted for a supermutant
   components:
   - type: Sprite
@@ -259,6 +329,17 @@
     - SuperMutantWearable
   - type: NightVision
     isEquipment: True
+
+- type: entity
+  parent: ClothingSuperRangerGasmask
+  id: ClothingSuperMutantRangerGasmaskAlt
+  name: supermutant ranger gasmask
+  description: A larger Ranger gasmask fitted for a supermutant, this one has yellow lenses.
+  components:
+  - type: Sprite
+    sprite: _Misfits/Clothing/SuperMutant/ranger_gasmask_alt.rsi
+  - type: Clothing
+    sprite: _Misfits/Clothing/SuperMutant/ranger_gasmask_alt.rsi
 
 # #Misfits Add - Ranger armor for the playable Supermutant Ranger job variant.
 # Tagged SuperMutantWearable so only supermutants can equip it in outerClothing slot.
@@ -610,7 +691,7 @@
   - type: Tag
     tags:
     - SuperMutantWearable
-  - type: Armor 
+  - type: Armor
     modifiers:
       coefficients:
         Blunt: 0.80

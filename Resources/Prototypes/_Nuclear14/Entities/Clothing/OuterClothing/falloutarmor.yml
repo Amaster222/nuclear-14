@@ -812,6 +812,30 @@
 
 - type: entity
   parent: N14FalloutArmorBase
+  id: N14ClothingOuterNCRVestCoatBlackArmored
+  name: NCR Provost Armored Coat
+  description: A light ballistic plate inside a leather vest over a long coat. This one is covered in black camo for night operations.
+  components:
+  - type: Sprite
+    sprite: _Nuclear14/Clothing/OuterClothing/Armor/falloutNCRvestcoatblack.rsi
+  - type: Clothing
+    sprite: _Nuclear14/Clothing/OuterClothing/Armor/falloutNCRvestcoatblack.rsi
+  - type: ClothingSpeedModifier
+    walkModifier: 1.00
+    sprintModifier: 1.00
+  - type: Armor
+    modifiers:
+      coefficients:
+        Blunt: 0.60
+        Slash: 0.60
+        Piercing: 0.55
+        Heat: 0.60
+    priceMultiplier: 0.6
+  - type: ExplosionResistance
+    damageCoefficient: 0.85
+
+- type: entity
+  parent: N14FalloutArmorBase
   id: N14ClothingOuterNCRPlateWoods
   name: NCR plate armor
   description: A bunch of light steel plates connected to a hollow regular vest, designed to protect during melee combat.
@@ -1003,7 +1027,7 @@
 - type: entity
   parent: N14ClothingOuterBase
   id: N14ClothingOuterRangerVest
-  name: ranger custom leather vest
+  name: NCR tactical vest
   description: A custom NCR leather vest modified to become more versatile and protective.
   components:
   - type: Sprite
@@ -1104,8 +1128,8 @@
 - type: entity
   parent: N14ClothingOuterRangerCoat
   id: N14ClothingOuterRangerFieldArmor
-  name: NCR field ranger armor
-  description: A set of combat armor refurbished from old national guard stock, issued to Field Rangers.
+  name: NCR field armor
+  description: A set of combat armor refurbished from old national guard stock, issued to Field Rangers and senior Army personnel.
   components:
   - type: Sprite
     sprite: _Nuclear14/Clothing/OuterClothing/Armor/falloutrangerfieldarmor.rsi
@@ -1352,12 +1376,12 @@
   - type: Clothing
     sprite: _Nuclear14/Clothing/OuterClothing/Armor/BoS_Wash/InitiateArmor.rsi
   - type: Armor
-    modifiers:
+    modifiers: # #Misfits Tweak: Initiate is the lowest BoS rank - weakest armor in the ladder (T2, 0.85/0.80), now below Squire
       coefficients:
-        Blunt: 0.80
-        Slash: 0.80
-        Piercing: 0.75
-        Heat: 0.75
+        Blunt: 0.85
+        Slash: 0.85
+        Piercing: 0.80
+        Heat: 0.80
     priceMultiplier: 0.5
   - type: FireProtection
     reduction: 0.1
@@ -1375,7 +1399,7 @@
   - type: Clothing
     sprite: _Nuclear14/Clothing/OuterClothing/Armor/BoS_Wash/SquireArmor.rsi
   - type: Armor
-    modifiers:
+    modifiers: # #Misfits Tweak: Squire (T3, 0.80/0.75) now outranks Initiate (T2, 0.85/0.80)
       coefficients:
         Blunt: 0.8
         Slash: 0.8
@@ -1529,12 +1553,12 @@
   - type: Clothing
     sprite: _Nuclear14/Clothing/OuterClothing/Armor/BoS_Midw/InitiateArmor.rsi
   - type: Armor
-    modifiers:
+    modifiers: # #Misfits Tweak: Initiate is the lowest BoS rank - weakest armor in the ladder (T2, 0.85/0.80), now below Squire
       coefficients:
-        Blunt: 0.80
-        Slash: 0.80
-        Piercing: 0.75
-        Heat: 0.75
+        Blunt: 0.85
+        Slash: 0.85
+        Piercing: 0.80
+        Heat: 0.80
     priceMultiplier: 0.5
   - type: FireProtection
     reduction: 0.1
@@ -1552,7 +1576,7 @@
   - type: Clothing
     sprite: _Nuclear14/Clothing/OuterClothing/Armor/BoS_Midw/SquireArmor.rsi
   - type: Armor
-    modifiers:
+    modifiers: # #Misfits Tweak: Squire (T3, 0.80/0.75) now outranks Initiate (T2, 0.85/0.80)
       coefficients:
         Blunt: 0.80
         Slash: 0.80

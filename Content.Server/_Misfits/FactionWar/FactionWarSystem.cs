@@ -1,8 +1,8 @@
 // #Misfits Refactor - Server-side player-to-player war system.
 // Handles GUI form submissions from clients (declare/ceasefire/warjoin) and the admin /forcewar command.
 // Active war state is maintained here and broadcast to all clients on every change.
-// Wars go through a 5-minute Pending phase (during which /warjoin is open) before becoming Active.
-// Acceptance is optional - wars auto-activate after the Pending phase regardless of whether the target accepts.
+// Wars go through a 5-minute Pending phase (during which /warjoin is open), then a side-review step, then become Active.
+// Acceptance is optional - wars progress after the Pending phase regardless of whether the target accepts.
 // A war is bound to two character entities: the declarer and the declared-against (character-bound, not account-bound).
 // /warjoin is still supported; certain factions auto-enlist their members on declaration.
 // Only original 2 players can participate in raids during the war.
@@ -13,16 +13,19 @@ using Content.Server.Administration.Managers;
 using Content.Server.Chat.Managers;
 using Content.Server.Mind;
 using Content.Server.Roles.Jobs;
+using Content.Server._Misfits.Group;
 using Content.Shared._Misfits.FactionWar;
 using Content.Shared.GameTicking;
 using Content.Shared.Ghost;
 using Content.Shared.Mind.Components;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Components;
+using Content.Shared.NPC.Components;
 using Content.Shared.NPC.Systems;
 using Content.Shared.Popups;
 using Content.Shared.Standing;
 using Content.Shared.Stunnable;
+using Content.Shared.Verbs;
 using Robust.Server.Player;
 using Robust.Shared.Console;
 using Robust.Shared.Enums;
@@ -38,8 +41,8 @@ namespace Content.Server._Misfits.FactionWar;
 /// Manages player-to-player war declarations, ceasefires, and individual war participation.
 /// Rules enforced here (all game-logic stays server-side):
 ///   - Any two different players can declare war on each other.
-///   - Wars enter a 5-minute Pending phase before becoming Active (during which /warjoin is open).
-///   - Acceptance is optional - wars auto-activate regardless of whether the target accepts.
+///   - Wars enter a 5-minute Pending phase before side review (during which /warjoin is open).
+///   - Acceptance is optional - wars still progress after Pending regardless of target acceptance.
 ///   - During Pending, any player may /warjoin on either side (except the original 2).
 ///   - Once Active, /warjoin is closed.
 ///   - Raids require both participants to be part of the original 2 players in the war.
@@ -56,6 +59,7 @@ public sealed class FactionWarSystem : EntitySystem
     [Dependency] private readonly JobSystem         _jobs          = default!;
     [Dependency] private readonly MindSystem        _minds         = default!;
     [Dependency] private readonly NpcFactionSystem  _npcFaction    = default!;
+    [Dependency] private readonly GroupSystem       _groupSystem   = default!;
     [Dependency] private readonly SharedPopupSystem _popup         = default!;
     [Dependency] private readonly SharedStunSystem  _stun          = default!;
 
@@ -63,11 +67,17 @@ public sealed class FactionWarSystem : EntitySystem
 
     /// <summary>Minimum elapsed round time before war can be declared.</summary>
     /// <summary>Minimum elapsed round time before war can be declared.</summary>
-    private static readonly TimeSpan WarCooldownAfterRoundStart = TimeSpan.FromMinutes(30);
+    private static readonly TimeSpan WarCooldownAfterRoundStart = TimeSpan.FromMinutes(60);
 
-    /// <summary>How long a war stays in Pending before becoming Active.</summary>
-    /// <summary>How long a war stays in Pending before becoming Active.</summary>
+    /// <summary>How long a war stays in Pending before side review begins.</summary>
+    /// <summary>How long a war stays in Pending before side review begins.</summary>
     private static readonly TimeSpan WarPrepDuration = TimeSpan.FromMinutes(5);
+
+    /// <summary>How long side owners have to submit keep/remove before auto-keeping.</summary>
+    private static readonly TimeSpan WarSideReviewDuration = TimeSpan.FromMinutes(2);
+
+    /// <summary>How long a targeted invite to join a pending war remains valid.</summary>
+    private static readonly TimeSpan WarInviteDuration = TimeSpan.FromSeconds(30);
 
     /// <summary>Minimum word count for war reason/casus belli.</summary>
     private const int MinReasonWords = 5;
@@ -110,7 +120,6 @@ public sealed class FactionWarSystem : EntitySystem
         "NCR",
         "CaesarLegion",
         "BrotherhoodOfSteel",
-        "Enclave",
     };
 
 
@@ -143,6 +152,12 @@ public sealed class FactionWarSystem : EntitySystem
     /// <summary>Ceasefire proposals awaiting the other player's consent. Key = WarKey.</summary>
     private readonly Dictionary<string, CeasefireProposal> _pendingCeasefireProposals = new();
 
+    /// <summary>Per-war side review state after pending prep ends and before activation.</summary>
+    private readonly Dictionary<string, SideReviewState> _pendingSideReviews = new();
+
+    /// <summary>Targeted invites to join a pending war.</summary>
+    private readonly List<PendingWarInvite> _pendingWarInvites = new();
+
     /// <summary>
     /// Sessions that currently have the /war panel open.
     /// Panel data is only sent to these sessions on state change, avoiding O(N) broadcasts.
@@ -165,8 +180,6 @@ public sealed class FactionWarSystem : EntitySystem
 
     private float _warUpdateAccumulator;
     private const float WarUpdateInterval = 1.0f;
-
-    private readonly List<PlayerWarEntry> _activatedScratch = new();
 
     // ── Lifecycle ──────────────────────────────────────────────────────────
 
@@ -220,6 +233,8 @@ public sealed class FactionWarSystem : EntitySystem
         // Warjoin panel & enlistment.
         SubscribeNetworkEvent<FactionWarJoinPanelRequestEvent>(OnWarJoinPanelRequest);
         SubscribeNetworkEvent<PlayerWarJoinRequestEvent>(OnWarJoinRequest);
+        SubscribeNetworkEvent<WarSideReviewSubmitEvent>(OnWarSideReviewSubmit);
+        SubscribeNetworkEvent<WarInviteResponseEvent>(OnWarInviteResponse);
 
         // Surrender.
         SubscribeNetworkEvent<PlayerWarSurrenderRequestEvent>(OnSurrenderRequest);
@@ -230,6 +245,7 @@ public sealed class FactionWarSystem : EntitySystem
         SubscribeNetworkEvent<PlayerWarForceObserveRequestEvent>(OnForceObserveRequest); // #Misfits Add
 
         SubscribeLocalEvent<RoundRestartCleanupEvent>(OnRoundRestart);
+        SubscribeLocalEvent<GetVerbsEvent<Verb>>(OnGetWarInviteVerb);
         SubscribeLocalEvent<MindContainerComponent, MindAddedMessage>(OnMindAdded);
         _playerManager.PlayerStatusChanged += OnPlayerStatusChanged;
     }
@@ -280,43 +296,39 @@ public sealed class FactionWarSystem : EntitySystem
             }
         }
 
-        // ── Pending → Active transitions ──────────────────────────────────
+        // ── Pending invite expiry ────────────────────────────────────────
+        if (_pendingWarInvites.Count > 0)
+            _pendingWarInvites.RemoveAll(inv => now >= inv.ExpiresAt);
+
+        // ── Pending → Review transitions ─────────────────────────────────
         if (_warActivationTimes.Count > 0)
         {
-            var activated = _activatedScratch;
-            activated.Clear();
-
             foreach (var (key, activationTime) in _warActivationTimes.ToList())
             {
                 if (now < activationTime)
                     continue;
 
+                _warActivationTimes.Remove(key);
+
                 if (!_activeWars.TryGetValue(key, out var war))
                     continue;
 
-                war.Phase = WarPhase.Active;
-                _warActivationTimes.Remove(key);
-                activated.Add(war);
+                StartSideReview(war);
             }
+        }
 
-            if (activated.Count > 0)
+        // ── Review timeout finalization ──────────────────────────────────
+        if (_pendingSideReviews.Count > 0)
+        {
+            foreach (var (warKey, review) in _pendingSideReviews.ToList())
             {
-                BroadcastWarState();
-                SendPanelDataToAll();
+                if (now < review.ExpiresAt)
+                    continue;
 
-                // Ensure clients receive the participant mapping for newly-activated wars
-                // so overlays will appear immediately even if no joiners have been sent.
-                BroadcastParticipants();
-
-                foreach (var war in activated)
-                {
-                    _chat.DispatchServerAnnouncement(
-                        $"WAR HAS BEGUN\n" +
-                        $"The conflict between {war.SideName1} and {war.SideName2} is now active!\n" +
-                        $"(/warjoin) is now closed for this conflict.\n" +
-                        $"The war will only end by ceasefire.",
-                        Color.OrangeRed);
-                }
+                if (_activeWars.TryGetValue(warKey, out var war) && war.Phase == WarPhase.Review)
+                    FinalizeSideReview(war, review, timedOut: true);
+                else
+                    _pendingSideReviews.Remove(warKey);
             }
         }
 
@@ -384,14 +396,58 @@ public sealed class FactionWarSystem : EntitySystem
 
     private void SendPanelData(ICommonSession player)
     {
+        var requesterEntity = default(EntityUid);
+        var requesterNetEntity = default(NetEntity);
+        string? requesterFaction = null;
+        if (player.AttachedEntity is { } attachedEntity)
+        {
+            requesterEntity = attachedEntity;
+            requesterNetEntity = GetNetEntity(attachedEntity);
+            if (TryGetAutoEnlistFaction(attachedEntity, out var faction))
+                requesterFaction = faction;
+        }
+
         var data = new PlayerWarPanelDataEvent
         {
             ActiveWars = _activeWars.Values.ToList(),
-            MyCharacterName = player.AttachedEntity is { } myEntity ? Name(myEntity) : null,
+            MyCharacterName = requesterEntity != default ? Name(requesterEntity) : null,
             MyWars = new List<PlayerWarEntry>(),
         };
 
-        // Populate online players for targeting
+        var groupedEntities = BuildGroupedEntitySet();
+
+        // Populate faction targets.
+        foreach (var faction in AutoEnlistFactions.OrderBy(GetFactionDisplayName))
+        {
+            if (requesterFaction != null && string.Equals(requesterFaction, faction, StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            if (!TryGetFactionRepresentative(faction, out _, out _, out _))
+                continue;
+
+            data.FactionTargets.Add(new WarTargetInfo
+            {
+                Kind = WarTargetKind.Faction,
+                Id = faction,
+                DisplayName = GetFactionDisplayName(faction),
+            });
+        }
+
+        // Populate group targets.
+        foreach (var group in _groupSystem.GetRaidTargets())
+        {
+            if (group.Members.Any(m => m.Entity == requesterNetEntity))
+                continue;
+
+            data.GroupTargets.Add(new WarTargetInfo
+            {
+                Kind = WarTargetKind.Group,
+                Id = group.GroupId.ToString(),
+                DisplayName = $"{group.GroupName} ({group.Members.Count})",
+            });
+        }
+
+        // Populate wastelander targets.
         foreach (var session in _playerManager.Sessions)
         {
             if (session.Status != SessionStatus.InGame || session.UserId == player.UserId)
@@ -411,15 +467,34 @@ public sealed class FactionWarSystem : EntitySystem
                 CharacterName = Name(entity),
                 JobName = jobName,
             });
+
+            var netEntity = GetNetEntity(entity);
+            if (groupedEntities.Contains(netEntity))
+                continue;
+
+            if (TryGetAutoEnlistFaction(entity, out _))
+                continue;
+
+            data.WastelanderTargets.Add(new WarTargetInfo
+            {
+                Kind = WarTargetKind.Wastelander,
+                Id = session.UserId.ToString(),
+                DisplayName = string.IsNullOrWhiteSpace(jobName)
+                    ? Name(entity)
+                    : $"{Name(entity)} ({jobName})",
+            });
         }
+
         data.OnlinePlayers.Sort((a, b) => string.Compare(a.CharacterName, b.CharacterName, StringComparison.Ordinal));
+        data.GroupTargets.Sort((a, b) => string.Compare(a.DisplayName, b.DisplayName, StringComparison.Ordinal));
+        data.WastelanderTargets.Sort((a, b) => string.Compare(a.DisplayName, b.DisplayName, StringComparison.Ordinal));
 
         // Check 30-minute cooldown.
         var elapsed = _gameTiming.CurTime - _roundStartTime;
         if (elapsed < WarCooldownAfterRoundStart)
         {
             var remaining = WarCooldownAfterRoundStart - elapsed;
-            data.StatusMessage = $"War declarations are locked for the first 30 minutes. " +
+            data.StatusMessage = $"War declarations are locked for the first 60 minutes. " +
                                  $"{remaining.Minutes}m {remaining.Seconds}s remaining.";
         }
 
@@ -466,18 +541,13 @@ public sealed class FactionWarSystem : EntitySystem
             return;
         }
 
-        if (msg.TargetPlayer == player.UserId)
-        {
-            SendResult(player, false, "You cannot declare war on yourself.");
-            return;
-        }
-
         var elapsed = _gameTiming.CurTime - _roundStartTime;
         if (elapsed < WarCooldownAfterRoundStart)
         {
             var remaining = WarCooldownAfterRoundStart - elapsed;
+            // #Cythisiax Fixed - message said 30 minutes but the cooldown is 60 (WarCooldownAfterRoundStart)
             SendResult(player, false,
-                $"War declarations are locked for the first 30 minutes. {remaining.Minutes}m {remaining.Seconds}s remaining.");
+                $"War declarations are locked for the first 60 minutes. {remaining.Minutes}m {remaining.Seconds}s remaining.");
             return;
         }
 
@@ -498,28 +568,29 @@ public sealed class FactionWarSystem : EntitySystem
             return;
         }
 
-        // Check if target exists and is online with an active character
-        if (!TryGetSessionForPlayer(msg.TargetPlayer, out var targetSession))
+        var playerNetEntity = GetNetEntity(playerEntity);
+
+        if (msg.TargetKind == WarTargetKind.Group
+            && int.TryParse(msg.TargetId, out var targetGroupId)
+            && _groupSystem.TryGetRaidTargetInfo(targetGroupId, out var targetGroupSnapshot)
+            && targetGroupSnapshot.Members.Any(m => m.Entity == playerNetEntity))
         {
-            SendResult(player, false, "Target player is not online.");
+            SendResult(player, false, "You cannot declare war on your own group.");
             return;
         }
 
-        if (targetSession.AttachedEntity is not { } targetEntity)
+        if (!TryGetWarTargetRepresentative(msg.TargetKind, msg.TargetId, player.UserId, out var targetSession, out var targetEntity, out var targetDisplayName))
         {
-            SendResult(player, false, "Target player is not yet in-game.");
+            SendResult(player, false, "Target is not valid or is not online.");
             return;
         }
 
-        // #Misfits Fix - Cannot declare war on ghosts
         if (HasComp<GhostComponent>(targetEntity))
         {
             SendResult(player, false, "Cannot declare war on ghosts.");
             return;
         }
 
-        // Character-bound: check by entity, not account
-        var playerNetEntity = GetNetEntity(playerEntity);
         var targetNetEntity = GetNetEntity(targetEntity);
 
         if (_warParticipants.ContainsKey(playerNetEntity))
@@ -530,37 +601,31 @@ public sealed class FactionWarSystem : EntitySystem
 
         if (_warParticipants.ContainsKey(targetNetEntity))
         {
-            SendResult(player, false, "Target player is already in a war.");
+            SendResult(player, false, "Target is already in a war.");
             return;
         }
 
-        // #Misfits Add - Same-faction war check
         TryGetAutoEnlistFaction(playerEntity, out var declarerFaction);
-        TryGetAutoEnlistFaction(targetEntity, out var targetFaction);
 
-        if (declarerFaction != null
-            && targetFaction != null
-            && string.Equals(declarerFaction, targetFaction, StringComparison.OrdinalIgnoreCase))
+        if (msg.TargetKind == WarTargetKind.Faction)
         {
-            SendResult(player, false, "Your faction cannot wage war on itself.");
-            return;
-        }
-
-        // #Misfits Add - Major faction already-in-war check
-        foreach (var faction in new[] { declarerFaction, targetFaction })
-        {
-            if (faction == null || !MajorFactions.Contains(faction))
-                continue;
-
-            if (IsFactionInAnyWar(faction))
+            if (string.Equals(declarerFaction, msg.TargetId, StringComparison.OrdinalIgnoreCase))
             {
-                SendResult(player, false, $"{faction} is already committed to a war.");
+                SendResult(player, false, "Your faction cannot wage war on itself.");
                 return;
             }
         }
 
+        if (msg.TargetKind == WarTargetKind.Faction
+            && MajorFactions.Contains(msg.TargetId)
+            && IsFactionInAnyWar(msg.TargetId))
+        {
+            SendResult(player, false, $"{msg.TargetId} is already committed to a war.");
+            return;
+        }
+
         // Create war entry (entity-bound: war key derived from character entities)
-        var declaredAgainstCharacterName = Name(targetEntity);
+        var declaredAgainstCharacterName = targetDisplayName;
 
         var warEntry = new PlayerWarEntry
         {
@@ -568,7 +633,7 @@ public sealed class FactionWarSystem : EntitySystem
             DeclaredByEntity = playerNetEntity,
             DeclaredByCharacterName = Name(playerEntity),
             DeclaredByJobName = "Unknown",
-            DeclaredAgainstPlayer = msg.TargetPlayer,
+            DeclaredAgainstPlayer = targetSession.UserId,
             DeclaredAgainstEntity = targetNetEntity,
             DeclaredAgainstCharacterName = declaredAgainstCharacterName,
             SideName1 = msg.SideName1.Trim(),
@@ -604,7 +669,7 @@ public sealed class FactionWarSystem : EntitySystem
         // Set activation time - war will auto-activate after Pending phase
         _warActivationTimes[warKey] = now + WarPrepDuration;
 
-        AutoEnlistFactionMembers(warEntry, playerEntity, targetEntity);
+        AutoEnlistDeclarationTargets(warEntry, msg.TargetKind, msg.TargetId, playerEntity, targetEntity);
 
         // Send acceptance prompt to target (optional - allows them to name their side)
         RaiseNetworkEvent(
@@ -632,10 +697,10 @@ public sealed class FactionWarSystem : EntitySystem
             $"WAR DECLARED\n" +
             $"{warEntry.DeclaredByCharacterName} has declared war on {warEntry.DeclaredAgainstCharacterName}!\n" +
             $"Reason: \"{reason}\"\n\n" +
-            $"War begins in 5 minutes. Use /warjoin to pick a side.",
+            $"War begins in {FormatDuration(WarPrepDuration)}. Use /warjoin to pick a side.",
             Color.OrangeRed);
 
-        SendResult(player, true, $"War declared. Begins in 5 minutes.");
+        SendResult(player, true, $"War declared. Begins in {FormatDuration(WarPrepDuration)}.");
     }
 
     // ── War acceptance/rejection ───────────────────────────────────────────
@@ -692,10 +757,10 @@ public sealed class FactionWarSystem : EntitySystem
             $"WAR ACCEPTED\n" +
             $"{Name(player.AttachedEntity ?? EntityUid.Invalid)} has accepted the war and named their side!\n" +
             $"{war.SideName1} vs {war.SideName2}\n\n" +
-            $"War begins in 5 minutes. Use (/warjoin) to choose a side.",
+            $"War begins in {FormatDuration(WarPrepDuration)}. Use (/warjoin) to choose a side.",
             Color.OrangeRed);
 
-        SendResult(player, true, "Side named. War begins in 5 minutes.");
+        SendResult(player, true, $"Side named. War begins in {FormatDuration(WarPrepDuration)}.");
     }
 
     private void OnRejectWar(PlayerWarRejectEvent msg, EntitySessionEventArgs args)
@@ -1076,6 +1141,213 @@ public sealed class FactionWarSystem : EntitySystem
 
         var sideName = msg.ChosenSide == 1 ? war.SideName1 : war.SideName2;
         SendJoinResult(player, true, $"You have joined the war on the side of {sideName}.");
+    }
+
+    private void OnWarSideReviewSubmit(WarSideReviewSubmitEvent msg, EntitySessionEventArgs args)
+    {
+        var player = args.SenderSession;
+
+        if (!_activeWars.TryGetValue(msg.WarKey, out var war) || war.Phase != WarPhase.Review)
+        {
+            RaiseNetworkEvent(new WarSideReviewResultEvent
+            {
+                Success = false,
+                Message = "This war is no longer in side review.",
+            }, player);
+            return;
+        }
+
+        if (!_pendingSideReviews.TryGetValue(msg.WarKey, out var review))
+        {
+            RaiseNetworkEvent(new WarSideReviewResultEvent
+            {
+                Success = false,
+                Message = "No side review is currently open for this war.",
+            }, player);
+            return;
+        }
+
+        byte side;
+        if (player.UserId == war.DeclaredByPlayer)
+            side = 1;
+        else if (player.UserId == war.DeclaredAgainstPlayer)
+            side = 2;
+        else
+        {
+            RaiseNetworkEvent(new WarSideReviewResultEvent
+            {
+                Success = false,
+                Message = "Only the two original war participants can submit this review.",
+            }, player);
+            return;
+        }
+
+        var removable = new HashSet<NetEntity>();
+        foreach (var (participant, participantSide) in war.Participants)
+        {
+            if (participantSide != side)
+                continue;
+
+            if (side == 1 && participant == war.DeclaredByEntity)
+                continue;
+
+            if (side == 2 && participant == war.DeclaredAgainstEntity)
+                continue;
+
+            removable.Add(participant);
+        }
+
+        var selected = new HashSet<NetEntity>();
+        foreach (var participant in msg.RemovedParticipants)
+        {
+            if (removable.Contains(participant))
+                selected.Add(participant);
+        }
+
+        if (side == 1)
+        {
+            review.Side1Removed = selected;
+            review.Side1Submitted = true;
+        }
+        else
+        {
+            review.Side2Removed = selected;
+            review.Side2Submitted = true;
+        }
+
+        RaiseNetworkEvent(new WarSideReviewResultEvent
+        {
+            Success = true,
+            Message = "Side roster submitted.",
+        }, player);
+
+        if (review.Side1Submitted && review.Side2Submitted)
+            FinalizeSideReview(war, review, timedOut: false);
+    }
+
+    private void OnWarInviteResponse(WarInviteResponseEvent msg, EntitySessionEventArgs args)
+    {
+        var player = args.SenderSession;
+        var invite = _pendingWarInvites.FirstOrDefault(i => i.TargetUserId == player.UserId && i.WarKey == msg.WarKey);
+
+        if (invite == null)
+        {
+            RaiseNetworkEvent(new WarInviteResultEvent
+            {
+                Success = false,
+                Message = "That invite has expired.",
+            }, player);
+            return;
+        }
+
+        _pendingWarInvites.Remove(invite);
+
+        if (!msg.Accept)
+        {
+            RaiseNetworkEvent(new WarInviteResultEvent
+            {
+                Success = true,
+                Message = "War invite declined.",
+            }, player);
+
+            if (TryGetSessionForPlayer(invite.InviterUserId, out var inviterDeclineSession))
+                _chat.DispatchServerMessage(inviterDeclineSession, $"{player.Name} declined your war invite.");
+
+            return;
+        }
+
+        if (player.Status != SessionStatus.InGame || player.AttachedEntity is not { } joinerEntity)
+        {
+            RaiseNetworkEvent(new WarInviteResultEvent
+            {
+                Success = false,
+                Message = "You must be in-game to accept a war invite.",
+            }, player);
+            return;
+        }
+
+        var joinerNetEntity = GetNetEntity(joinerEntity);
+        if (_warParticipants.ContainsKey(joinerNetEntity))
+        {
+            RaiseNetworkEvent(new WarInviteResultEvent
+            {
+                Success = false,
+                Message = "You are already in a war.",
+            }, player);
+            return;
+        }
+
+        if (!_activeWars.TryGetValue(invite.WarKey, out var war) ||
+            (war.Phase != WarPhase.Pending && war.Phase != WarPhase.Active))
+        {
+            RaiseNetworkEvent(new WarInviteResultEvent
+            {
+                Success = false,
+                Message = "That war is no longer joinable.",
+            }, player);
+            return;
+        }
+
+        war.Participants[joinerNetEntity] = invite.Side;
+        _warParticipants[joinerNetEntity] = (invite.WarKey, invite.Side);
+        _surrenderedParticipants.Remove(joinerNetEntity);
+        _observerParticipants.Remove(joinerNetEntity);
+
+        war.History.Add(new WarHistoryEvent
+        {
+            EventType = WarHistoryEventType.PlayerJoined,
+            OccurredAtUtc = DateTime.UtcNow,
+            ActorUserId = player.UserId,
+            ActorUserName = player.Name,
+            ActorCharacterName = Name(joinerEntity),
+            Details = $"Accepted invite to side {invite.Side}",
+        });
+
+        BroadcastWarState();
+        SendPanelDataToAll();
+        if (war.Phase == WarPhase.Active)
+            BroadcastParticipants();
+
+        var sideName = invite.Side == 1 ? war.SideName1 : war.SideName2;
+        RaiseNetworkEvent(new WarInviteResultEvent
+        {
+            Success = true,
+            Message = $"You joined the war on the side of {sideName}.",
+        }, player);
+
+        if (TryGetSessionForPlayer(invite.InviterUserId, out var inviterAcceptSession))
+            _chat.DispatchServerMessage(inviterAcceptSession, $"{Name(joinerEntity)} accepted your war invite.");
+    }
+
+    private void OnGetWarInviteVerb(GetVerbsEvent<Verb> args)
+    {
+        if (!args.CanInteract || !args.CanAccess)
+            return;
+
+        if (!TryComp<ActorComponent>(args.User, out var userActor) || !TryComp<ActorComponent>(args.Target, out var targetActor))
+            return;
+
+        if (args.User == args.Target)
+            return;
+
+        var userNetEntity = GetNetEntity(args.User);
+        if (!TryGetInvitableWarForOriginalParticipant(userActor.PlayerSession.UserId, userNetEntity, out var war, out var inviterSide))
+            return;
+
+        var targetNetEntity = GetNetEntity(args.Target);
+        if (_warParticipants.ContainsKey(targetNetEntity))
+            return;
+
+        var targetSession = targetActor.PlayerSession;
+        if (_pendingWarInvites.Any(i => i.WarKey == war.WarKey && i.TargetUserId == targetSession.UserId))
+            return;
+
+        args.Verbs.Add(new Verb
+        {
+            Text = "Invite to War",
+            Act = () => SendWarInvite(userActor.PlayerSession, targetSession, war, inviterSide),
+            Priority = 2,
+        });
     }
 
     // ── Surrender ───────────────────────────────────────────────────────────
@@ -1602,6 +1874,8 @@ public sealed class FactionWarSystem : EntitySystem
         _ceasefireCooldowns.Clear();
         _pendingCeasefireProposals.Clear();
         _pendingAcceptancePrompts.Clear();
+        _pendingSideReviews.Clear();
+        _pendingWarInvites.Clear();
         _panelOpenSessions.Clear();
         _participantResyncAccumulator = 0f;
         _roundStartTime = _gameTiming.CurTime;
@@ -1627,6 +1901,22 @@ public sealed class FactionWarSystem : EntitySystem
 
         if (_warParticipants.Count > 0)
             SendParticipantsTo(e.Session);
+
+        if (e.Session.AttachedEntity is { } attachedEntity)
+        {
+            var netEntity = GetNetEntity(attachedEntity);
+            foreach (var war in _activeWars.Values)
+            {
+                if (war.Phase != WarPhase.Review)
+                    continue;
+
+                if (war.DeclaredByPlayer == e.Session.UserId && war.DeclaredByEntity == netEntity)
+                    SendSideReviewPrompt(war, 1);
+
+                if (war.DeclaredAgainstPlayer == e.Session.UserId && war.DeclaredAgainstEntity == netEntity)
+                    SendSideReviewPrompt(war, 2);
+            }
+        }
 
         // Late-join auto-enlist: if this character belongs to a war faction, join the ongoing war
         if (e.Session.AttachedEntity is { } spawnedEntity)
@@ -1683,6 +1973,199 @@ public sealed class FactionWarSystem : EntitySystem
         }
     }
 
+    private void StartSideReview(PlayerWarEntry war)
+    {
+        war.Phase = WarPhase.Review;
+
+        var review = new SideReviewState
+        {
+            WarKey = war.WarKey,
+            ExpiresAt = _gameTiming.CurTime + WarSideReviewDuration,
+        };
+
+        _pendingSideReviews[war.WarKey] = review;
+        _pendingWarInvites.RemoveAll(i => i.WarKey == war.WarKey);
+
+        SendSideReviewPrompt(war, 1);
+        SendSideReviewPrompt(war, 2);
+
+        BroadcastWarState();
+        SendPanelDataToAll();
+    }
+
+    private void SendSideReviewPrompt(PlayerWarEntry war, byte side)
+    {
+        var targetPlayer = side == 1 ? war.DeclaredByPlayer : war.DeclaredAgainstPlayer;
+        if (!TryGetSessionForPlayer(targetPlayer, out var session))
+            return;
+
+        var sideName = side == 1 ? war.SideName1 : war.SideName2;
+        var originalEntity = side == 1 ? war.DeclaredByEntity : war.DeclaredAgainstEntity;
+
+        var prompt = new WarSideReviewPromptEvent
+        {
+            WarKey = war.WarKey,
+            SideName = sideName,
+        };
+
+        foreach (var (participant, participantSide) in war.Participants)
+        {
+            if (participantSide != side)
+                continue;
+
+            if (participant == originalEntity)
+                continue;
+
+            var uid = GetEntity(participant);
+            if (!Exists(uid))
+                continue;
+
+            prompt.Participants.Add(new WarSideParticipantCandidate
+            {
+                Entity = participant,
+                CharacterName = Name(uid),
+                JobName = _minds.TryGetMind(uid, out var mindId, out _)
+                    ? _jobs.MindTryGetJobName(mindId)
+                    : string.Empty,
+            });
+        }
+
+        RaiseNetworkEvent(prompt, session);
+    }
+
+    private void FinalizeSideReview(PlayerWarEntry war, SideReviewState review, bool timedOut)
+    {
+        var removed = new HashSet<NetEntity>();
+        foreach (var participant in review.Side1Removed)
+            removed.Add(participant);
+        foreach (var participant in review.Side2Removed)
+            removed.Add(participant);
+
+        foreach (var participant in removed)
+        {
+            war.Participants.Remove(participant);
+            _warParticipants.Remove(participant);
+            _surrenderedParticipants.Remove(participant);
+            _observerParticipants.Remove(participant);
+
+            if (!Exists(GetEntity(participant)))
+                continue;
+
+            if (TryComp<ActorComponent>(GetEntity(participant), out var actor))
+                _chat.DispatchServerMessage(actor.PlayerSession, "You were removed from the war roster before it became active.");
+        }
+
+        _pendingSideReviews.Remove(war.WarKey);
+        _pendingWarInvites.RemoveAll(i => i.WarKey == war.WarKey);
+
+        war.Phase = WarPhase.Active;
+
+        BroadcastWarState();
+        SendPanelDataToAll();
+        BroadcastParticipants();
+
+        var reviewNote = timedOut
+            ? "Side review timed out. Unsubmitted sides defaulted to Keep."
+            : "Side review complete.";
+
+        _chat.DispatchServerAnnouncement(
+            $"WAR HAS BEGUN\n" +
+            $"The conflict between {war.SideName1} and {war.SideName2} is now active!\n" +
+            $"{reviewNote}\n" +
+            $"(/warjoin) is now closed for this conflict.\n" +
+            $"The war will only end by ceasefire.",
+            Color.OrangeRed);
+    }
+
+    private bool TryGetInvitableWarForOriginalParticipant(NetUserId userId, NetEntity entity, out PlayerWarEntry war, out byte side)
+    {
+        foreach (var entry in _activeWars.Values)
+        {
+            if (entry.Phase != WarPhase.Pending && entry.Phase != WarPhase.Active)
+                continue;
+
+            if (entry.DeclaredByPlayer == userId && entry.DeclaredByEntity == entity)
+            {
+                war = entry;
+                side = 1;
+                return true;
+            }
+
+            if (entry.DeclaredAgainstPlayer == userId && entry.DeclaredAgainstEntity == entity)
+            {
+                war = entry;
+                side = 2;
+                return true;
+            }
+        }
+
+        war = null!;
+        side = 0;
+        return false;
+    }
+
+    private void SendWarInvite(ICommonSession inviterSession, ICommonSession targetSession, PlayerWarEntry war, byte inviterSide)
+    {
+        if (!_activeWars.TryGetValue(war.WarKey, out var currentWar) ||
+            (currentWar.Phase != WarPhase.Pending && currentWar.Phase != WarPhase.Active))
+        {
+            _chat.DispatchServerMessage(inviterSession, "That war is no longer accepting invites.");
+            return;
+        }
+
+        if (inviterSession.AttachedEntity is not { } inviterEntity)
+            return;
+
+        var inviterNetEntity = GetNetEntity(inviterEntity);
+        if ((inviterSide == 1 && currentWar.DeclaredByEntity != inviterNetEntity) ||
+            (inviterSide == 2 && currentWar.DeclaredAgainstEntity != inviterNetEntity))
+        {
+            _chat.DispatchServerMessage(inviterSession, "Only original war participants can invite players.");
+            return;
+        }
+
+        if (targetSession.Status != SessionStatus.InGame || targetSession.AttachedEntity is not { } targetEntity)
+        {
+            _chat.DispatchServerMessage(inviterSession, "Target is not in-game.");
+            return;
+        }
+
+        var targetNetEntity = GetNetEntity(targetEntity);
+        if (_warParticipants.ContainsKey(targetNetEntity))
+        {
+            _chat.DispatchServerMessage(inviterSession, "Target is already in a war.");
+            return;
+        }
+
+        if (_pendingWarInvites.Any(i => i.WarKey == currentWar.WarKey && i.TargetUserId == targetSession.UserId))
+        {
+            _chat.DispatchServerMessage(inviterSession, "That player already has a pending invite for this war.");
+            return;
+        }
+
+        var invite = new PendingWarInvite
+        {
+            WarKey = currentWar.WarKey,
+            InviterUserId = inviterSession.UserId,
+            TargetUserId = targetSession.UserId,
+            Side = inviterSide,
+            ExpiresAt = _gameTiming.CurTime + WarInviteDuration,
+        };
+
+        _pendingWarInvites.Add(invite);
+
+        var sideName = inviterSide == 1 ? currentWar.SideName1 : currentWar.SideName2;
+        RaiseNetworkEvent(new WarInvitePromptEvent
+        {
+            WarKey = currentWar.WarKey,
+            InviterCharacterName = Name(inviterEntity),
+            SideName = sideName,
+        }, targetSession);
+
+        _chat.DispatchServerMessage(inviterSession, $"Sent war invite to {Name(targetEntity)}.");
+        _chat.DispatchServerMessage(targetSession, $"You have been invited to join {sideName}. Open the war invite window and accept to join.");
+    }
+
     // ── Helpers ────────────────────────────────────────────────────────────
 
     private void RemoveWar(PlayerWarEntry war)
@@ -1691,6 +2174,8 @@ public sealed class FactionWarSystem : EntitySystem
         _warActivationTimes.Remove(war.WarKey);
         _pendingCeasefireProposals.Remove(war.WarKey);
         _pendingAcceptancePrompts.Remove(war.WarKey);
+        _pendingSideReviews.Remove(war.WarKey);
+        _pendingWarInvites.RemoveAll(i => i.WarKey == war.WarKey);
 
         // Set per-player cooldown for original 2 players
         var cooldownEnd = _gameTiming.CurTime + WarCooldownAfterEnd;
@@ -1752,6 +2237,196 @@ public sealed class FactionWarSystem : EntitySystem
             SendPanelData(session);
     }
 
+    private HashSet<NetEntity> BuildGroupedEntitySet()
+    {
+        var grouped = new HashSet<NetEntity>();
+        foreach (var group in _groupSystem.GetRaidTargets())
+        {
+            foreach (var member in group.Members)
+                grouped.Add(member.Entity);
+        }
+
+        return grouped;
+    }
+
+    private bool TryGetWarTargetRepresentative(
+        WarTargetKind kind,
+        string targetId,
+        NetUserId requesterUserId,
+        out ICommonSession targetSession,
+        out EntityUid targetEntity,
+        out string targetDisplayName)
+    {
+        switch (kind)
+        {
+            case WarTargetKind.Faction:
+                return TryGetFactionRepresentative(targetId, out targetSession, out targetEntity, out targetDisplayName);
+
+            case WarTargetKind.Group:
+                if (!int.TryParse(targetId, out var groupId))
+                {
+                    targetSession = null!;
+                    targetEntity = default;
+                    targetDisplayName = string.Empty;
+                    return false;
+                }
+
+                return TryGetGroupRepresentative(groupId, out targetSession, out targetEntity, out targetDisplayName);
+
+            case WarTargetKind.Wastelander:
+                if (!Guid.TryParse(targetId, out var userGuid) ||
+                    !TryGetSessionForPlayer(new NetUserId(userGuid), out targetSession) ||
+                    targetSession.AttachedEntity is not { } wastelanderEntity ||
+                    targetSession.UserId == requesterUserId ||
+                    TryGetAutoEnlistFaction(wastelanderEntity, out _) ||
+                    BuildGroupedEntitySet().Contains(GetNetEntity(wastelanderEntity)))
+                {
+                    targetSession = null!;
+                    targetEntity = default;
+                    targetDisplayName = string.Empty;
+                    return false;
+                }
+
+                targetEntity = wastelanderEntity;
+                targetDisplayName = Name(wastelanderEntity);
+                return true;
+
+            default:
+                targetSession = null!;
+                targetEntity = default;
+                targetDisplayName = string.Empty;
+                return false;
+        }
+    }
+
+    private bool TryGetFactionRepresentative(
+        string factionId,
+        out ICommonSession targetSession,
+        out EntityUid targetEntity,
+        out string targetDisplayName)
+    {
+        ICommonSession? bestSession = null;
+        EntityUid bestEntity = default;
+        var bestWeight = -1;
+
+        foreach (var session in EnumerateFactionMembers(factionId))
+        {
+            if (session.AttachedEntity is not { } entity)
+                continue;
+            if (HasComp<GhostComponent>(entity))
+                continue;
+            if (!_minds.TryGetMind(entity, out var mindId, out _))
+                continue;
+
+            var weight = GetJobWeight(mindId);
+            if (weight <= bestWeight)
+                continue;
+
+            bestWeight = weight;
+            bestSession = session;
+            bestEntity = entity;
+        }
+
+        if (bestSession == null)
+        {
+            targetSession = null!;
+            targetEntity = default;
+            targetDisplayName = string.Empty;
+            return false;
+        }
+
+        targetSession = bestSession;
+        targetEntity = bestEntity;
+        targetDisplayName = GetFactionDisplayName(factionId);
+        return true;
+    }
+
+    private bool TryGetGroupRepresentative(
+        int groupId,
+        out ICommonSession targetSession,
+        out EntityUid targetEntity,
+        out string targetDisplayName)
+    {
+        if (!_groupSystem.TryGetRaidTargetInfo(groupId, out var targetGroup))
+        {
+            targetSession = null!;
+            targetEntity = default;
+            targetDisplayName = string.Empty;
+            return false;
+        }
+
+        ICommonSession? bestSession = null;
+        EntityUid bestEntity = default;
+        var bestRole = byte.MinValue;
+        var bestWeight = -1;
+
+        foreach (var member in targetGroup.Members.OrderByDescending(m => (byte)m.Role))
+        {
+            var memberEntity = GetEntity(member.Entity);
+            if (!Exists(memberEntity) || !TryComp<ActorComponent>(memberEntity, out var actor))
+                continue;
+            if (actor.PlayerSession.Status != SessionStatus.InGame)
+                continue;
+            if (HasComp<GhostComponent>(memberEntity))
+                continue;
+            if (!_minds.TryGetMind(memberEntity, out var mindId, out _))
+                continue;
+
+            var weight = GetJobWeight(mindId);
+            var role = (byte) member.Role;
+            if (bestSession != null && (role < bestRole || (role == bestRole && weight <= bestWeight)))
+                continue;
+
+            bestSession = actor.PlayerSession;
+            bestEntity = memberEntity;
+            bestRole = role;
+            bestWeight = weight;
+        }
+
+        if (bestSession == null)
+        {
+            targetSession = null!;
+            targetEntity = default;
+            targetDisplayName = string.Empty;
+            return false;
+        }
+
+        targetSession = bestSession;
+        targetEntity = bestEntity;
+        targetDisplayName = targetGroup.GroupName;
+        return true;
+    }
+
+    private void AutoEnlistDeclarationTargets(
+        PlayerWarEntry war,
+        WarTargetKind targetKind,
+        string targetId,
+        EntityUid side1Entity,
+        EntityUid side2Entity)
+    {
+        if (TryGetAutoEnlistFaction(side1Entity, out var side1Faction))
+        {
+            war.Side1FactionId = side1Faction;
+            AutoEnlistFactionMembers(war, side1Faction, 1);
+        }
+
+        switch (targetKind)
+        {
+            case WarTargetKind.Faction:
+                if (TryGetAutoEnlistFaction(side2Entity, out var side2Faction))
+                {
+                    war.Side2FactionId = side2Faction;
+                    AutoEnlistFactionMembers(war, side2Faction, 2);
+                }
+                break;
+
+            case WarTargetKind.Group:
+                if (int.TryParse(targetId, out var groupId))
+                    AutoEnlistGroupMembers(war, groupId, 2);
+                break;
+        }
+    }
+
     private Dictionary<NetEntity, FactionWarParticipantInfo> BuildParticipantDict()
     {
         var dict = new Dictionary<NetEntity, FactionWarParticipantInfo>();
@@ -1800,32 +2475,6 @@ public sealed class FactionWarSystem : EntitySystem
             session);
     }
 
-    private void AutoEnlistFactionMembers(PlayerWarEntry war, EntityUid? side1Entity, EntityUid? side2Entity)
-    {
-        string? side1Faction = null, side2Faction = null;
-
-        if (side1Entity != null && TryGetAutoEnlistFaction(side1Entity.Value, out var f1))
-            side1Faction = f1;
-
-        if (side2Entity != null && TryGetAutoEnlistFaction(side2Entity.Value, out var f2))
-            side2Faction = f2;
-
-        // Store faction IDs on the war for late-join detection
-        war.Side1FactionId = side1Faction;
-        war.Side2FactionId = side2Faction;
-
-        // Same-faction war: no auto-enlist (e.g. NCR vs NCR — let them settle it themselves)
-        if (side1Faction != null && side2Faction != null &&
-            string.Equals(side1Faction, side2Faction, StringComparison.OrdinalIgnoreCase))
-            return;
-
-        if (side1Faction != null)
-            AutoEnlistFactionMembers(war, side1Faction, 1);
-
-        if (side2Faction != null)
-            AutoEnlistFactionMembers(war, side2Faction, 2);
-    }
-
     private void AutoEnlistFactionMembers(PlayerWarEntry war, string factionId, byte side)
     {
         foreach (var session in _playerManager.Sessions)
@@ -1852,6 +2501,56 @@ public sealed class FactionWarSystem : EntitySystem
         }
     }
 
+    private void AutoEnlistGroupMembers(PlayerWarEntry war, int groupId, byte side)
+    {
+        if (!_groupSystem.TryGetRaidTargetInfo(groupId, out var targetGroup))
+            return;
+
+        foreach (var member in targetGroup.Members)
+        {
+            var memberEntity = GetEntity(member.Entity);
+            if (!Exists(memberEntity))
+                continue;
+
+            if (HasComp<GhostComponent>(memberEntity))
+                continue;
+
+            var netEntity = member.Entity;
+            if (war.Participants.ContainsKey(netEntity))
+                continue;
+
+            if (IsEntityInOtherWar(netEntity, war.WarKey))
+                continue;
+
+            war.Participants[netEntity] = side;
+            _warParticipants[netEntity] = (war.WarKey, side);
+        }
+    }
+
+    private void AutoEnlistFactionMembers(PlayerWarEntry war, EntityUid? side1Entity, EntityUid? side2Entity)
+    {
+        string? side1Faction = null, side2Faction = null;
+
+        if (side1Entity != null && TryGetAutoEnlistFaction(side1Entity.Value, out var f1))
+            side1Faction = f1;
+
+        if (side2Entity != null && TryGetAutoEnlistFaction(side2Entity.Value, out var f2))
+            side2Faction = f2;
+
+        war.Side1FactionId = side1Faction;
+        war.Side2FactionId = side2Faction;
+
+        if (side1Faction != null && side2Faction != null &&
+            string.Equals(side1Faction, side2Faction, StringComparison.OrdinalIgnoreCase))
+            return;
+
+        if (side1Faction != null)
+            AutoEnlistFactionMembers(war, side1Faction, 1);
+
+        if (side2Faction != null)
+            AutoEnlistFactionMembers(war, side2Faction, 2);
+    }
+
     private bool TryGetAutoEnlistFaction(EntityUid entity, out string factionId)
     {
         foreach (var faction in AutoEnlistFactions)
@@ -1867,6 +2566,22 @@ public sealed class FactionWarSystem : EntitySystem
         return false;
     }
 
+    private IEnumerable<ICommonSession> EnumerateFactionMembers(string canonicalFaction)
+    {
+        var query = EntityQueryEnumerator<NpcFactionMemberComponent, ActorComponent>();
+        while (query.MoveNext(out var entity, out _, out var actor))
+        {
+            if (actor.PlayerSession.Status != SessionStatus.InGame)
+                continue;
+
+            if (_npcFaction.IsMember(entity, canonicalFaction))
+                yield return actor.PlayerSession;
+        }
+    }
+
+    private int GetJobWeight(EntityUid mindId) =>
+        _jobs.MindTryGetJob(mindId, out _, out var proto) ? proto.Weight : 0;
+
     private bool IsAutoEnlistJobExempt(EntityUid entity)
     {
         if (!_minds.TryGetMind(entity, out var mindId, out _))
@@ -1876,6 +2591,21 @@ public sealed class FactionWarSystem : EntitySystem
             return false;
 
         return AutoEnlistJobExemptions.Contains(proto.ID);
+    }
+
+    private string GetFactionDisplayName(string canonicalFaction)
+    {
+        return canonicalFaction switch
+        {
+            "NCR" => "NCR",
+            "CaesarLegion" => "Caesar's Legion",
+            "BrotherhoodOfSteel" => "Brotherhood of Steel",
+            "Tribal" => "Tribal",
+            "Vault" => "Vault",
+            "Enclave" => "Enclave",
+            "Eighties" => "Eighties",
+            _ => canonicalFaction,
+        };
     }
 
     private bool IsEntityInOtherWar(NetEntity entity, string currentWarKey)
@@ -1962,6 +2692,18 @@ public sealed class FactionWarSystem : EntitySystem
         return null;
     }
 
+    private static string FormatDuration(TimeSpan span)
+    {
+        if (span.TotalMinutes >= 1)
+        {
+            var wholeMinutes = (int) Math.Ceiling(span.TotalMinutes);
+            return wholeMinutes == 1 ? "1 minute" : $"{wholeMinutes} minutes";
+        }
+
+        var wholeSeconds = Math.Max(1, (int) Math.Ceiling(span.TotalSeconds));
+        return wholeSeconds == 1 ? "1 second" : $"{wholeSeconds} seconds";
+    }
+
     // ── Inner types ────────────────────────────────────────────────────────
 
     private sealed class WarAcceptancePrompt
@@ -1976,6 +2718,25 @@ public sealed class FactionWarSystem : EntitySystem
         public PlayerWarEntry War = null!;
         public NetUserId ProposingPlayer;
         public string ProposingPlayerName = string.Empty;
+        public TimeSpan ExpiresAt;
+    }
+
+    private sealed class SideReviewState
+    {
+        public string WarKey = string.Empty;
+        public TimeSpan ExpiresAt;
+        public bool Side1Submitted;
+        public bool Side2Submitted;
+        public HashSet<NetEntity> Side1Removed = new();
+        public HashSet<NetEntity> Side2Removed = new();
+    }
+
+    private sealed class PendingWarInvite
+    {
+        public string WarKey = string.Empty;
+        public NetUserId InviterUserId;
+        public NetUserId TargetUserId;
+        public byte Side;
         public TimeSpan ExpiresAt;
     }
 }

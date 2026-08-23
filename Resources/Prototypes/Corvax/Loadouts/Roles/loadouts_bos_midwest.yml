@@ -131,6 +131,7 @@
         - BoSMidPaladinCommander
         - BoSMidPaladin
         - BoSMidKnight
+        - BoSLancerCaptain
         - BoSMidSquire
         - BoSWestElderCommander # Misfits Change /Add/: expand access to all BoS roles
         - BoSHeadKnight
@@ -157,6 +158,9 @@
         - BoSMidPaladinCommander
         - BoSMidPaladin
         - BoSMidKnight
+        - BoSLancerCaptain
+        - BoSLancerKnight
+        - BoSLancer
         - BoSWestElderCommander # Misfits Change /Add/: expand access to all BoS roles
         - BoSHeadKnight
         - BoSWestScribe
@@ -165,7 +169,7 @@
         - BoSScribe
         - BoSMidScribe
     - !type:CharacterPlaytimeRequirement
-      tracker: BoSMidKnight
+      tracker: BoSPaladin
       min: 36000
   items:
     - N14ClothingMaskLinerBlack

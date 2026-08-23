@@ -72,7 +72,7 @@ public sealed partial class GeneticsConsoleSystem
         var targetIdentity = Identity.Entity(target, EntityManager);
         var you = Loc.GetString("genetics-console-linking-you", ("scanner", ent), ("user", userIdentity));
         var others = Loc.GetString("genetics-console-linking-others", ("scanner", ent), ("user", userIdentity), ("target", targetIdentity));
-        _popup.PopupEntity(you, target, target);
+        _popup.PopupPredicted(you, others, target, target);
         var doAfterArgs = new DoAfterArgs(
             EntityManager,
             user,
@@ -92,8 +92,7 @@ public sealed partial class GeneticsConsoleSystem
         if (args.Cancelled || args.Target is not {} target)
             return;
 
-        if (GetScannedMob(ent.Owner) is {} oldMob)
-            Unlink(oldMob, ent.Owner);
+        UnlinkFromAll(ent.Owner);
 
         var user = args.User;
         _popup.PopupEntity(Loc.GetString("genetics-console-linked"), user, user);
@@ -126,6 +125,21 @@ public sealed partial class GeneticsConsoleSystem
             RemComp(ent, ent.Comp);
         else
             Dirty(ent, ent.Comp);
+    }
+
+    private void UnlinkFromAll(EntityUid scanner)
+    {
+        var query = EntityQueryEnumerator<LinkedToGeneticScannerComponent>();
+        while (query.MoveNext(out var uid, out var linked))
+        {
+            if (!linked.Scanners.Remove(scanner))
+                continue;
+
+            if (linked.Scanners.Count == 0)
+                RemComp(uid, linked);
+            else
+                Dirty(uid, linked);
+        }
     }
 }
 

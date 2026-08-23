@@ -35,6 +35,37 @@
 
 - type: entity
   parent: BaseMutation
+  id: MutationLaserEyes
+  name: Laser Eyes
+  description: The subject's eyes have become focusing lenses for coherent light. Try not to blink.
+  components:
+  - type: Mutation
+    instability: 35
+    difficulty: 18
+    rarity: Mythical
+  - type: ActionMutation
+    action: ActionMutationLaserEyes
+
+- type: entity
+  id: ActionMutationLaserEyes
+  name: Fire Laser Eyes
+  description: Burn a hole through whatever you're looking at.
+  components:
+  - type: WorldTargetAction
+    raiseOnUser: true
+    useDelay: 20
+    itemIconStyle: BigAction
+    sound: /Audio/Weapons/Guns/Gunshots/laser.ogg
+    icon:
+      sprite: Mobs/Species/Human/organs.rsi
+      state: eyeball-l
+    range: 60
+    checkCanAccess: false
+    event: !type:ProjectileSpellEvent
+      prototype: BulletLaser
+
+- type: entity
+  parent: BaseMutation
   id: MutationThermalVision
   name: Thermal Vision
   description: The user of this genome can visually perceive the unique human thermal signature.
@@ -48,13 +79,14 @@
     added:
     - type: ThermalVision
       toggleAction: MutationActionThermalVision
-      pulseTime: 10
+      pulseTime: 5 # stays on for ~5s per activation, then fades out
 
 - type: entity
   parent: ToggleThermalVision
   id: MutationActionThermalVision
   components:
   - type: InstantAction
+    checkCanInteract: false
     useDelay: 25
   - type: EffectAction
     onPerformed: true
@@ -75,17 +107,6 @@
     added:
     - type: BlockReading
     - type: BlockWriting
-
-- type: entity
-  parent: BaseMutationAdmeme # wizard and admeme only
-  id: MutationLaserEyes
-  name: Laser Eyes
-  description: Reflects concentrated light back from the eyes.
-  components:
-  - type: Mutation
-    difficulty: 16
-    rarity: Mythical
-  # TODO: move out of goob hulk
 
 - type: entity
   parent: BaseMutation

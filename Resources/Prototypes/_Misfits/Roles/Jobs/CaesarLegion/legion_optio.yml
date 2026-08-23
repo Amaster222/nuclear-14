@@ -9,12 +9,12 @@
   description: job-description-caesar-legion-optio
   playTimeTracker: CaesarLegionOptio
   requirements:
-    - !type:CharacterDepartmentTimeRequirement # #Misfits Tweak - T4 faction timelock (12h Legion)
+    - !type:CharacterDepartmentTimeRequirement # Legion total timelock
       department: CaesarLegion
-      min: 72000 #
-    #- !type:CharacterPlaytimeRequirement # TEMP REMOVED
-    #  tracker: CaesarLegionRecruit
-    #  min: 18000 # 5 hours
+      min: 144000 # 40 hours
+    - !type:CharacterPlaytimeRequirement
+      tracker: CaesarLegionVeteranDecanus
+      min: 28800 # 8 hours
     - !type:CharacterSpeciesRequirement
       species:
       - Human
@@ -68,7 +68,7 @@
   equipment:
     jumpsuit: N14ClothingUniformJumpsuitLegionnaire
     ears: N14ClothingHeadsetLegion
-    neck: N14ClothingNeckCloakLegionRed
+    neck: M14ClothingNeckLegionMantle
     mask: N14ClothingMaskBrownMask
     back: N14ClothingBackpackMilitary
     shoes: N14ClothingShoesKaligi

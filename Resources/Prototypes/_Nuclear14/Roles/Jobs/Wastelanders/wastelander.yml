@@ -16,13 +16,37 @@
       - Human
       - Ghoul
       - GhoulGlowing
-    - !type:CharacterOverallTimeRequirement
-      min: 28800 # #Misfits Add - 8 hours total playtime
   special:
   - !type:AddComponentSpecial
     components:
       - type: NpcFactionMember
         factions:
+          - Wastelander
+
+- type: job
+  id: Outcast
+  setPreference: true
+  weight: 10
+  overrideConsoleVisibility: false
+  canBeAntag: false
+  name: job-name-outcast
+  description: job-description-outcast
+  playTimeTracker: Outcast
+  startingGear: WastelanderGear
+  icon: "JobIconWastelander"
+  supervisors: job-supervisors-wastelander
+  requirements:
+    - !type:CharacterSpeciesRequirement
+      species:
+      - Human
+      - Ghoul
+      - GhoulGlowing
+  special:
+  - !type:AddComponentSpecial
+    components:
+      - type: NpcFactionMember
+        factions:
+          - BrotherhoodOfSteel
           - Wastelander
 
 - type: startingGear
@@ -42,3 +66,6 @@
 
 - type: playTimeTracker
   id: Wastelander
+
+- type: playTimeTracker
+  id: Outcast

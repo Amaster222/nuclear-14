@@ -277,14 +277,12 @@ public sealed partial class AbsorbentSystem : SharedAbsorbentSystem
         if (!_solutionContainerSystem.ResolveSolution(target, puddle.SolutionName, ref puddle.Solution, out var puddleSolution) || puddleSolution.Volume <= 0)
             return false;
 
-        // Check if the puddle has any non-evaporative reagents
-        if (_puddleSystem.CanFullyEvaporate(puddleSolution))
-        {
-            _popups.PopupEntity(Loc.GetString("mopping-system-puddle-evaporate", ("target", target)), user, user);
-            return true;
-        }
+        // #Cythisiax Fixed - Since EvaporationReagents now contains every reagent (ReagentPrototype.Evaporates
+        // defaults true and no N14 reagent overrides it), CanFullyEvaporate() was true for ALL puddles, so this
+        // guard always fired and mops could never clean a spill ("is evaporating"). Mirrors upstream #38743
+        // "allow mopping evaporating puddles" — mops should clean any puddle.
 
-        // Check if we have any evaporative reagents on our absorber to transfer
+        // Check if we have any evaporative reagents (water) on our absorber to transfer
         var absorberSolution = absorberSoln.Comp.Solution;
         var available = absorberSolution.GetTotalPrototypeQuantity(PuddleSystem.EvaporationReagents);
 
@@ -298,7 +296,9 @@ public sealed partial class AbsorbentSystem : SharedAbsorbentSystem
         var transferMax = absorber.PickupAmount;
         var transferAmount = available > transferMax ? transferMax : available;
 
-        var puddleSplit = puddleSolution.SplitSolutionWithout(transferAmount, PuddleSystem.EvaporationReagents);
+        // Pick up the spilled liquid directly, then leave water behind so the spill becomes
+        // a water puddle (changes color) that evaporates faster — the expected mop behavior.
+        var puddleSplit = puddleSolution.SplitSolution(transferAmount);
         var absorberSplit = absorberSolution.SplitSolutionWithOnly(puddleSplit.Volume, PuddleSystem.EvaporationReagents);
 
         // Do tile reactions first

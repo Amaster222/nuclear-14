@@ -42,8 +42,19 @@ public enum WarPhase : byte
 {
     /// <summary>War declared but not yet active. /warjoin is open.</summary>
     Pending,
+    /// <summary>War prep ended. Original participants are reviewing their side lists.</summary>
+    Review,
     /// <summary>War is active. /warjoin is closed.</summary>
     Active,
+}
+
+/// <summary>Target category for a war declaration.</summary>
+[Serializable, NetSerializable]
+public enum WarTargetKind : byte
+{
+    Faction,
+    Group,
+    Wastelander,
 }
 
 /// <summary>
@@ -139,6 +150,9 @@ public sealed class PlayerWarPanelDataEvent : EntityEventArgs
     public string? MyCharacterName;
     public List<PlayerWarEntry> ActiveWars = new();
     public List<OnlinePlayerInfo> OnlinePlayers = new();
+    public List<WarTargetInfo> FactionTargets = new();
+    public List<WarTargetInfo> GroupTargets = new();
+    public List<WarTargetInfo> WastelanderTargets = new();
     public string? StatusMessage;
 
     /// <summary>Wars where this player is a participant.</summary>
@@ -157,6 +171,15 @@ public sealed class OnlinePlayerInfo
     public string JobName = string.Empty;
 }
 
+/// <summary>One selectable war target, grouped by kind in the UI.</summary>
+[Serializable, NetSerializable]
+public sealed class WarTargetInfo
+{
+    public WarTargetKind Kind;
+    public string Id = string.Empty;
+    public string DisplayName = string.Empty;
+}
+
 /// <summary>
 /// Client → server. Player submits the Declare War form.
 /// Server validates and responds with <see cref="FactionWarCommandResultEvent"/>.
@@ -164,7 +187,8 @@ public sealed class OnlinePlayerInfo
 [Serializable, NetSerializable]
 public sealed class PlayerWarDeclareRequestEvent : EntityEventArgs
 {
-    public NetUserId TargetPlayer;
+    public WarTargetKind TargetKind;
+    public string TargetId = string.Empty;
     public string Reason = string.Empty;
     public string SideName1 = string.Empty;  // Declarer's side name
 }
@@ -277,6 +301,82 @@ public sealed class PlayerWarJoinRequestEvent : EntityEventArgs
 {
     public string WarKey = string.Empty;  // War to join, identified by its key
     public byte ChosenSide;               // 1 or 2
+}
+
+/// <summary>
+/// A participant candidate that can be kept or removed by an original side owner
+/// during the post-pending review step.
+/// </summary>
+[Serializable, NetSerializable]
+public sealed class WarSideParticipantCandidate
+{
+    public NetEntity Entity;
+    public string CharacterName = string.Empty;
+    public string JobName = string.Empty;
+}
+
+/// <summary>
+/// Server → original war participant. Prompts them to review participants on their own side
+/// after pending prep ends and before war activation.
+/// </summary>
+[Serializable, NetSerializable]
+public sealed class WarSideReviewPromptEvent : EntityEventArgs
+{
+    public string WarKey = string.Empty;
+    public string SideName = string.Empty;
+    public List<WarSideParticipantCandidate> Participants = new();
+}
+
+/// <summary>
+/// Client → server. Original side owner submits the list of participants to remove.
+/// Any side participant not listed remains kept.
+/// </summary>
+[Serializable, NetSerializable]
+public sealed class WarSideReviewSubmitEvent : EntityEventArgs
+{
+    public string WarKey = string.Empty;
+    public List<NetEntity> RemovedParticipants = new();
+}
+
+/// <summary>
+/// Server → client. Result of a side-review submission.
+/// </summary>
+[Serializable, NetSerializable]
+public sealed class WarSideReviewResultEvent : EntityEventArgs
+{
+    public bool Success = false;
+    public string Message = string.Empty;
+}
+
+/// <summary>
+/// Server → invited player. Invitation to join a pending war on a specific side.
+/// </summary>
+[Serializable, NetSerializable]
+public sealed class WarInvitePromptEvent : EntityEventArgs
+{
+    public string WarKey = string.Empty;
+    public string InviterCharacterName = string.Empty;
+    public string SideName = string.Empty;
+}
+
+/// <summary>
+/// Client → server. Response to a war invite prompt.
+/// </summary>
+[Serializable, NetSerializable]
+public sealed class WarInviteResponseEvent : EntityEventArgs
+{
+    public string WarKey = string.Empty;
+    public bool Accept;
+}
+
+/// <summary>
+/// Server → client. Result feedback for war invite acceptance/rejection.
+/// </summary>
+[Serializable, NetSerializable]
+public sealed class WarInviteResultEvent : EntityEventArgs
+{
+    public bool Success = false;
+    public string Message = string.Empty;
 }
 
 /// <summary>

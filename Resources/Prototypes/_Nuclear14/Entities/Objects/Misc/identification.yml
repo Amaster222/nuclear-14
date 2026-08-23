@@ -337,6 +337,11 @@
   - type: IdCard # #Misfits Add - display "holotags" instead of default "ID card"
     nameLocId: n14-id-holotag-name
     fullNameLocId: n14-id-holotag-full-name
+  # #Misfits Fix - Tag officer holotags so the Enclave TacMap Overwatch tracks them
+  # (only Trooper holotags were tagged before, leaving officers off the Enclave feed).
+  - type: Tag
+    tags:
+    - IdCardEnclave
   # - type: PresetIdCard
   #   job: EnclaveOfficer
 
@@ -353,6 +358,11 @@
   - type: IdCard # #Misfits Add - display "holotags" instead of default "ID card"
     nameLocId: n14-id-holotag-name
     fullNameLocId: n14-id-holotag-full-name
+  # #Misfits Fix - Tag noncombat holotags so the Enclave TacMap Overwatch tracks them
+  # (scientists/noncombat were missing the Enclave tag entirely).
+  - type: Tag
+    tags:
+    - IdCardEnclave
   # - type: PresetIdCard
   #   job: EnclaveScientist
 
@@ -457,6 +467,15 @@
     state: ranger_recruit
   - type: PresetIdCard
     job: NCRPatrolRanger
+  # #Misfits Fix - Tag every ranger badge so the Rangers TacMap Overwatch tab only
+  # tracks Ranger personnel, not the whole NCR. This is the base of ALL ranger badges
+  # (Desert Ranger, Elite, Chief, Republic Ranger). NOTE: a child Tag component
+  # REPLACES the parent's (composition is not additive for this field), so we must
+  # re-list IdCardNCR here to keep rangers on the standard NCR map/Pip-Boy feed.
+  - type: Tag
+    tags:
+    - IdCardNCR
+    - IdCardNCRRanger
 
 - type: entity
   parent: N14IDBadgeNCRDesertRangerRecruit

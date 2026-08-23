@@ -37,15 +37,14 @@ public sealed class TerminalDatabaseState
     /// <summary>
     /// #Misfits Add - True if the viewer's currently-assigned JOB matches one of the
     /// prototype's LeadershipJobs. Job-based (not access-tag-based) so spawned ID cards
-    /// cannot grant it. Tier 7. Powers: create root entries, delete/restore non-Admin
-    /// entries, roll back revisions.
+    /// cannot grant it. Tier 7. Powers: create root entries and roll back revisions.
     /// </summary>
     public readonly bool CanLeadership;
 
     /// <summary>
     /// #Misfits Add - True if the viewer's currently-assigned JOB matches one of the
-    /// prototype's AdminJobs. Tier 8. Powers: tick the Admin checkbox on root creation;
-    /// delete/restore Admin-marked entries.
+    /// prototype's AdminJobs. Tier 8/highest rank. Powers include delete/restore of
+    /// every entry and management of Admin-marked entries.
     /// </summary>
     public readonly bool CanAdmin;
 
@@ -57,7 +56,7 @@ public sealed class TerminalDatabaseState
 
     /// <summary>
     /// All non-deleted folders for this database. Subfolders are nested inside.
-    /// Leaders (and Admins) also receive deleted entries (for restore).
+    /// Admins also receive deleted entries for restoration.
     /// </summary>
     public readonly List<DatabaseFolderSummary> Folders;
 
@@ -435,9 +434,9 @@ public sealed class ExportDatabaseDocumentMessage : BoundUserInterfaceMessage
 
 // #Misfits Add - Permanently delete a folder or document from the database.
 // Unlike soft-delete, this actually REMOVES the entry from the data store.
-// Authorization (server-side): original author OR Leadership for normal entries;
-// original author OR Admin for Admin-protected entries. After deletion, the entry
-// cannot be restored by anyone.
+// Authorization (server-side): the database-specific highest rank from AdminJobs.
+// Authorship never grants destructive control over shared entries. After deletion,
+// the entry cannot be restored by anyone.
 [Serializable, NetSerializable]
 public sealed class PermanentDeleteDatabaseEntryMessage : BoundUserInterfaceMessage
 {

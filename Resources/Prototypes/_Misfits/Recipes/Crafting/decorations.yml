@@ -3,13 +3,13 @@
 
 # Flags
 - type: construction
-  name: US flag
+  name: Flag of the United States
   id: N14FlagWallUS
   graph: MisfitsFlagUS
   startNode: start
   targetNode: flagus
 # category: construction-category-decorations
-  description: A flag of the United States.
+  description: The banner of the United States, an empire that fell over two centuries ago. Even with its dissolution in the Great War, many still believe the nation stands so long as its people believe in it.
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Wallmounts/walldecor_flags.rsi
@@ -18,13 +18,13 @@
   placementMode: SnapgridCenter
 
 - type: construction
-  name: Chinese flag
+  name: Flag of the People's Republic of China
   id: N14FlagWallChina
   graph: MisfitsFlagCH
   startNode: start
   targetNode: flagch
 # category: construction-category-decorations
-  description: A Chinese flag.
+  description: The banner of the People's Republic of China, it existed over a century, inheritor of an empire of 3500 years, but its ultimate fate is a mystery in this wasteland.
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Wallmounts/walldecor_flags.rsi
@@ -33,13 +33,13 @@
   placementMode: SnapgridCenter
 
 - type: construction
-  name: California flag
+  name: Flag of the State of California
   id: N14FlagWallCalifornia
   graph: MisfitsFlagCI
   startNode: start
   targetNode: flagci
 # category: construction-category-decorations
-  description: A flag of California.
+  description: The banner of the State of California, home of both the Brotherhood of Steel and New California Republic's foundation. It is regarded by many as the state where America began to truly rebuild.
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Wallmounts/walldecor_flags.rsi
@@ -48,13 +48,13 @@
   placementMode: SnapgridCenter
 
 - type: construction
-  name: Arizona flag
+  name: Flag of the State of Arizona
   id: N14FlagWallArizona
   graph: MisfitsFlagAZ
   startNode: start
   targetNode: flagaz
 # category: construction-category-decorations
-  description: A flag of Arizona.
+  description: The banner of the State of Arizona, which is now the home of Caesar's Legion. Once a hive of lawless violence, the Legion's structured violence has now made it a safe place for civilians to live.
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Wallmounts/walldecor_flags.rsi
@@ -63,13 +63,13 @@
   placementMode: SnapgridCenter
 
 - type: construction
-  name: Enclave flag
+  name: Flag of the Enclave
   id: N14FlagWallEnclave
   graph: MisfitsFlagEN
   startNode: start
   targetNode: flagen
 # category: construction-category-decorations
-  description: An Enclave flag.
+  description: The banner of the Enclave, the descendents of America's elite who claim to be the true inheritors of the United States federal government.
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Wallmounts/walldecor_flags.rsi
@@ -78,13 +78,13 @@
   placementMode: SnapgridCenter
 
 - type: construction
-  name: NCR flag
+  name: Flag of the New California Republic
   id: N14FlagWallNCR
   graph: MisfitsFlagNCR
   startNode: start
   targetNode: flagncr
 # category: construction-category-decorations
-  description: An NCR flag.
+  description: The banner of the New California Republic, a nation that despite enemies within and without, has done its best to provide comfort and equality to its citizens.
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Wallmounts/walldecor_flags.rsi
@@ -93,13 +93,13 @@
   placementMode: SnapgridCenter
 
 - type: construction
-  name: Legion flag
+  name: Flag of Caesar's Legion
   id: N14FlagWallLegion
   graph: MisfitsFlagLE
   startNode: start
   targetNode: flagle
 # category: construction-category-decorations
-  description: A Legion flag.
+  description: The banner of Caesar's Legion, a slave army under the mighty warlord Caesar, whose monumental ego and sharp wit have seen the lawless east fall in line under his iron boot.
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Wallmounts/walldecor_flags.rsi
@@ -108,13 +108,13 @@
   placementMode: SnapgridCenter
 
 - type: construction
-  name: Rangers flag
+  name: Flag of the NCR Rangers
   id: N14FlagWallRangers
   graph: MisfitsFlagRG
   startNode: start
   targetNode: flagrg
 # category: construction-category-decorations
-  description: A Rangers flag.
+  description: The banner of the New California Republic Rangers, an elite military division in the New California Republic Army. Founded by the legendary Seth of Shady Sands, if you need a problem handled, call the Rangers.
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Wallmounts/walldecor_flags.rsi
@@ -123,17 +123,33 @@
   placementMode: SnapgridCenter
 
 - type: construction
-  name: Brotherhood of Steel flag
+  name: Flag of the Brotherhood of Steel
   id: N14FlagWallWesternBrotherhood
   graph: MisfitsFlagBOSW
   startNode: start
   targetNode: flagbosw
 # category: construction-category-decorations
-  description: A Brotherhood of Steel flag.
+  description: The banner of the Brotherhood of Steel, descendents of the United States military who now attempt to confiscate and safeguard dangerous technology to prevent another apocalypse.
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Wallmounts/walldecor2.rsi
     state: flag_midwest
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+# #Misfits Add - 509th Brotherhood of Steel wall flag recipe
+- type: construction
+  name: Flag of the 509th Brotherhood of Steel
+  id: MisfitsFlagWallBrotherhoodBonneville509
+  graph: MisfitsFlagBOS509W
+  startNode: start
+  targetNode: flagbos509w
+  # category: construction-category-decorations
+  description: The banner of the 509th Brotherhood of Steel, an offshoot of the Mojave Chapter that survived Operation Sunburst and spent a decade as ghosts of the salt flats. Now risen as an active vanguard, they secure the region's lost technology before the Enclave or the ignorant can seize it.
+  hide: false
+  icon:
+    sprite: _Misfits/Structures/Wallmounts/walldecor_bos509th.rsi
+    state: flag_509th
   objectType: Structure
   placementMode: SnapgridCenter
 
@@ -153,13 +169,13 @@
 #  placementMode: SnapgridCenter
 
 - type: construction
-  name: Colorado flag
+  name: Flag of the State of Colorado
   id: N14FlagWallColorado
   graph: MisfitsFlagCL
   startNode: start
   targetNode: flagcl
 # category: construction-category-decorations
-  description: A flag for the state of Colorado.
+  description: The banner of the State of Colorado. It served as a testing ground before the Great War for cyberdog police units, which saw heavy use when the Food Riots began in earnest.
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Wallmounts/walldecor_flags.rsi
@@ -168,13 +184,13 @@
   placementMode: SnapgridCenter
 
 - type: construction
-  name: Denver flag
+  name: Flag of the City of Denver
   id: N14FlagWallDenver
   graph: MisfitsFlagDE
   startNode: start
   targetNode: flagde
 # category: construction-category-decorations
-  description: A flag for the capital of Colorado.
+  description: The banner of the city of Denver, Colorado. Home of the Hangdogs tribe, its stiff resistance nearly caused Caesar's Legion to break, until Legate Lanius forced the tribe's surrender by burning their dogs alive.
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Wallmounts/walldecor_flags.rsi
@@ -183,13 +199,13 @@
   placementMode: SnapgridCenter
 
 - type: construction
-  name: Children of Atom flag
+  name: Flag of the Children of Atom
   id: MisfitsBannerChildrenOfAtom
   graph: MisfitsFlagSmallCoA
   startNode: start
   targetNode: flagbcoas
 # category: construction-category-decorations
-  description: A banner bearing the sacred symbol of the Children of Atom. It radiates faint warmth to true believers.
+  description: The banner of the Children of Atom cult. They believe that radiation is a gift that will help its followers ascend, as it transforms the land and the life within it.
   hide: false
   icon:
     sprite: _Misfits/Structures/Decoration/coa_banner_small.rsi
@@ -198,12 +214,12 @@
   placementMode: SnapgridCenter
 
 - type: construction
-  name: Bazaar flag
+  name: Flag of the Town of Bazaar
   id: NCFlagWallBazaar
   graph: DecorationFlagBazaar
   startNode: start
   targetNode: FlagBazaar
-  description: You notice something interesting with this bird...
+  description: The banner of the Town of Bazaar, based in the southern remains of Wendover, Utah. When the bombs first dropped, Wendover split into three survivor communities, the Locusts, Vultures and Willowers. At first a camp of scavengers, the Vulture Tribe eventually civilized into a fully fledged trading outpost of towners. They built the Bazaar out of salvage they gathered and repaired over the first twenty years.
 #  category: construction-category-furniture
   objectType: Structure
   placementMode: SnapgridCenter
@@ -214,12 +230,12 @@
     state: flag_bazar
 
 - type: construction
-  name: Brahmin flag
+  name: Flag of the Caravan Network
   id: NCFlagWallTown
   graph: DecorationFlagTown
   startNode: start
   targetNode: FlagTown
-  description: The brahmin on this flag doesn't look very alive...
+  description: The banner of the Caravan Network, an organization of contractors, suppliers, merchants and their bodyguards that stretch from the West Coast to the Midwest. They maintain neutrality and will gladly take anyone's money.
 #  category: construction-category-furniture
   objectType: Structure
   placementMode: SnapgridCenter
@@ -230,12 +246,12 @@
     state: flag_town
 
 - type: construction
-  name: Mexico flag
+  name: Flag of Mexico
   id: NCFlagWallMexico
   graph: DecorationFlagMexico
   startNode: start
   targetNode: FlagMexico
-  description: Avocados from Mexico!
+  description: The banner of Mexico, it was invaded and occupied by the United States military during the Resource Wars, and fell into total anarchy after the Great War began and ended.
 #  category: construction-category-furniture
   objectType: Structure
   placementMode: SnapgridCenter
@@ -248,13 +264,13 @@
 # Banners aka big flags
 
 - type: construction
-  name: Children of Atom flag
+  name: Flag of the Children of Atom
   id: MisfitsDecorationFlagChildrenOfAtom
   graph: MisfitsFlagCoA
   startNode: start
   targetNode: flagcoa
 # category: construction-category-decorations
-  description: A tall flag bearing the symbol of the Children of Atom. It flutters solemnly in glow-tainted breezes.
+  description: The banner of the Children of Atom, it proudly stands against a world that would refuse the teachings of its acolytes. Where this flag is planted, so too will come the gift of Atom's radiant glow.
   hide: false
   icon:
     sprite: _Misfits/Structures/Decoration/coa_banner_big.rsi
@@ -263,13 +279,13 @@
   placementMode: SnapgridCenter
 
 - type: construction
-  name: Oasis flag
+  name: Flag of the Oasis Tribe
   id: N14DecorationFlagOasis
   graph: DecorationFlagOasis
   startNode: start
   targetNode: FlagOasis
 # category: construction-category-decorations
-  description: A flag depicting a stylised pink flower on a green background. It's the symbol of the town of Oasis.  
+  description: The banner of the Oasis Tribe, originating in the remains of Pahrump, Nevada. The tribe was incorporated into the New California Republic, yet its members still remember their roots as they settle new lands.
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Decoration/flags.rsi
@@ -293,13 +309,13 @@
 #  placementMode: SnapgridCenter
 
 - type: construction
-  name: Enclave flag
+  name: Flag of the Enclave
   id: N14DecorationFlagEnclave
   graph: DecorationFlagEnclave
   startNode: start
   targetNode: FlagEnclave
 # category: construction-category-decorations
-  description: An Enclave flag atop a bearer.
+  description: The banner of the Enclave, the descendents of the business and government elite of the United States, who believe it is their manifest destiny to rebuild and rule the wasteland as their birthright.
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Decoration/flags.rsi
@@ -308,13 +324,13 @@
   placementMode: SnapgridCenter
 
 - type: construction
-  name: High Valley Hills flag
+  name: Flag of High Valley Hills
   id: N14DecorationFlagHighvalleyhills
   graph: DecorationFlagHighvalleyhills
   startNode: start
   targetNode: FlagHighvalleyhills
 # category: construction-category-decorations
-  description: A flag with two white stripes, blue border and a red centre with a white Vault-Tec logo, turned on its side and stretched out.
+  description: The banner of High Valley Hills, a settlement that cropped up around Vault City in the New California Republic from those who were not permitted entry; it is a mix of a slum and work camp for the desperate.
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Decoration/flags.rsi
@@ -323,13 +339,13 @@
   placementMode: SnapgridCenter
 
 - type: construction
-  name: Vault-Tec City Coalition flag
+  name: Flag of Vault City
   id: N14DecorationFlagVaultTecCityCoalition
   graph: DecorationFlagVaultTecCityCoalition
   startNode: start
   targetNode: FlagVaultTecCityCoalition
 # category: construction-category-decorations
-  description: A Vault-Tec City Coalition flag atop a bearer.
+  description: The banner of Vault City, a major settlement that evolved from Vault 8 in what remains of the west coast of the United States. They are a notable exporter of medical technology.
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Decoration/flags.rsi
@@ -338,13 +354,13 @@
   placementMode: SnapgridCenter
 
 - type: construction
-  name: Khans flag
+  name: Flag of the Great Khans Tribe
   id: N14DecorationFlagKhans
   graph: DecorationFlagKhans
   startNode: start
   targetNode: FlagKhans
 # category: construction-category-decorations
-  description: A flag worn and weathered from a long cherished history. A decorated smiling skull smiles mockingly upon those who challenge it.
+  description: The banner of the Great Khans Tribe, weathered and worn from a long cherished history of raiding the helpless. The decorated skull smiles with mockery at those who would challenge it.
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Decoration/flags.rsi
@@ -353,13 +369,13 @@
   placementMode: SnapgridCenter
 
 - type: construction
-  name: Church flag
+  name: Flag of the Church of Renewal
   id: N14DecorationFlagChurch
   graph: DecorationFlagChurch
   startNode: start
   targetNode: FlagChurch
 # category: construction-category-decorations
-  description: A blood red flag featuring a symbol associated with nuclear radiation.
+  description: The banner of the Church of Renewal, a cult that believes the nuclear apocalypse was a gift of creation, and that forced evolution of humanity is not only our one path to survival, but our sacred destiny.
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Decoration/flags.rsi
@@ -368,17 +384,33 @@
   placementMode: SnapgridCenter
 
 - type: construction
-  name: Willowers banner
+  name: Flag of the Willowers Tribe
   id: MisfitsDecorationFlagTribe
   graph: MisfitsFlagTribe
   startNode: start
   targetNode: FlagTribe
   # category: construction-category-decorations
-  description: A banner depicting the tree of life.
+  description: The banner of the Willowers Tribe, a local settlement who worship the 'tree of life' illustrated on this flag. When the bombs first dropped, Wendover split into three survivor communities, the Locusts, Vultures and Willowers. The Willowers harvests and hunts were responsible for keeping all three fed in the first few years.
   hide: false
   icon:
     sprite: _Misfits/Structures/Decoration/tribal_banner.rsi
     state: banner1
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+# #Misfits Add - 509th Brotherhood of Steel standing flag recipe
+- type: construction
+  name: Flag of the 509th Brotherhood of Steel
+  id: MisfitsDecorationFlagBoSBonneville509
+  graph: MisfitsFlagBOS509
+  startNode: start
+  targetNode: FlagBOS509
+  # category: construction-category-decorations
+  description: The banner of the 509th Brotherhood of Steel, an offshoot of the Mojave Chapter that survived Operation Sunburst and spent a decade as ghosts of the salt flats. Now risen as an active vanguard, they secure the region's lost technology before the Enclave or the ignorant can seize it.
+  hide: false
+  icon:
+    sprite: _Misfits/Structures/Decoration/bos509thflag.rsi
+    state: bos509thflag
   objectType: Structure
   placementMode: SnapgridCenter
 
@@ -390,7 +422,7 @@
   graph: WoodenSign
   startNode: start
   targetNode: sign_left
-  description: He's pointing somewhere. 
+  description: He's pointing somewhere.
   hide: false
   icon:
     sprite: Objects/Decoration/mines.rsi
@@ -403,7 +435,7 @@
   graph: WoodenSign
   startNode: start
   targetNode: sign_right
-  description: He's pointing somewhere, but this time on the right. 
+  description: He's pointing somewhere, but this time on the right.
   hide: false
   icon:
     sprite: Objects/Decoration/mines.rsi
@@ -432,7 +464,7 @@
   graph: WoodenSupports
   startNode: start
   targetNode: support_beams
-  description: Two sturdy wooden support beams. 
+  description: Two sturdy wooden support beams.
   hide: false
   icon:
     sprite: Objects/Decoration/mines.rsi
@@ -465,5 +497,811 @@
   icon:
     sprite: Objects/Decoration/mines.rsi
     state: support_wall_broken
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+# #Cythisiax Added - Crafting menu expansion: wasteland floor decor
+# Wasteland floor/world decor
+
+- type: construction
+  name: brick rubble
+  id: N14DecorFloorBrickrubble
+  graph: DecorFloorBrickrubble
+  startNode: start
+  targetNode: brickrubble
+  description: The great nations huffed, and puffed, and blew down the world.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Decoration/world.rsi
+    state: brickrubble
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: pallet
+  id: N14DecorFloorPallet
+  graph: DecorFloorPallets
+  startNode: start
+  targetNode: pallet
+  description: An old wooden pallet, riddled with termites. Its beyond useless now.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Decoration/world.rsi
+    state: pallet
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: pallet stack
+  id: N14DecorFloorPalletStack
+  graph: DecorFloorPallets
+  startNode: start
+  targetNode: pallet_stack
+  description: A stack of old wooden pallets, damp and moldy. Not even good enough to use as fuel.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Decoration/world.rsi
+    state: pallet_stack
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+# Floor boards (all variants)
+- type: construction
+  name: floor board
+  id: N14DecorFloorBoard1
+  graph: DecorFloorBoards
+  startNode: start
+  targetNode: floorboard1
+  description: Keep the mud off your feet.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Decoration/cave_decor.rsi
+    state: boards_drought_ns-1
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: floor board
+  id: N14DecorFloorBoard2
+  graph: DecorFloorBoards
+  startNode: start
+  targetNode: floorboard2
+  description: Keep the mud off your feet.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Decoration/cave_decor.rsi
+    state: boards_drought_ns-2
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: floor board
+  id: N14DecorFloorBoard3
+  graph: DecorFloorBoards
+  startNode: start
+  targetNode: floorboard3
+  description: Keep the mud off your feet.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Decoration/cave_decor.rsi
+    state: boards_drought_ns-3
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: floor board
+  id: N14DecorFloorBoard4
+  graph: DecorFloorBoards
+  startNode: start
+  targetNode: floorboard4
+  description: Keep the mud off your feet.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Decoration/cave_decor.rsi
+    state: boards_drought_ns-4
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: floor board
+  id: N14DecorFloorBoard5
+  graph: DecorFloorBoards
+  startNode: start
+  targetNode: floorboard5
+  description: Keep the mud off your feet.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Decoration/cave_decor.rsi
+    state: boards_drought_ns-5
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: floor board
+  id: N14DecorFloorBoard6
+  graph: DecorFloorBoards
+  startNode: start
+  targetNode: floorboard6
+  description: Keep the mud off your feet.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Decoration/cave_decor.rsi
+    state: boards_drought_ns-6
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: floor board
+  id: N14DecorFloorBoard7
+  graph: DecorFloorBoards
+  startNode: start
+  targetNode: floorboard7
+  description: Keep the mud off your feet.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Decoration/cave_decor.rsi
+    state: boards_drought_we-1
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: floor board
+  id: N14DecorFloorBoard8
+  graph: DecorFloorBoards
+  startNode: start
+  targetNode: floorboard8
+  description: Keep the mud off your feet.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Decoration/cave_decor.rsi
+    state: boards_drought_we-2
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: floor board
+  id: N14DecorFloorBoard9
+  graph: DecorFloorBoards
+  startNode: start
+  targetNode: floorboard9
+  description: Keep the mud off your feet.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Decoration/cave_decor.rsi
+    state: boards_drought_we-3
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: floor board
+  id: N14DecorFloorBoard10
+  graph: DecorFloorBoards
+  startNode: start
+  targetNode: floorboard10
+  description: Keep the mud off your feet.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Decoration/cave_decor.rsi
+    state: boards_drought_we-4
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: floor board
+  id: N14DecorFloorBoard11
+  graph: DecorFloorBoards
+  startNode: start
+  targetNode: floorboard11
+  description: Keep the mud off your feet.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Decoration/cave_decor.rsi
+    state: boards_drought_we-5
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: floor board
+  id: N14DecorFloorBoard12
+  graph: DecorFloorBoards
+  startNode: start
+  targetNode: floorboard12
+  description: Keep the mud off your feet.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Decoration/cave_decor.rsi
+    state: boards_drought_we-6
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: floor board
+  id: N14DecorFloorBoard13
+  graph: DecorFloorBoards
+  startNode: start
+  targetNode: floorboard13
+  description: Keep the mud off your feet.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Decoration/cave_decor.rsi
+    state: boards_mammoth_ns-1
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: floor board
+  id: N14DecorFloorBoard14
+  graph: DecorFloorBoards
+  startNode: start
+  targetNode: floorboard14
+  description: Keep the mud off your feet.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Decoration/cave_decor.rsi
+    state: boards_mammoth_ns-2
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: floor board
+  id: N14DecorFloorBoard15
+  graph: DecorFloorBoards
+  startNode: start
+  targetNode: floorboard15
+  description: Keep the mud off your feet.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Decoration/cave_decor.rsi
+    state: boards_mammoth_ns-3
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: floor board
+  id: N14DecorFloorBoard16
+  graph: DecorFloorBoards
+  startNode: start
+  targetNode: floorboard16
+  description: Keep the mud off your feet.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Decoration/cave_decor.rsi
+    state: boards_mammoth_ns-4
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: floor board
+  id: N14DecorFloorBoard17
+  graph: DecorFloorBoards
+  startNode: start
+  targetNode: floorboard17
+  description: Keep the mud off your feet.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Decoration/cave_decor.rsi
+    state: boards_mammoth_ns-5
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: floor board
+  id: N14DecorFloorBoard18
+  graph: DecorFloorBoards
+  startNode: start
+  targetNode: floorboard18
+  description: Keep the mud off your feet.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Decoration/cave_decor.rsi
+    state: boards_mammoth_ns-6
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: floor board
+  id: N14DecorFloorBoard19
+  graph: DecorFloorBoards
+  startNode: start
+  targetNode: floorboard19
+  description: Keep the mud off your feet.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Decoration/cave_decor.rsi
+    state: boards_mammoth_we-1
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: floor board
+  id: N14DecorFloorBoard20
+  graph: DecorFloorBoards
+  startNode: start
+  targetNode: floorboard20
+  description: Keep the mud off your feet.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Decoration/cave_decor.rsi
+    state: boards_mammoth_we-2
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: floor board
+  id: N14DecorFloorBoard21
+  graph: DecorFloorBoards
+  startNode: start
+  targetNode: floorboard21
+  description: Keep the mud off your feet.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Decoration/cave_decor.rsi
+    state: boards_mammoth_we-3
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: floor board
+  id: N14DecorFloorBoard22
+  graph: DecorFloorBoards
+  startNode: start
+  targetNode: floorboard22
+  description: Keep the mud off your feet.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Decoration/cave_decor.rsi
+    state: boards_mammoth_we-4
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: floor board
+  id: N14DecorFloorBoard23
+  graph: DecorFloorBoards
+  startNode: start
+  targetNode: floorboard23
+  description: Keep the mud off your feet.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Decoration/cave_decor.rsi
+    state: boards_mammoth_we-5
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: floor board
+  id: N14DecorFloorBoard24
+  graph: DecorFloorBoards
+  startNode: start
+  targetNode: floorboard24
+  description: Keep the mud off your feet.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Decoration/cave_decor.rsi
+    state: boards_mammoth_we-6
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+# #Cythisiax Added - Crafting menu expansion: rebar structure
+- type: construction
+  name: rebar
+  id: N14WallRebar
+  graph: WallRebar
+  startNode: start
+  targetNode: rebarwall
+  description: Some rebar ready for construction.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Walls/ms13/slanted/girder.rsi
+    state: rebar
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+# #Cythisiax Added - Crafting menu expansion: floor torch (mapping variant, not held item)
+- type: construction
+  name: torch
+  id: N14Torch
+  graph: TorchFloor
+  startNode: start
+  targetNode: torchfloor
+  description: A flaming torch for lighting an area.
+  hide: false
+  icon:
+    sprite: Corvax/Structures/Decoration/torches.rsi
+    state: torch_lit
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+# #Cythisiax Added - Crafting menu expansion: rugs and mats (all variants)
+- type: construction
+  name: mat
+  id: N14RugMat
+  graph: N14Rugs
+  startNode: start
+  targetNode: rugmat
+  description: Better than the floor.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Furniture/rugs.rsi
+    state: mat_blank
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: welcome mat
+  id: N14RugMatWelcome
+  graph: N14Rugs
+  startNode: start
+  targetNode: rugwelcome
+  description: Better than the floor.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Furniture/rugs.rsi
+    state: mat_welcome
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: vulgar mat
+  id: N14RugMatVulgar1
+  graph: N14Rugs
+  startNode: start
+  targetNode: rugvulgar1
+  description: A charming floor mat.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Furniture/rugs.rsi
+    state: mat_vulgar
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: vulgar mat
+  id: N14RugMatVulgar2
+  graph: N14Rugs
+  startNode: start
+  targetNode: rugvulgar2
+  description: A charming floor mat.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Furniture/rugs.rsi
+    state: mat_vulgar_2
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: town mat
+  id: N14RugMatTown
+  graph: N14Rugs
+  startNode: start
+  targetNode: rugtown
+  description: A floor mat for a town dweller.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Furniture/rugs.rsi
+    state: mat_town
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: NCR mat
+  id: N14RugMatNCR
+  graph: N14Rugs
+  startNode: start
+  targetNode: rugncr
+  description: A floor mat with a patriotic message.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Furniture/rugs.rsi
+    state: mat_ncr
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: BOS mat
+  id: N14RugMatBOS
+  graph: N14Rugs
+  startNode: start
+  targetNode: rugbos
+  description: A floor mat with a patriotic message.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Furniture/rugs.rsi
+    state: mat_bos
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: rubber mat
+  id: N14RugMatRubberSingle
+  graph: N14Rugs
+  startNode: start
+  targetNode: rubbersingle
+  description: A rubber protective floor mat.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Furniture/rugs.rsi
+    state: rubber_single
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: rubber mat
+  id: N14RugMatRubber1
+  graph: N14Rugs
+  startNode: start
+  targetNode: rubber1
+  description: A rubber protective floor mat.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Furniture/rugs.rsi
+    state: rubber_1
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: rubber mat
+  id: N14RugMatRubber2
+  graph: N14Rugs
+  startNode: start
+  targetNode: rubber2
+  description: A rubber protective floor mat.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Furniture/rugs.rsi
+    state: rubber_2
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: rubber mat
+  id: N14RugMatRubber3
+  graph: N14Rugs
+  startNode: start
+  targetNode: rubber3
+  description: A rubber protective floor mat.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Furniture/rugs.rsi
+    state: rubber_3
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: rubber mat
+  id: N14RugMatRubberLarge
+  graph: N14Rugs
+  startNode: start
+  targetNode: rubberlarge
+  description: A large rubber mat.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Furniture/rugs64x64.rsi
+    state: rug_rubber
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: rug
+  id: N14RugBlue
+  graph: N14Rugs
+  startNode: start
+  targetNode: rugblue
+  description: A modern looking blue rug.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Furniture/rugs64x64.rsi
+    state: rug_blue
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: blue shag rug
+  id: N14RugBlueShag
+  graph: N14Rugs
+  startNode: start
+  targetNode: rugblueshag
+  description: A modern looking blue rug.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Furniture/rugs64x64.rsi
+    state: rug_blue_shag
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: brown fancy rug
+  id: N14RugBrownFancy
+  graph: N14Rugs
+  startNode: start
+  targetNode: rugfancy
+  description: A fancy looking rug.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Furniture/rugs64x64.rsi
+    state: rug_fancy
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: red rug
+  id: N14RugRed
+  graph: N14Rugs
+  startNode: start
+  targetNode: rugred
+  description: A patterned red rug.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Furniture/rugs64x64.rsi
+    state: rug_red
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: yellow rug
+  id: N14RugYellow
+  graph: N14Rugs
+  startNode: start
+  targetNode: rugyellow
+  description: A patterned yellow rug.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Furniture/rugs64x64.rsi
+    state: rug_yellow
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+# #Cythisiax Added - Crafting menu expansion: barrels (all variants)
+- type: construction
+  name: black barrel
+  id: N14BlackBarrel
+  graph: N14Barrels
+  startNode: start
+  targetNode: barrelblack
+  description: A worn out black barrel. The label is torn off.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Storage/barrels.rsi
+    state: black-closed
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: blue barrel
+  id: N14BlueBarrel
+  graph: N14Barrels
+  startNode: start
+  targetNode: barrelblue
+  description: A blue barrel with a warning sign of. Maybe it contains water?
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Storage/barrels.rsi
+    state: blue-closed
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: red barrel
+  id: N14RedBarrel
+  graph: N14Barrels
+  startNode: start
+  targetNode: barrelred
+  description: A red barrel with an explosive warning sign on. Better be careful.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Storage/barrels.rsi
+    state: red-closed
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: yellow barrel
+  id: N14YellowBarrel
+  graph: N14Barrels
+  startNode: start
+  targetNode: barrelyellow
+  description: A yellow barrel with a radiation warning sign on. Better be careful.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Storage/barrels.rsi
+    state: yellow-closed
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: black barrel
+  id: N14BlackBarrelOpen
+  graph: N14Barrels
+  startNode: start
+  targetNode: barrelblackopen
+  description: A worn out black barrel. The lid is off and you can see inside.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Storage/barrels.rsi
+    state: black-open
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: blue barrel
+  id: N14BlueBarrelOpen
+  graph: N14Barrels
+  startNode: start
+  targetNode: barrelblueopen
+  description: A blue barrel with a warning sign of. The lid is off and you can see inside.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Storage/barrels.rsi
+    state: blue-open
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: red barrel
+  id: N14RedBarrelOpen
+  graph: N14Barrels
+  startNode: start
+  targetNode: barrelredopen
+  description: A red barrel with an explosive warning sign on. The lid is off and you can see inside.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Storage/barrels.rsi
+    state: red-open
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: yellow barrel
+  id: N14YellowBarrelOpen
+  graph: N14Barrels
+  startNode: start
+  targetNode: barrelyellowopen
+  description: A yellow barrel with a radiation warning sign on. The lid is off and you can see inside but it still makes you twitch.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Storage/barrels.rsi
+    state: yellow-open
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: black barrel
+  id: N14BlackBarrelFull
+  graph: N14Barrels
+  startNode: start
+  targetNode: barrelblackfull
+  description: A worn out black barrel. This one looks full of some dark liquid.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Storage/barrels.rsi
+    state: black-full
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: red barrel
+  id: N14RedBarrelFull
+  graph: N14Barrels
+  startNode: start
+  targetNode: barrelredfull
+  description: A red barrel with an explosive warning sign on. It has a golden liquid inside.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Storage/barrels.rsi
+    state: red-full
+  objectType: Structure
+  placementMode: SnapgridCenter
+
+- type: construction
+  name: yellow barrel
+  id: N14YellowBarrelFull
+  graph: N14Barrels
+  startNode: start
+  targetNode: barrelyellowfull
+  description: A yellow barrel with a radiation warning sign on. It has some glowing liquid inside.
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Storage/barrels.rsi
+    state: yellow-full
   objectType: Structure
   placementMode: SnapgridCenter

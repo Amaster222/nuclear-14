@@ -4,7 +4,7 @@
 # Excludes syndicate/antag-only levels (NuclearOperative, SyndicateAgent) — admin card shouldn't flag as antag.
 
 - type: accessGroup
-  id: AllAccessN14
+  id: AllAccessMisfits
   tags:
   # ── Standard SS14 (mirrors upstream AllAccess) ──
   - EmergencyShuttleRepealAll
@@ -89,6 +89,13 @@
   - EnclaveOfficer
   - EnclaveCommand
   - EnclaveScience
+  - EnclaveRoleAll
+  - EnclaveRoleScientist
+  - EnclaveRoleHeadScientist
+  - EnclaveRoleNCO
+  - EnclaveRoleJuniorOfficer
+  - EnclaveRoleSeniorOfficer
+  - EnclaveRoleCommander
   # ── N14: NCR ──
   - NCR
   - NCRSGT
@@ -97,6 +104,7 @@
   - NCRRanger
   - NCRCaptain
   - NCRMajor
+  - OSI
   # ── N14: Vault ──
   - VaultOverseer
   - VaultGatekeeper
@@ -116,12 +124,12 @@
   - CaesarLegionFrumentarii
   - CaesarLegionVexillarius
   - CaesarLegionExplorer
-  - CaesarLegionOptio
   - CaesarLegionLegionnaireRecruit
   - CaesarLegionLegionnaireWarrior
   - CaesarLegionLegionnaireVeteran
   - CaesarLegionDean
   - CaesarLegionVeteranDecanus
+  - CaesarLegionOptio
   - CaesarLegionCenturion
   - CaesarLegionLegate
   # ── N14: BoS Washington ──

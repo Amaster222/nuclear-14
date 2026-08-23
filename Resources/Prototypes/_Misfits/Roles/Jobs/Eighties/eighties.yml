@@ -111,7 +111,7 @@
   id: EightiesCylindersGear
   equipment:
     bandage: NCClothingBandageRaiders
-    id: MisfitsEightiesIDCard
+    id: MisfitsEightiesIDCardCylinders
     gloves: N14ClothingHandsGlovesBlackBiker
     jumpsuit: N14ClothingUniformJumpsuitBrahminFarmer
     outerClothing: MisfitsClothingOuterEightiesArmorHeavyElite
@@ -173,7 +173,7 @@
   id: EightiesPistonsGear
   equipment:
     bandage: NCClothingBandageRaiders
-    id: MisfitsEightiesIDCard
+    id: MisfitsEightiesIDCardPistons
     jumpsuit: N14ClothingUniformJumpsuitBrahminFarmer
     gloves: N14ClothingHandsGlovesBlackBiker
     outerClothing: MisfitsClothingOuterEightiesArmorHeavy
@@ -235,7 +235,7 @@
   id: EightiesOilersGear
   equipment:
     bandage: NCClothingBandageRaiders
-    id: MisfitsEightiesIDCard
+    id: MisfitsEightiesIDCardOilers
     jumpsuit: N14ClothingUniformJumpsuitBrahminFarmer
     gloves: N14ClothingHandsGlovesBlackBiker
     outerClothing: MisfitsClothingOuterEightiesArmorHeavyBoss
@@ -290,8 +290,6 @@
           - Eighties
           - PlayerRaider
           - Wastelander
-  - !type:AddTraitSpecial
-    traits: [ N14RidingPerk ]
 - type: startingGear
   id: EightiesRoadRashGear
   equipment:
@@ -306,7 +304,6 @@
     ears: MisfitsClothingHeadsetEighties
     back: N14ClothingBackpackMilitary
     pocket1: EightiesRoadRashloadoutkits
-    pocket2: VehicleKeyMotorbike
     belt: ClothingBeltMilitary
   storage:
     back:

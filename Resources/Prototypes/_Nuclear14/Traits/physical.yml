@@ -312,7 +312,7 @@
 - type: trait
   id: N14SittingDuck
   category: Physical
-  points: 2
+  points: 4
   requirements:
     - !type:CharacterTraitRequirement
       inverted: true
@@ -390,6 +390,8 @@
         - FollowerDoctor
         - FollowerGuard
         - FollowerVolunteer
+        - CaesarLegionSlave # Restricted from Slaves & Prisoners - if they had these traits, they wouldn't be stuck in the first place!
+        - NCRPrisoner
     # Forge-Change-End
     # Misfits Fix: CharacterTraitRequirement block removed — all referenced N14ExtremeAug* traits are commented out
     #- !type:CharacterTraitRequirement
@@ -424,12 +426,12 @@
   category: Physical
   points: -5
   # Misfits Fix: CharacterTraitRequirement block removed — all referenced N14ExtremeAug* traits are commented out
-  #requirements:
-  #  - !type:CharacterTraitRequirement
-  #    inverted: true
-  #    traits:
-  #      - N14ExtremeAugKnight
-  #      - N14ExtremeAugScribe
+  requirements:
+  - !type:CharacterJobRequirement
+    inverted: true
+    jobs:
+    - CaesarLegionSlave # Restricted from Slaves & Prisoners - if they had these traits, they wouldn't be stuck in the first place!
+    - NCRPrisoner
   functions:
     - !type:TraitAddComponent
       components:
@@ -447,6 +449,9 @@
         - BoSMidPaladinCommander
         - BoSMidPaladin
         - BoSMidKnight
+        - BoSLancerCaptain
+        - BoSLancerKnight
+        - BoSLancer
         #- BoSWashingtonCommander #Misfits Change /Comment-out/: Washington BoS removed
         #- BoSWashingtonPaladin
         #- BoSWashingtonKnight
@@ -487,6 +492,7 @@
         - BoSMidPaladinCommander
         - BoSMidPaladin
         - BoSMidKnight
+        - BoSLancerCaptain
         #- BoSWashingtonCommander #Misfits Change /Comment-out/: Washington BoS removed
         #- BoSWashingtonPaladin
         #- BoSWashingtonKnight
@@ -517,6 +523,9 @@
         - BoSMidPaladinCommander
         - BoSMidPaladin
         - BoSMidKnight
+        - BoSLancerCaptain
+        - BoSLancerKnight
+        - BoSLancer
     - !type:CharacterTraitRequirement
       inverted: true
       traits:

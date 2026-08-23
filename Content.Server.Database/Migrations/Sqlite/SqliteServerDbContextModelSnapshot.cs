@@ -762,6 +762,10 @@ namespace Content.Server.Database.Migrations.Sqlite
                         .HasColumnType("TEXT")
                         .HasColumnName("admin_ooc_color");
 
+                    b.Property<bool>("AnonymousRoundEndReport")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("anonymous_round_end_report");
+
                     b.Property<int>("SelectedCharacterSlot")
                         .HasColumnType("INTEGER")
                         .HasColumnName("selected_character_slot");
@@ -809,6 +813,10 @@ namespace Content.Server.Database.Migrations.Sqlite
                         .IsRequired()
                         .HasColumnType("TEXT")
                         .HasColumnName("clothing");
+
+                    b.Property<byte[]>("CustomBaseLayers")
+                        .HasColumnType("jsonb")
+                        .HasColumnName("custom_base_layers");
 
                     b.Property<string>("CustomSpecieName")
                         .IsRequired()
@@ -1384,6 +1392,19 @@ namespace Content.Server.Database.Migrations.Sqlite
                         .HasColumnType("INTEGER")
                         .HasColumnName("bottlecaps");
 
+                    // #Cythisiax Add - Multi-currency columns
+                    b.Property<int>("NcrDollars")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("ncr_dollars");
+
+                    b.Property<int>("Silver")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("silver");
+
+                    b.Property<int>("Gold")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("gold");
+
                     b.Property<string>("CharacterName")
                         .IsRequired()
                         .HasColumnType("TEXT")
@@ -1770,6 +1791,10 @@ namespace Content.Server.Database.Migrations.Sqlite
                         .HasColumnType("TEXT")
                         .HasColumnName("name_color");
 
+                    b.Property<int>("Tier")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("tier");
+
                     b.Property<string>("Title")
                         .HasColumnType("TEXT")
                         .HasColumnName("title");
@@ -1791,6 +1816,208 @@ namespace Content.Server.Database.Migrations.Sqlite
                         .HasDatabaseName("IX_supporter_user_id");
 
                     b.ToTable("supporter", (string)null);
+                });
+
+            // #Cythisiax Add - Free market entities
+
+            modelBuilder.Entity("Content.Server.Database.MarketListing", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("market_listing_id");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("currency");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("expires_at");
+
+                    b.Property<DateTime>("ListedAt")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("listed_at");
+
+                    b.Property<Guid>("ListingId")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("listing_id");
+
+                    b.Property<int>("PricePerUnit")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("price_per_unit");
+
+                    b.Property<string>("PrototypeId")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("prototype_id");
+
+                    b.Property<int>("Quantity")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasDefaultValue(1)
+                        .HasColumnName("quantity");
+
+                    b.Property<string>("RequestedItemId")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("requested_item_id");
+
+                    b.Property<int>("RequestedQuantity")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("requested_quantity");
+
+                    b.Property<string>("SellerCharacterName")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("seller_character_name");
+
+                    b.Property<Guid>("SellerPlayerId")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("seller_player_id");
+
+                    b.Property<int>("StackCount")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("stack_count");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT")
+                        .HasDefaultValue("Active")
+                        .HasColumnName("status");
+
+                    b.Property<DateTime?>("SoldAt")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("sold_at");
+
+                    b.Property<string>("SoldItemTag")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("sold_item_tag");
+
+                    b.Property<string>("SoldToCharacter")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("sold_to_character");
+
+                    b.HasKey("Id")
+                        .HasName("PK_market_listing");
+
+                    b.HasIndex("ListingId")
+                        .IsUnique()
+                        .HasDatabaseName("IX_market_listing_listing_id");
+
+                    b.HasIndex("ExpiresAt")
+                        .HasDatabaseName("IX_market_listing_expires_at");
+
+                    b.HasIndex(new[] { "SellerPlayerId", "Status" })
+                        .HasDatabaseName("IX_market_listing_seller_player_id_status");
+
+                    b.ToTable("market_listing", (string)null);
+                });
+
+            modelBuilder.Entity("Content.Server.Database.MarketPriceHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("market_price_history_id");
+
+                    b.Property<int>("Demand")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("demand");
+
+                    b.Property<string>("PrototypeId")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("prototype_id");
+
+                    b.Property<int>("ReferencePrice")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("reference_price");
+
+                    b.Property<int>("Supply")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("supply");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("timestamp");
+
+                    b.HasKey("Id")
+                        .HasName("PK_market_price_history");
+
+                    b.HasIndex(new[] { "PrototypeId", "Timestamp" })
+                        .HasDatabaseName("IX_market_price_history_prototype_id_timestamp");
+
+                    b.ToTable("market_price_history", (string)null);
+                });
+
+            modelBuilder.Entity("Content.Server.Database.MarketSale", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("market_sale_id");
+
+                    b.Property<Guid>("BuyerId")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("buyer_id");
+
+                    b.Property<string>("BuyerName")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("buyer_name");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("currency");
+
+                    b.Property<string>("ItemProto")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("item_proto");
+
+                    b.Property<Guid>("ListingId")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("listing_id");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("INTEGER")
+                        .HasColumnName("price");
+
+                    b.Property<Guid>("SellerId")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("seller_id");
+
+                    b.Property<string>("SellerName")
+                        .IsRequired()
+                        .HasColumnType("TEXT")
+                        .HasColumnName("seller_name");
+
+                    b.Property<DateTime>("SoldAt")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("sold_at");
+
+                    b.HasKey("Id")
+                        .HasName("PK_market_sale");
+
+                    b.HasIndex("SoldAt")
+                        .HasDatabaseName("IX_market_sale_sold_at");
+
+                    b.ToTable("market_sale", (string)null);
+                });
+
+            modelBuilder.Entity("Content.Server.Database.MarketSoldItem", b =>
+                {
+                    b.Property<string>("SoldTag")
+                        .HasColumnType("TEXT")
+                        .HasColumnName("sold_tag");
+
+                    b.HasKey("SoldTag")
+                        .HasName("PK_market_sold_item");
+
+                    b.ToTable("market_sold_item", (string)null);
                 });
 
             modelBuilder.Entity("Content.Server.Database.Admin", b =>

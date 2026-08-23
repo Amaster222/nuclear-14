@@ -283,6 +283,24 @@ public abstract class SharedActionsSystem : EntitySystem
         Dirty(actionId.Value, action);
     }
 
+    /// <summary>
+    /// Controls whether an action requires the performer to pass the normal
+    /// interaction blocker check. Intended for innate powers that do not
+    /// require free hands.
+    /// </summary>
+    public void SetCheckCanInteract(EntityUid? actionId, bool checkCanInteract)
+    {
+        if (!TryGetActionData(actionId, out var action) ||
+            action.CheckCanInteract == checkCanInteract)
+        {
+            return;
+        }
+
+        action.CheckCanInteract = checkCanInteract;
+        UpdateAction(actionId, action);
+        Dirty(actionId!.Value, action);
+    }
+
     public void SetCharges(EntityUid? actionId, int? charges)
     {
         if (!TryGetActionData(actionId, out var action) ||

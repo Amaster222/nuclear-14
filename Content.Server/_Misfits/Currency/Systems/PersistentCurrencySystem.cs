@@ -347,8 +347,11 @@ public sealed class PersistentCurrencySystem : EntitySystem
     // #Misfits Fix - Load currency on spawn, when mind is guaranteed to be ready.
     private void OnPlayerSpawnComplete(PlayerSpawnCompleteEvent args)
     {
-        if (!TryComp<PersistentCurrencyComponent>(args.Mob, out var comp))
-            return;
+        // #Misfits Fix - EnsureComp (mirrors PersistentPlayerDataSystem) so ANY player species
+        // mob gets a wallet, even if its prototype forgot to declare PersistentCurrency.
+        // Previously TryComp silently skipped e.g. the C-27 chassis (inherits BaseMobSpecies,
+        // not BaseMobSpeciesOrganic), so its balance was never loaded or saved between rounds.
+        var comp = EnsureComp<PersistentCurrencyComponent>(args.Mob);
 
         if (args.Player.AttachedEntity == args.Mob)
             LoadCurrencyAsync(args.Mob, comp, args.Player);
@@ -356,7 +359,11 @@ public sealed class PersistentCurrencySystem : EntitySystem
 
     private void OnCurrencyShutdown(Entity<PersistentCurrencyComponent> ent, ref ComponentShutdown args)
     {
-        // #Misfits Change - nothing to remove; action is no longer granted
+        // #Misfits Fix - Flush the balance to the DB on entity deletion so the wallet is never
+        // lost at round end, even if the last change didn't trigger an explicit SaveCurrency.
+        // Mirrors PersistentPlayerDataSystem.OnShutdown.
+        if (ent.Comp.Loaded && ent.Comp.UserId != null && ent.Comp.CharacterName != null)
+            SaveCurrency(ent.Comp.UserId, ent.Comp.CharacterName, ent.Comp);
     }
 
     private void OnPlayerAttached(Entity<PersistentCurrencyComponent> ent, ref PlayerAttachedEvent args)
@@ -384,7 +391,11 @@ public sealed class PersistentCurrencySystem : EntitySystem
 
         try
         {
-            comp.Bottlecaps = await _db.GetCharacterCurrencyAsync(playerId, characterName);
+            var row = await _db.GetCharacterCurrencyAsync(playerId, characterName);
+            comp.Bottlecaps = row?.Bottlecaps ?? 0;
+            comp.NcrDollars = row?.NcrDollars ?? 0; // #Cythisiax Add
+            comp.Silver = row?.Silver ?? 0; // #Cythisiax Add
+            comp.Gold = row?.Gold ?? 0; // #Cythisiax Add
         }
         catch (Exception ex)
         {
@@ -410,7 +421,8 @@ public sealed class PersistentCurrencySystem : EntitySystem
         if (!Guid.TryParse(userId, out var playerId))
             return;
 
-        _db.UpsertCharacterCurrencyAsync(playerId, characterName, comp.Bottlecaps);
+        _db.UpsertCharacterCurrencyAsync(playerId, characterName, comp.Bottlecaps,
+            comp.NcrDollars, comp.Silver, comp.Gold); // #Cythisiax Add - multi-currency
     }
 
     // ── One-time JSON → database migration ─────────────────────────────────────
@@ -441,7 +453,7 @@ public sealed class PersistentCurrencySystem : EntitySystem
                 if (string.IsNullOrEmpty(record.UserId) || !Guid.TryParse(record.UserId, out var pid))
                     continue;
 
-                await _db.UpsertCharacterCurrencyAsync(pid, record.CharacterName, record.Bottlecaps);
+                await _db.UpsertCharacterCurrencyAsync(pid, record.CharacterName, record.Bottlecaps); // #Cythisiax - multi-currency migration (legacy records only have caps)
             }
 
             File.Move(jsonPath, jsonPath + ".migrated");

@@ -18,6 +18,9 @@
     - !type:CharacterDepartmentTimeRequirement # T6 faction timelock (20h NCR)
       department: NCR
       min: 72000 # 20 hours
+    - !type:CharacterPlaytimeRequirement
+      tracker: NCRSquadLeader
+      min: 28800 # 8 hours as NCO
   weight: 105
   startingGear: NCRRequisitionOfficerGear
   icon: "JobIconNcrLeader"
@@ -57,6 +60,8 @@
   storage:
     back:
     - N14BoxPlasticFilledMilitaryNCR
+    - SprayPaintDesertTan
+    - SprayPaintDesertTan
 
 - type: playTimeTracker
   id: NCRRO

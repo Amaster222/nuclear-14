@@ -53,8 +53,8 @@
     instability: 35
     difficulty: 24 # good luck chuddy
     rarity: Mythical
-  # TODO: prevent wearing gloves, disable picking up two handed items
   - type: ComponentMutation
     added:
     - type: ExtraReach
       bonus: 1
+    - type: ElasticArms # too soft for gloves, too floppy for two-handed items

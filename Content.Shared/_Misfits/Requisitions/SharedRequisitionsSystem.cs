@@ -146,6 +146,16 @@ public abstract class SharedRequisitionsSystem : EntitySystem
         comp.Purchased = account != null ? new Dictionary<string, int>(account.Purchased) : new Dictionary<string, int>();
         comp.History = account != null ? new List<RequisitionsHistoryEntry>(account.History) : new List<RequisitionsHistoryEntry>();
         comp.CompletedBounties = account != null ? new List<string>(account.CompletedBounties) : new List<string>();
+
+        // A pooled console shows the account's rotating board rather than a fixed list.
+        // Writing it into Bounties means the existing client rendering needs no changes.
+        if (comp.BountyPool != null)
+        {
+            comp.Bounties = account != null
+                ? new List<RequisitionsBounty>(account.ActiveBounties)
+                : new List<RequisitionsBounty>();
+        }
+
         comp.BountyProgress = account != null ? new Dictionary<string, int>(account.BountyProgress) : new Dictionary<string, int>();
         comp.RandomRequests = account != null ? new List<RequisitionsRandomSlot>(account.RandomRequests) : new List<RequisitionsRandomSlot>();
         comp.PendingOrders = pendingOrders;
@@ -167,6 +177,10 @@ public abstract class SharedRequisitionsSystem : EntitySystem
         DirtyField(uid, comp, nameof(RequisitionsComputerComponent.Purchased));
         DirtyField(uid, comp, nameof(RequisitionsComputerComponent.History));
         DirtyField(uid, comp, nameof(RequisitionsComputerComponent.CompletedBounties));
+
+        if (comp.BountyPool != null)
+            DirtyField(uid, comp, nameof(RequisitionsComputerComponent.Bounties));
+
         DirtyField(uid, comp, nameof(RequisitionsComputerComponent.BountyProgress));
         DirtyField(uid, comp, nameof(RequisitionsComputerComponent.RandomRequests));
         DirtyField(uid, comp, nameof(RequisitionsComputerComponent.PendingOrders));

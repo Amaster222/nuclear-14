@@ -21,7 +21,7 @@
     - !type:CharacterDepartmentTimeRequirement # #Misfits Add - admin-only timelock (70h Enclave)
       department: Enclave
       min: 252000 # 70 hours — admin role
-  startingGear: EnclaveCommanderGear # reuse Commander gear as base
+  startingGear: EnclaveReformerGear # #Misfits Change - dedicated Reformer gear keeps Hellfire (Commander moved to APA MK II)
   icon: "JobIconEnclaveReformer"
   supervisors: job-supervisors-enclave-reformer
   requireAdminNotify: true
@@ -35,7 +35,30 @@
       - type: NpcFactionMember
         factions:
           - Enclave
+      - type: ReplacementAccent
+        accent: n14Enclave
       - type: PowerArmorProficiency
+
+# #Misfits Change - Reformer keeps Hellfire Advanced PA (Hellfire is now Reformer-exclusive; Commander uses APA MK II).
+- type: startingGear
+  id: EnclaveReformerGear
+  equipment:
+    head: N14ClothingHeadHatEnclaveOfficer
+    back: N14ClothingBackpackMilitary
+    jumpsuit: N14ClothingUniformJumpsuitEnclave
+    outerClothing: N14ClothingOuterPowerArmorAdvanced2HellfireMisfit
+    shoes: N14ClothingBootsCombatFilled
+    gloves: N14ClothingHandsGlovesCombat
+    belt: ClothingBeltMilitary
+    ears: N14ClothingHeadsetEnclave
+    pocket1: EnclaveOfficerloadoutkits
+    pocket2: RadioHandheld
+    id: N14EnclaveOfficerPipboy
+  satchel: N14ClothingBackpackSatchelMilitaryFilled
+  duffelbag: N14ClothingBackpackDuffelMilitaryFilled
+  storage:
+    back:
+    - N14BoxPlasticFilledMilitary
 
 - type: playTimeTracker
   id: EnclaveReformer

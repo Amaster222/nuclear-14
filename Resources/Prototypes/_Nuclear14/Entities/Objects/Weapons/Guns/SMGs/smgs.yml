@@ -4,7 +4,11 @@
   abstract: true
   components:
   - type: Wieldable
+    unwieldOnUse: false
     wieldedSpeedModifier: 0.9
+  - type: GunWieldBonus
+    minAngle: -5
+    maxAngle: -10
   - type: MagazineVisuals
     magState: mag
     steps: 1

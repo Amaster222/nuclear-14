@@ -1,10 +1,11 @@
 // #Misfits Add - Per-round Enclave recruitment system.
-// Enclave members get a right-click "Recruit" verb on player entities.
-// Recruited players gain EnclaveRecruit playtime so their time counts
+// #Cythisiax Edited - The "Recruit" verb is now restricted to Enclave Junior
+// Officers (previously any Enclave department member could recruit).
+// Recruited players are assigned the EnclaveRecruit job so their time counts
 // toward Enclave department role timers. Resets on death or round restart.
 
 using System.Linq;
-using Content.Server.Administration;
+using Content.Server.EUI;
 using Content.Server.Mind;
 using Content.Shared._Misfits.Enclave;
 using Content.Shared.GameTicking;
@@ -16,28 +17,28 @@ using Content.Shared.Popups;
 using Content.Shared.Roles;
 using Content.Shared.Roles.Jobs;
 using Content.Shared.Verbs;
-using Robust.Server.Player;
 using Content.Shared.IdentityManagement;
-using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 
 namespace Content.Server._Misfits.Enclave;
 
 public sealed class EnclaveRecruitSystem : EntitySystem
 {
-    [Dependency] private readonly IPlayerManager _playerManager = default!;
     [Dependency] private readonly IPrototypeManager _prototypes = default!;
     [Dependency] private readonly SharedJobSystem _jobs = default!;
+    [Dependency] private readonly SharedRoleSystem _roles = default!;
     [Dependency] private readonly SharedMindSystem _minds = default!;
     [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly SharedRoleSystem _roles = default!;
-    [Dependency] private readonly QuickDialogSystem _quickDialog = default!;
+    [Dependency] private readonly EuiManager _eui = default!;
+    [Dependency] private readonly EnclaveMicroBombSystem _microBombs = default!;
 
-    /// <summary>Enclave department ID from the department prototype.</summary>
-    private const string EnclaveDepartmentId = "Enclave";
+    /// <summary>#Cythisiax Edited - Only this Enclave job may use the Recruit verb.
+    /// The former EnclaveDepartmentId const was removed since recruitment is no
+    /// longer open to every Enclave department member.</summary>
+    private const string EnclaveRecruiterJobId = "EnclaveJuniorOfficer";
 
-    /// <summary>Tracker ID injected on recruited players.</summary>
-    private const string EnclaveRecruitTrackerId = "EnclaveRecruit";
+    /// <summary>The literal job assigned to accepted recruits.</summary>
+    private const string EnclaveRecruitJobId = "EnclaveRecruit";
 
     public override void Initialize()
     {
@@ -45,9 +46,6 @@ public sealed class EnclaveRecruitSystem : EntitySystem
 
         // Show "Recruit" verb on living player entities for Enclave members
         SubscribeLocalEvent<MindContainerComponent, GetVerbsEvent<InteractionVerb>>(OnGetInteractionVerbs);
-
-        // Inject EnclaveRecruit tracker for recruited minds
-        SubscribeLocalEvent<EnclaveRecruitMindComponent, MindGetAllRolesEvent>(OnMindGetAllRoles);
 
         // Remove recruitment on death
         SubscribeLocalEvent<MobStateChangedEvent>(OnMobStateChanged);
@@ -69,7 +67,7 @@ public sealed class EnclaveRecruitSystem : EntitySystem
 
         var user = args.User;
 
-        // User must be a living player with an Enclave job
+        // User must be a living player with the Enclave Junior Officer job
         if (!IsEnclaveMember(user))
             return;
 
@@ -99,22 +97,6 @@ public sealed class EnclaveRecruitSystem : EntitySystem
     }
 
     /// <summary>
-    /// Inject EnclaveRecruit tracker into the playtime system for recruited minds.
-    /// </summary>
-    private void OnMindGetAllRoles(
-        EntityUid mindId,
-        EnclaveRecruitMindComponent component,
-        ref MindGetAllRolesEvent args)
-    {
-        args.Roles.Add(new RoleInfo(
-            component,
-            Loc.GetString("job-name-enclave-recruit"),
-            false,
-            EnclaveRecruitTrackerId,
-            "EnclaveRecruit"));
-    }
-
-    /// <summary>
     /// Remove recruitment when the player dies.
     /// </summary>
     private void OnMobStateChanged(MobStateChangedEvent ev)
@@ -131,8 +113,9 @@ public sealed class EnclaveRecruitSystem : EntitySystem
     private void OnRoundRestart(RoundRestartCleanupEvent ev)
     {
         var query = EntityQueryEnumerator<EnclaveRecruitMindComponent>();
-        while (query.MoveNext(out var uid, out _))
+        while (query.MoveNext(out var uid, out var recruit))
         {
+            RestorePreviousJob(uid, recruit);
             RemComp<EnclaveRecruitMindComponent>(uid);
         }
     }
@@ -158,12 +141,8 @@ public sealed class EnclaveRecruitSystem : EntitySystem
         var userName = Identity.Name(user, EntityManager);
         var targetName = Identity.Name(target, EntityManager);
 
-        _quickDialog.OpenConfirmationDialog(
-            targetSession,
-            Loc.GetString("enclave-recruit-dialog-title"),
-            Loc.GetString("enclave-recruit-dialog-accept"),
-            Loc.GetString("enclave-recruit-dialog-decline"),
-            // Accept
+        _eui.OpenEui(new EnclaveRecruitEui(
+            targetName,
             () =>
             {
                 // Double-check they're still not recruited (may have been recruited while dialog was open)
@@ -172,7 +151,6 @@ public sealed class EnclaveRecruitSystem : EntitySystem
 
                 ApplyRecruitment(target, targetMind, user, userName, targetName);
             },
-            // Decline
             () =>
             {
                 _popup.PopupEntity(
@@ -180,7 +158,8 @@ public sealed class EnclaveRecruitSystem : EntitySystem
                     user,
                     user,
                     PopupType.MediumCaution);
-            });
+            }),
+            targetSession);
     }
 
     /// <summary>
@@ -197,7 +176,17 @@ public sealed class EnclaveRecruitSystem : EntitySystem
         if (HasComp<EnclaveRecruitMindComponent>(mindId))
             return;
 
-        AddComp<EnclaveRecruitMindComponent>(mindId);
+        ProtoId<JobPrototype>? previousJob = null;
+        if (_jobs.MindTryGetJob(mindId, out var currentJob, out _))
+        {
+            previousJob = currentJob.Prototype;
+            _roles.MindRemoveRole<JobComponent>(mindId);
+        }
+
+        var recruit = AddComp<EnclaveRecruitMindComponent>(mindId);
+        recruit.PreviousJob = previousJob;
+        _roles.MindAddRole(mindId, new JobComponent { Prototype = EnclaveRecruitJobId });
+        _microBombs.Implant(target);
 
         _popup.PopupEntity(
             Loc.GetString("enclave-recruit-popup-target", ("user", userName)),
@@ -213,7 +202,7 @@ public sealed class EnclaveRecruitSystem : EntitySystem
     }
 
     /// <summary>
-    /// Remove EnclaveRecruitMindComponent from a player's mind on death.
+    /// Remove recruitment and restore the player's former job on death.
     /// </summary>
     private void RemoveRecruitment(EntityUid body)
     {
@@ -222,13 +211,14 @@ public sealed class EnclaveRecruitSystem : EntitySystem
 
         var mindId = mindContainer.Mind.Value;
 
-        if (!HasComp<EnclaveRecruitMindComponent>(mindId))
+        if (!TryComp<EnclaveRecruitMindComponent>(mindId, out var recruit))
             return;
 
+        RestorePreviousJob(mindId, recruit);
         RemComp<EnclaveRecruitMindComponent>(mindId);
 
         // Notify the player they are no longer recruited
-        if (_minds.TryGetSession(mindId, out var session))
+        if (_minds.TryGetSession(mindId, out _))
         {
             _popup.PopupEntity(
                 Loc.GetString("enclave-recruit-lost"),
@@ -238,11 +228,29 @@ public sealed class EnclaveRecruitSystem : EntitySystem
         }
     }
 
+    private void RestorePreviousJob(EntityUid mindId, EnclaveRecruitMindComponent recruit)
+    {
+        // Do not overwrite a job that another system deliberately assigned
+        // after recruitment.
+        if (!_jobs.MindHasJobWithId(mindId, EnclaveRecruitJobId))
+            return;
+
+        _roles.MindRemoveRole<JobComponent>(mindId);
+
+        if (recruit.PreviousJob is { } previousJob && _prototypes.HasIndex(previousJob))
+            _roles.MindAddRole(mindId, new JobComponent { Prototype = previousJob }, silent: true);
+    }
+
     /// <summary>
-    /// Check if a user entity is an Enclave member (has an Enclave department job).
+    /// Check if a user entity may recruit: must be an Enclave Junior Officer,
+    /// or carry the admin bypass EnclaveRecruiterComponent.
     /// </summary>
     private bool IsEnclaveMember(EntityUid uid)
     {
+        // Bypass: admins can addcomp EnclaveRecruiterComponent to any player
+        if (HasComp<EnclaveRecruiterComponent>(uid))
+            return true;
+
         // Get the mind ID from the user's entity
         if (!TryComp<MindContainerComponent>(uid, out var mindContainer) || !mindContainer.HasMind)
             return false;
@@ -253,8 +261,8 @@ public sealed class EnclaveRecruitSystem : EntitySystem
         if (!_jobs.MindTryGetJob(mindId, out _, out var jobProto))
             return false;
 
-        // Check if the job belongs to the Enclave department
-        var department = _prototypes.Index<DepartmentPrototype>(EnclaveDepartmentId);
-        return department.Roles.Contains(jobProto.ID);
+        // #Cythisiax Edited - Restricted to the Enclave Junior Officer job only
+        // (was: any job in the Enclave department could recruit).
+        return jobProto.ID == EnclaveRecruiterJobId;
     }
 }

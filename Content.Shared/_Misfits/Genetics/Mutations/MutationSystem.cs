@@ -163,7 +163,7 @@ public sealed partial class MutationSystem : CommonMutationSystem
 
         var popup = Loc.GetString(id + "-mutated");
         if (predicted)
-            _popup.PopupEntity(popup, ent, ent, PopupType.MediumCaution);
+            _popup.PopupPredicted(popup, ent, ent, PopupType.MediumCaution);
         else
             _popup.PopupEntity(popup, ent, ent, PopupType.MediumCaution);
     }
@@ -187,7 +187,7 @@ public sealed partial class MutationSystem : CommonMutationSystem
             return;
 
         if (predicted)
-            _popup.PopupEntity(popup, ent, ent, PopupType.MediumCaution);
+            _popup.PopupPredicted(popup, ent, ent, PopupType.MediumCaution);
         else
             _popup.PopupEntity(popup, ent, ent, PopupType.MediumCaution);
     }
@@ -342,6 +342,25 @@ public sealed partial class MutationSystem : CommonMutationSystem
     /// Returns true if an entity has <see cref="MutatableComponent"/>.
     /// </summary>
     public bool IsMutatable(EntityUid uid) => _mutatableQuery.HasComp(uid);
+
+    /// <summary>
+    /// Ensures an entity can hold mutations, initializing its container and DNA if the
+    /// component was just added. Lets admin mutators work on any living mob, not just
+    /// species that spawn with <see cref="MutatableComponent"/>.
+    /// </summary>
+    public Entity<MutatableComponent> EnsureMutatable(EntityUid uid)
+    {
+        if (_mutatableQuery.TryComp(uid, out var existing))
+            return (uid, existing);
+
+        var comp = AddComp<MutatableComponent>(uid);
+        var container = _container.EnsureContainer<Container>(uid, comp.ContainerId);
+        container.OccludesLight = false; // let glowy mutation shine
+        if (comp.GeneticDna.Length == 0)
+            comp.GeneticDna = RandomDna(32);
+        Dirty(uid, comp);
+        return (uid, comp);
+    }
 
     /// <summary>
     /// Returns true if an entity has a specific mutation active.
@@ -571,7 +590,9 @@ public sealed partial class MutationSystem : CommonMutationSystem
             return;
 
         // add enough random dormant mutations so there will be enough sequences.
-        while (ent.Comp.Dormant.Count < ent.Comp.MaxDormant)
+        // never ask for more than exist, the pick loop can't terminate once they're all taken
+        var max = Math.Min(ent.Comp.MaxDormant, UnlockedMutations.Count);
+        while (ent.Comp.Dormant.Count < max)
         {
             var picked = _random.Pick(UnlockedMutations);
             if (!ent.Comp.Dormant.Contains(picked))
@@ -707,8 +728,12 @@ public sealed partial class MutationSystem : CommonMutationSystem
 
         foreach (var id in _removing)
         {
-            PredictedQueueDel(ent.Comp.Mutations[id]);
+            var uid = ent.Comp.Mutations[id];
             ent.Comp.Mutations.Remove(id);
+            // go through MutationRemoved so instability is refunded and provided actions are cleaned up
+            if (_query.TryComp(uid, out var comp))
+                MutationRemoved(ent, (uid, comp), null, automatic: true, predicted: false);
+            PredictedQueueDel(uid);
         }
 
         DirtyField(ent, ent.Comp, nameof(MutatableComponent.Mutations));
@@ -731,7 +756,7 @@ public sealed partial class MutationSystem : CommonMutationSystem
         {
             var msg = Loc.GetString(key);
             if (predicted)
-                _popup.PopupEntity(msg, ent, ent);
+                _popup.PopupPredicted(msg, ent, ent);
             else
                 _popup.PopupEntity(msg, ent, ent);
         }

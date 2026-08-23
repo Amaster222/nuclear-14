@@ -4,16 +4,13 @@
 
 undecided-loadout-category-explorer-tracker-name = Explorer Tracker
 undecided-loadout-category-explorer-tracker-description =
-    Includes a Legion SKS with 3 clips, 2 bolas,
-    a .45 Colt pistol, 2 .45 magazines, a rope belt,
-    night vision goggles, a healing powder,
+    Includes a hunting rifle, 3 308. Ammo boxes, a bola, healing powder,
     a healing poultice, 2 K rations, and a ceramic flask.
 
 undecided-loadout-category-explorer-raider-name = Explorer Raider
 undecided-loadout-category-explorer-raider-description =
-    Includes a FAL Rifle with 3 magazines, 2 bolas,
-    a .45 Colt pistol, 2 .45 magazines, a rope belt,
-    night vision goggles, a healing powder,
+    Includes 2 bolas,
+    a grease gun and a 1911,
     a healing poultice, 2 K rations, and a ceramic flask.
 
 # Migrated Corvax legacy Legion keys
@@ -604,6 +601,22 @@ undecided-loadout-category-misfits-enclave-engineering-science-description =
     a filled electrical toolbox, a handheld radio,
     1 stimpak, 1 gauze pack, and 1 flare.
 
+# Misfits NCR Office of Science and Industry (OSI) sets
+undecided-loadout-category-misfits-osi-mechanical-name = Mechanical Branch Kit
+undecided-loadout-category-misfits-osi-mechanical-description =
+    Includes a filled mechanical toolbox, a filled electrical toolbox,
+    a handheld radio, 1 stimpak, 1 gauze pack, and 1 flare.
+
+undecided-loadout-category-misfits-osi-medical-name = Medical Branch Kit
+undecided-loadout-category-misfits-osi-medical-description =
+    Includes a filled combat medkit, 1 super stimpak,
+    1 RadAway blood bag, 2 gauze packs, and a handheld radio.
+
+undecided-loadout-category-misfits-osi-field-name = Field Branch Kit
+undecided-loadout-category-misfits-osi-field-description =
+    Includes a radiation suit, a geiger counter, a filled radiation medkit,
+    a 9mm pistol, 1 stimpak, 1 gauze pack, 1 flare, and a handheld radio.
+
 # Misfits NCR rank sets
 undecided-loadout-category-misfits-ncra-pfc-fireteam-name = Private First Class Fireteam Kit
 undecided-loadout-category-misfits-ncra-pfc-fireteam-description =
@@ -662,7 +675,7 @@ undecided-loadout-category-misfits-ncra-captain-marksman-description =
 undecided-loadout-category-misfits-ncra-captain-service-rifle-name = Captain Field Officer Kit
 undecided-loadout-category-misfits-ncra-captain-service-rifle-description =
     Includes NCR officer armor, an NCR belt,
-    a scoped service rifle with 6 magazines,
+    a marksman carbine with 4 magazines,
     a 9mm pistol with 3 magazines, a handheld radio,
     2 smoke grenades, a stick of dynamite, a C ration MRE,
     a stimpak, 2 super stimpaks, a RadAway blood bag,
@@ -741,11 +754,23 @@ undecided-loadout-category-misfits-priestess-zealot-desc =
     spear quiver, 3 pilum, 2 Bolas, 2 Cazador acid sacs,
     2 K rations, and a ceramic flask.
 
+undecided-loadout-category-misfits-acolyte-healing-name = Acolyte Healer
+undecided-loadout-category-misfits-acolyte-healing-desc =
+    Includes 2 Smelling Salts, 1 health analyzer, 1 Bitter Drink,
+    1 Poultices, 1 Powder, 1 bandage,
+    2 K rations, and a ceramic flask.
+
+undecided-loadout-category-misfits-acolyte-zealot-name = Acolyte Zealot
+undecided-loadout-category-misfits-acolyte-zealot-desc =
+    Includes a Gladius, Legionnaire buckler,
+    spear quiver, A battle rifle, 308 clips,
+    2 K rations, and a ceramic flask.
+
 undecided-loadout-category-misfits-eighties-block-road-captain-name = Road Captain Kit
 undecided-loadout-category-misfits-eighties-block-road-captain-description =
     A kit filled with everything a block needs to rip them apart.
-    Comes with a 12.7 SMG, a heavy ripper sword, and some meds with various other
-    looted equipment. Includes a 45-70 hunter and a shitload of meds.
+    Comes with a 12.7 SMG, a ripper, and some meds with various other
+    looted equipment.
 
 undecided-loadout-category-misfits-eighties-block-boss-brawler-name = Boss Brawler Kit
 undecided-loadout-category-misfits-eighties-block-boss-brawler-description =

@@ -37,6 +37,8 @@
       - type: NpcFactionMember
         factions:
           - Enclave
+      - type: ReplacementAccent
+        accent: n14Enclave
       - type: CPRTraining
 
 - type: startingGear
@@ -45,12 +47,13 @@
     head: N14ClothingHeadHatEnclaveScientist
     back: N14ClothingBackpackSatchelMilitary
     jumpsuit: N14ClothingUniformJumpsuitEnclave
+    outerClothing: N14ClothingOuterRadSuitEnclave
     shoes: N14ClothingBootsLeatherFilled
     neck: ClothingNeckPinEnclaveHeadScientist
     belt: ClothingBeltMilitary
     ears: N14ClothingHeadsetEnclave
     pocket2: EnclaveScientistloadoutkits
-    id: N14IDEnclaveNoncombat
+    id: N14EnclaveNoncombatPipboy
   satchel: N14ClothingBackpackSatchelMilitaryFilled
   storage:
     back:
