@@ -283,8 +283,8 @@
 - type: entity
   parent: SupermutantFollowerGloves
   id: SupermutantBlackGloves
-  name: Super Ranger Gloves
-  description: Made to fit the biggest hands taking on the republic's biggest problems, issued to super mutant rangers and even super mutant troopers when logistics can spare the material for it.
+  name: Super Sized Gloves
+  description: Made to fit the biggest hands taking on the biggest problems, issued to super mutants who prefer hands-on solutions.
   components:
   - type: Sprite
     sprite: _Misfits/Clothing/SuperMutant/yazov_gloves.rsi
