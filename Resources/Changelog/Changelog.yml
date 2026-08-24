@@ -10605,3 +10605,10 @@ Entries:
   id: 6353
   time: '2026-08-24T02:23:43.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1788
+- author: Dpellowski
+  changes:
+    - type: Tweak
+      message: Enclave -> US Army renames (Mostly)
+  id: 6354
+  time: '2026-08-24T17:18:42.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1806
