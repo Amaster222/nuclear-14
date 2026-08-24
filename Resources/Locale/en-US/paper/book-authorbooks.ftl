@@ -367,19 +367,17 @@ book-text-legion-law =
 
  === CRIMINAL  CODE ===
 
- The following laws apply overall to both Legionaries and Plebeians. Servii and Monstrum are irrelevant, as they are property.
-
- Murder of a Plebian - the illegal killing of a Plebeian without just cause, such as in self-defense, or in preventing degeneracy.
+ Murder of a Plebian - the illegal killing of a Plebian. an 'illegal' killing refers to one without just cause - such as self defence or punishing degeneracy.
 
  Murder of a Legionary - The illegal killing of any Legionary. The killing of women who perform duties adjacent to bellum - such as Auxiliary, Frumentarii, and Explorers is to be treated for all intents and purposes as killing of a Legionary.
 
- Damage of Property - The damaging of a piece of owned property belonging to another, including servi.
+ Damage of Property - The damaging of an item of value belonging to another, including servi.
 
  Sacrilege - any Act that is a direct attack on Mars or his earthly representatives. This includes the damage of temples and shrines as well as attacks on members of the Priesthood
 
- Treason - An act undertaken by a Plebeian or Legionary that is intended to disadvantage or disrupt the Legion
+ Treason - An act undertaken by a Plebian or Legionary that is intended to disadvantage or disrupt the Legion
 
- Disobedience - A plebeian Ignoring an order from a Legionary, or a Legionary ignoring orders from a superior officer.
+ Disobedience - A plebian Ignoring an order from a Legionary, or a Legionary ignoring orders from a superior officer.
 
  Desertion - Abandoning the Legion whilst having been an active Legionary
 
@@ -448,17 +446,17 @@ book-text-legion-law =
 
  === ADMINISTRATION ===
 
- Civilian administration - This refers to the internal governing bodies of any settlements of Plebeians. These governments are generally free to be entirely self-governing and self-policing, with a few important exceptions:
+ Civilian administration - This refers to the internal governing bodies of any settlements of Plebians. These governments are generally free to be entirely self-governing and self-policing, with a few important exceptions:
 
- -The plebeian government must obey all commands and requisitions made of it by the Legio. If a demand is found to be excessive or corrupt, the government may petition the Legatus to overturn it, but must still follow it until then. Abuses of this power by a Centurion demand harsh punishment.
+ -The plebian government must obey all commands and requisitions made of it by the Legio. If a demand is found to be excessive or corrupt, the government may petition the Legatus to overturn it, but must still follow it until then. Abuses of this power by a Centurion demand harsh punishment.
 
- -The plebeian government may not pass laws or allow behavior that blatantly contradict the laws and morals of the Legio and Mars
+ -The plebian government may not pass laws or allow behavior that blatantly contradict the laws and morals of the Legio and Mars
 
- -The plebeian government may not privately enter into diplomatic relations of its own volition with any other entity without the consent of the Legio.
+ -The plebian government may not privately enter into diplomatic relations of its own volition with any other entity without the consent of the Legio.
 
  Legio administration - Each administrative district of the Legio is typically centered around a castrum or similar military installation. These installations will be commanded by a Centurion. The centurion assigned to a region holds absolute life and death authority over the Bellatores assigned to him. This does not mean his power to execute is without checks. A Centurion found to kill or punish his Bellatores without just cause will be subject to punishment.
 
- The powers for the assigned Centurion of a region include the ability to pass laws for that area’s plebeian population, so long as they do not conflict with the Law of the Legio, and to make requisitions of resources and men from Plebeian populations. The Centurion may enslave any dissolute found within their administration area.
+ The powers for the assigned Centurion of a region include the ability to pass laws for that area’s plebian population, so long as they do not conflict with the Law of the Legio, and to make requisitions of resources and men from Plebian populations. The Centurion may enslave any dissolute found within their administration area.
 
  ==== ROLES AND DIVISION OF POWERS BETWEEN PRIESTHOOD AND LEGION ====
 
