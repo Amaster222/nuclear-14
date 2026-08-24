@@ -10598,3 +10598,10 @@ Entries:
   id: 6352
   time: '2026-08-23T01:06:46.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1793
+- author: aftemath434
+  changes:
+    - type: Tweak
+      message: Enclave Cargo TLC :3
+  id: 6353
+  time: '2026-08-24T02:23:43.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1788
