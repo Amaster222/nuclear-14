@@ -11,7 +11,7 @@ using Robust.Shared.Network;
 namespace Content.Shared.Item.ItemToggle;
 
 /// <summary>
-/// This handles w
+/// This handles toggling guns on and off for the purposes of changing their stats during different active states
 /// </summary>
 public sealed class ItemToggleGunSystems : EntitySystem
 {
@@ -28,6 +28,10 @@ public sealed class ItemToggleGunSystems : EntitySystem
         SubscribeLocalEvent<ItemToggleGunComponent, HeldRelayedEvent<RefreshMovementSpeedModifiersEvent>>(ActiveSpeedModifier);
     }
 
+
+    /// <summary>
+    /// Calls upon refreshes for gun stats and movement speed when the gun is toggled
+    /// </summary>
     private void ActivateGun(EntityUid uid, ItemToggleGunComponent component, ref ItemToggledEvent args)
     {
         _gun.RefreshModifiers(uid);
@@ -38,6 +42,10 @@ public sealed class ItemToggleGunSystems : EntitySystem
         Dirty(uid, component);
 
     }
+
+    /// <summary>
+    /// Handles changing the fire rate when the gun is active and inactive
+    /// </summary>
     public void ActiveFireRate(Entity<ItemToggleGunComponent> ent, ref GunRefreshModifiersEvent args)
     {
         if (TryComp<ItemToggleComponent>(ent, out var toggle) && toggle.Activated)
@@ -50,6 +58,9 @@ public sealed class ItemToggleGunSystems : EntitySystem
         }
     }
 
+    /// <summary>
+    /// Handles changing user movement speed when the gun is held and active (defaults to base speed when in active)
+    /// </summary>
     public void ActiveSpeedModifier(EntityUid uid, ItemToggleGunComponent component, ref HeldRelayedEvent<RefreshMovementSpeedModifiersEvent>args)
     {
         if (TryComp<ItemToggleComponent>(uid, out var toggle) && toggle.Activated)
