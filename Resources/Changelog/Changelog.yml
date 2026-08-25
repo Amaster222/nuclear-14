@@ -10628,3 +10628,10 @@ Entries:
   id: 6356
   time: '2026-08-25T01:47:34.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1090
+- author: Oreo365
+  changes:
+    - type: Add
+      message: Added Canes and Cane Blades to Loadouts
+  id: 6357
+  time: '2026-08-25T20:48:21.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1798
