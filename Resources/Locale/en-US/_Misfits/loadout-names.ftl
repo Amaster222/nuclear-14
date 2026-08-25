@@ -131,6 +131,9 @@ loadout-name-MisfitsLoadoutOuterArmorKitShoulder = shoulder armor kit
 loadout-name-MisfitsLoadoutOuterKhansJacket = great khan jacket
 loadout-name-MisfitsLoadoutOuterKhansVest = great khan vest
 loadout-name-MisfitsLoadoutOuterKhansBattlecoatRed = great khan red battlecoat
+loadout-name-MisfitsLoadoutOuterMarkedMenCombatTribalArmor = marked men tribal armor
+loadout-name-MisfitsLoadoutOuterMarkedMenCombatPatrolArmor = marked men patrol armor
+
 
 # Shoes
 loadout-name-ClothingShoesBootsLaceupVault = laceup shoes

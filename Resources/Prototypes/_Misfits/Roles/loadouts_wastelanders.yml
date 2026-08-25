@@ -111,6 +111,42 @@
   items:
     -  MisfitsClothingOuterKhansBattlecoatBlack
 
+- type: loadout
+  id: MisfitsLoadoutOuterMarkedMenCombatTribalArmor
+  category: Outer
+  cost: 6
+  exclusive: true
+  requirements:
+    - !type:CharacterItemGroupRequirement
+      group: N14LoadoutOuter
+    - !type:CharacterSpeciesRequirement
+      species:
+        - Ghoul
+        - GhoulGlowing
+    - !type:CharacterDepartmentRequirement
+      departments:
+        - Wastelander
+  items:
+    -  M14ClothingOuterMarkedMenCombatTribalArmor
+
+- type: loadout
+  id: MisfitsLoadoutOuterMarkedMenCombatPatrolArmor
+  category: Outer
+  cost: 6
+  exclusive: true
+  requirements:
+    - !type:CharacterItemGroupRequirement
+      group: N14LoadoutOuter
+    - !type:CharacterSpeciesRequirement
+      species:
+        - Ghoul
+        - GhoulGlowing
+    - !type:CharacterDepartmentRequirement
+      departments:
+        - Wastelander
+  items:
+    -  M14ClothingOuterMarkedMenCombatPatrolArmor
+
 # === Outer: Wasteland jackets and coats ===
 
 - type: loadout
