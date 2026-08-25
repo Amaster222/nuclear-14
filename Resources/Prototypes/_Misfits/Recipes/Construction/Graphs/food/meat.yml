@@ -1,0 +1,34 @@
+﻿# cooked human steak and cutlets, don't forget to change microwave recipes too!
+- type: constructionGraph
+  id: HumanMeatSteak
+  start: start
+  graph:
+
+  - node: start
+    edges:
+    - to: human meat steak
+      completed:
+      - !type:PlaySound
+        sound: /Audio/Effects/sizzle.ogg
+      steps:
+      - minTemperature: 345
+
+  - node: human meat steak
+    entity: N14FoodMeatHumanCooked
+
+- type: constructionGraph
+  id: HumanMeatCutlet
+  start: start
+  graph:
+
+  - node: start
+    edges:
+    - to: human meat cutlet
+      completed:
+      - !type:PlaySound
+        sound: /Audio/Effects/sizzle.ogg
+      steps:
+      - minTemperature: 345
+
+  - node: human meat cutlet
+    entity: N14FoodMeatHumanCooked

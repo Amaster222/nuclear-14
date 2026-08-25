@@ -200,6 +200,22 @@
   solids:
     N14FoodMeatRadchickenCutlet: 1
 
+- type: microwaveMealRecipe
+  id: N14RecipeSteakHuman
+  name: human steak recipe
+  result: N14FoodMeatHumanCooked
+  time: 15
+  solids:
+    N14FoodMeatHuman: 1
+
+- type: microwaveMealRecipe
+  id: N14RecipeCutletHuman
+  name: human cutlet recipe
+  result: N14FoodMeatHumanCutletCooked
+  time: 5
+  solids:
+    N14FoodMeatHumanCutlet: 1
+
 #THE GREAT DOWNSTREAM MIGRATION BEGINS HERE GANG
 
 - type: microwaveMealRecipe
