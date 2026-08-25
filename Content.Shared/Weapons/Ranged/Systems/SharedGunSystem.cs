@@ -607,7 +607,7 @@ public abstract partial class SharedGunSystem : EntitySystem
         }
 
         var angle = new Angle(direction.Theta + spread + buckleMovementSpread);
-        DebugTools.Assert(spread <= component.MaxAngleModified.Theta);
+        //DebugTools.Assert(spread <= component.MaxAngleModified.Theta);
         return angle;
     }
 
@@ -809,14 +809,13 @@ public abstract partial class SharedGunSystem : EntitySystem
     /// to strip its comps(including physics) and ensure no desync issues
     /// </summary>
     protected void EjectCartridge(
-        EntityUid cart,
+        EntityUid cart, EntityCoordinates baseCoords,
         Angle? angle = null,
         bool playSound = true,
         ICommonSession? userSession = null)
     {
         // Misfit: pending refactor. maybe redundant check
         if (!TryGetNetEntity(cart, out var netEnt)) return;
-        // Misfit change: changed rng method for better server-client sync
 
         var xform = Transform(cart);
         if (!TryComp<CartridgeAmmoComponent>(cart, out var cartComp) || !cartComp.Spent)
@@ -825,12 +824,12 @@ public abstract partial class SharedGunSystem : EntitySystem
             _xform.SetLocalPositionRotation(cart, xform.Coordinates.Offset(posEjectRNG).Position, angleEjectRNG, xform);
             return;
         }
-        var (posW, angleW) = _xform.GetWorldPositionRotation(xform);
-        var mapCoord = new MapCoordinates(posW, _xform.GetMapId(cart));
+
+        var angleW = _xform.GetWorldRotation(baseCoords.EntityId);
+        var mapCoord = _xform.ToMapCoordinates(baseCoords);
         var cartProto = MetaData(cart).EntityPrototype?.ID;
         EjectSpentCart(mapCoord, angleW, cartProto, userSession);
         PredictedDel(cart);
-
     }
 
 

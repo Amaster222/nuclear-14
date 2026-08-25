@@ -731,3 +731,75 @@
     backStrength: 4
   - type: StaticPrice
     price: 350
+
+
+- type: entity
+  name: Debug Shotgun
+  parent: N14WeaponShotgunBase
+  id: MisfitWeaponDebugShotgun
+  suffix: DEBUG
+  description: DEBUG ONLY!!! NOT ADMIN ABUSE NO ADMINS ALLOWS!!!!
+  components:
+  - type: Clothing
+    sprite: _Nuclear14/Objects/Weapons/Guns/Shotguns/double_shotgun.rsi
+    quickEquip: false
+    slots:
+    - Back
+    - suitStorage
+  - type: Sprite
+    sprite: _Nuclear14/Objects/Weapons/Guns/Shotguns/boomstick2.rsi
+  - type: Item
+    size: Large
+    sprite: _Nuclear14/Objects/Weapons/Guns/Shotguns/boomstick2.rsi
+  - type: GunRequiresWield
+  - type: Gun
+    fireRate: 6
+    soundGunshot:
+      collection: N14DoubleBarrelShotgunGunshot
+  - type: BallisticAmmoProvider
+    whitelist:
+      tags:
+      - N14ShellShotgun12
+    capacity: 900
+    proto: N14ShellShotgun12
+    soundInsert:
+      path: /Audio/_Nuclear14/Weapons/Effects/Reload/Shotguns/shotgun_insert.ogg
+  - type: StaticPrice
+    price: 666
+  - type: MeleeWeapon
+    attackRate: 5
+    bluntStaminaDamageFactor: 10
+    swapKeys: true
+    disableHeavy: false
+    range: 3
+    damage:
+      types:
+        Piercing: 666
+        Slash: 666
+    animation: WeaponArcThrust
+    wideAnimationRotation: -135
+    soundHit:
+      path: /Audio/Weapons/bladeslice.ogg
+  - type: IncreaseDamageOnWield
+    damage:
+      types:
+        Piercing: 666
+        Slash: 666
+  - type: DamageOtherOnHit
+    damage:
+      types:
+        Piercing: 666
+        Slash: 666
+  - type: EmbeddableProjectile
+    removalTime: 666
+  - type: EmbedPassiveDamage
+  - type: ThrowingAngle
+    angle: 225
+
+
+- type: entity
+  name: Admin Abuse Shotgun
+  parent: MisfitWeaponDebugShotgun
+  id: ToddStick
+  suffix: ADMIN
+  description: This is the admin abuse shotgun

@@ -21,8 +21,9 @@ public abstract partial class SharedGunSystem
     /// </summary>
     private void OnTakeAmmo(EntityUid uid, CartridgeAmmoComponent giverComp, TakeAmmoEvent args)
     {
+
         args.Ammo.Add((uid, EnsureShootable(uid)));
-        Dirty(uid, giverComp);
+        //Dirty(uid, giverComp);
     }
     /// <summary>
     /// clients running this should handle visual/send event to server

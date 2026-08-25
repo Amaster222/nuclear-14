@@ -26,7 +26,7 @@ public sealed partial class GunSystem
             {
                 if (!autoShoot.Enabled)
                     continue;
-
+                Log.Debug($"Server autoshoot on {Timing.CurTime.Ticks}");
                 AttemptShoot(uid, gun);
             }
             else if (gun.BurstActivated)
@@ -39,4 +39,5 @@ public sealed partial class GunSystem
             }
         }
     }
+
 }

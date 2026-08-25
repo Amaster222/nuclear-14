@@ -361,7 +361,7 @@ public partial class SharedGunSystem
                     SetCartridgeSpent(uid, cartridge, !(bool) chamber);
                 // misfit fix deuplicated spent carts
                 var sender = _player.TryGetSessionByEntity(user!.Value, out var session) ? session : _player.LocalSession;
-                EjectCartridge(uid, userSession: sender);
+                EjectCartridge(uid, baseCoords: Transform(revolverUid).Coordinates, userSession: sender);
                 //}
 
                 component.Chambers[i] = null;
@@ -376,7 +376,7 @@ public partial class SharedGunSystem
                 //                 prediction handled in EjectCartridge
                 // msifit fix duplicated spent carts
                 var sender = _player.TryGetSessionByEntity(user!.Value, out var session) ? session : _player.LocalSession;
-                EjectCartridge(slot.Value, userSession: sender);
+                EjectCartridge(slot.Value, baseCoords: Transform(sender!.AttachedEntity!.Value).Coordinates, userSession: sender);
 
 
                 anyEmpty = true;
