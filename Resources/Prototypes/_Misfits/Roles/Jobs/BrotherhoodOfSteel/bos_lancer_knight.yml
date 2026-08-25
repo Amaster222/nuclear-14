@@ -10,7 +10,7 @@
   overrideConsoleVisibility: true
   canBeAntag: false
   name: job-name-bos-lancer-knight
-  overwatchCategory: OverwatchBosKnight
+  overwatchCategory: OverwatchBosSupport
   description: job-description-bos-lancer-knight
   playTimeTracker: BoSLancerKnight
   requirements:
