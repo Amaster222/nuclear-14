@@ -34,14 +34,6 @@
 
     - type: entity
   parent: N14BasePipboy
-  id: N14Lancer_PipBoy
-  suffix: Lancer
-  components:
-  - type: Pda
-    id: N14IDBrotherhoodOfSteelHolotagInitiate
-
-    - type: entity
-  parent: N14BasePipboy
   id: N14LancerKnight_PipBoy
   suffix: Lancer-Knight
   components:
