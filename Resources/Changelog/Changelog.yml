@@ -10621,3 +10621,10 @@ Entries:
   id: 6355
   time: '2026-08-25T01:46:09.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1804
+- author: Vixting
+  changes:
+    - type: Add
+      message: 'Pacifism now blocks arming explosives '
+  id: 6356
+  time: '2026-08-25T01:47:34.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1090
