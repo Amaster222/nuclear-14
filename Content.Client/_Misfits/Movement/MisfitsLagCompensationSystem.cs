@@ -56,6 +56,7 @@ public sealed partial class MisfitsLagCompensationSystem : SharedMisfitsLagCompe
     {
         if (!TryComp(user, out HandsComponent? hands))
             return false;
+        // entityCoords changes EntityId to nearest valid parent(ie... not in container, not held ect...)
         var parent = Transform(item).Coordinates.EntityId;
         if (parent == user) return true;
 
@@ -67,7 +68,7 @@ public sealed partial class MisfitsLagCompensationSystem : SharedMisfitsLagCompe
     }
     public void OnDirtyQueue(ref AmmoProviderDirtyEvent ev)
     {
-        // todo: better "isHeldInHands"
+
         if (ev.User is null || !IsHeldInHands(ev.User.Value, ev.Gun) || !_clientTiming.IsFirstTimePredicted)
             return;
 
@@ -80,17 +81,10 @@ public sealed partial class MisfitsLagCompensationSystem : SharedMisfitsLagCompe
         LatestPredictedTick = ev.Tick;
         DebugTools.Assert(DebugPredictTick());
         PredictTicks.Enqueue(ev);
-
     }
-
+    private const int TotalResetMult = 4;
+    private const int PredictionTolerance = 2;
     // TODO: very wip
-    /// <summary>
-    /// return false if we already predicted that tick
-    /// else if we didnt or we are too far off ect, accept whatever state is not null
-    /// </summary>
-    /// <param name="cur"></param>
-    /// <param name="next"></param>
-    /// <returns></returns>
     public void OnHandleStateCheck(OnCompHandling ev)
     {
         // cur not null, next null
@@ -106,7 +100,7 @@ public sealed partial class MisfitsLagCompensationSystem : SharedMisfitsLagCompe
 
         if (cur is BallisticAmmoState curstate && next is null
             && !PredictTicks.TryPeek(out var predictedState) &&
-            Math.Abs(LatestPredictedTick - LastConfirmedTick) >= lagTickCount * 4)
+            Math.Abs(LatestPredictedTick - LastConfirmedTick) >= lagTickCount * TotalResetMult)
         {
             DebugTools.Assert(DebugPredictResetBack(curstate, predictedState));
             // reset
@@ -130,7 +124,7 @@ public sealed partial class MisfitsLagCompensationSystem : SharedMisfitsLagCompe
         {
             //lagTickCount
             //state.Tick > nextState.FromTick)
-            if (Equals(state, nextState) && Math.Abs(state.Tick - nextState.FromTick) <= lagTickCount * 2)
+            if (Equals(state, nextState) && Math.Abs(state.Tick - nextState.FromTick) <= lagTickCount * PredictionTolerance)
             {
                 DebugTools.Assert(DebugPredictSuccess(nextState));
                 LastConfirmedTick = nextState.FromTick;

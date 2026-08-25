@@ -88,9 +88,7 @@ public abstract partial class SharedGunSystem
         "gun-ballistic-cycled-empty" : "gun-ballistic-cycled")
         , giverUid, user);
 
-        var cartridge = Cycle(giverUid, comp, user);
-
-
+        Cycle(giverUid, comp, user);
     }
 
     /// <summary>
@@ -130,7 +128,6 @@ public abstract partial class SharedGunSystem
             return;
         }
         Audio.PlayPredicted(recieverComp.SoundInsert, recieverUid, args.User);
-
     }
 
     /// <summary>
@@ -185,10 +182,9 @@ public abstract partial class SharedGunSystem
 
         args.Repeat = !args.Cancelled && !Deleted(args.Target) && TryComp<BallisticAmmoProviderComponent>(args.Target.Value, out var recieverComp) &&
                       !PopupCancels(recieverComp, args.Target.Value, giverComp, giverUID, args.User) &&
-                      TryAmmoInsert(1, giverUID, recieverComp, args.Target.Value, args.User);
+                      TryAmmoInsert(5, giverUID, recieverComp, args.Target.Value, args.User);
 
         Audio.PlayPredicted(giverComp.SoundInsert, giverUID, args.User);
-
     }
 
     /// <summary>
@@ -269,8 +265,6 @@ public abstract partial class SharedGunSystem
     ///               2. already spawned ammo is removed from container(gun, ammobox ect)
     ///               3. spawned ammo is dropped in closest valid parent of giverUID
     /// <remarks/>
-
-    // TODO: rework takeammo event so it only worries about taking(spawning and such) not position logic
     private void OnBallisticTakeAmmo(EntityUid giverUID, BallisticAmmoProviderComponent giverComp, TakeAmmoEvent args)
     {
         // Transfrom data we apply to all spawned ammo
@@ -308,7 +302,7 @@ public abstract partial class SharedGunSystem
             var ammo = (uid, EnsureShootable(uid));
             args.Ammo.Add(ammo);
             Containers.Remove(uid, giverComp.Container);
-            FlagPredicted(uid);
+            //FlagPredicted(uid);
 
             index--;
             toRemCount--;
@@ -345,8 +339,6 @@ public abstract partial class SharedGunSystem
             Dirty(uid, comp);
         }
     }
-
-
 }
 [ByRefEvent]
 public record struct AmmoProviderDirtyEvent(EntityUid Gun, EntityUid? User, int AmmoIndex,
