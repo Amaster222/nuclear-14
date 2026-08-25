@@ -1109,6 +1109,13 @@ namespace Content.Server.Database
 
         /// <summary>Persistent Gold balance (2 gold = 1 cap).</summary>
         public int Gold { get; set; }
+
+        // #Nuclear14 Add - Persistent Legion Denarii / pre-war money balances
+        /// <summary>Persistent Legion Denarii balance.</summary>
+        public int LegionDenarii { get; set; }
+
+        /// <summary>Persistent Pre-War Money balance.</summary>
+        public int PrewarMoney { get; set; }
     }
 
     // #Misfits Change - Persistent SPECIAL stats, kill/death/round counters, and history per character.
@@ -1559,7 +1566,7 @@ namespace Content.Server.Database
         /// <summary>Stack count for stackable items.</summary>
         public int StackCount { get; set; }
 
-        /// <summary>Currency: Barter, Bottlecaps, NCRDollars, Silver, Gold.</summary>
+        /// <summary>Currency: Barter, Bottlecaps, NCRDollars, Silver, Gold, PrewarMoney, LegionDenarii.</summary>
         [Required]
         public string Currency { get; set; } = null!;
 
