@@ -5,13 +5,12 @@
 # Tier model:
 #   accessRead     (tag)    Tier 5  - View tab + folder list.
 #   accessWrite    (tag)    Tier 6  - Add subfolders / docs UNDER existing root entries.
-#   leadershipJobs (jobId)  Tier 7  - Create root entries; delete/restore non-Admin
-#                                     entries; rollback revisions; MAY also tick the
+#   leadershipJobs (jobId)  Tier 7  - Create root entries; rollback revisions; MAY tick the
 #                                     "Admin" checkbox to protect their own docs/folders
-#                                     from peer leaders. Job-gated so spawned ID cards
-#                                     cannot grant deletion power.
-#   adminJobs      (jobId)  Tier 8  - Delete/restore/edit Admin-marked entries;
-#                                     everything Leadership can do.
+#                                     from peer leaders.
+#   adminJobs      (jobId)  Tier 8  - Highest faction rank. Delete/restore any entry,
+#                                     edit Admin-marked entries, and use all Leadership powers.
+#                                     Job-gated so spawned ID cards cannot grant structural power.
 #   adminLabel     (string) Faction-themed label for the Admin checkbox in the UI.
 
 # -- Followers of the Apocalypse: Open Archive --------------------------------
@@ -51,6 +50,24 @@
   - BoSWestScribe          # "Head Scribe" job id
   adminJobs:
   - BoSWestElderCommander  # "Elder Commander" job id
+
+# ── NCR Office of Science and Industry: Research Archive ─────────────────────
+# Kept before the general NCR database because terminal selection uses the first
+# matching access tag. Every OSI job receives the OSI tag; the Chief is the
+# department's sole administrative authority for permanent deletion.
+- type: misfitsTerminalDatabase
+  id: osi-researcharchive
+  displayName: OSI Research Archive
+  accentColor: "#F4F4F4"
+  adminLabel: CHIEF SCIENTIST
+  accessRead:
+  - OSI
+  accessWrite:
+  - OSI
+  leadershipJobs:
+  - OSIChiefScientist
+  adminJobs:
+  - OSIChiefScientist
 
 # ── NCR: Salt Dogs ───────────────────────────────────────────────────────────
 # Leadership = Captain, Lieutenant, First Sergeant.

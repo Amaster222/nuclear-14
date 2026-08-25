@@ -483,14 +483,12 @@
             - PlayerSuperMutant
             - Enclave
         - type: PowerArmorProficiency
-- type: startingGear
+- type: startingGear # Enclave will give the Enlisted mutant their weapons
   id: SuperMutantEnclaveGear
   equipment:
     outerClothing: MisfitsEnclavePowerArmor
-    jumpsuit: ClothingSuperMutantLabcoat
+    jumpsuit: ClothingSuperMutantJumpsuit
     ears: N14ClothingHeadsetEnclave
     id: N14EnclaveTrooperPipboy
-    belt: ClothingBeltMilitary
-    pocket1: EnclaveSoldierloadoutkits
 - type: playTimeTracker
   id: SuperMutantEnclave

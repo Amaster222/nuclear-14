@@ -499,6 +499,8 @@
   components:
   - type: Sprite
     state: ceramic-flask
+  - type: Spillable
+    solution: drink
   - type: SolutionContainerManager
     solutions:
       drink:

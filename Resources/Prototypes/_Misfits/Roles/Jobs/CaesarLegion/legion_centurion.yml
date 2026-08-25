@@ -9,12 +9,12 @@
   description: job-description-caesar-legion-centurion
   playTimeTracker: CaesarLegionCenturion
   requirements:
-    - !type:CharacterDepartmentTimeRequirement # #Misfits Tweak - T7 faction timelock (40h Legion)
+    - !type:CharacterDepartmentTimeRequirement # Legion total timelock
       department: CaesarLegion
       min: 144000 # 40 hours
     - !type:CharacterPlaytimeRequirement
       tracker: CaesarLegionOptio
-      min: 28800 # 8 hrs
+      min: 28800 # 8 hours
     - !type:CharacterSpeciesRequirement
       species:
       - Human

@@ -128,7 +128,9 @@ loadout-name-MisfitsLoadoutOuterVegabondsVest = vagabond's vest
 loadout-name-MisfitsLoadoutOuterArmorKit = armor kit
 loadout-name-MisfitsLoadoutOuterArmorKitPunk = punk armor kit
 loadout-name-MisfitsLoadoutOuterArmorKitShoulder = shoulder armor kit
-loadout-name-MisfitsLoadoutOuterKhanLeather = great khan leather vest
+loadout-name-MisfitsLoadoutOuterKhansJacket = great khan jacket
+loadout-name-MisfitsLoadoutOuterKhansVest = great khan vest
+loadout-name-MisfitsLoadoutOuterKhansBattlecoatRed = great khan red battlecoat
 
 # Shoes
 loadout-name-ClothingShoesBootsLaceupVault = laceup shoes
@@ -202,6 +204,8 @@ loadout-name-ClothingNeckCrucifixColor = crucifix (colorable)
 
 # Belt
 loadout-name-N14LoadoutBeltUtility = utility belt
+loadout-name-MisfitsLoadoutSquireWebbingBlack = black squire webbing
+loadout-name-MisfitsLoadoutSquireWebbingBrown = brown squire webbing
 
 # Masks
 loadout-name-ClothingMaskGasMinerVault = miner gas mask
@@ -464,7 +468,8 @@ loadout-name-Magazine762AmmoShort = 7.62 short magazine
 loadout-name-Magazine762Rifle = 7.62 rifle magazine
 loadout-name-ClipMagazine308Rifle = .308 rifle clip
 loadout-name-MagazineBox10mm = 10mm ammo box
-loadout-name-MagazineBox12 = 12-gauge ammo box
+# Cythisiax Fixed - MagazineBox12 is the 12.7mm box (was mislabeled as 12-gauge)
+loadout-name-MagazineBox12 = 12.7mm ammo box
 loadout-name-MagazineBox12gauge = 12-gauge ammo box
 loadout-name-MagazineBox20gauge = 20-gauge ammo box
 loadout-name-MagazineBox22 = .22 ammo box
@@ -491,6 +496,22 @@ loadout-name-N14LoadoutOuterSoldierCoat = soldier coat
 loadout-name-N14LoadoutOuterZealotDuster = zealot duster
 loadout-name-N14LoadoutOuterRaiderCombat1 = raider combat armor
 loadout-name-N14LoadoutOuterCombatArmorRaider = raider combat armor
+loadout-name-MisfitsLoadoutOuterCombatTalon = talon combat armor
+loadout-name-MisfitsLoadoutOuterCombatTalonDuster = talon combat duster
+loadout-name-MisfitsLoadoutOuterDeadHorsesArmor = dead horses armor
+loadout-name-MisfitsLoadoutOuterDeadHorsesLightArmor = dead horses light armor
+loadout-name-MisfitsLoadoutOuterSorrowsArmor = sorrows armor
+loadout-name-MisfitsLoadoutOuterRustwalkersArmor = rustwalkers armor
+loadout-name-MisfitsLoadoutOuterRustwalkersLightArmor = rustwalkers light armor
+loadout-name-MisfitsLoadoutOuterWesternWayfarerArmor = western wayfarer armor
+loadout-name-MisfitsLoadoutOuterWesternWayfarerHeavyArmor = western wayfarer heavy armor
+loadout-name-MisfitsLoadoutOuterWardenPlate = warden plate
+loadout-name-LoadoutN14ClothingOuterCaliforniaGirlVetRangerRiotArmor = california girl riot armor
+loadout-name-LoadoutN14ClothingOuterTheDevoutVetRangerRiotArmor = the devout riot armor
+loadout-name-LoadoutN14ClothingOuterDemoExpertVetRangerRiotArmor = demo expert riot armor
+loadout-name-LoadoutN14ClothingOuterCanOpenerVetRangerRiotArmor = can opener riot armor
+
+
 
 # Misfits Add - Headgear loadout names
 loadout-name-LoadoutN14ClothingHatSaltRunnerMask = Salt Runner mask
@@ -503,6 +524,10 @@ loadout-name-N14ClothingHeadHatPressHelmet = press helmet
 loadout-name-N14ClothingHeadHatPrewarMilitaryHelmet = pre-war military helmet
 loadout-name-LoadoutN14ClothingHeadFourLeafRangerHelmet = Four Leaf ranger helmet
 loadout-name-LoadoutN14ClothingHeadHighlandRangerHelmet = Highland ranger helmet
+loadout-name-LoadoutN14ClothingHeadHardCaseRangerHelmet = hard case ranger helmet
+loadout-name-LoadoutN14ClothingHeadDemoExpertRangerHelmet = demo expert ranger helmet
+loadout-name-LoadoutN14ClothingHeadTheDevoutRangerHelmet = the devout ranger helmet
+loadout-name-LoadoutN14ClothingHeadCanOpenerRangerHelmet = can opener ranger helmet
 
 # Misfits Add - Neckwear loadout names
 loadout-name-LoadoutN14ClothingNeckRangerDuster = ranger duster
@@ -642,6 +667,7 @@ loadout-name-MisfitsLoadoutHeadHeadMarlowHat = marlow hat
 loadout-name-MisfitsLoadoutHeadHeadSchlimmHat = schlimm hat
 loadout-name-MisfitsLoadoutHeadHeadAHPhelmet = highway patrol helmet
 loadout-name-MisfitsLoadoutHeadKhanHelmet = khan helmet
+loadout-name-MisfitsLoadoutHeadKhanFullHelmet = khan full helmet
 # Head — NCR soldiers
 loadout-name-MisfitsLoadoutHeadNCRSidecap = NCR sidecap
 loadout-name-MisfitsLoadoutHeadNCRBeretOfficer = NCR officer beret
@@ -714,6 +740,7 @@ loadout-name-N14LoadoutUniversalMaskGreenMask = green mask
 loadout-name-N14LoadoutUniversalMaskOrangeMask = orange mask
 loadout-name-N14LoadoutUniversalMaskPatriotMask = patriot mask
 loadout-name-N14LoadoutUniversalMaskRedMask = red mask
+loadout-name-LoadoutN14ClothingHatTheDevoutMask = the devout riot gas mask
 
 # Neck
 loadout-name-N14LoadoutUniversalNeckCloakBrotherhoodWashington = Brotherhood of Steel cloak
@@ -790,6 +817,10 @@ loadout-name-MisfitsLoadoutUniformKhansUniform = great khans uniform
 loadout-name-MisfitsLoadoutUniformKhansUniformShorts = great khan jorts
 loadout-name-MisfitsLoadoutUniformEnclaveUniformGrey = grey enclave jumpsuit
 loadout-name-MisfitsLoadoutUniformEnclaveUniformBlue = blue enclave jumpsuit
+loadout-name-MisfitsLoadoutUniformDeadHorsesUniform = dead horses garb
+loadout-name-MisfitsLoadoutUniformSorrowsUniform = sorrows garb
+loadout-name-MisfitsLoadoutUniformRustwalkersUniform = rustwalkers uniform
+loadout-name-MisfitsLoadoutUniformWhiteLegsUniform = white legs garb
 
 # Ammo and magazines
 loadout-name-N14MagazinePistol45 = pistol magazine (.45 auto)
@@ -823,3 +854,9 @@ loadout-name-LoadoutNCRRangerFoxArmor = fox ranger combat armor
 loadout-name-MisfitsLoadoutHeadAntlerSkull = antler skullcap
 loadout-name-MisfitsLoadoutBoSMidwestCommanderPowerArmor = BoS Commander Power Armor
 loadout-name-MisfitsLoadoutFollowerResponderDuster = Follower Responder Duster
+
+# #Cythisiax Add - Patreon supporter loadout names/category
+loadout-category-Patreon = Patreon
+loadout-name-LoadoutPatreonSilverUniformVaultJumpsuit = vault jumpsuit (Patreon)
+loadout-name-LoadoutPatreonGoldCombatBoots = combat boots (Patreon)
+loadout-name-LoadoutPatreonNuclearPistol10mm = 10mm pistol (Patreon)

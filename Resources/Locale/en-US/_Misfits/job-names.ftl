@@ -21,6 +21,9 @@ job-description-ncr-weapon-specialist = You are a weapons-qualified specialist o
 job-name-ncr-requisition-officer = NCR Requisition Officer
 job-description-ncr-requisition-officer = You are a Quartermaster and Requisition Officer of NCR, maintain the armies' equipment and supervise the allocation of its resources.
 
+job-name-ncr-vertibird-pilot = NCR Vertibird Pilot
+job-description-ncr-vertibird-pilot = You fly the Republic's vertibirds. Insertion, extraction, and casualty evacuation are yours to run, and the bird you are given is worth more than the platoon riding in it. You hold a warrant, not a commission — you start as a Warrant Officer and climb to CW3 on flight hours alone.
+
 job-name-ncr-citizen = NCR Citizen
 job-description-ncr-citizen = You are a citizen of the NCR coming east for work, to help the military as a Civilian contractor.
 
@@ -36,6 +39,8 @@ job-name-enclave-senior-officer = Enclave Senior Officer
 job-description-enclave-senior-officer = Serve as the Commander's right hand, directing field operations and managing subordinate officers. (WARNING YOU CAN BE RR'D FOR ANY REASON AS ENCLAVE BY YOUR COMMANDER)
 job-name-enclave-junior-officer = Enclave Junior Officer
 job-description-enclave-junior-officer = Lead squads in the field, execute mission objectives, and bridge the gap between NCOs and senior command. (WARNING YOU CAN BE RR'D FOR ANY REASON AS ENCLAVE BY YOUR COMMANDER)
+job-name-enclave-vertibird-pilot = Enclave Vertibird Pilot
+job-description-enclave-vertibird-pilot = You fly for the Enclave. The vertibird is the last symbol of what America was, and you are trusted to keep it in the air. Your commission begins at Second Lieutenant and reaches Captain with hours logged. (WARNING YOU CAN BE RR'D FOR ANY REASON AS ENCLAVE BY YOUR COMMANDER)
 job-name-enclave-nco = Enclave NCO
 job-description-enclave-nco = Maintain discipline, train enlisted personnel, and ensure tactical readiness on the ground. (WARNING YOU CAN BE RR'D FOR ANY REASON AS ENCLAVE BY YOUR COMMANDER)
 job-name-enclave-enlisted = Enclave Enlisted
@@ -143,6 +148,13 @@ job-name-bos-paladin = Brotherhood Paladin
 job-description-bos-paladin = Fight as the Brotherhood's frontline heavy infantry and defend the chapter's interests.
 job-name-bos-knight = Brotherhood Knight
 job-description-bos-knight = Protect the chapter, escort missions, and recover technology in the field.
+# #Misfits Add - Brotherhood Lancers, the chapter's aviation branch.
+job-name-bos-lancer-captain = Brotherhood Lancer-Captain
+job-description-bos-lancer-captain = You command the chapter's Lancers and fly its vertibird. Keep the bird in the air, move the Brotherhood's people and salvage, and remember that the machine is Brotherhood property first and your ride second.
+job-name-bos-lancer-knight = Brotherhood Lancer-Knight
+job-description-bos-lancer-knight = You are the crew chief. You ride the co-pilot seat, work the turret over whatever the Captain flies you across, and keep the gun fed. When the bird is down you are on the airframe with everyone else.
+job-name-bos-lancer = Brotherhood Lancer
+job-description-bos-lancer = You are deck crew. The vertibird comes back chewed up and it is your torch that puts it right, your hands that clear the pad and load the cargo. Nobody flies anywhere without you.
 job-name-bos-scribe = Brotherhood Scribe
 job-description-bos-scribe = Support the chapter with research, medicine, and technical expertise.
 job-name-bos-initiate = Brotherhood Initiate
@@ -176,7 +188,7 @@ job-name-caesar-legion-Acolyte-of-mars = Acolyte of Mars
 job-description-caesar-legion-Acolyte-of-mars = You are a devoted Acolyte of Mars, you answer to the Priestess directly.
 
 job-name-bos-off-duty = Off Duty BOS
-job-description-bos-off-duty = You are an off-duty member of the Brotherhood of Steel. You are not to participate in combat operations as this week you are not on duty.
+job-description-bos-off-duty = You are an off-duty member of the Brotherhood of Steel. You are not to participate in operations as this week you are not on duty. To do so is to violate the codex.
 
 job-name-ncr-provost = NCR Provost
 job-description-ncr-provost = You are An investigator sent on behalf of the Provost office.

@@ -16,6 +16,24 @@
       - state: green
       - state: commander
 
+# #Cythisiax Edited - NCR HT Instructor personal-whitelist spawn point (was Paladin Commander).
+- type: entity
+  parent: MisfitsSpawnPointBoSMidPaladinCommander
+  id: MisfitsSpawnPointBoSPaladinCommander
+  name: NCR HT Instructor
+  components:
+  - type: SpawnPoint
+    job_id: BoSPaladinCommander
+
+# #Cythisiax Added - TOMBSTONE personal-whitelist spawn point.
+- type: entity
+  parent: MisfitsSpawnPointBoSMidPaladinCommander
+  id: MisfitsSpawnPointBoSTombstone
+  name: TOMBSTONE
+  components:
+  - type: SpawnPoint
+    job_id: BoSTombstone
+
 - type: entity
   parent: MisfitsSpawnPointBoSMidPaladinCommander
   id: MisfitsSpawnPointBoSMidKnight
@@ -27,6 +45,43 @@
     layers:
       - state: green
       - state: knight
+
+# #Misfits Add - Brotherhood Lancers spawn points.
+- type: entity
+  parent: MisfitsSpawnPointBoSMidPaladinCommander
+  id: MisfitsSpawnPointBoSLancerCaptain
+  name: Brotherhood Lancer-Captain
+  components:
+  - type: SpawnPoint
+    job_id: BoSLancerCaptain
+  - type: Sprite
+    layers:
+      - state: green
+      - state: knight
+
+- type: entity
+  parent: MisfitsSpawnPointBoSMidPaladinCommander
+  id: MisfitsSpawnPointBoSLancerKnight
+  name: Brotherhood Lancer-Knight
+  components:
+  - type: SpawnPoint
+    job_id: BoSLancerKnight
+  - type: Sprite
+    layers:
+      - state: green
+      - state: knight
+
+- type: entity
+  parent: MisfitsSpawnPointBoSMidPaladinCommander
+  id: MisfitsSpawnPointBoSLancer
+  name: Brotherhood Lancer
+  components:
+  - type: SpawnPoint
+    job_id: BoSLancer
+  - type: Sprite
+    layers:
+      - state: green
+      - state: squire
 
 - type: entity
   parent: MisfitsSpawnPointBoSMidPaladinCommander
@@ -610,6 +665,56 @@
       - state: green
       - state: recruit
 
+# NCR Office of Science and Industry (OSI) spawn points. # #Misfits Add
+# Spawn near the NCRA labs/medic area like the NCR Doctor.
+- type: entity
+  parent: MisfitsSpawnPointNCRCadet
+  id: MisfitsSpawnPointOSIChiefScientist
+  name: OSI Chief Scientist
+  components:
+  - type: SpawnPoint
+    job_id: OSIChiefScientist
+  - type: Sprite
+    layers:
+      - state: green
+      - state: medic
+
+- type: entity
+  parent: MisfitsSpawnPointNCRCadet
+  id: MisfitsSpawnPointOSIScientist
+  name: OSI Scientist
+  components:
+  - type: SpawnPoint
+    job_id: OSIScientist
+  - type: Sprite
+    layers:
+      - state: green
+      - state: medic
+
+- type: entity
+  parent: MisfitsSpawnPointNCRCadet
+  id: MisfitsSpawnPointOSIAssistant
+  name: OSI Assistant
+  components:
+  - type: SpawnPoint
+    job_id: OSIAssistant
+  - type: Sprite
+    layers:
+      - state: green
+      - state: medic
+
+- type: entity
+  parent: MisfitsSpawnPointNCRCadet
+  id: MisfitsSpawnPointOSIAgent
+  name: OSI Agent
+  components:
+  - type: SpawnPoint
+    job_id: OSIAgent
+  - type: Sprite
+    layers:
+      - state: green
+      - state: ws
+
 # Enclave — expanded 8-role hierarchy (#Misfits Change)
 - type: entity
   parent: SpawnPointJobBase
@@ -643,6 +748,19 @@
   components:
   - type: SpawnPoint
     job_id: EnclaveJuniorOfficer
+  - type: Sprite
+    layers:
+      - state: green
+      - state: lt
+
+# #Misfits Add - Vertibird Pilot spawn point.
+- type: entity
+  parent: MisfitsSpawnPointEnclaveCommander
+  id: MisfitsSpawnPointEnclaveVertibirdPilot
+  name: Enclave Vertibird Pilot
+  components:
+  - type: SpawnPoint
+    job_id: EnclaveVertibirdPilot
   - type: Sprite
     layers:
       - state: green

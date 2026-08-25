@@ -20,6 +20,7 @@ using Content.Shared.Storage.EntitySystems;
 using Content.Shared.Traits.Assorted.Components;
 using Robust.Shared.Collections;
 using Robust.Shared.Configuration;
+using Robust.Shared.Network; // #Cythisiax Add - player NetUserId for Patreon tier enforcement
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Serialization.Manager;
@@ -79,7 +80,8 @@ public sealed class LoadoutSystem : EntitySystem
             ev.Profile,
             _playTimeTracking.GetTrackerTimes(ev.Player),
             ev.Player.ContentData()?.Whitelisted ?? false,
-            jobProto: job);
+            jobProto: job,
+            player: ev.Player.UserId); // #Cythisiax Edited - pass player for Patreon tier enforcement
     }
 
 
@@ -91,11 +93,12 @@ public sealed class LoadoutSystem : EntitySystem
         Dictionary<string, TimeSpan> playTimes,
         bool whitelisted,
         bool deleteFailed = false,
-        JobPrototype? jobProto = null)
+        JobPrototype? jobProto = null,
+        NetUserId? player = null) // #Cythisiax Edited - player for Patreon tier enforcement
     {
         // Spawn the loadout, get a list of items that failed to equip
         var (failedLoadouts, allLoadouts) =
-            _loadout.ApplyCharacterLoadout(uid, job, profile, playTimes, whitelisted, out var heirlooms);
+            _loadout.ApplyCharacterLoadout(uid, job, profile, playTimes, whitelisted, out var heirlooms, player);
 
         // #Misfits Fix - Cascading fallback for loadout items that couldn't equip to their natural
         // slot (slot collision with job startingGear, or non-clothing items like weapons that have

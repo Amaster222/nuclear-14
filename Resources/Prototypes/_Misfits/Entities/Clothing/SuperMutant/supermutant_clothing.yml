@@ -211,9 +211,9 @@
   description: The remains of fallen Brotherhood armor, the vest is a Knight's breastplate and the leg guard is from a Paladin's power armored greaves. Trophies of past victories, and a mockery of the enemy.
   components:
   - type: Sprite
-    sprite: _Misfits/Clothing/SuperMutant/yazov_armor.rsi
+    sprite: _Misfits/Clothing/SuperMutant/customized_combat_armor.rsi
   - type: Clothing
-    sprite: _Misfits/Clothing/SuperMutant/yazov_armor.rsi
+    sprite: _Misfits/Clothing/SuperMutant/customized_combat_armor.rsi
   - type: Tag
     tags:
     - SuperMutantWearable
@@ -245,9 +245,9 @@
   description: Custom made for mutants who earn the right to join the rangers, it has been reinforced with ballistic material. This is the mark of a hero, who fights even when unappreciated.
   components:
   - type: Sprite
-    sprite: _Misfits/Clothing/SuperMutant/yazov_hat.rsi
+    sprite: _Misfits/Clothing/SuperMutant/ranger_hat_alt.rsi
   - type: Clothing
-    sprite: _Misfits/Clothing/SuperMutant/yazov_hat.rsi
+    sprite: _Misfits/Clothing/SuperMutant/ranger_hat_alt.rsi
   - type: Tag
     tags:
     - SuperMutantWearable
@@ -259,9 +259,9 @@
   description: Not many mutants reach the esteemed ranks of the rangers, and this coat is decorated with the armor of defeated enemies. Each piece is a bounty completed, a point of pride.
   components:
   - type: Sprite
-    sprite: _Misfits/Clothing/SuperMutant/yazov_duster.rsi
+    sprite: _Misfits/Clothing/SuperMutant/customized_duster.rsi
   - type: Clothing
-    sprite: _Misfits/Clothing/SuperMutant/yazov_duster.rsi
+    sprite: _Misfits/Clothing/SuperMutant/customized_duster.rsi
   - type: Tag
     tags:
     - SuperMutantWearable
@@ -281,15 +281,15 @@
     - SuperMutantWearable
 
 - type: entity
-  parent: SupermutantFollowerGloves
+  parent: ClothingHandsBase
   id: SupermutantBlackGloves
   name: Super Sized Gloves
   description: Made to fit the biggest hands taking on the biggest problems, issued to super mutants who prefer hands-on solutions.
   components:
   - type: Sprite
-    sprite: _Misfits/Clothing/SuperMutant/yazov_gloves.rsi
+    sprite: _Misfits/Clothing/SuperMutant/black_gloves.rsi
   - type: Clothing
-    sprite: _Misfits/Clothing/SuperMutant/yazov_gloves.rsi
+    sprite: _Misfits/Clothing/SuperMutant/black_gloves.rsi
   - type: Tag
     tags:
     - SuperMutantWearable
@@ -337,9 +337,9 @@
   description: An old LAPD riot squad gasmask, customized to fit a super mutant's large head. It no longer functions as a proper mask, but its night vision lenses still work. The red eyepieces have been swapped for yellow lenses.
   components:
   - type: Sprite
-    sprite: _Misfits/Clothing/SuperMutant/yazov_gasmask.rsi
+    sprite: _Misfits/Clothing/SuperMutant/ranger_gasmask_alt.rsi
   - type: Clothing
-    sprite: _Misfits/Clothing/SuperMutant/yazov_gasmask.rsi
+    sprite: _Misfits/Clothing/SuperMutant/ranger_gasmask_alt.rsi
 
 # #Misfits Add - Ranger armor for the playable Supermutant Ranger job variant.
 # Tagged SuperMutantWearable so only supermutants can equip it in outerClothing slot.

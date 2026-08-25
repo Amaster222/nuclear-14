@@ -18,6 +18,7 @@
         - NCRDoctor
         - NCRExecutiveOfficer
         - NCRPlatoonLeader
+        - NCRVertibirdPilot
         - NCRNCO
         - NCREngineer
         - NCRMedic
@@ -45,6 +46,7 @@
         - NCRDoctor
         - NCRExecutiveOfficer
         - NCRPlatoonLeader
+        - NCRVertibirdPilot
         - NCRNCO
         - NCREngineer
         - NCRMedic
@@ -72,6 +74,7 @@
         - NCRDoctor
         - NCRExecutiveOfficer
         - NCRPlatoonLeader
+        - NCRVertibirdPilot
         - NCRNCO
         - NCREngineer
         - NCRMedic
@@ -99,6 +102,7 @@
         - NCRDoctor
         - NCRExecutiveOfficer
         - NCRPlatoonLeader
+        - NCRVertibirdPilot
         - NCRNCO
         - NCREngineer
         - NCRMedic
@@ -126,6 +130,7 @@
         - NCRDoctor
         - NCRExecutiveOfficer
         - NCRPlatoonLeader
+        - NCRVertibirdPilot
         - NCRNCO
         - NCREngineer
         - NCRMedic
@@ -153,6 +158,7 @@
         - NCRDoctor
         - NCRExecutiveOfficer
         - NCRPlatoonLeader
+        - NCRVertibirdPilot
         - NCRNCO
         - NCREngineer
         - NCRMedic
@@ -179,6 +185,7 @@
         - NCRDoctor
         - NCRExecutiveOfficer
         - NCRPlatoonLeader
+        - NCRVertibirdPilot
         - NCRNCO
         - NCREngineer
         - NCRMedic
@@ -205,6 +212,7 @@
         - NCRDoctor
         - NCRExecutiveOfficer
         - NCRPlatoonLeader
+        - NCRVertibirdPilot
         - NCRNCO
         - NCREngineer
         - NCRMedic
@@ -231,6 +239,7 @@
         - NCRDoctor
         - NCRExecutiveOfficer
         - NCRPlatoonLeader
+        - NCRVertibirdPilot
         - NCRNCO
         - NCREngineer
         - NCRMedic
@@ -257,6 +266,7 @@
         - NCRDoctor
         - NCRExecutiveOfficer
         - NCRPlatoonLeader
+        - NCRVertibirdPilot
         - NCRNCO
         - NCREngineer
         - NCRMedic
@@ -283,6 +293,7 @@
         - NCRDoctor
         - NCRExecutiveOfficer
         - NCRPlatoonLeader
+        - NCRVertibirdPilot
         - NCRNCO
         - NCREngineer
         - NCRMedic
@@ -315,6 +326,7 @@
         - NCRDoctor
         - NCRExecutiveOfficer
         - NCRPlatoonLeader
+        - NCRVertibirdPilot
         - NCRNCO
         - NCREngineer
         - NCRMedic
@@ -347,6 +359,7 @@
         - NCRDoctor
         - NCRExecutiveOfficer
         - NCRPlatoonLeader
+        - NCRVertibirdPilot
         - NCRNCO
         - NCREngineer
         - NCRMedic
@@ -381,6 +394,7 @@
         - NCRDoctor
         - NCRExecutiveOfficer
         - NCRPlatoonLeader
+        - NCRVertibirdPilot
         - NCRNCO
         - NCREngineer
         - NCRMedic
@@ -415,6 +429,7 @@
         - NCRDoctor
         - NCRExecutiveOfficer
         - NCRPlatoonLeader
+        - NCRVertibirdPilot
         - NCRNCO
         - NCREngineer
         - NCRMedic
@@ -449,6 +464,7 @@
         - NCRDoctor
         - NCRExecutiveOfficer
         - NCRPlatoonLeader
+        - NCRVertibirdPilot
         - NCRNCO
         - NCREngineer
         - NCRMedic
@@ -483,6 +499,7 @@
         - NCRDoctor
         - NCRExecutiveOfficer
         - NCRPlatoonLeader
+        - NCRVertibirdPilot
         - NCRNCO
         - NCREngineer
         - NCRMedic
@@ -517,6 +534,7 @@
         - NCRDoctor
         - NCRExecutiveOfficer
         - NCRPlatoonLeader
+        - NCRVertibirdPilot
         - NCRNCO
         - NCREngineer
         - NCRMedic
@@ -551,6 +569,7 @@
         - NCRDoctor
         - NCRExecutiveOfficer
         - NCRPlatoonLeader
+        - NCRVertibirdPilot
         - NCRNCO
         - NCREngineer
         - NCRMedic
@@ -581,6 +600,7 @@
         - NCRDoctor
         - NCRExecutiveOfficer
         - NCRPlatoonLeader
+        - NCRVertibirdPilot
         - NCRNCO
         - NCREngineer
         - NCRMedic
@@ -618,6 +638,7 @@
         - NCRDoctor
         - NCRExecutiveOfficer
         - NCRPlatoonLeader
+        - NCRVertibirdPilot
         - NCRNCO
         - NCREngineer
         - NCRMedic
@@ -649,9 +670,9 @@
     - !type:CharacterJobRequirement
       jobs:
         - NCRVeteranRanger
-    - !type:CharacterPlaytimeRequirement
-     tracker: NCRVeteranRanger
-     min: 216000
+    - !type:CharacterDepartmentTimeRequirement
+      department: Rangers
+      min: 216000
   items:
    - N14ClothingOuterRangerFox
 
@@ -664,9 +685,9 @@
     - !type:CharacterJobRequirement
       jobs:
         - NCRVeteranRanger
-    - !type:CharacterPlaytimeRequirement
-     tracker: NCRVeteranRanger
-     min: 108000
+    - !type:CharacterDepartmentTimeRequirement
+      department: Rangers
+      min: 108000
   items:
    - N14ClothingOuterRangerElite
 
@@ -703,8 +724,8 @@
     - !type:CharacterJobRequirement
       jobs:
         - NCRVeteranRanger
-    - !type:CharacterPlaytimeRequirement
-      tracker: NCRVeteranRanger
+    - !type:CharacterDepartmentTimeRequirement
+      department: Rangers
       min: 72000 # 1200 minutes
   items:
     - N14ClothingHeadHatRangerHelmetFox
@@ -718,8 +739,8 @@
     - !type:CharacterJobRequirement
       jobs:
         - NCRVeteranRanger
-    - !type:CharacterPlaytimeRequirement
-      tracker: NCRVeteranRanger
+    - !type:CharacterDepartmentTimeRequirement
+      department: Rangers
       min: 72000 # 1200 minutes
   items:
     - N14ClothingHeadHatRangerHelmetPrice
@@ -733,8 +754,8 @@
     - !type:CharacterJobRequirement
       jobs:
         - NCRVeteranRanger
-    - !type:CharacterPlaytimeRequirement
-      tracker: NCRVeteranRanger
+    - !type:CharacterDepartmentTimeRequirement
+      department: Rangers
       min: 72000 # 1200 minutes
   items:
     - N14ClothingOuterRangerWeathered
@@ -748,8 +769,8 @@
     - !type:CharacterJobRequirement
       jobs:
         - NCRVeteranRanger
-    - !type:CharacterPlaytimeRequirement
-      tracker: NCRVeteranRanger
+    - !type:CharacterDepartmentTimeRequirement
+      department: Rangers
       min: 72000 # 1200 minutes
   items:
     - N14ClothingOuterRangerPrice
@@ -789,8 +810,8 @@
         - NCRVeteranRanger
         - NCRFieldRanger # Purely cosmetic, goes over armor
         - NCRCitizen
-    - !type:CharacterPlaytimeRequirement
-      tracker: NCRVeteranRanger
+    - !type:CharacterDepartmentTimeRequirement
+      department: Rangers
       min: 72000 # 1200 minutes
   items:
     - N14ClothingNeckSaltRunnerDuster
@@ -804,8 +825,8 @@
     - !type:CharacterJobRequirement
       jobs:
         - NCRVeteranRanger
-    - !type:CharacterPlaytimeRequirement
-      tracker: NCRVeteranRanger
+    - !type:CharacterDepartmentTimeRequirement
+      department: Rangers
       min: 72000 # 1200 minutes
   items:
     - N14ClothingHatSaltRunnerHelmet
@@ -820,8 +841,8 @@
       jobs:
         - NCRVeteranRanger
         - NCRFieldRanger # Purely cosmetic, identical to field ranger mask
-    - !type:CharacterPlaytimeRequirement
-      tracker: NCRVeteranRanger
+    - !type:CharacterDepartmentTimeRequirement
+      department: Rangers
       min: 72000 # 1200 minutes
   items:
     - N14ClothingHatSaltRunnerMask
@@ -835,8 +856,8 @@
     - !type:CharacterJobRequirement
       jobs:
         - NCRVeteranRanger
-    - !type:CharacterPlaytimeRequirement
-      tracker: NCRVeteranRanger
+    - !type:CharacterDepartmentTimeRequirement
+      department: Rangers
       min: 72000 # 1200 minutes
   items:
     - N14ClothingHeadFourLeafRangerHelmet
@@ -850,8 +871,8 @@
     - !type:CharacterJobRequirement
       jobs:
         - NCRVeteranRanger
-    - !type:CharacterPlaytimeRequirement
-      tracker: NCRVeteranRanger
+    - !type:CharacterDepartmentTimeRequirement
+      department: Rangers
       min: 72000 # 1200 minutes
   items:
     - N14ClothingHeadHighlandRangerHelmet
@@ -865,8 +886,8 @@
     - !type:CharacterJobRequirement
       jobs:
         - NCRVeteranRanger
-    - !type:CharacterPlaytimeRequirement
-      tracker: NCRVeteranRanger
+    - !type:CharacterDepartmentTimeRequirement
+      department: Rangers
       min: 72000 # 1200 minutes
   items:
     - N14ClothingHeadCanOpenerRangerHelmet
@@ -880,8 +901,8 @@
     - !type:CharacterJobRequirement
       jobs:
         - NCRVeteranRanger
-    - !type:CharacterPlaytimeRequirement
-      tracker: NCRVeteranRanger
+    - !type:CharacterDepartmentTimeRequirement
+      department: Rangers
       min: 46800 # 780 minutes
   items:
     - N14ClothingHeadTheDevoutRangerHelmet
@@ -895,8 +916,8 @@
     - !type:CharacterJobRequirement
       jobs:
         - NCRVeteranRanger
-    - !type:CharacterPlaytimeRequirement
-      tracker: NCRVeteranRanger
+    - !type:CharacterDepartmentTimeRequirement
+      department: Rangers
       min: 72000 # 1200 minutes
   items:
     - N14ClothingHeadDemoExpertRangerHelmet
@@ -910,8 +931,8 @@
     - !type:CharacterJobRequirement
       jobs:
         - NCRVeteranRanger
-    - !type:CharacterPlaytimeRequirement
-      tracker: NCRVeteranRanger
+    - !type:CharacterDepartmentTimeRequirement
+      department: Rangers
       min: 72000 # 1200 minutes
   items:
     - N14ClothingHeadHardCaseRangerHelmet
@@ -926,8 +947,8 @@
       jobs:
         - NCRVeteranRanger
         - NCRFieldRanger # Purely cosmetic, identical to field ranger mask
-    - !type:CharacterPlaytimeRequirement
-      tracker: NCRVeteranRanger
+    - !type:CharacterDepartmentTimeRequirement
+      department: Rangers
       min: 46800 # 780 minutes
   items:
     - N14ClothingHatTheDevoutMask
@@ -941,8 +962,8 @@
     - !type:CharacterJobRequirement
       jobs:
         - NCRVeteranRanger
-    - !type:CharacterPlaytimeRequirement
-      tracker: NCRVeteranRanger
+    - !type:CharacterDepartmentTimeRequirement
+      department: Rangers
       min: 72000 # 1200 minutes
   items:
     - N14ClothingOuterCaliforniaGirlVetRangerRiotArmor
@@ -956,8 +977,8 @@
     - !type:CharacterJobRequirement
       jobs:
         - NCRVeteranRanger
-    - !type:CharacterPlaytimeRequirement
-      tracker: NCRVeteranRanger
+    - !type:CharacterDepartmentTimeRequirement
+      department: Rangers
       min: 72000 # 1200 minutes
   items:
     - N14ClothingOuterCanOpenerVetRangerRiotArmor
@@ -971,8 +992,8 @@
     - !type:CharacterJobRequirement
       jobs:
         - NCRVeteranRanger
-    - !type:CharacterPlaytimeRequirement
-      tracker: NCRVeteranRanger
+    - !type:CharacterDepartmentTimeRequirement
+      department: Rangers
       min: 72000 # 1200 minutes
   items:
     - N14ClothingOuterDemoExpertVetRangerRiotArmor
@@ -986,8 +1007,8 @@
     - !type:CharacterJobRequirement
       jobs:
         - NCRVeteranRanger
-    - !type:CharacterPlaytimeRequirement
-      tracker: NCRVeteranRanger
+    - !type:CharacterDepartmentTimeRequirement
+      department: Rangers
       min: 46800 # 780 minutes
   items:
     - N14ClothingOuterTheDevoutVetRangerRiotArmor
@@ -1003,8 +1024,8 @@
         - NCRVeteranRanger
         - NCRFieldRanger
         - NCRCitizen
-    - !type:CharacterPlaytimeRequirement
-      tracker: NCRVeteranRanger
+    - !type:CharacterDepartmentTimeRequirement
+      department: Rangers
       min: 72000 # 1200 minutes
   items:
     - N14ClothingNeckHighlandRangerDuster
@@ -1020,8 +1041,8 @@
         - NCRVeteranRanger
         - NCRFieldRanger
         - NCRCitizen
-    - !type:CharacterPlaytimeRequirement
-      tracker: NCRVeteranRanger
+    - !type:CharacterDepartmentTimeRequirement
+      department: Rangers
       min: 72000 # 1200 minutes
   items:
     - N14ClothingNeckFourLeafDuster
@@ -1037,8 +1058,8 @@
         - NCRVeteranRanger
         - NCRFieldRanger
         - NCRCitizen
-    - !type:CharacterPlaytimeRequirement
-      tracker: NCRVeteranRanger
+    - !type:CharacterDepartmentTimeRequirement
+      department: Rangers
       min: 72000 # 1200 minutes
   items:
     - N14ClothingNeckCaliforniaGirlDuster

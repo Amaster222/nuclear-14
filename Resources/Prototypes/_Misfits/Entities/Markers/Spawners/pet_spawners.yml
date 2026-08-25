@@ -303,6 +303,19 @@
   - type: GhostRoleMobSpawner
     prototype: MisfitsMobPetEyebotTribe
 
+# OSI Eyebot companion, issued only by the OSI scientist job specials.
+- type: entity
+  parent: MisfitsPetSpawnerEyebot
+  id: MisfitsPetSpawnerEyebotOSI
+  name: OSI eyebot companion spawner
+  components:
+  - type: GhostRole
+    name: ghost-role-information-misfits-pet-eyebot-osi-name
+    description: ghost-role-information-misfits-pet-eyebot-osi-description
+    rules: ghost-role-component-default-rules
+  - type: GhostRoleMobSpawner
+    prototype: MisfitsMobPetEyebotOSI
+
 # Dog companion spawner (Wastelander/Tribe/Townsfolk)
 - type: entity
   parent: MisfitsPetSpawnerBase

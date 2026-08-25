@@ -37,6 +37,7 @@ using Content.Shared.Players.RateLimiting;
 using Content.Shared._NC.Sponsor; // Forge-Change
 using Content.Server._NC.Sponsor;
 using Content.Server._NC.TTS; // Forge-Change
+using Content.Shared._Misfits.Supporter; // #Cythisiax Add - Patreon supporter tier sync
 
 namespace Content.Server.IoC
 {
@@ -89,6 +90,7 @@ namespace Content.Server.IoC
             IoCManager.Register<TerminalNotesDataStore>(); // #Misfits Add - Persistent terminal notes storage
             IoCManager.Register<TerminalDatabaseDataStore>(); // #Misfits Add - Persistent faction database storage
             IoCManager.Register<ISupporterManager, SupporterManager>(); // #Misfits Add
+            IoCManager.Register<ISharedSupporterManager, SupporterManager>(); // #Cythisiax Add - same singleton via IoC dupe detection
         }
     }
 }

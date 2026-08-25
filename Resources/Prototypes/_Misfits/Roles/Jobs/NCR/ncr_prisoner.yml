@@ -40,6 +40,7 @@
     jumpsuit: ClothingUniformJumpsuitPrisoner
     shoes: N14ClothingShoesBlack
     bandage: NCClothingBraceletNCRPrisoner
+    id: N14IDNCRDogtagPrisoner # #Misfits Add - Prisoner ID so they appear on the crew manifest
 
 - type: playTimeTracker
   id: NCRPrisoner

@@ -6,6 +6,7 @@ using Content.Server.Chat.Managers; // #Misfits Add - faction death alert chat d
 using Content.Server._Misfits.Group; // #Misfits Add - group blip injection
 using Content.Server._Misfits.Overwatch;
 using Content.Server._Misfits.TribalHunt;
+using Content.Server.Radio.Components;
 using Content.Shared.Access.Components;
 using Content.Shared.Humanoid; // #Misfits Add - Followers casualty filter for humanoid player bodies only
 using Content.Shared.Mind; // #Misfits Add - MindComponent (OriginalOwnerUserId player check)
@@ -17,6 +18,10 @@ using Content.Shared.Tag;
 using Content.Shared._Misfits.WastelandMap;
 using Content.Shared._Misfits.TribalHunt;
 using Content.Shared.NPC.Components; // NpcFactionMemberComponent
+using Content.Shared.NPC.Systems;
+using Content.Shared.Radio;
+using Content.Shared.Radio.Components;
+using Content.Shared.Radio.EntitySystems;
 using Content.Shared.Roles.Jobs; // #Misfits Add - leadership job lookup for Tree TacMap access
 using Content.Shared.UserInterface;
 using Robust.Server.GameObjects;
@@ -39,17 +44,67 @@ namespace Content.Server._Misfits.WastelandMap;
 /// </summary>
 public sealed class WastelandMapSystem : EntitySystem
 {
+    private const string WastelandGlobalChannel = "WastelandGlobal";
+
+    private static readonly HashSet<string> EmptyCommunicationsJobs = [];
+
+    private static readonly HashSet<string> BrotherhoodCommunicationsJobs =
+    [
+        "BoSWestElderCommander",
+        "BoSMidPaladinCommander",
+        "BoSHeadKnight",
+        "BoSWestScribe",
+    ];
+
+    private static readonly HashSet<string> NcrCommunicationsJobs =
+    [
+        "NCRCommander",
+        "NCRExecutiveOfficer",
+        "NCRPlatoonLeader",
+        "NCRRO",
+        "NCRProvost",
+        "NCRMilitaryPoliceCaptain",
+    ];
+
+    private static readonly HashSet<string> EnclaveCommunicationsJobs =
+    [
+        "EnclaveCommander",
+        "EnclaveSeniorOfficer",
+        "EnclaveJuniorOfficer",
+        "EnclaveHeadScientist",
+    ];
+
+    private static readonly HashSet<string> LegionCommunicationsJobs =
+    [
+        "CaesarLegionLegate",
+        "CaesarLegionCenturion",
+        "CaesarLegionOptio",
+    ];
+
+    private static readonly HashSet<string> FollowersCommunicationsJobs =
+    [
+        "FollowerDoctor",
+        "SuperMutantFollowerDoctor",
+    ];
+
+    private static readonly HashSet<string> VaultCommunicationsJobs =
+    [
+        "Overseer",
+    ];
+
     [Dependency] private readonly UserInterfaceSystem _uiSystem = default!;
     [Dependency] private readonly SharedTransformSystem _transform = default!;
     [Dependency] private readonly TagSystem _tag = default!;
     [Dependency] private readonly SharedMindSystem _mind = default!; // #Misfits Add - Tree map leadership lookup
     [Dependency] private readonly SharedJobSystem _jobs = default!; // #Misfits Add - Tree map leadership lookup
     [Dependency] private readonly GroupSystem _groupSystem = default!; // #Misfits Add - group member map blips
+    [Dependency] private readonly NpcFactionSystem _npcFaction = default!;
+    [Dependency] private readonly EncryptionKeySystem _encryptionKeys = default!;
     // #Misfits Add - Followers dead body tracking & death alerts
     [Dependency] private readonly MobStateSystem _mobState = default!;
     [Dependency] private readonly IChatManager _chatManager = default!;
     // #Misfits Add - Auto-detect map bounds and texture
-    [Dependency] private readonly IMapManager _mapManager = default!;
+    [Dependency] private readonly SharedMapSystem _mapManager = default!;
     [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
     [Dependency] private readonly SharedMapSystem _mapSystem = default!;
 
@@ -87,6 +142,7 @@ public sealed class WastelandMapSystem : EntitySystem
         SubscribeLocalEvent<WastelandMapComponent, WastelandMapAddAnnotationMessage>(OnAddAnnotationMessage);
         SubscribeLocalEvent<WastelandMapComponent, WastelandMapRemoveAnnotationMessage>(OnRemoveAnnotationMessage);
         SubscribeLocalEvent<WastelandMapComponent, WastelandMapClearAnnotationsMessage>(OnClearAnnotationsMessage);
+        SubscribeLocalEvent<WastelandMapComponent, WastelandMapCommunicationsMessage>(OnCommunicationsMessage);
         // #Misfits Add - notify Followers players when a player humanoid dies
         SubscribeLocalEvent<MindContainerComponent, MobStateChangedEvent>(OnMindedEntityMobStateChanged);
         // #Misfits Add - track MapId→gameMap for auto-detect bounds/texture
@@ -268,6 +324,32 @@ public sealed class WastelandMapSystem : EntitySystem
         UpdateMapUi(uid, comp, Transform(args.Actor).MapID);
     }
 
+    private void OnCommunicationsMessage(EntityUid uid, WastelandMapComponent comp, WastelandMapCommunicationsMessage args)
+    {
+        if (!TryResolveCommunications(comp, out var factionId, out var factionChannelId) ||
+            !CanManageCommunications(args.Actor, comp))
+        {
+            return;
+        }
+
+        var channelId = args.ChannelKind == WastelandMapCommunicationsChannelKind.Wasteland
+            ? WastelandGlobalChannel
+            : factionChannelId;
+
+        var target = GetEntity(args.Target);
+        if (Deleted(target) ||
+            !HasComp<ActorComponent>(target) ||
+            !_npcFaction.IsMember(target, factionId))
+        {
+            return;
+        }
+
+        if (!TrySetFactionEncryptionRevoked(target, channelId, args.Revoke))
+            return;
+
+        UpdateMapUi(uid, comp, Transform(args.Actor).MapID);
+    }
+
     // #Misfits Add - optional actor param so group-member blips can be injected per-viewer
     public WastelandMapBoundUserInterfaceState BuildState(WastelandMapComponent comp, MapId mapId, WastelandMapTacticalFeedKind? feedOverride = null, EntityUid? actor = null)
     {
@@ -286,6 +368,9 @@ public sealed class WastelandMapSystem : EntitySystem
         var overwatch = uid == null
             ? null
             : EntityManager.System<OverwatchConsoleSystem>().BuildUiState(uid.Value);
+        var communications = uid == null || actor == null
+            ? null
+            : BuildCommunicationsState(uid.Value, comp, actor.Value);
 
         return new WastelandMapBoundUserInterfaceState(
             comp.MapTitle,
@@ -297,7 +382,8 @@ public sealed class WastelandMapSystem : EntitySystem
             bounds.Top,
             trackedBlips,
             sharedAnnotations,
-            overwatch);
+            overwatch,
+            communications);
     }
 
     public WastelandMapTacticalFeedKind GetEffectiveFeed(WastelandMapComponent comp)
@@ -342,6 +428,225 @@ public sealed class WastelandMapSystem : EntitySystem
 
         annotations.Clear();
         return true;
+    }
+
+    private WastelandMapCommunicationsState? BuildCommunicationsState(EntityUid uid, WastelandMapComponent comp, EntityUid actor)
+    {
+        if (!IsCommunicationsPanelAvailable(uid, comp) ||
+            !TryResolveCommunications(comp, out var factionId, out var channelId))
+        {
+            return null;
+        }
+
+        var canManage = CanManageCommunications(actor, comp);
+        var entries = new List<WastelandMapCommunicationsEntry>();
+
+        if (canManage)
+        {
+            var query = EntityQueryEnumerator<NpcFactionMemberComponent, ActorComponent>();
+
+            while (query.MoveNext(out var player, out _, out _))
+            {
+                if (!_npcFaction.IsMember(player, factionId))
+                    continue;
+
+                var (hasFactionHeadset, factionRevoked) = GetChannelHeadsetState(player, channelId);
+                var (hasWastelandHeadset, wastelandRevoked) = GetChannelHeadsetState(player, WastelandGlobalChannel);
+                entries.Add(new WastelandMapCommunicationsEntry(
+                    GetNetEntity(player),
+                    Name(player),
+                    TryGetJobTitle(player),
+                    hasFactionHeadset,
+                    factionRevoked,
+                    hasWastelandHeadset,
+                    wastelandRevoked));
+            }
+
+            entries.Sort((left, right) => string.Compare(left.Name, right.Name, StringComparison.OrdinalIgnoreCase));
+        }
+
+        return new WastelandMapCommunicationsState(
+            channelId,
+            GetChannelName(channelId),
+            WastelandGlobalChannel,
+            GetChannelName(WastelandGlobalChannel),
+            canManage,
+            entries.ToArray());
+    }
+
+    private bool CanManageCommunications(EntityUid actor, WastelandMapComponent component)
+    {
+        var communicationsJobs = GetCommunicationsJobs(component);
+        if (communicationsJobs.Count == 0)
+            return false;
+
+        return _mind.TryGetMind(actor, out var mindId, out _) &&
+               _jobs.MindTryGetJob(mindId, out _, out var job) &&
+               communicationsJobs.Contains(job.ID);
+    }
+
+    private bool IsCommunicationsPanelAvailable(EntityUid uid, WastelandMapComponent component)
+    {
+        if (component.CommunicationsJobs is { Count: > 0 })
+            return true;
+
+        return HasComp<OverwatchConsoleComponent>(uid) && GetDefaultCommunicationsJobs(GetEffectiveFeed(component)).Count > 0;
+    }
+
+    private IReadOnlySet<string> GetCommunicationsJobs(WastelandMapComponent component)
+    {
+        return component.CommunicationsJobs is { Count: > 0 }
+            ? component.CommunicationsJobs
+            : GetDefaultCommunicationsJobs(GetEffectiveFeed(component));
+    }
+
+    private static IReadOnlySet<string> GetDefaultCommunicationsJobs(WastelandMapTacticalFeedKind feed)
+    {
+        return feed switch
+        {
+            WastelandMapTacticalFeedKind.Brotherhood => BrotherhoodCommunicationsJobs,
+            WastelandMapTacticalFeedKind.NCR => NcrCommunicationsJobs,
+            WastelandMapTacticalFeedKind.Enclave => EnclaveCommunicationsJobs,
+            WastelandMapTacticalFeedKind.Legion => LegionCommunicationsJobs,
+            WastelandMapTacticalFeedKind.Followers => FollowersCommunicationsJobs,
+            WastelandMapTacticalFeedKind.Vault => VaultCommunicationsJobs,
+            _ => EmptyCommunicationsJobs,
+        };
+    }
+
+    private string? TryGetJobTitle(EntityUid player)
+    {
+        if (!_mind.TryGetMind(player, out var mindId, out _) ||
+            !_jobs.MindTryGetJob(mindId, out _, out var job))
+        {
+            return null;
+        }
+
+        return job.LocalizedName;
+    }
+
+    private string GetChannelName(string channelId)
+    {
+        return _prototypeManager.TryIndex<RadioChannelPrototype>(channelId, out var channel)
+            ? channel.LocalizedName
+            : channelId;
+    }
+
+    private (bool HasHeadset, bool Revoked) GetChannelHeadsetState(EntityUid player, string channelId)
+    {
+        if (!TryComp<WearingHeadsetComponent>(player, out var wearing) ||
+            !TryComp<EncryptionKeyHolderComponent>(wearing.Headset, out var holder))
+        {
+            return (false, false);
+        }
+
+        var hasChannel = holder.Channels.Contains(channelId);
+        var revoked = TryComp<DisabledEncryptionChannelsComponent>(wearing.Headset, out var disabledHolder) &&
+                      disabledHolder.Channels.Contains(channelId);
+
+        foreach (var key in holder.KeyContainer.ContainedEntities)
+        {
+            if (!TryComp<EncryptionKeyComponent>(key, out var keyComp) ||
+                !keyComp.Channels.Contains(channelId))
+            {
+                continue;
+            }
+
+            hasChannel = true;
+            revoked |= TryComp<DisabledEncryptionChannelsComponent>(key, out var disabledKey) &&
+                       disabledKey.Channels.Contains(channelId);
+        }
+
+        return (hasChannel || revoked, revoked);
+    }
+
+    private bool TrySetFactionEncryptionRevoked(EntityUid player, string channelId, bool revoked)
+    {
+        if (!TryComp<WearingHeadsetComponent>(player, out var wearing) ||
+            !TryComp<EncryptionKeyHolderComponent>(wearing.Headset, out var holder))
+        {
+            return false;
+        }
+
+        var changed = SetChannelDisabled(wearing.Headset, channelId, revoked);
+
+        foreach (var key in holder.KeyContainer.ContainedEntities)
+        {
+            if (!TryComp<EncryptionKeyComponent>(key, out var keyComp) ||
+                !keyComp.Channels.Contains(channelId))
+            {
+                continue;
+            }
+
+            changed |= SetChannelDisabled(key, channelId, revoked);
+        }
+
+        if (!changed)
+            return false;
+
+        _encryptionKeys.UpdateChannels(wearing.Headset, holder);
+        return true;
+    }
+
+    private bool SetChannelDisabled(EntityUid uid, string channelId, bool disabled)
+    {
+        if (disabled)
+        {
+            var comp = EnsureComp<DisabledEncryptionChannelsComponent>(uid);
+            if (!comp.Channels.Add(channelId))
+                return false;
+
+            Dirty(uid, comp);
+            return true;
+        }
+
+        if (!TryComp<DisabledEncryptionChannelsComponent>(uid, out var existing) ||
+            !existing.Channels.Remove(channelId))
+        {
+            return false;
+        }
+
+        if (existing.Channels.Count == 0)
+            RemComp<DisabledEncryptionChannelsComponent>(uid);
+        else
+            Dirty(uid, existing);
+
+        return true;
+    }
+
+    private bool TryResolveCommunications(WastelandMapComponent comp, out string factionId, out string channelId)
+    {
+        switch (GetEffectiveFeed(comp))
+        {
+            case WastelandMapTacticalFeedKind.Brotherhood:
+                factionId = "BrotherhoodOfSteel";
+                channelId = "BrotherhoodOfSteel";
+                return true;
+            case WastelandMapTacticalFeedKind.NCR:
+                factionId = "NCR";
+                channelId = "NCR";
+                return true;
+            case WastelandMapTacticalFeedKind.Enclave:
+                factionId = "Enclave";
+                channelId = "Enclave";
+                return true;
+            case WastelandMapTacticalFeedKind.Legion:
+                factionId = "CaesarLegion";
+                channelId = "Legion";
+                return true;
+            case WastelandMapTacticalFeedKind.Followers:
+                factionId = "Followers";
+                channelId = "FollowersOfApocalypse";
+                return true;
+            case WastelandMapTacticalFeedKind.Vault:
+                factionId = "Vault";
+                channelId = "VaultCommon";
+                return true;
+            default:
+                factionId = string.Empty;
+                channelId = string.Empty;
+                return false;
+        }
     }
 
     private void UpdateMapUi(EntityUid uid, WastelandMapComponent comp, MapId? mapId = null)
@@ -515,6 +820,18 @@ public sealed class WastelandMapSystem : EntitySystem
 
             var label = Name(member);
             buffer.Add(new WastelandMapTrackedBlip(pos.X, pos.Y, label, WastelandMapTrackedBlipKind.PipBoyGroupMember));
+        }
+
+        var rallyPoint = _groupSystem.GetGroupRallyPoint(actor);
+        if (rallyPoint.HasValue &&
+            rallyPoint.Value.MapId == mapId &&
+            bounds.Contains(rallyPoint.Value.Position))
+        {
+            buffer.Add(new WastelandMapTrackedBlip(
+                rallyPoint.Value.Position.X,
+                rallyPoint.Value.Position.Y,
+                "RALLY",
+                WastelandMapTrackedBlipKind.GroupRallyPoint));
         }
     }
 

@@ -803,7 +803,7 @@
 - type: entity
   parent: N14MaterialBase
   id: N14MaterialBrick
-  name: brick
+  name: adobe brick
   description: Clay brick for construction.
   categories: [ HideSpawnMenu ]
   components:
@@ -814,7 +814,7 @@
       Brick: 100
   - type: Sprite
     sprite: /Textures/_Nuclear14/Objects/Misc/materials.rsi
-    state: scrap_copper
+    state: adobe_brick
     color: "#8b4513"
   - type: Item
     size: Small
