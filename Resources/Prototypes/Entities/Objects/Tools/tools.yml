@@ -187,6 +187,7 @@
     state: icon
   - type: Item
     sprite: Objects/Tools/wrench.rsi
+    storedRotation: 0 # Misfit change: sprite match itemGrid
     storedSprite:
       sprite: Objects/Tools/wrench.rsi
       state: storage
@@ -244,6 +245,7 @@
     state: icon
   - type: Item
     sprite: Objects/Tools/crowbar.rsi
+    storedRotation: 0 # Misfit change: sprite match itemGrid
     size: Small
     storedSprite:
       sprite: Objects/Tools/crowbar.rsi

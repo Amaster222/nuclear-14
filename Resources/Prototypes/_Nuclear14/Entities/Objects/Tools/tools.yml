@@ -97,7 +97,7 @@
     netsync: false
   - type: Item
     sprite: _Nuclear14/Objects/Tools/wrench.rsi
-    storedRotation: -90
+    storedRotation: 0 # Misfit change: sprite match itemGrid
   - type: MeleeWeapon
     wideAnimationRotation: 135
     attackRate: 1.5
