@@ -111,6 +111,50 @@
   items:
     -  MisfitsClothingOuterKhansBattlecoatBlack
 
+
+#Timelocks are 5 hours PER faction on both Tribal & NCR variants of marked men armors. You are atleast somewhat expected to know what both of legion and ncr lore and up to the point of the divide. Timelocks for these might or might not get increased depends on how people RP with these. -Oli
+- type: loadout
+  id: MisfitsLoadoutOuterMarkedMenCombatTribalArmor
+  category: Outer
+  cost: 6
+  exclusive: true
+  requirements:
+    - !type:CharacterItemGroupRequirement
+      group: N14LoadoutOuter
+    - !type:CharacterSpeciesRequirement
+      species:
+        - Ghoul
+        - GhoulGlowing
+    - !type:CharacterDepartmentTimeRequirement # T6 faction timelock (20h NCR)
+      department: CaesarLegion
+      min: 18000 # 5 hours
+    - !type:CharacterDepartmentRequirement
+      departments:
+        - Wastelander
+  items:
+    -  M14ClothingOuterMarkedMenCombatTribalArmor
+
+- type: loadout
+  id: MisfitsLoadoutOuterMarkedMenCombatPatrolArmor
+  category: Outer
+  cost: 6
+  exclusive: true
+  requirements:
+    - !type:CharacterItemGroupRequirement
+      group: N14LoadoutOuter
+    - !type:CharacterSpeciesRequirement
+      species:
+        - Ghoul
+        - GhoulGlowing
+    - !type:CharacterDepartmentTimeRequirement # T6 faction timelock (20h NCR)
+      department: NCR
+      min: 18000 # 5 hours
+    - !type:CharacterDepartmentRequirement
+      departments:
+        - Wastelander
+  items:
+    -  M14ClothingOuterMarkedMenCombatPatrolArmor
+
 # === Outer: Wasteland jackets and coats ===
 
 - type: loadout

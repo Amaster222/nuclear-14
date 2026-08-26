@@ -10605,3 +10605,42 @@ Entries:
   id: 6353
   time: '2026-08-24T02:23:43.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1788
+- author: Dpellowski
+  changes:
+    - type: Tweak
+      message: Enclave -> US Army renames (Mostly)
+  id: 6354
+  time: '2026-08-24T17:18:42.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1806
+- author: Amaster222
+  changes:
+    - type: Tweak
+      message: Made it so Water and various other reagents now evaporate much faster!
+    - type: Fix
+      message: (Mostly) Fixed mop code! Just remember to stop mopping at some point.
+  id: 6355
+  time: '2026-08-25T01:46:09.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1804
+- author: Vixting
+  changes:
+    - type: Add
+      message: 'Pacifism now blocks arming explosives '
+  id: 6356
+  time: '2026-08-25T01:47:34.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1090
+- author: Oreo365
+  changes:
+    - type: Add
+      message: Added Canes and Cane Blades to Loadouts
+  id: 6357
+  time: '2026-08-25T20:48:21.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1798
+- author: Oli
+  changes:
+    - type: Add
+      message: Marked Men gear
+    - type: Tweak
+      message: loadout satchels were bugged for the longest time.
+  id: 6358
+  time: '2026-08-25T20:55:03.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1808

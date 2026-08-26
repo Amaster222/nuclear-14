@@ -205,6 +205,30 @@
   - type: Clothing
     sprite: _Misfits/Clothing/OuterClothing/Armor/talonduster.rsi
 
+#Marked Men, The men who survived the Divide. How they ended up to the region that they are is up to the player. Armor exclusive to Ghouls + Glowing Ghouls. As Marked Men are technically a unique ghoul species for NV. But sadly not on Misfits.
+
+- type: entity
+  parent: N14ClothingOuterCombatArmor
+  id: M14ClothingOuterMarkedMenCombatTribalArmor
+  name: marked men tribal armor
+  description: A set of oddly ornate ruined armour put together with scrap metal, license plates and pure anger. While ugly in look, it seems to have a nice amount of protection in it's plates, bearing a striking resemblance to the armour most commonly worn by a Legatus - although lacking it's golden beauty and flowing red cape.
+  components:
+  - type: Sprite
+    sprite: _Misfits/Clothing/OuterClothing/Armor/markedmentribal.rsi
+  - type: Clothing
+    sprite: _Misfits/Clothing/OuterClothing/Armor/markedmentribal.rsi
+
+- type: entity
+  parent: N14ClothingOuterCombatArmor
+  id: M14ClothingOuterMarkedMenCombatPatrolArmor
+  name: marked men patrol armor
+  description: A set of weathered Ranger Patrol gear that's definitely seen better days. Bits and pieces of it have been modified and replaced with license plates and scrap metal, as opposed to it's usual kevlar padding. The entire kit being caked with dust, bullet holes and stab marks, most definitely a reminder of the past rather than functioning armour.
+  components:
+  - type: Sprite
+    sprite: _Misfits/Clothing/OuterClothing/Armor/markedmenpatrol.rsi
+  - type: Clothing
+    sprite: _Misfits/Clothing/OuterClothing/Armor/markedmenpatrol.rsi
+
 
 #All of the armors below are equivalent to White Legs armor. These armors are for Tribals / Wastelanders. All tribes in this category gets two armors outside of the Sorrows.
 - type: entity
