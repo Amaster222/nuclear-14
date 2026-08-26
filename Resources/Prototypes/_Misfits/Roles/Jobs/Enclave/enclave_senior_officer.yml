@@ -3,7 +3,6 @@
 - type: job
   id: EnclaveSeniorOfficer
   setPreference: true
-  hideWithoutJobWhitelist: true
   jobWhitelistBypassesRoleTimers: true # #Misfits Change
   weight: 115
   displayWeight: 128
@@ -19,10 +18,7 @@
       - Ghoul
     - !type:CharacterDepartmentTimeRequirement # #Misfits Tweak - T6 faction timelock (20h Enclave)
       department: Enclave
-      min: 72000 # 20 hours
-    - !type:CharacterPlaytimeRequirement
-      tracker: EnclaveJuniorOfficer
-      min: 36000 # 10 hours
+      min: 360000 # 100 hours
   startingGear: EnclaveSeniorOfficerGear
   icon: "JobIconEnclaveSeniorOfficer"
   supervisors: job-supervisors-enclave-senior-officer
