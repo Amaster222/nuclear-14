@@ -95,9 +95,9 @@
   description: An old set of combat armor, repainted in the blue color of the Khans.
   components:
   - type: Sprite
-    sprite: _Nuclear14/Clothing/OuterClothing/Armor/khanbatarmor.rsi
+    sprite: _Misfits/Clothing/OuterClothing/Armor/khanbatarmor.rsi
   - type: Clothing
-    sprite: _Nuclear14/Clothing/OuterClothing/Armor/khanbatarmor.rsi
+    sprite: _Misfits/Clothing/OuterClothing/Armor/khanbatarmor.rsi
 
 - type: entity
   parent: N14ClothingOuterCombatArmorMK2
@@ -106,6 +106,6 @@
   description: An old set of combat armor, repainted in the colors of the Khans, with a big mongol on the back."
   components:
   - type: Sprite
-    sprite: _Nuclear14/Clothing/OuterClothing/Armor/khanbatarmormk2.rsi
+    sprite: _Misfits/Clothing/OuterClothing/Armor/khanbatarmormk2.rsi
   - type: Clothing
-    sprite: _Nuclear14/Clothing/OuterClothing/Armor/khanbatarmormk2.rsi
+    sprite: _Misfits/Clothing/OuterClothing/Armor/khanbatarmormk2.rsi
