@@ -518,7 +518,7 @@
   parent: ClothingHandsBase
   id: SupermutantFollowerGloves
   name: Large Sterile Gloves
-  description: Gigantic gloves intended gigantic medical volunteers, they help the mutant with a gentle touch to keep the patient from infection during surgery.
+  description: Gigantic gloves intended for gigantic medical volunteers, they help the mutant with a gentle touch to keep the patient from infection during surgery.
   components:
   - type: Sprite
     sprite: _Misfits/Clothing/SuperMutant/follower_gloves.rsi
