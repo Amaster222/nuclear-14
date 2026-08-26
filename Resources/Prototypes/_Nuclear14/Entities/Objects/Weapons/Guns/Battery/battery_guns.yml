@@ -245,7 +245,7 @@
   - type: Gun
     soundGunshot:
       collection: N14PlasmaDefenderGunshot
-    fireRate: 1.5
+    fireRate: 2.5
   - type: FollowDistance
     backStrength: 6
   - type: StaticPrice
