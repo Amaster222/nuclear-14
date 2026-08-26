@@ -48,6 +48,7 @@
   - EnclaveCommander
   - EnclaveSeniorOfficer
   - EnclaveJuniorOfficer
+  - EnclaveVertibirdPilot # #Misfits Add - commissioned aviator, ranks 2LT → 1LT → Captain
   - EnclaveHeadScientist
   - EnclaveScientist
   - EnclaveJuniorScientist
@@ -55,6 +56,19 @@
   - EnclaveEnlisted
   - EnclaveRecruit       # #Misfits Add - hidden job for per-round recruitment playtime tracking
   - SuperMutantEnclave
+
+# #Cythisiax Added - Brotherhood of Steel personal whitelist department.
+# Single-player whitelist postings styled after the Brotherhood faction so they
+# appear attached to the BoS in the Whitelist tab.
+- type: department
+  id: BoSPersonalWhitelist
+  description: department-BoSPersonalWhitelist-description
+  color: "#3B72BF" # Brotherhood of Steel blue
+  weight: -103
+  uiCategory: Whitelist
+  roles:
+  - BoSPaladinCommander # #Cythisiax Edited - NCR HT Instructor | _Misfits/Roles/Jobs/BrotherhoodOfSteel/bos_paladin_commander.yml
+  - BoSTombstone # #Cythisiax Added - TOMBSTONE | _Misfits/Roles/Jobs/BrotherhoodOfSteel/bos_tombstone.yml
 
 # #Misfits Add — Caesar's Legion department. Groups all Legion roles for the
 # character-creation screen and for department-based requirements/lookups.

@@ -9,9 +9,12 @@
   description: job-description-caesar-legion-houndmaster
   playTimeTracker: CaesarLegionHoundmaster
   requirements:
-    - !type:CharacterDepartmentTimeRequirement # #Misfits Tweak - T5 faction timelock (16h Legion)
+    - !type:CharacterDepartmentTimeRequirement # Legion total timelock
       department: CaesarLegion
       min: 57600 # 16 hours
+    - !type:CharacterPlaytimeRequirement
+      tracker: CaesarLegionVexillarius
+      min: 28800 # 8 hours
     - !type:CharacterSpeciesRequirement
       species:
       - Human

@@ -132,8 +132,9 @@
 - type: entity
   parent: N14ClothingOuterPowerArmorT45
   id: MisfitsEnclavePowerArmor
-  name: Experimental X-01 Power Armor
-  description: A set of X-01 power armor made to fit a supermutant, the extensive modifications have left it less durable than a standard set of X-01.
+  # #Misfits Change - Renamed to APA MK I (removed 'Experimental' prefix per rebalance)
+  name: APA MK I Power Armor
+  description: A set of APA MK I power armor made to fit a supermutant, the extensive modifications have left it less durable than a standard set of APA MK I.
   components:
   - type: PowerArmorIntegrity
     brokenBleedthroughRatio: 1.0  # #Misfits Add - when broken, only armor coefficients apply
@@ -142,9 +143,10 @@
     sprite: _Misfits/Clothing/OuterClothing/PowerArmor/Mutant_PA.rsi
   - type: Clothing
     sprite: _Misfits/Clothing/OuterClothing/PowerArmor/Mutant_PA.rsi
-    equipDelay: 14400 # The Experimental X-01 Power armor is a living Tomb for whichever poor supermutant they put in it, so it takes the entire round to unequip/equip.
+    equipDelay: 14400 # The APA MK I Power armor is a living Tomb for whichever poor supermutant they put in it, so it takes the entire round to unequip/equip.
     unequipDelay: 14400
   - type: Armor # #Misfits Tweak: Added Heat and Piercing coefficients — pre-reduces damage before integrity absorption so PA stays above Centurion/Vet.Ranger at all integrity levels.
+    # #Misfits Change - no Radiation coefficient; supermutants take no radiation damage to begin with.
     modifiers:
       coefficients:
         Blunt: 0.70
@@ -152,7 +154,6 @@
         Piercing: 0.70
         Heat: 0.70
         Caustic: 0.75
-        Radiation: 0.6
   - type: Unremoveable # This is your casket. Service guarantees citizenship.
   - type: Tag
     tags:
@@ -283,8 +284,9 @@
 - type: entity
   parent: N14ClothingOuterPowerArmorT45
   id: N14ClothingOuterPowerArmorAdvanced1
-  name: X-01 Power Armor
-  description: The standard issue model of power armor for Enclave infantry personnel. It offers an advanced sensors suite and improved defensive capabilities compared to standard pre-war models.
+  # #Misfits Change - Renamed X-01 -> APA MK I
+  name: APA MK I Power Armor
+  description: The standard issue model of power armor for U.S. Army infantry personnel. It offers an advanced sensors suite and improved defensive capabilities compared to standard pre-war models.
   components:
   - type: PowerArmorIntegrity
     brokenBleedthroughRatio: 1.0  # #Misfits Add - when broken, only armor coefficients apply
@@ -303,7 +305,7 @@
         Caustic: 0.6
         Radiation: 0.6
   - type: ExplosionResistance
-    damageCoefficient: 0.10 # #Misfits Tweak: X-01 blast resistance — ~12 HP at ground zero
+    damageCoefficient: 0.10 # #Misfits Tweak: APA MK I blast resistance — ~12 HP at ground zero
   - type: UserInterface
     interfaces:
       enum.ToggleClothingUiKey.Key:
@@ -327,8 +329,9 @@
 - type: entity
   parent: N14ClothingOuterPowerArmorAdvanced1
   id: N14ClothingOuterPowerArmorAdvanced2
-  name: X-02 Power Armor
-  description: The next generation in power armor technology. The X-02 is a more lightweight and sleek design than the X-01, offering the wearer unparalleled mobility compared to its alternatives.
+  # #Misfits Change - Renamed X-02 -> APA MK II
+  name: APA MK II Power Armor
+  description: The next generation in power armor technology. The APA MK II is a more lightweight and sleek design than the APA MK I, offering the wearer unparalleled mobility compared to its alternatives.
   components:
   - type: PowerArmorIntegrity
     brokenBleedthroughRatio: 1.0  # #Misfits Add - when broken, only armor coefficients apply
@@ -386,7 +389,7 @@
   parent: N14ClothingOuterPowerArmorAdvanced2
   id: N14ClothingOuterPowerArmorAdvanced2Hellfire
   name: Hellfire Power Armor
-  description: A deep black suit of Enclave-manufactured heavy power armor based on pre-war designs such as the T-51, and improving off of data gathered by post-war designs such as the X-01. Most commonly fielded on the East Coast, no suit can rival its strength.
+  description: A deep black suit of U.S. Army-manufactured heavy power armor based on pre-war designs such as the T-51, and improving off of data gathered by post-war designs such as the APA MK I. Most commonly fielded on the East Coast, no suit can rival its strength.
   components:
   - type: PowerArmorIntegrity
     maxIntegrity: 620 # #Misfits Tweak: Hellfire durability.

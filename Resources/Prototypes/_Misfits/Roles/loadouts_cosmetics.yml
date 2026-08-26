@@ -337,6 +337,7 @@
         - NCRHeavyTrooper
         - NCRExecutiveOfficer
         - NCRPlatoonLeader
+        - NCRVertibirdPilot
         - NCRCommander
         - NCRMajor
         - NCRDoctor
@@ -528,57 +529,6 @@
   items:
     - MisfitsClothingHeadRedBandana
 
-- type: loadout
-  id: MisfitsLoadoutHeadHeadMarlowHat
-  category: Head
-  cost: 0
-  exclusive: true
-  requirements:
-    - !type:CharacterDepartmentRequirement
-      departments:
-        - Wastelander
-        - Townsfolk
-  items:
-    - MisfitsClothingHeadMarlowHat
-
-- type: loadout
-  id: MisfitsLoadoutHeadHeadSchlimmHat
-  category: Head
-  cost: 0
-  exclusive: true
-  requirements:
-    - !type:CharacterDepartmentRequirement
-      departments:
-        - Wastelander
-        - Townsfolk
-  items:
-    - MisfitsClothingHeadSchlimmHat
-
-- type: loadout
-  id: MisfitsLoadoutHeadHeadAHPhelmet
-  category: Head
-  cost: 0
-  exclusive: true
-  requirements:
-    - !type:CharacterDepartmentRequirement
-      departments:
-        - Wastelander
-        - Townsfolk
-  items:
-    - MisfitsClothingHeadAHPhelmet
-
-- type: loadout
-  id: MisfitsLoadoutHeadKhanHelmet
-  category: Head
-  cost: 0
-  exclusive: true
-  requirements:
-    - !type:CharacterDepartmentRequirement
-      departments:
-        - Wastelander
-  items:
-    - MisfitsClothingHeadKhanHelmet
-
 # === Head: NCR soldiers ===
 
 - type: loadout
@@ -599,6 +549,7 @@
         - NCRHeavyTrooper
         - NCRExecutiveOfficer
         - NCRPlatoonLeader
+        - NCRVertibirdPilot
         - NCRCommander
         - NCRMajor
         - NCRDoctor
@@ -615,6 +566,7 @@
       jobs:
         - NCRExecutiveOfficer
         - NCRPlatoonLeader
+        - NCRVertibirdPilot
         - NCRCommander
         - NCRMajor
   items:
@@ -670,6 +622,7 @@
         - NCRDoctor
         - NCRExecutiveOfficer
         - NCRPlatoonLeader
+        - NCRVertibirdPilot
         - NCRNCO
         - NCREngineer
         - NCRMedic
@@ -766,6 +719,9 @@
         - BoSScribe
         - BoSPaladin
         - BoSMidKnight
+        - BoSLancerCaptain
+        - BoSLancerKnight
+        - BoSLancer
         - BoSMidPaladin
         - BoSWestScribe
         - BoSMidScribe
@@ -788,6 +744,7 @@
         - BoSScribe
         - BoSPaladin
         - BoSMidKnight
+        - BoSLancerCaptain
         - BoSMidPaladin
         - BoSWestScribe
         - BoSMidScribe
@@ -810,6 +767,9 @@
         - BoSScribe
         - BoSPaladin
         - BoSMidKnight
+        - BoSLancerCaptain
+        - BoSLancerKnight
+        - BoSLancer
         - BoSMidPaladin
         - BoSWestScribe
         - BoSMidScribe
@@ -857,6 +817,7 @@
         - EnclaveEnlisted
         - EnclaveNCO
         - EnclaveJuniorOfficer
+        - EnclaveVertibirdPilot
         - EnclaveSeniorOfficer
         - EnclaveCommander
         - EnclaveReformer
@@ -876,6 +837,7 @@
         - EnclaveEnlisted
         - EnclaveNCO
         - EnclaveJuniorOfficer
+        - EnclaveVertibirdPilot
         - EnclaveSeniorOfficer
         - EnclaveCommander
         - EnclaveReformer
@@ -890,6 +852,7 @@
     - !type:CharacterJobRequirement
       jobs:
         - EnclaveJuniorOfficer
+        - EnclaveVertibirdPilot
         - EnclaveSeniorOfficer
         - EnclaveCommander
         - EnclaveReformer
@@ -1209,68 +1172,6 @@
   items:
     - ClothingOuterCoatJacketBiker
 
-# === Outer: Wasteland jackets and coats ===
-
-- type: loadout
-  id: MisfitsLoadoutOuterHighwayPatrolJacket
-  category: Outer
-  cost: 1
-  exclusive: true
-  requirements:
-    - !type:CharacterItemGroupRequirement
-      group: N14LoadoutOuter
-    - !type:CharacterDepartmentRequirement
-      departments:
-        - Wastelander
-        - Townsfolk
-  items:
-    - M14ClothingOuterHighwayPatrolJacket
-
-- type: loadout
-  id: MisfitsLoadoutOuterMarlowGangOvercoat
-  category: Outer
-  cost: 1
-  exclusive: true
-  requirements:
-    - !type:CharacterItemGroupRequirement
-      group: N14LoadoutOuter
-    - !type:CharacterDepartmentRequirement
-      departments:
-        - Wastelander
-        - Townsfolk
-  items:
-    -  M14ClothingOuterMarlowGangOvercoat
-
-- type: loadout
-  id: MisfitsLoadoutOuterGunfightersOvercoat
-  category: Outer
-  cost: 1
-  exclusive: true
-  requirements:
-    - !type:CharacterItemGroupRequirement
-      group: N14LoadoutOuter
-    - !type:CharacterDepartmentRequirement
-      departments:
-        - Wastelander
-        - Townsfolk
-  items:
-    -  M14ClothingOuterGunfightersOvercoat
-
-- type: loadout
-  id: MisfitsLoadoutOuterVegabondsVest
-  category: Outer
-  cost: 1
-  exclusive: true
-  requirements:
-    - !type:CharacterItemGroupRequirement
-      group: N14LoadoutOuter
-    - !type:CharacterDepartmentRequirement
-      departments:
-        - Wastelander
-        - Townsfolk
-  items:
-    -  M14ClothingOuterVegabondsVest
-
 - type: loadout
   id: MisfitsLoadoutOuterArmorKit
   category: Outer
@@ -1328,139 +1229,6 @@
   items:
     -  M14ClothingOuterArmorKitShoulder
 
-- type: loadout
-  id: MisfitsLoadoutOuterKhanLeather
-  category: Outer
-  cost: 1
-  exclusive: true
-  requirements:
-    - !type:CharacterItemGroupRequirement
-      group: N14LoadoutOuter
-    - !type:CharacterDepartmentRequirement
-      departments:
-        - Wastelander
-  items:
-    -  M14ClothingOuterKhanLeather
-
-# === Uniform: Wastelanders drip ===
-
-- type: loadout
-  id: MisfitsLoadoutUniformADPUniform
-  category: Uniform
-  cost: 0
-  exclusive: true
-  requirements:
-    - !type:CharacterItemGroupRequirement
-      group: N14LoadoutUniform
-    - !type:CharacterDepartmentRequirement
-      departments:
-        - Wastelander
-        - Townsfolk
-  items:
-    - M14ClothingUniformADPUniform
-
-- type: loadout
-  id: MisfitsLoadoutUniformMarlowdudsUniform
-  category: Uniform
-  cost: 0
-  exclusive: true
-  requirements:
-    - !type:CharacterItemGroupRequirement
-      group: N14LoadoutUniform
-    - !type:CharacterDepartmentRequirement
-      departments:
-        - Wastelander
-        - Townsfolk
-  items:
-    - M14ClothingUniformMarlowdudsUniform
-
-- type: loadout
-  id: MisfitsLoadoutUniformIkedudsUniform
-  category: Uniform
-  cost: 0
-  exclusive: true
-  requirements:
-    - !type:CharacterItemGroupRequirement
-      group: N14LoadoutUniform
-    - !type:CharacterDepartmentRequirement
-      departments:
-        - Wastelander
-        - Townsfolk
-  items:
-    - M14ClothingUniformIkedudsUniform
-
-- type: loadout
-  id: MisfitsLoadoutUniformHelendudsUniform
-  category: Uniform
-  cost: 0
-  exclusive: true
-  requirements:
-    - !type:CharacterItemGroupRequirement
-      group: N14LoadoutUniform
-    - !type:CharacterDepartmentRequirement
-      departments:
-        - Wastelander
-        - Townsfolk
-  items:
-    - M14ClothingUniformHelendudsUniform
-
-- type: loadout
-  id: MisfitsLoadoutUniformMasondudsUniform
-  category: Uniform
-  cost: 0
-  exclusive: true
-  requirements:
-    - !type:CharacterItemGroupRequirement
-      group: N14LoadoutUniform
-    - !type:CharacterDepartmentRequirement
-      departments:
-        - Wastelander
-        - Townsfolk
-  items:
-    - M14ClothingUniformMasondudsUniform
-
-- type: loadout
-  id: MisfitsLoadoutUniformSchlimmUniform
-  category: Uniform
-  cost: 0
-  exclusive: true
-  requirements:
-    - !type:CharacterItemGroupRequirement
-      group: N14LoadoutUniform
-    - !type:CharacterDepartmentRequirement
-      departments:
-        - Wastelander
-        - Townsfolk
-  items:
-    - M14ClothingUniformSchlimmUniform
-
-- type: loadout
-  id: MisfitsLoadoutUniformKhansUniform
-  category: Uniform
-  cost: 0
-  exclusive: true
-  requirements:
-    - !type:CharacterItemGroupRequirement
-      group: N14LoadoutUniform
-    - !type:CharacterDepartmentRequirement
-      departments:
-        - Wastelander
-  items:
-    - M14ClothingUniformKhansUniform
-
-- type: loadout
-  id: MisfitsLoadoutUniformKhansUniformShorts
-  category: Uniform
-  cost: 0
-  exclusive: true
-  requirements:
-    - !type:CharacterItemGroupRequirement
-      group: N14LoadoutUniform
-    - !type:CharacterDepartmentRequirement
-      departments:
-        - Wastelander
-  items:
-    - M14ClothingUniformKhansUniformShorts
 
 - type: loadout
   id: MisfitsLoadoutUniformEnclaveUniformBlue
@@ -1475,6 +1243,7 @@
     - EnclaveEnlisted
     - EnclaveNCO
     - EnclaveJuniorOfficer
+    - EnclaveVertibirdPilot
     - EnclaveSeniorOfficer
     - EnclaveCommander
     - EnclaveJuniorScientist
@@ -1496,6 +1265,7 @@
     - EnclaveEnlisted
     - EnclaveNCO
     - EnclaveJuniorOfficer
+    - EnclaveVertibirdPilot
     - EnclaveSeniorOfficer
     - EnclaveCommander
     - EnclaveJuniorScientist
@@ -1527,6 +1297,7 @@
         - NCRHeavyTrooper
         - NCRExecutiveOfficer
         - NCRPlatoonLeader
+        - NCRVertibirdPilot
         - NCRCommander
         - NCRMajor
         - NCRDoctor
@@ -1555,6 +1326,7 @@
         - NCRHeavyTrooper
         - NCRExecutiveOfficer
         - NCRPlatoonLeader
+        - NCRVertibirdPilot
         - NCRCommander
         - NCRMajor
         - NCRDoctor
@@ -1577,6 +1349,7 @@
         - NCRHeavyTrooper
         - NCRExecutiveOfficer
         - NCRPlatoonLeader
+        - NCRVertibirdPilot
         - NCRCommander
         - NCRMajor
   items:

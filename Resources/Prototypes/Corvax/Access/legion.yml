@@ -27,10 +27,6 @@
   name: id-card-access-level-legion-explorer
 
 - type: accessLevel
-  id: CaesarLegionOptio
-  name: id-card-access-level-legion-optio
-
-- type: accessLevel
   id: CaesarLegionLegionnaireRecruit
   name: id-card-access-level-legion-recruit-legionary
 
@@ -51,6 +47,18 @@
   name: id-card-access-level-legion-veteran-decanus
 
 - type: accessLevel
+  id: CaesarLegionPriestessOfMars
+  name: id-card-access-level-legion-priestess-of-mars
+
+- type: accessLevel
+  id: CaesarLegionAcolyteOfMars
+  name: id-card-access-level-legion-acolyte-of-mars
+
+- type: accessLevel
+  id: CaesarLegionOptio
+  name: id-card-access-level-legion-optio
+
+- type: accessLevel
   id: CaesarLegionCenturion
   name: id-card-access-level-legion-centurion
 
@@ -58,24 +66,26 @@
   id: CaesarLegionLegate
   name: id-card-access-level-legion-legate
 
+# #Misfits Fix: Legion access hierarchy rebuilt.
+# Previously EVERY group (including Slave) carried the base CaesarLegion tag AND inherited
+# CaesarLegionSlave, so the base tag matched every Legion ID and rank doors were meaningless.
+# Now: Slaves carry ONLY CaesarLegionSlave; CaesarLegion/CaesarLegionRecruit is the non-slave
+# base; each rank adds its own tag and never inherits CaesarLegionSlave.
 - type: accessGroup
   id: CaesarLegionSlave
   tags:
-  - CaesarLegion
   - CaesarLegionSlave
 
 - type: accessGroup
   id: CaesarLegionRecruit
   tags:
   - CaesarLegion
-  - CaesarLegionSlave
   - CaesarLegionRecruit
 
 - type: accessGroup
   id: CaesarLegionHoundmaster
   tags:
   - CaesarLegion
-  - CaesarLegionSlave
   - CaesarLegionRecruit
   - CaesarLegionHoundmaster
 
@@ -83,15 +93,21 @@
   id: CaesarLegionFrumentarii
   tags:
   - CaesarLegion
-  - CaesarLegionSlave
   - CaesarLegionRecruit
+  - CaesarLegionHoundmaster
   - CaesarLegionFrumentarii
+  - CaesarLegionVexillarius
+  - CaesarLegionExplorer
+  - CaesarLegionLegionnaireRecruit
+  - CaesarLegionLegionnaireWarrior
+  - CaesarLegionLegionnaireVeteran
+  - CaesarLegionDean
+  - CaesarLegionVeteranDecanus # yes frum have access to everyone except cent, legate, and optio. they are the legio cia. wah wah -legate tytos
 
 - type: accessGroup
   id: CaesarLegionVexillarius
   tags:
   - CaesarLegion
-  - CaesarLegionSlave
   - CaesarLegionRecruit
   - CaesarLegionVexillarius
 
@@ -99,23 +115,13 @@
   id: CaesarLegionExplorer
   tags:
   - CaesarLegion
-  - CaesarLegionSlave
   - CaesarLegionRecruit
   - CaesarLegionExplorer
-
-- type: accessGroup
-  id: CaesarLegionOptio
-  tags:
-  - CaesarLegion
-  - CaesarLegionSlave
-  - CaesarLegionRecruit
-  - CaesarLegionOptio
 
 - type: accessGroup
   id: CaesarLegionLegionnaireRecruit
   tags:
   - CaesarLegion
-  - CaesarLegionSlave
   - CaesarLegionRecruit
   - CaesarLegionLegionnaireRecruit
 
@@ -123,7 +129,6 @@
   id: CaesarLegionLegionnaireWarrior
   tags:
   - CaesarLegion
-  - CaesarLegionSlave
   - CaesarLegionRecruit
   - CaesarLegionLegionnaireRecruit
   - CaesarLegionLegionnaireWarrior
@@ -132,7 +137,6 @@
   id: CaesarLegionLegionnaireVeteran
   tags:
   - CaesarLegion
-  - CaesarLegionSlave
   - CaesarLegionRecruit
   - CaesarLegionLegionnaireRecruit
   - CaesarLegionLegionnaireWarrior
@@ -142,7 +146,6 @@
   id: CaesarLegionDean
   tags:
   - CaesarLegion
-  - CaesarLegionSlave
   - CaesarLegionRecruit
   - CaesarLegionLegionnaireRecruit
   - CaesarLegionLegionnaireWarrior
@@ -153,32 +156,51 @@
   id: CaesarLegionVeteranDecanus
   tags:
   - CaesarLegion
-  - CaesarLegionSlave
   - CaesarLegionRecruit
   - CaesarLegionLegionnaireRecruit
   - CaesarLegionLegionnaireWarrior
   - CaesarLegionLegionnaireVeteran
   - CaesarLegionDean
   - CaesarLegionVeteranDecanus
+
+- type: accessGroup
+  id: CaesarLegionPriestessOfMars
+  tags:
+  - CaesarLegion
+  - CaesarLegionRecruit
+  - CaesarLegionAcolyteOfMars
+  - CaesarLegionPriestessOfMars
+
+- type: accessGroup
+  id: CaesarLegionAcolyteOfMars
+  tags:
+  - CaesarLegion
+  - CaesarLegionRecruit
+  - CaesarLegionAcolyteOfMars
+
+- type: accessGroup
+  id: CaesarLegionOptio
+  tags:
+  - CaesarLegion
+  - CaesarLegionRecruit
+  - CaesarLegionHoundmaster
+  - CaesarLegionFrumentarii
+  - CaesarLegionVexillarius
+  - CaesarLegionExplorer
+  - CaesarLegionOptio
+  - CaesarLegionLegionnaireRecruit
+  - CaesarLegionLegionnaireWarrior
+  - CaesarLegionLegionnaireVeteran
+  - CaesarLegionDean
+  - CaesarLegionVeteranDecanus
+  - CaesarLegionAcolyteOfMars
+  - CaesarLegionPriestessOfMars
+
 
 - type: accessGroup
   id: CaesarLegionCenturion
   tags:
   - CaesarLegion
-  - CaesarLegionSlave
-  - CaesarLegionRecruit
-  - CaesarLegionLegionnaireRecruit
-  - CaesarLegionLegionnaireWarrior
-  - CaesarLegionLegionnaireVeteran
-  - CaesarLegionDean
-  - CaesarLegionVeteranDecanus
-  - CaesarLegionCenturion
-
-- type: accessGroup
-  id: CaesarLegionLegate
-  tags:
-  - CaesarLegion
-  - CaesarLegionSlave
   - CaesarLegionRecruit
   - CaesarLegionHoundmaster
   - CaesarLegionFrumentarii
@@ -191,18 +213,27 @@
   - CaesarLegionDean
   - CaesarLegionVeteranDecanus
   - CaesarLegionCenturion
+  - CaesarLegionAcolyteOfMars
+  - CaesarLegionPriestessOfMars
+
+- type: accessGroup
+  id: CaesarLegionLegate
+  tags:
+  - CaesarLegion
+  - CaesarLegionRecruit
+  - CaesarLegionHoundmaster
+  - CaesarLegionFrumentarii
+  - CaesarLegionVexillarius
+  - CaesarLegionExplorer
+  - CaesarLegionOptio
+  - CaesarLegionLegionnaireRecruit
+  - CaesarLegionLegionnaireWarrior
+  - CaesarLegionLegionnaireVeteran
+  - CaesarLegionDean
+  - CaesarLegionAcolyteOfMars
+  - CaesarLegionVeteranDecanus
+  - CaesarLegionPriestessOfMars
+  - CaesarLegionCenturion
   - CaesarLegionLegate
 
-- type: accessGroup
-  id: CaesarLegionPriestessOfMars
-  tags:
-  - CaesarLegion
-  - CaesarLegionSlave
-  - CaesarLegionRecruit
 
-- type: accessGroup
-  id: CaesarLegionAcolyteOfMars
-  tags:
-  - CaesarLegion
-  - CaesarLegionSlave
-  - CaesarLegionRecruit

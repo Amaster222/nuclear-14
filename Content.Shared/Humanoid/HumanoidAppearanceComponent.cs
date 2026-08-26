@@ -132,6 +132,13 @@ public sealed partial class HumanoidAppearanceComponent : Component
     public HumanoidCharacterProfile? LastProfileLoaded;
 
     /// <summary>
+    ///     Set after the final profile pass. Body-part appearance uses this to
+    ///     avoid capturing the temporary default markings during initialization.
+    /// </summary>
+    [ViewVariables]
+    public bool ProfileLoaded;
+
+    /// <summary>
     ///     The height of this humanoid.
     /// </summary>
     [DataField, AutoNetworkedField]

@@ -56,6 +56,10 @@
 - type: Tag
   id: MisfitsPipBoy
 
+# #Cythisiax Added - lets utility belts store the N14 welding goggles
+- type: Tag
+  id: WeldingGoggles
+
 # Medical Items
 - type: Tag
   id: N14DirtyGauze
@@ -192,6 +196,9 @@
 
 - type: Tag
   id: N14Igniter
+
+- type: Tag
+  id: N14PoliceBaton
 
 - type: Tag
   id: Capacitor2

@@ -15,7 +15,7 @@ namespace Content.Server.Administration.Systems;
 /// </summary>
 public sealed class AdminTestArenaSystem : EntitySystem
 {
-    [Dependency] private readonly IMapManager _mapManager = default!;
+    [Dependency] private readonly SharedMapSystem _mapManager = default!;
     [Dependency] private readonly MapLoaderSystem _map = default!;
     [Dependency] private readonly MetaDataSystem _metaDataSystem = default!;
 
@@ -42,7 +42,7 @@ public sealed class AdminTestArenaSystem : EntitySystem
         if (!_map.TryLoadMap(new ResPath(ArenaMapPath), out var loadedMap, out var grids) || grids == null || grids.Count == 0)
         {
             // Fallback: create empty map
-            ArenaMap[admin.UserId] = _mapManager.GetMapEntityId(_mapManager.CreateMap());
+            ArenaMap[admin.UserId] = _mapManager.CreateMap();
             _metaDataSystem.SetEntityName(ArenaMap[admin.UserId], $"ATAM-{admin.Name}");
             ArenaGrid[admin.UserId] = null;
             return (ArenaMap[admin.UserId], ArenaGrid[admin.UserId]);

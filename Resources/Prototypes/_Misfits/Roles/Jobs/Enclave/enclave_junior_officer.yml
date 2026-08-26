@@ -35,6 +35,8 @@
       - type: NpcFactionMember
         factions:
           - Enclave
+      - type: ReplacementAccent
+        accent: n14Enclave
       - type: PowerArmorProficiency
 
 - type: startingGear
@@ -46,7 +48,6 @@
     outerClothing: N14ClothingOuterPowerArmorAdvanced2
     shoes: N14ClothingBootsCombatFilled
     gloves: N14ClothingHandsGlovesCombat
-    neck: ClothingNeckPinEnclaveSecondLieutenant
     belt: ClothingBeltMilitary
     ears: N14ClothingHeadsetEnclave
     pocket1: EnclaveOfficerloadoutkits
