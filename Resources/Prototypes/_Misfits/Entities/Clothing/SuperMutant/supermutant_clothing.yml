@@ -187,7 +187,7 @@
 - type: entity
   parent: [ClothingOuterBase, AllowSuitStorageClothing]
   id: ClothingSuperMutantRangerArmor
-  name: Super Ranger Duster Coat
+  name: Supersized Ranger Duster Coat
   description: Adorned with the flag of the New California Republic on each pauldron, this armored coat marks you as one of the best of the best. You are the teeth of the bear, and you'll tear out the throat of any tyrant.
   components:
   - type: Sprite
@@ -207,7 +207,7 @@
 - type: entity
   parent: ClothingSuperMutantRangerArmor
   id: ClothingSuperMutantCustomizedCombatArmor
-  name: Super Ranger Armor Kit
+  name: Supersized Ranger Armor Kit
   description: The remains of fallen Brotherhood armor, the vest is a Knight's breastplate and the leg guard is from a Paladin's power armored greaves. Trophies of past victories, and a mockery of the enemy.
   components:
   - type: Sprite
@@ -221,7 +221,7 @@
 - type: entity
   parent: ClothingHeadBase
   id: ClothingSuperMutantRangerHat
-  name: Super Ranger Hat
+  name: Supersized Ranger Hat
   description: Gifted to super mutants who join the rangers, it has a helmet hidden under the material. It might not be comfortable, but every advantage counts when you're fighting the odds.
   components:
   - type: Sprite
@@ -241,7 +241,7 @@
 - type: entity
   parent: ClothingSuperMutantRangerHat
   id: ClothingSuperMutantRangerHatAlt
-  name: Super Ranger Cowboy Hat
+  name: Supersized Ranger Cowboy Hat
   description: Custom made for mutants who earn the right to join the rangers, it has been reinforced with ballistic material. This is the mark of a hero, who fights even when unappreciated.
   components:
   - type: Sprite
@@ -255,7 +255,7 @@
 - type: entity
   parent: ClothingSuperMutantNeckTrinket
   id: ClothingSuperMutantCustomDuster
-  name: Super Ranger Trophy Coat
+  name: Supersized Ranger Trophy Coat
   description: Not many mutants reach the esteemed ranks of the rangers, and this coat is decorated with the armor of defeated enemies. Each piece is a bounty completed, a point of pride.
   components:
   - type: Sprite
@@ -283,7 +283,7 @@
 - type: entity
   parent: SupermutantFollowerGloves
   id: SupermutantBlackGloves
-  name: Super Sized Gloves
+  name: Supersized Gloves
   description: Made to fit the biggest hands taking on the biggest problems, issued to super mutants who prefer hands-on solutions.
   components:
   - type: Sprite
@@ -297,7 +297,7 @@
 - type: entity
   parent: ClothingHeadBase
   id: ClothingSuperMutantRangerHelmet
-  name: Super Ranger Helmet
+  name: Supersized Ranger Helmet
   description: Custom made to keep an especially big target safe, issued to mutants who have joined the NCR's warrior elite. Many an enemy of the republic would like to take this as a trophy piece.
   components:
   - type: Sprite
@@ -317,7 +317,7 @@
 - type: entity
   parent: ClothingMaskBase
   id: ClothingSuperRangerGasmask
-  name: Super Ranger Riot Mask
+  name: Supersized Ranger Riot Mask
   description: An old LAPD riot squad gasmask, customized to fit a super mutant's large head. It no longer functions as a proper mask, but its night vision lenses still work. Nothing is more scary than a stealthy super mutant.
   components:
   - type: Sprite
@@ -333,7 +333,7 @@
 - type: entity
   parent: ClothingSuperRangerGasmask
   id: ClothingSuperMutantRangerGasmaskAlt
-  name: Super Ranger Recon Mask
+  name: Supersized Ranger Recon Mask
   description: An old LAPD riot squad gasmask, customized to fit a super mutant's large head. It no longer functions as a proper mask, but its night vision lenses still work. The red eyepieces have been swapped for yellow lenses.
   components:
   - type: Sprite
@@ -346,7 +346,7 @@
 - type: entity
   parent: [UnsensoredClothingUniformBase, AllowSuitStorageClothing]
   id: ClothingSuperMutantRangerShirt
-  name: Super Ranger Formal Outfit
+  name: Supersized Ranger Formal Outfit
   description: Tailored especially to fit your massive frame, of higher quality than what most citizens have for their sunday best. Sky blue linen for a shirt and clean khaki trousers with a large leather belt, topped off with a silver belt buckle.
   components:
   - type: Sprite
