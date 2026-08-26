@@ -1875,3 +1875,23 @@
       group: N14LoadoutMelee
   items:
     - N14CeremonialSword
+
+- type: loadout
+  id: Cane
+  category: Weapons
+  cost: 1
+  requirements:
+    - !type:CharacterItemGroupRequirement
+      group: N14LoadoutMelee
+  items:
+    - Cane
+
+- type: loadout
+  id: CaneBlade
+  category: Weapons
+  cost: 3
+  requirements:
+    - !type:CharacterItemGroupRequirement
+      group: N14LoadoutMelee
+  items:
+    - CaneBlade

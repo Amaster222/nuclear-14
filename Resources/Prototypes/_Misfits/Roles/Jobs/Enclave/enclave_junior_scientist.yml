@@ -3,7 +3,6 @@
 - type: job
   id: EnclaveJuniorScientist
   setPreference: true
-  hideWithoutJobWhitelist: true
   jobWhitelistBypassesRoleTimers: true # #Misfits Change
   weight: 98
   displayWeight: 124

@@ -4,7 +4,6 @@
 - type: job
   id: EnclaveVertibirdPilot
   setPreference: true
-  hideWithoutJobWhitelist: true
   jobWhitelistBypassesRoleTimers: true
   weight: 112
   displayWeight: 127
