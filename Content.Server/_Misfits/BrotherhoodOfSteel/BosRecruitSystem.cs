@@ -42,16 +42,20 @@ public sealed class BosRecruitSystem : EntitySystem
     {
         base.Initialize();
 
-        // Show "Recruit" verb on living player entities for BoS members
-        SubscribeLocalEvent<MindContainerComponent, GetVerbsEvent<InteractionVerb>>(OnGetInteractionVerbs);
+        // Show "Recruit" verb on living player entities. Subscribed on
+        // MobStateComponent rather than MindContainerComponent: the Enclave
+        // recruit system already owns the (MindContainerComponent,
+        // GetVerbsEvent) pair and this engine throws on duplicate
+        // subscriptions. The verb requires a living target anyway.
+        SubscribeLocalEvent<MobStateComponent, GetVerbsEvent<InteractionVerb>>(OnGetInteractionVerbs);
     }
 
     /// <summary>
-    /// Add the "Recruit" verb for Brotherhood members on living player entities.
+    /// Add the "Recruit" verb for designated recruiters on living players.
     /// </summary>
     private void OnGetInteractionVerbs(
         EntityUid target,
-        MindContainerComponent targetMind,
+        MobStateComponent mobState,
         GetVerbsEvent<InteractionVerb> args)
     {
         var user = args.User;
@@ -70,13 +74,12 @@ public sealed class BosRecruitSystem : EntitySystem
         if (!hasBypass && !IsBrotherhoodMember(user))
             return;
 
-        // Target must be a living player with a mind
-        if (!targetMind.HasMind)
+        // Target must be alive (not dead/ghost)
+        if (mobState.CurrentState != MobState.Alive)
             return;
 
-        // Target must be alive (not dead/ghost)
-        if (!TryComp<MobStateComponent>(target, out var mobState)
-            || mobState.CurrentState != MobState.Alive)
+        // Target must be a player with a mind
+        if (!TryComp<MindContainerComponent>(target, out var targetMind) || !targetMind.HasMind)
             return;
 
         // Don't show verb on self
