@@ -10673,3 +10673,10 @@ Entries:
   id: 6361
   time: '2026-08-27T01:00:09.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1809
+- author: JohnKieser
+  changes:
+    - type: Fix
+      message: fixed wrench and crowbar sprite
+  id: 6362
+  time: '2026-08-27T01:11:45.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1812
