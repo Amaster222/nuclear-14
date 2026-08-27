@@ -103,7 +103,9 @@ public sealed partial class VertibirdSystem : EntitySystem
         SubscribeNetworkEvent<VertibirdControlInputMessage>(OnControlInput);
         SubscribeNetworkEvent<VertibirdCameraOffsetMessage>(OnCameraOffset);
 
-        InitializeTurret();
+        // #Cythisiax Removed - Vertibird co-pilot turret disabled: unwanted feature whose
+        // per-frame camera tracking caused lag.
+        // InitializeTurret();
         InitializeCombatDrop();
         InitializeCargo();
     }
@@ -112,7 +114,9 @@ public sealed partial class VertibirdSystem : EntitySystem
     {
         base.Update(frameTime);
 
-        UpdateTurretEyes();
+        // #Cythisiax Removed - Vertibird co-pilot turret disabled; this per-frame camera
+        // tracking was the lag source and is no longer needed.
+        // UpdateTurretEyes();
 
         var query = EntityQueryEnumerator<VertibirdComponent, MZPhysicsComponent, PhysicsComponent, TransformComponent>();
         while (query.MoveNext(out var uid, out var vertibird, out var mzPhysics, out var physics, out var xform))
