@@ -24,6 +24,8 @@
   startingGear: NCRTraderGear
   icon: "JobIconNcrCadet"
   supervisors: job-supervisors-ncr-prisoners
+  accessGroups:
+  - NCRTrader
   alwaysUseSpawner: true
   special:
   - !type:AddComponentSpecial
@@ -47,7 +49,7 @@
   duffelbag: N14ClothingBackpackDuffelFilled  # N14TODO: Trader bag
   storage:
     back:
-    - N14BoxPlasticFilledWastelander 
+    - N14BoxPlasticFilledWastelander
 
 - type: playTimeTracker
   id: NCRTrader
