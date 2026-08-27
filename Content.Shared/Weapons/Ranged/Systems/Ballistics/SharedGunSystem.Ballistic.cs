@@ -179,7 +179,7 @@ public abstract partial class SharedGunSystem
 
         args.Repeat = !args.Cancelled && !Deleted(args.Target) && TryComp<BallisticAmmoProviderComponent>(args.Target.Value, out var recieverComp) &&
                       !PopupCancels(recieverComp, args.Target.Value, giverComp, giverUID, args.User) &&
-                      TryAmmoInsert(5, giverUID, recieverComp, args.Target.Value, args.User);
+                      TryAmmoInsert(Math.Min(5, Math.Max(0, recieverComp.Capacity - recieverComp.AmmoCount)), giverUID, recieverComp, args.Target.Value, args.User);
 
         Audio.PlayPredicted(giverComp.SoundInsert, giverUID, args.User);
     }

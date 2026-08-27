@@ -205,6 +205,7 @@ public abstract partial class SharedGunSystem
                     ("entity", MetaData(recieverUid).EntityName)),
                 recieverUid,
                 user);
+
             return true;
         }
 
@@ -215,8 +216,10 @@ public abstract partial class SharedGunSystem
                     ("entity", MetaData(giverUid).EntityName)),
                 giverUid,
                 user);
+
             return true;
         }
+        DebugTools.Assert(recieverComp.AmmoCount < recieverComp.Capacity && recieverComp.AmmoCount > 0);
         return false;
     }
 
