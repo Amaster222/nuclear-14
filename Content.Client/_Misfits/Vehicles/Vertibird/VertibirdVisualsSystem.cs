@@ -74,12 +74,12 @@ public sealed class VertibirdVisualsSystem : EntitySystem
 
     private void UpdateSprite(Entity<VertibirdComponent> ent)
     {
-        if (!TryComp<SpriteComponent>(ent, out var sprite) ||
-            !_sprite.LayerMapTryGet((ent.Owner, sprite), VertibirdVisualLayers.Base, out _, false))
+        if (!TryComp<SpriteComponent>(ent, out var sprite))
         {
             return;
         }
-
+        _sprite.AddBlankLayer((ent.Owner, sprite), ((byte) VertibirdVisualLayers.Base));
+        _sprite.LayerMapSet((ent.Owner, sprite), VertibirdVisualLayers.Base, ((byte) VertibirdVisualLayers.Base));
         var state = IsAirborne(ent.Comp.State) ? ent.Comp.FlyingSpriteState : ent.Comp.GroundedSpriteState;
         _sprite.LayerSetRsiState((ent.Owner, sprite), VertibirdVisualLayers.Base, state);
         UpdateGroundHoverVisuals(ent, sprite);
