@@ -10705,3 +10705,18 @@ Entries:
   id: 6365
   time: '2026-08-27T02:23:57.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1811
+- author: Oreo365
+  changes:
+    - type: Add
+      message: Added Pipboys to Lancers
+    - type: Tweak
+      message: Standardized Overwatch colours for Lancers
+    - type: Remove
+      message: Removed bonus armour from Lancer-Captains
+    - type: Tweak
+      message: Gave all Lancers berets instead of standard cap hats
+    - type: Tweak
+      message: Gave all Lancers bomber jackets
+  id: 6366
+  time: '2026-08-27T02:24:11.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1810
