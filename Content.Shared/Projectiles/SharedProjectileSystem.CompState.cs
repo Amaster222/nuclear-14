@@ -26,7 +26,7 @@ public abstract partial class SharedProjectileSystem : EntitySystem
     }
     public bool DebugProjHandle(ProjectileComponent comp)
     {
-        Log.Debug($"Lifestage: {comp.LifeStage} Shooter: {comp.Shooter} Deleted?: {Deleted(comp.Weapon)} NetEnt:{GetNetEntity(comp.Shooter)} \n Weapon: {comp.Weapon} Deleted?: {Deleted(comp.Weapon)} NetEnt:{GetNetEntity(comp.Weapon)} ");
+        Log.Debug($"Tick: {_timing.CurTick} Lifestage: {comp.LifeStage} Shooter: {comp.Shooter} Deleted?: {Deleted(comp.Weapon)} NetEnt:{GetNetEntity(comp.Shooter)} \n Weapon: {comp.Weapon} Deleted?: {Deleted(comp.Weapon)} NetEnt:{GetNetEntity(comp.Weapon)} ");
         return true;
     }
     private void OnGetState(EntityUid uid, ProjectileComponent component, ref ComponentGetState args)
