@@ -9,9 +9,6 @@ namespace Content.Client.Weapons.Ranged.Systems;
 public sealed partial class GunSystem
 {
 
-    [Dependency] private IClientGameTiming _clientGameTiming = default!;
-    [Dependency] private IClientGameStateManager _stateManager = default!;
-
     protected override void InitializeBallistic()
     {
         base.InitializeBallistic();

@@ -21,7 +21,7 @@ public abstract partial class SharedGunSystem
             UnspawnedCount = comp.UnspawnedCount,
             SpawnedCountPredict = comp.Container.Count,
             CurIndex = comp.IndexPredict,
-            FromTick = _timing.CurTick.Value
+            FromTick = Timing.CurTick.Value
         };
     }
 

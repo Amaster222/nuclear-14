@@ -13,7 +13,6 @@ namespace Content.Shared.Weapons.Ranged.Systems;
 /// </summary>
 public abstract partial class SharedGunSystem
 {
-    [Dependency] private SharedMapSystem _mapManager = default!;
     /// <summary>
     /// Take some or none amount of ammo from giverUID returning a list of that ammo
     /// How this is done is up to comps of giverUID that listen to <see cref="TakeAmmoEvent"/>
@@ -43,7 +42,7 @@ public abstract partial class SharedGunSystem
     /// <remarks/>
     public virtual void DoAmmoInsert(List<(EntityUid? Entity, IShootable Shootable)> ammo, BallisticAmmoProviderComponent recieverComp, EntityUid recieverUid, EntityUid? User = null)
     {
-        if (!_timing.IsFirstTimePredicted)
+        if (!Timing.IsFirstTimePredicted)
         {
             foreach (var (shotUID, _) in ammo)
             {
@@ -59,7 +58,7 @@ public abstract partial class SharedGunSystem
         {
             Containers.Insert(shotUID!.Value, recieverComp.Container);
         }
-        if (!_timing.IsFirstTimePredicted)
+        if (!Timing.IsFirstTimePredicted)
             return;
         recieverComp.SpawnedCountPredict += ammo.Count;
         recieverComp.IndexPredict = recieverComp.IndexPredict + ammo.Count;
@@ -91,7 +90,7 @@ public abstract partial class SharedGunSystem
             return ammo;
         }
 
-        if (_timing.IsFirstTimePredicted && ammo.TryFirstOrNull(out var ent))
+        if (Timing.IsFirstTimePredicted && ammo.TryFirstOrNull(out var ent))
         {
             var proto = MetaData(ent.Value.Item1!.Value)!.EntityPrototype!.ID;
             RaisePredictiveEvent(new GunEjectEvent(proto, netEnt.Id, sequence, netEnt));

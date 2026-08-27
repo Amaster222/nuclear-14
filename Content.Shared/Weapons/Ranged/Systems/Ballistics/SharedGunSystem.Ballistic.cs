@@ -1,5 +1,4 @@
 using System.Runtime.CompilerServices;
-using Content.Shared._Misfits.Movement;
 using Content.Shared.DoAfter;
 using Content.Shared.Examine;
 using Content.Shared.Interaction;
@@ -33,8 +32,6 @@ namespace Content.Shared.Weapons.Ranged.Systems;
 public abstract partial class SharedGunSystem
 {
     [Dependency] private SharedDoAfterSystem _doAfter = default!;
-    [Dependency] private IGameTiming _timing = default!;
-    [Dependency] private SharedMisfitsLagCompensationSystem _lagComp = default!;
 
     private const int DEFAULT_AMMO = -1;
     //private static System.Random RNG;
@@ -104,7 +101,7 @@ public abstract partial class SharedGunSystem
         if (args.Handled || _whitelistSystem.IsWhitelistFailOrNull(recieverComp.Whitelist, args.Used))
             return;
         // TODO: rework
-        if (!_timing.IsFirstTimePredicted)
+        if (!Timing.IsFirstTimePredicted)
         {
             int slots = CanInstantFill(args.User) ? recieverComp.AmmoCount : 1;
             TryAmmoInsert(slots, args.Used, recieverComp, recieverUid, args.User);
@@ -268,7 +265,7 @@ public abstract partial class SharedGunSystem
     private void OnBallisticTakeAmmo(EntityUid giverUID, BallisticAmmoProviderComponent giverComp, TakeAmmoEvent args)
     {
         // Transfrom data we apply to all spawned ammo
-        if (!_timing.IsFirstTimePredicted)
+        if (!Timing.IsFirstTimePredicted)
         {
             foreach (var ammo in giverComp.ClientPredictedAmmoVisual)
             {
@@ -330,10 +327,10 @@ public abstract partial class SharedGunSystem
     }
     public void NetworkCompState(EntityUid uid, EntityUid? user, BallisticAmmoProviderComponent comp)
     {
-        var ev = new AmmoProviderDirtyEvent(uid, user, comp.IndexPredict, comp.UnspawnedCount, comp.SpawnedCountPredict, _timing.CurTick.Value);
+        var ev = new AmmoProviderDirtyEvent(uid, user, comp.IndexPredict, comp.UnspawnedCount, comp.SpawnedCountPredict, Timing.CurTick.Value);
         RaiseLocalEvent(ref ev);
 
-        if (_netManager.IsServer && Math.Abs(_timing.CurTick.Value - comp.LastModifiedTick.Value) > 20)
+        if (_netManager.IsServer && Math.Abs(Timing.CurTick.Value - comp.LastModifiedTick.Value) > 20)
         {
             DebugTools.Assert(DebugAmmoProviderClientDirty(uid));
             Dirty(uid, comp);

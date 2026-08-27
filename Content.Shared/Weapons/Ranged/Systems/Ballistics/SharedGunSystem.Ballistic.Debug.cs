@@ -59,18 +59,18 @@ public abstract partial class SharedGunSystem
         Log.Debug($"SpawnedCountPredict: {giverComp.SpawnedCountPredict}");
         Log.Debug($"UnspawnedCount: {giverComp.UnspawnedCount}");
         Log.Debug($"Index: {giverComp.IndexPredict}");
-        Log.Debug($"Cur Tick: {_timing.CurTick}");
+        Log.Debug($"Cur Tick: {Timing.CurTick}");
         return true;
     }
     //[System.Diagnostics.Conditional("DEBUG")]
     public bool DebugAmmoProviderClientDirty(EntityUid uid)
     {
-        Log.Debug($"Dirtied uid:{MetaData(uid).EntityName} on tick:{_timing.CurTick.Value}");
+        Log.Debug($"Dirtied uid:{MetaData(uid).EntityName} on tick:{Timing.CurTick.Value}");
         return true;
     }
     private bool DebugEjectCartRNG(int seed, int ammoCount, Vector2 pRNG, Vector2 pBase, Angle rRNG)
     {
-        Log.Debug($"curTick:{_timing.CurTick} seed: {seed} ammoCount: {ammoCount} RngPos:{pRNG} basePos:{pBase} , RngR:{rRNG.Reduced()}");
+        Log.Debug($"curTick:{Timing.CurTick} seed: {seed} ammoCount: {ammoCount} RngPos:{pRNG} basePos:{pBase} , RngR:{rRNG.Reduced()}");
         return true;
     }
 }
