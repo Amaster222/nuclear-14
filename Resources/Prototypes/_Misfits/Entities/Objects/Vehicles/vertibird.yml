@@ -132,8 +132,8 @@
       scale: 8, 4
       color: "#00000055"
       visible: false
-    #- state: vertibird
-    #  map: [ enum.VertibirdVisualLayers.Base ]
+    - state: vertibird
+      map: [ enum.VertibirdVisualLayers.Base ]
   - type: Strap
     position: Stand
     size: 900
