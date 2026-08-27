@@ -2,6 +2,7 @@ using Content.Shared.Whitelist;
 using Robust.Shared.Audio;
 using Robust.Shared.Containers;
 using Robust.Shared.GameStates;
+using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
 
 namespace Content.Shared.Weapons.Ranged.Components;
@@ -18,7 +19,7 @@ namespace Content.Shared.Weapons.Ranged.Components;
 ///
 /// ammo is also refered to as cartridge which is the technically correct term for the "bullet"
 /// </summary>
-[RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
+[RegisterComponent, NetworkedComponent]
 public sealed partial class BallisticAmmoProviderComponent : Component
 {
 
@@ -32,15 +33,37 @@ public sealed partial class BallisticAmmoProviderComponent : Component
     /// Number of yet to be spawned ammo.
     /// tradiationally thisll be how much ammo you'll want in the entity
     /// </summary>
-    [ViewVariables(VVAccess.ReadWrite), DataField, AutoNetworkedField]
+    [ViewVariables(VVAccess.ReadWrite), DataField]
     public int UnspawnedCount = -1;
 
+
+    /// <summary>
+    /// Container isnt predicted, so getting spawned item count off it
+    /// will cause visual delays and bugs.
+    /// </summary>
+    [ViewVariables(VVAccess.ReadOnly)]
+    public int SpawnedCountPredict = -1;
+
+    /// <summary>
+    /// For stuff like revolvers and maybe other shit
+    /// </summary>
+    [ViewVariables(VVAccess.ReadWrite)]
+    public int IndexPredict
+    {
+        get => _curIndex;
+        set => _curIndex = value % Capacity;
+    }
+
+    public List<EntProtoId?> ClientPredictedAmmoVisual = new();
+    //public List<(EntProtoId?, MapCoordinates, Angle)> PredictedEjects = default;
+
+    private int _curIndex = 0;
     [ViewVariables(VVAccess.ReadWrite), DataField]
     public EntityWhitelist? Whitelist;
     /// <summary>
     /// Container that holds any spawned ammo
     /// </summary>
-    ///
+
     [DataField(tag: "ballistic-ammo")]
     public Container Container = new();
 
@@ -50,7 +73,7 @@ public sealed partial class BallisticAmmoProviderComponent : Component
     /// <remarks>
     /// Set to false for entities like turrets to avoid users being able to cycle them.
     /// </remarks>
-    [ViewVariables(VVAccess.ReadWrite), DataField, AutoNetworkedField]
+    [ViewVariables(VVAccess.ReadWrite), DataField]
     public bool Cycleable = true;
     /// <summary>
     ///  max amount of ammo
@@ -61,7 +84,7 @@ public sealed partial class BallisticAmmoProviderComponent : Component
     /// total shots comp has
     /// basically: (yet to be spawned ammo) + (spawned ammo)
     /// </summary>
-    public int AmmoCount => UnspawnedCount + Container.Count;
+    public int AmmoCount => UnspawnedCount + SpawnedCountPredict;
     /// <summary>
     /// can this entity transfer its ammo into another ballistic ammo provider?
     /// </summary>
@@ -78,4 +101,5 @@ public sealed partial class BallisticAmmoProviderComponent : Component
 
     [ViewVariables(VVAccess.ReadWrite), DataField]
     public SoundSpecifier? SoundInsert = new SoundPathSpecifier("/Audio/Weapons/Guns/MagIn/bullet_insert.ogg");
+
 }
