@@ -10,7 +10,7 @@
   overrideConsoleVisibility: true
   canBeAntag: false
   name: job-name-bos-lancer-knight
-  overwatchCategory: OverwatchBosKnight
+  overwatchCategory: OverwatchBosSupport
   description: job-description-bos-lancer-knight
   playTimeTracker: BoSLancerKnight
   requirements:
@@ -39,12 +39,12 @@
     jumpsuit: N14ClothingUniformJumpskirtBOSBlack
     back: N14ClothingBackpackMilitary
     shoes: N14ClothingBootsLeatherFilled
-    head: N14ClothingHeadHatCapkhighBoS
-    outerClothing: MisfitsBoSKnightArmor
+    head: N14ClothingHeadHatBrotherhoodBeret
+    outerClothing: N14ClothingOuterJacketBomber
     hands: N14ClothingHandsGlovesCombat
     eyes: N14ClothingEyesGlassesPilot
     pocket1: BoSBrotherhoodKnightKits
-    id: N14IDBrotherhoodOfSteelHolotagKnight
+    id: N14LancerKnight_PipBoy
     ears: N14ClothingHeadsetBrotherhoodOfSteel
     belt: ClothingBeltBoSWebbing
   storage:

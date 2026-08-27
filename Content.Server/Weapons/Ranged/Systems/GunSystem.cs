@@ -1,11 +1,9 @@
-using System.Linq;
 using System.Numerics;
 using Content.Server._Misfits.Movement;
 using Content.Server._Misfits.Weapons.Ranged.Flamer;
 using Content.Server.Cargo.Systems;
 using Content.Server.Movement.Components;
 using Content.Server.Power.EntitySystems;
-using Content.Server.Weapons.Ranged.Components;
 using Content.Shared.Buckle.Components;
 using Content.Shared.Damage;
 using Content.Shared.Damage.Systems;
@@ -14,26 +12,20 @@ using Content.Shared.Effects;
 using Content.Shared.Projectiles;
 using Content.Shared._Misfits.CCVar;
 using Content.Shared._Misfits.Special;
-using Content.Shared.Weapons.Melee;
 using Content.Shared.Weapons.Ranged;
 using Content.Shared.Weapons.Ranged.Components;
 using Content.Shared.Weapons.Ranged.Events;
 using Content.Shared.Weapons.Ranged.Systems;
 using Content.Shared.Weapons.Reflect;
-using Content.Shared.Damage.Components;
 using Content.Shared._Misfits.Weapons; // #Misfits Add - GunDamageBonusComponent support
 using Content.Server._Misfits.Weapons.Ranged.Prediction;
 using Content.Shared._Misfits.Weapons.Ranged.Flamer;
 using Content.Shared._Misfits.Weapons.Ranged.Prediction;
 using Content.Server.Weapons.Ranged.Events;
-using Robust.Shared.Audio;
 using Robust.Shared.Configuration;
 using Robust.Shared.Map;
 using Robust.Shared.Physics;
-using Robust.Shared.Physics.Components;
-using Robust.Shared.Physics.Systems;
 using Robust.Shared.Player;
-using Robust.Shared.Prototypes;
 using Robust.Shared.Utility;
 using Robust.Shared.Containers;
 
@@ -152,7 +144,7 @@ public sealed partial class GunSystem : SharedGunSystem
                 base.ShootOrThrow(ent.Value, mapDirection, gunVelocity, gun, gunUid, user);
                 continue;
             }
-
+            // TODO: use ishootable like an actual interface
             switch (shootable)
             {
                 // Cartridge shoots something else
@@ -180,7 +172,7 @@ public sealed partial class GunSystem : SharedGunSystem
 
                     // Something like ballistic might want to leave it in the container still
                     if (!cartridge.DeleteOnSpawn && !Containers.IsEntityInContainer(ent!.Value))
-                        EjectCartridge(ent.Value, angle, userSession: userSession);
+                        EjectCartridge(ent.Value, baseCoords: Transform(gunUid).Coordinates, angle, userSession: userSession);
 
                     Dirty(ent!.Value, cartridge);
                     break;

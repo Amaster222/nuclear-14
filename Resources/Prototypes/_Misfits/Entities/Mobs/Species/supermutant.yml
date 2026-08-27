@@ -147,6 +147,11 @@
   - type: FootstepVolumeModifier
     sprintVolumeModifier: 15
     walkVolumeModifier: 15
+  - type: Butcherable
+    butcheringType: Spike # big fellas still need a spike
+    spawned:
+    - id: N14FoodMeatSupermutant
+      amount: 5
 
 - type: entity
   save: false

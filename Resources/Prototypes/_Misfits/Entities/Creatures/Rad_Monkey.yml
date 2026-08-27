@@ -37,3 +37,5 @@
   - type: MovementSpeedModifier
     baseWalkSpeed : 1
     baseSprintSpeed : 2
+  - type: NameIdentifier
+    group: Monkey
