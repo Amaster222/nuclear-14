@@ -10720,3 +10720,10 @@ Entries:
   id: 6366
   time: '2026-08-27T02:24:11.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1810
+- author: Oli
+  changes:
+    - type: Add
+      message: Bawls Caps Sprites
+  id: 6367
+  time: '2026-08-27T12:14:53.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1819
