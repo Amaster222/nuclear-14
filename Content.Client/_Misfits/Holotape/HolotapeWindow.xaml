@@ -137,6 +137,12 @@
                         <Button Name="DatabaseEditorCancelButton" Text="[ CANCEL ]" MinWidth="100" />
                     </BoxContainer>
                 </BoxContainer>
+                <!-- Directory footer occupies the browser's otherwise empty lower region. -->
+                <PanelContainer Name="SepDatabaseStatus" MinHeight="1" HorizontalExpand="True" />
+                <Label Name="DatabaseStatusLabel"
+                       StyleClasses="monospace"
+                       HorizontalExpand="True"
+                       HorizontalAlignment="Center" />
                 <!-- Action bar (rebuilt per view in code-behind) -->
                 <PanelContainer Name="SepDatabaseActions" MinHeight="1" HorizontalExpand="True" />
                 <BoxContainer Name="DatabaseActionsBar" Orientation="Horizontal" SeparationOverride="6" />

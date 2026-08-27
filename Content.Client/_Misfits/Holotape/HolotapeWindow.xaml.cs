@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Content.Client.Stylesheets;
+using Content.Client.UserInterface.Controls;
+using Content.Shared.Administration;
 using Content.Shared._Misfits.Holotape;
 using Content.Shared._Misfits.Overwatch;
 using Content.Shared.Mobs;
@@ -128,6 +131,8 @@ public sealed partial class HolotapeWindow : DefaultWindow
         SepLinks.PanelOverride = new StyleBoxFlat(Color.FromHex("#0f3d0f"));
         // #Misfits Add - Separator styling for the DATABASE tab
         SepDatabase.PanelOverride = new StyleBoxFlat(Color.FromHex("#0f3d0f"));
+        SepDatabaseStatus.PanelOverride = new StyleBoxFlat(Color.FromHex("#0f3d0f"));
+        DatabaseStatusLabel.FontColorOverride = Color.FromHex(TermDimGreen);
         SepDatabaseActions.PanelOverride = new StyleBoxFlat(Color.FromHex("#0f3d0f"));
         SepOverwatch.PanelOverride = new StyleBoxFlat(Color.FromHex("#0f3d0f"));
         OverwatchCameraFallback.PanelOverride = new StyleBoxFlat(Color.FromHex("#050805"));
@@ -880,6 +885,7 @@ public sealed partial class HolotapeWindow : DefaultWindow
         if (!_databaseState.CanRead)
         {
             DatabaseBrowserScroll.Visible = true;
+            DatabaseStatusLabel.Text = "ACCESS: DENIED _";
             DatabaseBreadcrumbLabel.SetMessage(FormattedMessage.FromMarkupPermissive("[color=#FF3333][bold]> ACCESS DENIED[/bold][/color]"));
 
             var noAccess = new RichTextLabel
@@ -897,6 +903,7 @@ public sealed partial class HolotapeWindow : DefaultWindow
 
         // Breadcrumb
         DatabaseBreadcrumbLabel.SetMessage(BuildBreadcrumb());
+        DatabaseStatusLabel.Text = BuildDatabaseStatus();
 
         switch (_dbView)
         {
@@ -961,6 +968,30 @@ public sealed partial class HolotapeWindow : DefaultWindow
         return msg;
     }
 
+    private string BuildDatabaseStatus()
+    {
+        if (_databaseState == null)
+            return "LINK STATUS: WAITING _";
+
+        var entryCount = 0;
+        foreach (var folder in _databaseState.Folders)
+        {
+            if (!folder.Deleted)
+                entryCount++;
+
+            foreach (var subfolder in folder.Subfolders)
+            {
+                if (!subfolder.Deleted)
+                    entryCount++;
+            }
+
+            entryCount += folder.Documents.Count(document => !document.Deleted);
+            entryCount += folder.Subfolders.Sum(subfolder => subfolder.Documents.Count(document => !document.Deleted));
+        }
+
+        return $"ENTRIES: {entryCount} // LINK READY _";
+    }
+
     private DatabaseFolderSummary? FindFolder(Guid id)
     {
         if (_databaseState == null)
@@ -978,6 +1009,48 @@ public sealed partial class HolotapeWindow : DefaultWindow
         foreach (var s in folder.Subfolders)
             if (s.SubfolderId == id) return s;
         return null;
+    }
+
+    private static BoxContainer CreateRowActions(BoxContainer row)
+    {
+        var actions = new BoxContainer
+        {
+            Orientation = BoxContainer.LayoutOrientation.Horizontal,
+            SeparationOverride = 6,
+            Visible = false,
+        };
+
+        // The action strip stays available while crossing from the entry to an action.
+        row.OnMouseEntered += _ => actions.Visible = true;
+        row.OnMouseExited += _ => actions.Visible = false;
+        row.AddChild(actions);
+        return actions;
+    }
+
+    private static Button CreateArchiveButton(string text, int minWidth, string styleClass)
+    {
+        return new Button
+        {
+            Text = text,
+            MinWidth = minWidth,
+            StyleClasses = { styleClass },
+        };
+    }
+
+    private Button CreatePermanentDeleteButton(string entryName, Action deleteAction)
+    {
+        var button = CreateArchiveButton("[ PERM DELETE ]", 110, StyleBase.ButtonTerminalDanger);
+        button.ToolTip = "Permanently remove this entry from the database. Cannot be restored.";
+        button.OnPressed += _ =>
+        {
+            // DialogWindow is the shared content-side confirmation control used by
+            // existing UI flows. An empty prompt list makes this a confirm/cancel dialog.
+            var dialog = new DialogWindow($"PERMANENT DELETE: {entryName}", new List<QuickDialogEntry>());
+            dialog.SetOkButtonText("[ DELETE FOREVER ]");
+            dialog.SetCancelButtonText("[ CANCEL ]");
+            dialog.OnConfirmed += _ => deleteAction();
+        };
+        return button;
     }
 
     private void RenderFolderList()
@@ -1005,6 +1078,7 @@ public sealed partial class HolotapeWindow : DefaultWindow
                 Text = deleted ? $"{adminBadge}[ {capName} ] [DELETED]" : $"{adminBadge}[ {capName} ]",
                 HorizontalExpand = true,
                 Disabled = deleted,
+                StyleClasses = { StyleBase.ButtonTerminalFolder },
             };
             btn.OnPressed += _ =>
             {
@@ -1014,13 +1088,14 @@ public sealed partial class HolotapeWindow : DefaultWindow
                 RefreshDatabaseView();
             };
             row.AddChild(btn);
+            var actions = CreateRowActions(row);
 
             // #Misfits Change - Delete/restore gated on Leadership (or Admin if marked).
             if (!deleted && canModify)
             {
-                var del = new Button { Text = "[ DEL ]", MinWidth = 60 };
+                var del = CreateArchiveButton("[ DEL ]", 60, StyleBase.ButtonTerminalCaution);
                 del.OnPressed += _ => OnDeleteDatabaseFolder?.Invoke(capId, null);
-                row.AddChild(del);
+                actions.AddChild(del);
             }
             // #Misfits Add - Leadership "move" (tidying): relocate this folder into another
             // folder. Admin-marked folders cannot be moved by leadership (server enforces same).
@@ -1033,25 +1108,23 @@ public sealed partial class HolotapeWindow : DefaultWindow
                     ToolTip = "Relocate this folder into another folder to organize it (e.g. a TRASH folder). Admin can delete it afterwards.",
                 };
                 move.OnPressed += _ => BeginMoveFolder(capId);
-                row.AddChild(move);
+                actions.AddChild(move);
             }
             if (!deleted && _databaseState!.CanAdmin)
             {
-                var permDel = new Button { Text = "[ PERM DELETE ]", MinWidth = 110 };
-                permDel.OnPressed += _ => OnPermanentDeleteDatabaseEntry?.Invoke(capId, null, null, null);
-                row.AddChild(permDel);
+                actions.AddChild(CreatePermanentDeleteButton(capName,
+                    () => OnPermanentDeleteDatabaseEntry?.Invoke(capId, null, null, null)));
             }
             if (deleted && canModify)
             {
-                var rest = new Button { Text = "[ RESTORE ]", MinWidth = 80 };
+                var rest = CreateArchiveButton("[ RESTORE ]", 80, StyleBase.ButtonTerminalFolder);
                 rest.OnPressed += _ => OnRestoreDatabaseEntry?.Invoke(capId, null, null, null);
-                row.AddChild(rest);
+                actions.AddChild(rest);
             }
             if (deleted && _databaseState!.CanAdmin)
             {
-                var permDel = new Button { Text = "[ PERM DELETE ]", MinWidth = 110 };
-                permDel.OnPressed += _ => OnPermanentDeleteDatabaseEntry?.Invoke(capId, null, null, null);
-                row.AddChild(permDel);
+                actions.AddChild(CreatePermanentDeleteButton(capName,
+                    () => OnPermanentDeleteDatabaseEntry?.Invoke(capId, null, null, null)));
             }
 
             DatabaseList.AddChild(row);
@@ -1113,6 +1186,7 @@ public sealed partial class HolotapeWindow : DefaultWindow
                 Text = deleted ? $"[ {s.Name} ] [DELETED]" : $"[ {s.Name} ]",
                 HorizontalExpand = true,
                 Disabled = deleted,
+                StyleClasses = { StyleBase.ButtonTerminalFolder },
             };
             btn.OnPressed += _ =>
             {
@@ -1121,12 +1195,13 @@ public sealed partial class HolotapeWindow : DefaultWindow
                 RefreshDatabaseView();
             };
             row.AddChild(btn);
+            var actions = CreateRowActions(row);
 
             if (!deleted && canModify)
             {
-                var del = new Button { Text = "[ DEL ]", MinWidth = 60 };
+                var del = CreateArchiveButton("[ DEL ]", 60, StyleBase.ButtonTerminalCaution);
                 del.OnPressed += _ => OnDeleteDatabaseFolder?.Invoke(folder.FolderId, capSub);
-                row.AddChild(del);
+                actions.AddChild(del);
             }
             // #Misfits Add - Leadership "move" (tidying): relocate this subfolder into another
             // root folder. Subfolders under an Admin-marked parent cannot be moved by leadership.
@@ -1139,25 +1214,23 @@ public sealed partial class HolotapeWindow : DefaultWindow
                     ToolTip = "Relocate this subfolder into another folder to organize it (e.g. a TRASH folder). Admin can delete it afterwards.",
                 };
                 move.OnPressed += _ => BeginMoveSubfolder(folder.FolderId, capSub);
-                row.AddChild(move);
+                actions.AddChild(move);
             }
             if (!deleted && _databaseState!.CanAdmin)
             {
-                var permDel = new Button { Text = "[ PERM DELETE ]", MinWidth = 110 };
-                permDel.OnPressed += _ => OnPermanentDeleteDatabaseEntry?.Invoke(null, folder.FolderId, capSub, null);
-                row.AddChild(permDel);
+                actions.AddChild(CreatePermanentDeleteButton(s.Name,
+                    () => OnPermanentDeleteDatabaseEntry?.Invoke(null, folder.FolderId, capSub, null)));
             }
             if (deleted && canModify)
             {
-                var rest = new Button { Text = "[ RESTORE ]", MinWidth = 80 };
+                var rest = CreateArchiveButton("[ RESTORE ]", 80, StyleBase.ButtonTerminalFolder);
                 rest.OnPressed += _ => OnRestoreDatabaseEntry?.Invoke(null, folder.FolderId, capSub, null);
-                row.AddChild(rest);
+                actions.AddChild(rest);
             }
             if (deleted && _databaseState!.CanAdmin)
             {
-                var permDel = new Button { Text = "[ PERM DELETE ]", MinWidth = 110 };
-                permDel.OnPressed += _ => OnPermanentDeleteDatabaseEntry?.Invoke(null, folder.FolderId, capSub, null);
-                row.AddChild(permDel);
+                actions.AddChild(CreatePermanentDeleteButton(s.Name,
+                    () => OnPermanentDeleteDatabaseEntry?.Invoke(null, folder.FolderId, capSub, null)));
             }
             DatabaseList.AddChild(row);
         }
@@ -1238,15 +1311,17 @@ public sealed partial class HolotapeWindow : DefaultWindow
                 : $"{docAdminBadge}> {d.Title}  (rev {d.RevisionCount})",
             HorizontalExpand = true,
             Disabled = deleted,
+            StyleClasses = { StyleBase.ButtonTerminalFolder },
         };
         btn.OnPressed += _ => OnOpenDatabaseDocument?.Invoke(capId);
         row.AddChild(btn);
+        var actions = CreateRowActions(row);
 
         if (!deleted && canModify)
         {
-            var del = new Button { Text = "[ DEL ]", MinWidth = 60 };
+            var del = CreateArchiveButton("[ DEL ]", 60, StyleBase.ButtonTerminalCaution);
             del.OnPressed += _ => OnDeleteDatabaseDocument?.Invoke(capId);
-            row.AddChild(del);
+            actions.AddChild(del);
         }
         // #Misfits Add - Leadership "move" (tidying): relocate this document into another folder
         // or subfolder. Admin-protected docs (own flag OR inside an Admin folder) cannot be moved.
@@ -1259,25 +1334,23 @@ public sealed partial class HolotapeWindow : DefaultWindow
                 ToolTip = "Relocate this document into another folder to organize it (e.g. a TRASH folder). Admin can delete it afterwards.",
             };
             move.OnPressed += _ => BeginMoveDocument(capId);
-            row.AddChild(move);
+            actions.AddChild(move);
         }
         if (!deleted && _databaseState!.CanAdmin)
         {
-            var permDel = new Button { Text = "[ PERM DELETE ]", MinWidth = 110 };
-            permDel.OnPressed += _ => OnPermanentDeleteDatabaseEntry?.Invoke(null, null, null, capId);
-            row.AddChild(permDel);
+            actions.AddChild(CreatePermanentDeleteButton(d.Title,
+                () => OnPermanentDeleteDatabaseEntry?.Invoke(null, null, null, capId)));
         }
         if (deleted && canModify)
         {
-            var rest = new Button { Text = "[ RESTORE ]", MinWidth = 80 };
+            var rest = CreateArchiveButton("[ RESTORE ]", 80, StyleBase.ButtonTerminalFolder);
             rest.OnPressed += _ => OnRestoreDatabaseEntry?.Invoke(null, null, null, capId);
-            row.AddChild(rest);
+            actions.AddChild(rest);
         }
         if (deleted && _databaseState!.CanAdmin)
         {
-            var permDel = new Button { Text = "[ PERM DELETE ]", MinWidth = 110 };
-            permDel.OnPressed += _ => OnPermanentDeleteDatabaseEntry?.Invoke(null, null, null, capId);
-            row.AddChild(permDel);
+            actions.AddChild(CreatePermanentDeleteButton(d.Title,
+                () => OnPermanentDeleteDatabaseEntry?.Invoke(null, null, null, capId)));
         }
 
         return row;
@@ -1493,14 +1566,8 @@ public sealed partial class HolotapeWindow : DefaultWindow
         if (_databaseState.CanAdmin)
         {
             var capDocId = doc.DocumentId;
-            var permDel = new Button
-            {
-                Text = "[ PERM DELETE ]",
-                MinWidth = 110,
-                ToolTip = "Permanently remove this document from the database. Cannot be restored.",
-            };
-            permDel.OnPressed += _ => OnPermanentDeleteDatabaseEntry?.Invoke(null, null, null, capDocId);
-            DatabaseActionsBar.AddChild(permDel);
+            DatabaseActionsBar.AddChild(CreatePermanentDeleteButton(doc.Title,
+                () => OnPermanentDeleteDatabaseEntry?.Invoke(null, null, null, capDocId)));
         }
 
         if (_databaseState.CanWrite && !doc.Deleted)

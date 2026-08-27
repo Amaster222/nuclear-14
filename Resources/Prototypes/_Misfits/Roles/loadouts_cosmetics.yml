@@ -721,7 +721,7 @@
         - BoSMidKnight
         - BoSLancerCaptain
         - BoSLancerKnight
-        - BoSLancer
+        # #Cythisiax Removed - Lancer rank folded into Lancer-Knight
         - BoSMidPaladin
         - BoSWestScribe
         - BoSMidScribe
@@ -771,7 +771,7 @@
         - BoSMidKnight
         - BoSLancerCaptain
         - BoSLancerKnight
-        - BoSLancer
+        # #Cythisiax Removed - Lancer rank folded into Lancer-Knight
         - BoSMidPaladin
         - BoSWestScribe
         - BoSMidScribe
