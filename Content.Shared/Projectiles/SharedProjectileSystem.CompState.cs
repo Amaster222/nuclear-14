@@ -13,7 +13,7 @@ public abstract partial class SharedProjectileSystem : EntitySystem
         SubscribeLocalEvent<ProjectileComponent, ComponentGetStateAttemptEvent>(OnProjGetStateAttempt);
     }
 
-    //TODO: figure out why this happens and rework as needed......
+    //TODO: figure out why this happens and rework as needed......Probably mounts
     private void OnProjGetStateAttempt(EntityUid uid, ProjectileComponent comp, ref ComponentGetStateAttemptEvent args)
     {
         if (Deleted(comp.Shooter) || Deleted(comp.Weapon) || GetNetEntity(comp.Shooter) == NetEntity.Invalid ||
