@@ -628,7 +628,7 @@ loadout-name-LoadoutLegionPrincipes = Principes pattern armor
 
 # Misfits Add - 509th BoS T-51bc power armor loadout names
 loadout-name-LoadoutBoS509ElderT51BC = 509th BoS Elder T-51bc Power Armor
-loadout-name-LoadoutBoS509HeadPaladinT51BC = 509th BoS Head Paladin T-51bc Power Armor
+# #Cythisiax Removed - Head Paladin T-51bc loadout no longer exists; the suit moved to the Honor Guard rank.
 
 # Enclave rank pin loadouts
 loadout-name-LoadoutEnclavePinPrivate = Enclave private pin

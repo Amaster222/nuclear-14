@@ -34,6 +34,15 @@
   - type: SpawnPoint
     job_id: BoSTombstone
 
+# #Cythisiax Added - HONOR GUARD personal-whitelist spawn point.
+- type: entity
+  parent: MisfitsSpawnPointBoSMidPaladinCommander
+  id: MisfitsSpawnPointBoSHonorGuard
+  name: Brotherhood Honor Guard
+  components:
+  - type: SpawnPoint
+    job_id: BoSHonorGuard
+
 - type: entity
   parent: MisfitsSpawnPointBoSMidPaladinCommander
   id: MisfitsSpawnPointBoSMidKnight

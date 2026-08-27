@@ -69,6 +69,7 @@
   roles:
   - BoSPaladinCommander # #Cythisiax Edited - NCR HT Instructor | _Misfits/Roles/Jobs/BrotherhoodOfSteel/bos_paladin_commander.yml
   - BoSTombstone # #Cythisiax Added - TOMBSTONE | _Misfits/Roles/Jobs/BrotherhoodOfSteel/bos_tombstone.yml
+  - BoSHonorGuard # #Cythisiax Added - HONOR GUARD | _Misfits/Roles/Jobs/BrotherhoodOfSteel/bos_honor_guard.yml
 
 # #Misfits Add — Caesar's Legion department. Groups all Legion roles for the
 # character-creation screen and for department-based requirements/lookups.
