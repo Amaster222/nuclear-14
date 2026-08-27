@@ -10649,3 +10649,14 @@ Entries:
   id: 6359
   time: '2026-08-26T20:10:03.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1816
+- author: John-Dang
+  changes:
+    - type: Add
+      message: Added new descriptions and names for all the super mutant items.
+    - type: Add
+      message: >-
+        Changed the round end notices from talking about an inbound train to an
+        incoming dust storm.
+  id: 6360
+  time: '2026-08-27T00:58:55.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1802
