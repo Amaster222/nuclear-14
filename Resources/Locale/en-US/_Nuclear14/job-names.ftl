@@ -7,6 +7,9 @@ job-description-bos-deserter = A former Brotherhood of Steel Paladin who turned 
 # #Misfits Add - TOMBSTONE personal-whitelist BoS role
 job-name-bos-tombstone = TOMBSTONE
 job-description-bos-tombstone = Dead and Revived again. Steel protects, and remember the name on the bag.
+# #Cythisiax Add - HONOR GUARD personal-whitelist BoS rank (hidden, beneath the Elder)
+job-name-bos-honor-guard = Brotherhood Honor Guard
+job-description-bos-honor-guard = A hand-picked guardian of the Elder, wearing the 509th T-51bc. Carry the same authority as a Head Paladin, partial of an Elder's voice, but your first duty is the Elder's life.
 job-name-bos-mid-paladin = Brotherhood Senior Paladin
 job-description-bos-mid-paladin = Serve as a veteran field commander and heavy infantry leader for the Brotherhood.
 job-name-bos-mid-knight = Brotherhood Senior Knight

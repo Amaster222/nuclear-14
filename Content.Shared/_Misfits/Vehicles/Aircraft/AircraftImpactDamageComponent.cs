@@ -28,6 +28,14 @@ public sealed partial class AircraftImpactDamageComponent : Component
     [DataField]
     public float SpeedDamageFactor = 0.5f;
 
+    /// <summary>
+    /// #Misfits Add - Ported from CMU. Multiplier converting impact speed squared into
+    /// Blunt damage when smashing through a destructible obstruction. Zero disables
+    /// momentum-based wall smashing and keeps the original impact behaviour.
+    /// </summary>
+    [DataField]
+    public float ObstacleDamageMultiplier = 150f;
+
     /// <summary>Fraction of tangential drift retained after the impact.</summary>
     [DataField]
     public float VelocityRetention = 0.25f;

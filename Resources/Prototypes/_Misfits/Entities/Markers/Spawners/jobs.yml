@@ -34,6 +34,15 @@
   - type: SpawnPoint
     job_id: BoSTombstone
 
+# #Cythisiax Added - HONOR GUARD personal-whitelist spawn point.
+- type: entity
+  parent: MisfitsSpawnPointBoSMidPaladinCommander
+  id: MisfitsSpawnPointBoSHonorGuard
+  name: Brotherhood Honor Guard
+  components:
+  - type: SpawnPoint
+    job_id: BoSHonorGuard
+
 - type: entity
   parent: MisfitsSpawnPointBoSMidPaladinCommander
   id: MisfitsSpawnPointBoSMidKnight
@@ -46,11 +55,13 @@
       - state: green
       - state: knight
 
-# #Misfits Add - Brotherhood Lancers spawn points.
+# #Misfits Add / #Cythisiax Renamed (player-facing) - Brotherhood Knights spawn points
+# (Knight-Captain / Knight-Lancer). Entity IDs and job_ids kept stable so spawns keep working.
+# Lancer spawn point removed with the rank it served.
 - type: entity
   parent: MisfitsSpawnPointBoSMidPaladinCommander
   id: MisfitsSpawnPointBoSLancerCaptain
-  name: Brotherhood Lancer-Captain
+  name: Brotherhood Knight-Captain
   components:
   - type: SpawnPoint
     job_id: BoSLancerCaptain
@@ -62,7 +73,7 @@
 - type: entity
   parent: MisfitsSpawnPointBoSMidPaladinCommander
   id: MisfitsSpawnPointBoSLancerKnight
-  name: Brotherhood Lancer-Knight
+  name: Brotherhood Knight-Lancer
   components:
   - type: SpawnPoint
     job_id: BoSLancerKnight
@@ -70,18 +81,6 @@
     layers:
       - state: green
       - state: knight
-
-- type: entity
-  parent: MisfitsSpawnPointBoSMidPaladinCommander
-  id: MisfitsSpawnPointBoSLancer
-  name: Brotherhood Lancer
-  components:
-  - type: SpawnPoint
-    job_id: BoSLancer
-  - type: Sprite
-    layers:
-      - state: green
-      - state: squire
 
 - type: entity
   parent: MisfitsSpawnPointBoSMidPaladinCommander

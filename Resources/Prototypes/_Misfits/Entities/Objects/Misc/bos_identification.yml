@@ -308,6 +308,17 @@
   - type: PresetIdCard
     job: BoSWestElderCommander
 
+# #Cythisiax Added - HONOR GUARD personal-whitelist holotag.
+- type: entity
+  parent: N14IDBrotherhoodOfSteelHolotagBase
+  id: N14IDBrotherhoodOfSteelHolotagHonorGuard
+  name: honor guard's holotags
+  description: An ID holotag worn by an Honor Guard of the Brotherhood of Steel.
+  suffix: Honor Guard
+  components:
+  - type: PresetIdCard
+    job: BoSHonorGuard
+
 ##MARK: NCR Specialist Dogtag # #Misfits Tweak - renamed from WS/Corporal
 - type: entity
   parent: N14IDNCRDogtag
