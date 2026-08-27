@@ -62,6 +62,10 @@ public sealed partial class HolotapeWindow : DefaultWindow
     // #Misfits Add - Permanent delete: actually remove entry from database (no restore possible).
     // Carries folderId, subfolderParentFolderId, subfolderId, documentId (same pattern as restore).
     public event Action<Guid?, Guid?, Guid?, Guid?>? OnPermanentDeleteDatabaseEntry;
+    // #Misfits Add - Leadership "move" (tidying): relocate a folder/subfolder/doc into another
+    // container. Carries folderId, subfolderParentFolderId, subfolderId, documentId (source),
+    // then targetFolderId, targetSubfolderId (destination).
+    public event Action<Guid?, Guid?, Guid?, Guid?, Guid?, Guid?>? OnMoveDatabaseEntry;
     public event Action<OverwatchConsoleMessageType, uint?>? OnOverwatchAction;
 
     /// <summary>Whether we're currently showing the notes tab.</summary>
@@ -89,7 +93,8 @@ public sealed partial class HolotapeWindow : DefaultWindow
     private bool _hasDatabase;
 
     // Database navigation state — purely client-side breadcrumb / view selector.
-    private enum DbView { FolderList, SubfolderList, DocumentList, DocumentViewer, EditorCreateFolder, EditorCreateDoc, EditorEditDoc }
+    // #Misfits Add - MovePicker: destination-selection view for the Leadership "move" action.
+    private enum DbView { FolderList, SubfolderList, DocumentList, DocumentViewer, EditorCreateFolder, EditorCreateDoc, EditorEditDoc, MovePicker }
     private DbView _dbView = DbView.FolderList;
     private Guid? _dbCurrentFolder;       // selected top-level folder
     private Guid? _dbCurrentSubfolder;    // selected subfolder (null = browsing folder root)
@@ -99,6 +104,13 @@ public sealed partial class HolotapeWindow : DefaultWindow
     // refreshes (overwatch tick, notes pushes) rebuild the state with OpenDocument=null;
     // without this cache every such push kicked the reader out of the document viewer.
     private DatabaseDocumentView? _dbOpenDoc;
+    // #Misfits Add - Pending "move" selection: which entry is being relocated and which view
+    // we came from, so the destination picker can send the message and return to the prior view.
+    private Guid? _moveFolderId;
+    private Guid? _moveSubfolderParentId;
+    private Guid? _moveSubfolderId;
+    private Guid? _moveDocumentId;
+    private DbView _moveReturnView = DbView.FolderList;
 
     public Content.Client.Viewport.ScalingViewport OverwatchFeedViewport => OverwatchCameraView;
 
@@ -910,6 +922,11 @@ public sealed partial class HolotapeWindow : DefaultWindow
                 DatabaseEditor.Visible = true;
                 RenderEditor();
                 break;
+            // #Misfits Add - Leadership "move" destination picker.
+            case DbView.MovePicker:
+                DatabaseBrowserScroll.Visible = true;
+                RenderMovePicker();
+                break;
         }
     }
 
@@ -1005,6 +1022,19 @@ public sealed partial class HolotapeWindow : DefaultWindow
                 del.OnPressed += _ => OnDeleteDatabaseFolder?.Invoke(capId, null);
                 row.AddChild(del);
             }
+            // #Misfits Add - Leadership "move" (tidying): relocate this folder into another
+            // folder. Admin-marked folders cannot be moved by leadership (server enforces same).
+            if (!deleted && _databaseState!.CanLeadership && !isAdmin)
+            {
+                var move = new Button
+                {
+                    Text = "[ MOVE ]",
+                    MinWidth = 70,
+                    ToolTip = "Relocate this folder into another folder to organize it (e.g. a TRASH folder). Admin can delete it afterwards.",
+                };
+                move.OnPressed += _ => BeginMoveFolder(capId);
+                row.AddChild(move);
+            }
             if (!deleted && _databaseState!.CanAdmin)
             {
                 var permDel = new Button { Text = "[ PERM DELETE ]", MinWidth = 110 };
@@ -1097,6 +1127,19 @@ public sealed partial class HolotapeWindow : DefaultWindow
                 var del = new Button { Text = "[ DEL ]", MinWidth = 60 };
                 del.OnPressed += _ => OnDeleteDatabaseFolder?.Invoke(folder.FolderId, capSub);
                 row.AddChild(del);
+            }
+            // #Misfits Add - Leadership "move" (tidying): relocate this subfolder into another
+            // root folder. Subfolders under an Admin-marked parent cannot be moved by leadership.
+            if (!deleted && _databaseState!.CanLeadership && !folder.IsAdmin)
+            {
+                var move = new Button
+                {
+                    Text = "[ MOVE ]",
+                    MinWidth = 70,
+                    ToolTip = "Relocate this subfolder into another folder to organize it (e.g. a TRASH folder). Admin can delete it afterwards.",
+                };
+                move.OnPressed += _ => BeginMoveSubfolder(folder.FolderId, capSub);
+                row.AddChild(move);
             }
             if (!deleted && _databaseState!.CanAdmin)
             {
@@ -1205,6 +1248,19 @@ public sealed partial class HolotapeWindow : DefaultWindow
             del.OnPressed += _ => OnDeleteDatabaseDocument?.Invoke(capId);
             row.AddChild(del);
         }
+        // #Misfits Add - Leadership "move" (tidying): relocate this document into another folder
+        // or subfolder. Admin-protected docs (own flag OR inside an Admin folder) cannot be moved.
+        if (!deleted && _databaseState!.CanLeadership && !d.IsAdmin && !parentIsAdmin)
+        {
+            var move = new Button
+            {
+                Text = "[ MOVE ]",
+                MinWidth = 70,
+                ToolTip = "Relocate this document into another folder to organize it (e.g. a TRASH folder). Admin can delete it afterwards.",
+            };
+            move.OnPressed += _ => BeginMoveDocument(capId);
+            row.AddChild(move);
+        }
         if (!deleted && _databaseState!.CanAdmin)
         {
             var permDel = new Button { Text = "[ PERM DELETE ]", MinWidth = 110 };
@@ -1225,6 +1281,166 @@ public sealed partial class HolotapeWindow : DefaultWindow
         }
 
         return row;
+    }
+
+    // ── Leadership "move" (tidying) ───────────────────────────────────────────
+
+    // #Misfits Add - Entry points for the Leadership "move" action. Each stashes the source
+    // entry ids + the view we came from, then switches to the destination picker.
+
+    private void BeginMoveFolder(Guid folderId)
+    {
+        _moveFolderId = folderId;
+        _moveSubfolderParentId = null;
+        _moveSubfolderId = null;
+        _moveDocumentId = null;
+        _moveReturnView = _dbView;
+        _dbView = DbView.MovePicker;
+        RefreshDatabaseView();
+    }
+
+    private void BeginMoveSubfolder(Guid parentFolderId, Guid subfolderId)
+    {
+        _moveFolderId = null;
+        _moveSubfolderParentId = parentFolderId;
+        _moveSubfolderId = subfolderId;
+        _moveDocumentId = null;
+        _moveReturnView = _dbView;
+        _dbView = DbView.MovePicker;
+        RefreshDatabaseView();
+    }
+
+    private void BeginMoveDocument(Guid documentId)
+    {
+        _moveFolderId = null;
+        _moveSubfolderParentId = null;
+        _moveSubfolderId = null;
+        _moveDocumentId = documentId;
+        _moveReturnView = _dbView;
+        _dbView = DbView.MovePicker;
+        RefreshDatabaseView();
+    }
+
+    private void ClearMoveSelection()
+    {
+        _moveFolderId = null;
+        _moveSubfolderParentId = null;
+        _moveSubfolderId = null;
+        _moveDocumentId = null;
+    }
+
+    /// <summary>
+    /// #Misfits Add - Renders the destination picker for the Leadership "move" action. Lists every
+    /// live container the source entry can be relocated into. Documents can go to folder roots AND
+    /// subfolders; folders/subfolders can only go to root folders (subfolders cannot nest).
+    /// </summary>
+    private void RenderMovePicker()
+    {
+        if (_databaseState == null)
+            return;
+
+        var movingDoc = _moveDocumentId.HasValue;
+        var movingFolder = _moveFolderId.HasValue;
+        var movingSub = _moveSubfolderId.HasValue;
+
+        DatabaseList.AddChild(MakeDimLabel("─ MOVE TO (choose destination) ─"));
+
+        foreach (var f in _databaseState.Folders)
+        {
+            if (f.Deleted)
+                continue;
+
+            // Exclude the entry's own container to avoid pointless no-op moves.
+            if (movingFolder && f.FolderId == _moveFolderId)
+                continue;
+            if (movingSub && f.FolderId == _moveSubfolderParentId)
+                continue;
+            if (movingDoc && IsDocInContainer(_moveDocumentId!.Value, f.FolderId, null))
+                continue;
+
+            var capFolderId = f.FolderId;
+            var row = new BoxContainer { Orientation = BoxContainer.LayoutOrientation.Horizontal, SeparationOverride = 6, HorizontalExpand = true };
+            var btn = new Button { Text = $"[ {f.Name} ]", HorizontalExpand = true };
+            btn.OnPressed += _ => SendMove(capFolderId, null);
+            row.AddChild(btn);
+            DatabaseList.AddChild(row);
+
+            // Documents can also move into subfolders; folders/subfolders cannot (no nesting).
+            if (movingDoc)
+            {
+                foreach (var s in f.Subfolders)
+                {
+                    if (s.Deleted)
+                        continue;
+                    if (IsDocInContainer(_moveDocumentId!.Value, f.FolderId, s.SubfolderId))
+                        continue;
+                    var capSubFolderId = f.FolderId;
+                    var capSubId = s.SubfolderId;
+                    var subRow = new BoxContainer { Orientation = BoxContainer.LayoutOrientation.Horizontal, SeparationOverride = 6, HorizontalExpand = true };
+                    var subBtn = new Button { Text = $"[ {f.Name} / {s.Name} ]", HorizontalExpand = true };
+                    subBtn.OnPressed += _ => SendMove(capSubFolderId, capSubId);
+                    subRow.AddChild(subBtn);
+                    DatabaseList.AddChild(subRow);
+                }
+            }
+        }
+
+        if (_databaseState.Folders.Count == 0)
+            DatabaseList.AddChild(MakeDimLabel("No destination folders available."));
+
+        // Cancel returns to the view we came from.
+        var cancel = new Button { Text = "[ CANCEL ]", MinWidth = 90 };
+        cancel.OnPressed += _ => CancelMove();
+        DatabaseActionsBar.AddChild(cancel);
+    }
+
+    /// <summary>
+    /// #Misfits Add - Sends the move message for the pending source to the chosen destination,
+    /// then returns to the view the picker was opened from.
+    /// </summary>
+    private void SendMove(Guid targetFolderId, Guid? targetSubfolderId)
+    {
+        OnMoveDatabaseEntry?.Invoke(_moveFolderId, _moveSubfolderParentId, _moveSubfolderId, _moveDocumentId,
+            targetFolderId, targetSubfolderId);
+        _dbView = _moveReturnView;
+        ClearMoveSelection();
+        RefreshDatabaseView();
+    }
+
+    private void CancelMove()
+    {
+        _dbView = _moveReturnView;
+        ClearMoveSelection();
+        RefreshDatabaseView();
+    }
+
+    /// <summary>
+    /// #Misfits Add - True if the given document currently lives in the given container
+    /// (used to exclude no-op destinations from the move picker).
+    /// </summary>
+    private bool IsDocInContainer(Guid documentId, Guid folderId, Guid? subfolderId)
+    {
+        if (_databaseState == null)
+            return false;
+        var folder = FindFolder(folderId);
+        if (folder == null)
+            return false;
+        if (subfolderId == null)
+        {
+            foreach (var d in folder.Documents)
+                if (d.DocumentId == documentId)
+                    return true;
+        }
+        else
+        {
+            var sub = FindSubfolder(folderId, subfolderId.Value);
+            if (sub == null)
+                return false;
+            foreach (var d in sub.Documents)
+                if (d.DocumentId == documentId)
+                    return true;
+        }
+        return false;
     }
 
     private void RenderDocumentViewer()
