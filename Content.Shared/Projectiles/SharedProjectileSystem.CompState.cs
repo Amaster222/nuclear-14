@@ -56,7 +56,7 @@ public abstract partial class SharedProjectileSystem : EntitySystem
         component.DamagedEntity = state.DamagedEntity;
     }
 
-
+    [Serializable, NetSerializable]
     public sealed class ProjectileComponentState : IComponentState
     {
         public Angle Angle = default;
