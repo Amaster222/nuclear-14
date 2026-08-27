@@ -31,3 +31,20 @@
   components:
   - type: Pda
     id: N14IDBrotherhoodOfSteelHolotagHeadKnight
+
+# #Cythisiax Fixed - Dedented Lancer Pip-Boy entities (4-space indent broke YAML parsing)
+- type: entity
+  parent: N14BasePipboy
+  id: N14LancerKnight_PipBoy
+  suffix: Lancer-Knight
+  components:
+  - type: Pda
+    id: N14IDBrotherhoodOfSteelHolotagKnight
+
+- type: entity
+  parent: N14BasePipboy
+  id: N14LancerCaptain_PipBoy
+  suffix: Lancer-Captain
+  components:
+  - type: Pda
+    id: N14IDBrotherhoodOfSteelHolotagSeniorKnight
