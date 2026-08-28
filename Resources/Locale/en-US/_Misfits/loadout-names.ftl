@@ -418,7 +418,7 @@ loadout-name-LoadoutClothingOuterMBoSSquireArmor = Brotherhood squire armor (Mid
 # loadout-name-LoadoutClothingHeadHatBoSInquisitorHat = Brotherhood inquisitor hat
 
 # Misfits Add - N14 weapon loadout names
-loadout-name-N14WeaponBlowback = blowback
+loadout-name-N14WeaponShotgunBlowback = blowback
 loadout-name-N14WeaponLaserPistol = laser pistol
 loadout-name-N14WeaponLaserRevolver = laser revolver
 loadout-name-N14WeaponLaserRifleMakeshift = makeshift laser rifle
@@ -847,7 +847,7 @@ loadout-name-N14PoliceBaton = police baton
 loadout-name-N14WeaponPistol9mmChinese = chinese pistol
 loadout-name-N14WeaponPistol45Colt = .45 colt handgun
 loadout-name-N14WeaponPistolWebley = webley pistol
-loadout-name-N14WeaponRevolver44Magnun = magnum revolver
+loadout-name-N14WeaponRevolver44Magnum = magnum revolver
 
 # Other loadouts
 loadout-name-LoadoutLegionExplorerVeteranArmor = veteran legion explorer armor

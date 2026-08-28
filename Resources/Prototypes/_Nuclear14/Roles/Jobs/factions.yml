@@ -197,6 +197,7 @@
   roles:
   - Wastelander
   - Outcast
+  - WasterTrader
   # Forge-Change: Followers — moved to FollowersOfTheApocalypse department in _Misfits/Roles/Jobs/Followers/followers.yml
 
 - type: department
