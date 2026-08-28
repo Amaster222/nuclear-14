@@ -175,10 +175,12 @@
 - type: reaction
   id: SmellingSaltsConversion
   reactants:
+    Sulfur:
+      amount: 5
     TableSalt:
       amount: 5
     Ammonia:
-      amount: 10
+      amount: 5
   effects:
   - !type:CreateEntityReactionEffect
     entity: N14SmellingSalts

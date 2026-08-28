@@ -482,6 +482,8 @@
           factions:
             - PlayerSuperMutant
             - Enclave
+        - type: ReplacementAccent
+          accent: n14Enclave
         - type: PowerArmorProficiency
 - type: startingGear # Enclave will give the Enlisted mutant their weapons
   id: SuperMutantEnclaveGear
