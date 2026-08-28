@@ -37,6 +37,7 @@
       - type: NpcFactionMember
         factions:
           - Enclave
+          - Wastelander
       - type: ReplacementAccent
         accent: n14Enclave
       - type: CPRTraining
