@@ -3,8 +3,10 @@ using Content.Shared._Misfits.Vehicles.Aircraft;
 using Content.Shared._Misfits.Vehicles.Vertibird;
 using Content.Shared._MultiZ.Core.Components;
 using Content.Server.Explosion.EntitySystems;
+using Content.Server._Misfits.Vehicles.Destruction;
 using Content.Shared.Buckle;
 using Content.Shared.Damage;
+using Content.Shared.FixedPoint;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs.Systems;
@@ -25,6 +27,7 @@ public sealed class AircraftImpactDamageSystem : EntitySystem
     [Dependency] private readonly SharedAudioSystem _audio = default!;
     [Dependency] private readonly SharedBuckleSystem _buckle = default!;
     [Dependency] private readonly DamageableSystem _damageable = default!;
+    [Dependency] private readonly DestructionMomentumSystem _momentum = default!;
     [Dependency] private readonly ExplosionSystem _explosion = default!;
     [Dependency] private readonly MobStateSystem _mobState = default!;
     [Dependency] private readonly SharedPhysicsSystem _physics = default!;
@@ -68,6 +71,30 @@ public sealed class AircraftImpactDamageSystem : EntitySystem
             return;
 
         ent.Comp.LastImpactAt = _timing.CurTime;
+
+        // #Misfits Add - Ported from CMU. Before treating the obstacle as a solid wall,
+        // check whether the craft's momentum can smash through it. If so, damage the
+        // obstacle, spend the break cost, and let the craft keep flying.
+        if (ent.Comp.ObstacleDamageMultiplier > 0f &&
+            _momentum.TryGetBreakCost(args.OtherEntity, closingSpeed, ent.Comp.ObstacleDamageMultiplier, out var breakCost))
+        {
+            var rawDamage = breakCost * breakCost * ent.Comp.ObstacleDamageMultiplier;
+            var obstacleDamage = new DamageSpecifier();
+            obstacleDamage.DamageDict["Blunt"] = FixedPoint2.New(rawDamage);
+            _damageable.TryChangeDamage(args.OtherEntity, obstacleDamage, origin: ent.Owner);
+
+            var remainingSpeed = DestructionMomentumSystem.GetRemainingSpeed(closingSpeed, breakCost);
+            if (aircraft.DriftVelocity.LengthSquared() > 0f)
+                aircraft.DriftVelocity = Vector2.Normalize(aircraft.DriftVelocity) * remainingSpeed;
+
+            aircraft.HeldInputs = VertibirdControlInput.None;
+            _physics.SetLinearVelocity(ent, aircraft.DriftVelocity, body: args.OurBody);
+
+            if (ent.Comp.ImpactSound != null)
+                _audio.PlayPvs(ent.Comp.ImpactSound, ent);
+
+            return;
+        }
 
         var excessSpeed = closingSpeed - ent.Comp.MinimumSpeed;
         var damageScale = 1f + excessSpeed * ent.Comp.SpeedDamageFactor;

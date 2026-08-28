@@ -1,5 +1,6 @@
-# #Misfits Add - Lancer-Captain: the chapter's vertibird pilot and head of the Lancers.
-# Top of the Lancers ladder, ranked alongside the Senior Knights.
+# #Misfits Add / #Cythisiax Renamed (player-facing) - Knight-Captain: the chapter's vertibird
+# pilot and head of the aviation branch. Top of the ladder, ranked alongside the Senior Knights.
+# Prototype IDs kept stable so Lancers playtime is preserved.
 
 - type: job
   id: BoSLancerCaptain
@@ -41,12 +42,12 @@
     jumpsuit: N14ClothingUniformJumpskirtBOSBlack
     back: N14ClothingBackpackMilitary
     shoes: N14ClothingBootsLeatherFilled
-    head: N14ClothingHeadHatCapkhighBoS
-    outerClothing: MisfitsBoSKnightArmor
+    head: N14ClothingHeadHatBrotherhoodBeret
+    outerClothing: N14ClothingOuterJacketBomber
     hands: N14ClothingHandsGlovesCombat
     eyes: N14ClothingEyesGlassesPilot
     pocket1: BoSBrotherhoodSeniorKnightKits
-    id: N14IDBrotherhoodOfSteelHolotagSeniorKnight
+    id: N14LancerCaptain_PipBoy
     ears: N14ClothingHeadsetBrotherhoodOfSteel
     belt: ClothingBeltBoSWebbing
   storage:

@@ -3,7 +3,6 @@
 - type: job
   id: EnclaveJuniorOfficer
   setPreference: true
-  hideWithoutJobWhitelist: true
   jobWhitelistBypassesRoleTimers: true # #Misfits Change
   weight: 110
   displayWeight: 127
@@ -19,10 +18,7 @@
       - Ghoul
     - !type:CharacterDepartmentTimeRequirement
       department: Enclave
-      min: 57600 # 16 hours
-    - !type:CharacterPlaytimeRequirement
-      tracker: EnclaveNCO
-      min: 36000 # 10 hours
+      min: 288000 # 80 hours
   startingGear: EnclaveJuniorOfficerGear
   icon: "JobIconEnclaveJuniorOfficer"
   supervisors: job-supervisors-enclave-junior-officer

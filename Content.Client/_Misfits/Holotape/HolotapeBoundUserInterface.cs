@@ -87,6 +87,9 @@ public sealed class HolotapeBoundUserInterface : BoundUserInterface
         // #Misfits Add - Forward permanent delete requests to the server.
         _window.OnPermanentDeleteDatabaseEntry += (folderId, subParent, subId, docId) =>
             SendMessage(new PermanentDeleteDatabaseEntryMessage(folderId, subParent, subId, docId));
+        // #Misfits Add - Forward Leadership "move" (tidying) requests to the server.
+        _window.OnMoveDatabaseEntry += (folderId, subParent, subId, docId, targetFolderId, targetSubfolderId) =>
+            SendMessage(new MoveDatabaseEntryMessage(folderId, subParent, subId, docId, targetFolderId, targetSubfolderId));
     }
 
     protected override void UpdateState(BoundUserInterfaceState state)

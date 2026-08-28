@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Content.Shared.DoAfter;
 using Content.Shared.Examine;
 using Content.Shared.Interaction;
@@ -5,6 +6,9 @@ using Content.Shared.Interaction.Events;
 using Content.Shared.Verbs;
 using Content.Shared.Weapons.Ranged.Components;
 using Content.Shared.Weapons.Ranged.Events;
+using Robust.Shared.Timing;
+using static Content.Shared.Weapons.Ranged.Systems.SharedGunSystem;
+using DependencyAttribute = Robust.Shared.IoC.DependencyAttribute;
 
 
 namespace Content.Shared.Weapons.Ranged.Systems;
@@ -31,6 +35,7 @@ public abstract partial class SharedGunSystem
 
     private const int DEFAULT_AMMO = -1;
     //private static System.Random RNG;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     protected virtual void InitializeBallistic()
     {
         SubscribeLocalEvent<BallisticAmmoProviderComponent, ComponentInit>(OnBallisticInit);
@@ -45,6 +50,9 @@ public abstract partial class SharedGunSystem
         SubscribeLocalEvent<BallisticAmmoProviderComponent, AmmoFillDoAfterEvent>(OnBallisticAmmoFillDoAfter);
         SubscribeLocalEvent<BallisticAmmoProviderComponent, UseInHandEvent>(OnBallisticUse);
 
+
+        // comp handlers
+        InitCompGen();
 
     }
 
@@ -77,10 +85,7 @@ public abstract partial class SharedGunSystem
         "gun-ballistic-cycled-empty" : "gun-ballistic-cycled")
         , giverUid, user);
 
-        var cartridge = Cycle(giverUid, comp, user);
-        // null check
-        if (cartridge.TryFirstOrNull(out var ent)) EjectCartRNG(ent.Value.Item1!.Value, comp.AmmoCount,
-                                                                GetNetEntity(giverUid).Id);
+        Cycle(giverUid, comp, user);
     }
 
     /// <summary>
@@ -95,6 +100,13 @@ public abstract partial class SharedGunSystem
     {
         if (args.Handled || _whitelistSystem.IsWhitelistFailOrNull(recieverComp.Whitelist, args.Used))
             return;
+        // TODO: rework
+        if (!Timing.IsFirstTimePredicted)
+        {
+            int slots = CanInstantFill(args.User) ? recieverComp.AmmoCount : 1;
+            TryAmmoInsert(slots, args.Used, recieverComp, recieverUid, args.User);
+            return;
+        }
         args.Handled = true;
         // reciever is full so doesnt matter what used ent is for useAfter event
         // special interactions should rely on BeforeUseInHandEvent event
@@ -113,7 +125,6 @@ public abstract partial class SharedGunSystem
             return;
         }
         Audio.PlayPredicted(recieverComp.SoundInsert, recieverUid, args.User);
-
     }
 
     /// <summary>
@@ -139,12 +150,14 @@ public abstract partial class SharedGunSystem
             return;
         }
 
-        args.Handled = true;
-        _doAfter.TryStartDoAfter(new DoAfterArgs(EntityManager, args.User, giverComp.FillDelay, new AmmoFillDoAfterEvent(), used: giverUID, target: args.Target, eventTarget: giverUID)
+        args.Handled = _doAfter.TryStartDoAfter(new DoAfterArgs(EntityManager, args.User, giverComp.FillDelay, new AmmoFillDoAfterEvent(), used: giverUID, target: args.Target, eventTarget: giverUID)
         {
-            BreakOnMove = true,
+            BreakOnMove = false,
             BreakOnDamage = false,
-            NeedHand = true
+            NeedHand = true,
+            BlockDuplicate = true,
+            RequireCanInteract = true,
+            BreakOnDropItem = true
         });
     }
 
@@ -163,28 +176,26 @@ public abstract partial class SharedGunSystem
     /// <remarks/>
     private void OnBallisticAmmoFillDoAfter(EntityUid giverUID, BallisticAmmoProviderComponent giverComp, AmmoFillDoAfterEvent args)
     {
-        if (Deleted(args.Target) || !TryComp<BallisticAmmoProviderComponent>(args.Target.Value, out var recieverComp))
-            return;
 
+        args.Repeat = !args.Cancelled && !Deleted(args.Target) && TryComp<BallisticAmmoProviderComponent>(args.Target.Value, out var recieverComp) &&
+                      !PopupCancels(recieverComp, args.Target.Value, giverComp, giverUID, args.User) &&
+                      TryAmmoInsert(Math.Min(5, Math.Max(0, recieverComp.Capacity - recieverComp.AmmoCount)), giverUID, recieverComp, args.Target.Value, args.User);
 
-
-        args.Repeat = PopupCancels(recieverComp, args.Target.Value, giverComp, giverUID, args.User) ||
-                      TryAmmoInsert(1, giverUID, recieverComp, args.Target.Value, args.User);
-
+        Audio.PlayPredicted(giverComp.SoundInsert, giverUID, args.User);
     }
 
     /// <summary>
     /// Verbs or available "commands"/"actions" on the drop down menu when you right click the item
     /// </summary>
-    private void OnBallisticVerb(EntityUid uid, BallisticAmmoProviderComponent component, GetVerbsEvent<Verb> args)
+    private void OnBallisticVerb(EntityUid uid, BallisticAmmoProviderComponent comp, GetVerbsEvent<Verb> args)
     {
-        if (!args.CanAccess || !args.CanInteract || args.Hands == null || !component.Cycleable)
+        if (!args.CanAccess || !args.CanInteract || args.Hands == null || !comp.Cycleable)
             return;
         args.Verbs.Add(new Verb()
         {
             Text = Loc.GetString("gun-ballistic-cycle"),
-            Disabled = component.AmmoCount == 0,
-            Act = () => ManualCycle(uid, component, args.User),
+            Disabled = comp.AmmoCount == 0,
+            Act = () => ManualCycle(uid, comp, args.User),
         });
     }
 
@@ -225,7 +236,6 @@ public abstract partial class SharedGunSystem
 
     /// <summary>
     /// Attempt to insert ammo into recieverUID with known BallisticComp
-    ///
     /// </summary>
     /// <param name="ammoAmount">Ammo we TRY to take from giverUID. Though not guaranteed(ie. not enough ammo, or other mechanic ect)</param>
     /// <param name="giverUID">UID who we take ammo from(should have comps that listen to event)</param>
@@ -239,7 +249,7 @@ public abstract partial class SharedGunSystem
     {
         var ammo = DoTakeAmmo(ammoAmount, giverUID, user);
         if (ammo.Count == 0) return false;
-        DoAmmoInsert(ammo, recieverComp, recieverUid);
+        DoAmmoInsert(ammo, recieverComp, recieverUid, user);
         return true;
     }
     /// <summary>
@@ -252,45 +262,93 @@ public abstract partial class SharedGunSystem
     ///               2. already spawned ammo is removed from container(gun, ammobox ect)
     ///               3. spawned ammo is dropped in closest valid parent of giverUID
     /// <remarks/>
-
-    // TODO: rework takeammo event so it only worries about taking(spawning and such) not position logic
     private void OnBallisticTakeAmmo(EntityUid giverUID, BallisticAmmoProviderComponent giverComp, TakeAmmoEvent args)
     {
-        if (giverComp.AmmoCount == 0) return;
         // Transfrom data we apply to all spawned ammo
-        var giverXform = (giverUID, Transform(giverUID));
-        var giverRotation = _xform.GetWorldRotation(giverXform.Item2);
+        if (!Timing.IsFirstTimePredicted)
+        {
+            foreach (var ammo in giverComp.ClientPredictedAmmoVisual)
+            {
+                var uid = Spawn(ammo);
+                FlagPredicted(uid);
+                args.Ammo.Add((uid, EnsureShootable(uid)));
+            }
+            return;
+        }
+        giverComp.ClientPredictedAmmoVisual.Clear();
 
-        // loop math
-        int ammoToSpawn = Math.Max(0, args.Shots - giverComp.Container.Count);
+        int ammoToSpawn = Math.Max(args.Shots - giverComp.SpawnedCountPredict, 0);
         ammoToSpawn = Math.Min(giverComp.AmmoCount, ammoToSpawn);
-        int ammoToRemove = Math.Min(giverComp.Container.Count, args.Shots - ammoToSpawn);
+        // branchless baby!!!!!!!!!!!!!!
+        // We only go by the "real" count(containers networked seperate)
+        // when otherwise would result in an index error by going over
+        // so we atleast always go equal or less than container count
+        int miniMin = Math.Min(giverComp.SpawnedCountPredict, giverComp.Container.Count);
+        int ammoToRemove = Math.Min(miniMin, args.Shots - ammoToSpawn);
+        int toRemCount = Math.Max(ammoToRemove, 0);
+        ammoToRemove = toRemCount;
 
         var alreadySpawnedAmmo = giverComp.Container.ContainedEntities;
-        int toRemCount = alreadySpawnedAmmo.Count - ammoToRemove;
-        giverComp.UnspawnedCount -= ammoToSpawn;
+        int index = miniMin - 1;
 
-        for (int i = alreadySpawnedAmmo.Count - 1; i >= toRemCount; i--)
+        while (toRemCount > 0)
         {
-            args.Ammo.Add((alreadySpawnedAmmo[i], EnsureShootable(alreadySpawnedAmmo[i])));
-            Containers.Remove(alreadySpawnedAmmo[i], giverComp.Container);
+            DebugTools.Assert(DebugCheckNullAmmo(alreadySpawnedAmmo, index));
+            var uid = alreadySpawnedAmmo[index];
+            giverComp.ClientPredictedAmmoVisual.Add(MetaData(uid)?.EntityPrototype?.ID);
+            var ammo = (uid, EnsureShootable(uid));
+            args.Ammo.Add(ammo);
+            Containers.Remove(uid, giverComp.Container);
+            //FlagPredicted(uid);
+
+            index--;
+            toRemCount--;
         }
 
         for (int i = 0; i < ammoToSpawn; i++)
         {
-            var spawnedAmmo = Spawn(giverComp.Proto);
-            PlaceNextToRot((spawnedAmmo, Transform(spawnedAmmo)), giverXform, giverRotation);
-            args.Ammo.Add((spawnedAmmo, EnsureShootable(spawnedAmmo)));
+            var uid = Spawn(giverComp.Proto);
+            FlagPredicted(uid);
+            giverComp.ClientPredictedAmmoVisual.Add(giverComp.Proto);
+
+            var spawnedAmmo = (uid, EnsureShootable(uid));
+            args.Ammo.Add(spawnedAmmo);
         }
 
-        Dirty(giverUID, giverComp);
+        // update stuff hereeee. REALLY WANNA MAKE SURE THESE GET UPDATED CORRECTLY!!!!!!!!!
+        giverComp.UnspawnedCount -= ammoToSpawn;
+        giverComp.SpawnedCountPredict -= ammoToRemove;
+        giverComp.IndexPredict = giverComp.IndexPredict + ammoToSpawn + ammoToRemove;
+
+        DebugTools.Assert(DebugAmmoProviderChange(giverComp));
+        NetworkCompState(giverUID, args.User, giverComp);
         UpdateBallisticAppearance(giverUID, giverComp);
         UpdateAmmoCount(giverUID);
     }
+    public void NetworkCompState(EntityUid uid, EntityUid? user, BallisticAmmoProviderComponent comp)
+    {
+        var ev = new AmmoProviderDirtyEvent(uid, user, comp.IndexPredict, comp.UnspawnedCount, comp.SpawnedCountPredict, Timing.CurTick.Value);
+        RaiseLocalEvent(ref ev);
 
-
+        if (_netManager.IsServer && Math.Abs(Timing.CurTick.Value - comp.LastModifiedTick.Value) > 20)
+        {
+            DebugTools.Assert(DebugAmmoProviderClientDirty(uid));
+            Dirty(uid, comp);
+        }
+    }
 }
+[ByRefEvent]
+public record struct AmmoProviderDirtyEvent(EntityUid Gun, EntityUid? User, int AmmoIndex,
+                                            int AmmoUnspawned, int AmmoSpawned, uint Tick);
 
+
+public sealed partial class OnCompHandling(IComponentState? cur, IComponentState? next, BallisticAmmoState? stateToApply)
+{
+    public IComponentState? Cur = cur;
+    public IComponentState? Next = next;
+    public BallisticAmmoState? StateToApply = stateToApply;
+}
+// BallisticAmmoState? StateToApply
 /// <summary>
 /// DoAfter event for filling one ammo provider from another.
 /// </summary>

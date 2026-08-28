@@ -10628,3 +10628,128 @@ Entries:
   id: 6356
   time: '2026-08-25T01:47:34.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1090
+- author: Oreo365
+  changes:
+    - type: Add
+      message: Added Canes and Cane Blades to Loadouts
+  id: 6357
+  time: '2026-08-25T20:48:21.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1798
+- author: Oli
+  changes:
+    - type: Add
+      message: Marked Men gear
+    - type: Tweak
+      message: loadout satchels were bugged for the longest time.
+  id: 6358
+  time: '2026-08-25T20:55:03.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1808
+- author: Dpellowski
+  changes: []
+  id: 6359
+  time: '2026-08-26T20:10:03.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1816
+- author: John-Dang
+  changes:
+    - type: Add
+      message: Added new descriptions and names for all the super mutant items.
+    - type: Add
+      message: >-
+        Changed the round end notices from talking about an inbound train to an
+        incoming dust storm.
+  id: 6360
+  time: '2026-08-27T00:58:55.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1802
+- author: Amaster222
+  changes:
+    - type: Fix
+      message: Stoves now cook food again! still working on heating reagents.
+    - type: Tweak
+      message: >-
+        Everyone now gives cookable human meat! do good things with that
+        information!
+    - type: Add
+      message: Supermutant meat! Don't worry cannibals, they taste like humans!
+  id: 6361
+  time: '2026-08-27T01:00:09.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1809
+- author: JohnKieser
+  changes:
+    - type: Fix
+      message: fixed wrench and crowbar sprite
+  id: 6362
+  time: '2026-08-27T01:11:45.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1812
+- author: JohnKieser
+  changes:
+    - type: Fix
+      message: Ranger PA lmg fixed if it was invisible for anyone
+    - type: Fix
+      message: Khan combat armor fixed if it was invisible for any drug addict khans
+  id: 6363
+  time: '2026-08-27T01:15:56.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1814
+- author: JohnKieser
+  changes:
+    - type: Fix
+      message: Fix potential source of lag
+  id: 6364
+  time: '2026-08-27T02:00:07.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1817
+- author: JohnKieser
+  changes:
+    - type: Fix
+      message: Gun visuals should be fixed
+    - type: Fix
+      message: DB Shotguns can't fire more than 2 shots anymore
+  id: 6365
+  time: '2026-08-27T02:23:57.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1811
+- author: Oreo365
+  changes:
+    - type: Add
+      message: Added Pipboys to Lancers
+    - type: Tweak
+      message: Standardized Overwatch colours for Lancers
+    - type: Remove
+      message: Removed bonus armour from Lancer-Captains
+    - type: Tweak
+      message: Gave all Lancers berets instead of standard cap hats
+    - type: Tweak
+      message: Gave all Lancers bomber jackets
+  id: 6366
+  time: '2026-08-27T02:24:11.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1810
+- author: Oli
+  changes:
+    - type: Add
+      message: Bawls Caps Sprites
+  id: 6367
+  time: '2026-08-27T12:14:53.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1819
+- author: JohnKieser
+  changes:
+    - type: Fix
+      message: Infinite Ammo in a mag is no more
+  id: 6368
+  time: '2026-08-27T21:35:40.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1820
+- author: cythisiaj
+  changes:
+    - type: Add
+      message: missing .ftl entries
+    - type: Remove
+      message: 'vertibird gunner feature '
+    - type: Tweak
+      message: vertibird pilot camera panning
+    - type: Tweak
+      message: vertibird destruction additions
+    - type: Tweak
+      message: missing sprite affixes
+    - type: Tweak
+      message: improved PA mechs
+    - type: Tweak
+      message: removed t51bc sprite alternating
+  id: 6369
+  time: '2026-08-27T22:36:24.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1818

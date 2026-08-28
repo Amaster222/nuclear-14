@@ -86,7 +86,8 @@
   - type: MZPhysics
     bounciness: 0.05
   # #Misfits Add - co-pilot turret. Ammunition is the LimitedCharges below.
-  - type: VertibirdTurret
+  # #Cythisiax Removed - Vertibird co-pilot turret disabled (unwanted feature; caused lag).
+  # - type: VertibirdTurret
   # #Misfits Add - power armoured passengers can drop out while cruising.
   - type: VertibirdCombatDrop
   - type: LimitedCharges
@@ -108,6 +109,8 @@
     speedDamageFactor: 0.5
     velocityRetention: 0.25
     damageCooldown: 0.65
+    # #Misfits Add - CMU momentum: smash through destructible walls using leftover speed
+    obstacleDamageMultiplier: 150
   - type: Appearance
   - type: CanMoveInAir
   - type: MovementAlwaysTouching

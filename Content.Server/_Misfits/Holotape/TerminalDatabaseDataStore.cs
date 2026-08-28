@@ -399,6 +399,126 @@ public sealed class TerminalDatabaseDataStore
         return false;
     }
 
+    // #Misfits Add - Leadership "move" operations. These RELOCATE an entry between
+    // containers (tidying / organizing into a folder like "TRASH"); they never delete.
+    // Moved entries remain fully visible — Admin-tier roles then delete them as before.
+
+    /// <summary>
+    /// Converts a top-level folder into a subfolder of another root folder.
+    /// Only allowed when the moved folder has no subfolders of its own (the schema
+    /// only nests one level deep); the caller enforces this, but it is guarded here too.
+    /// </summary>
+    public bool MoveFolderToSubfolder(string databaseId, Guid folderId, Guid targetFolderId)
+    {
+        var folders = GetFolders(databaseId);
+        var idx = folders.FindIndex(f => f.FolderId == folderId);
+        if (idx < 0)
+            return false;
+        var folder = folders[idx];
+        if (folder.Deleted)
+            return false;
+        var target = folders.Find(f => f.FolderId == targetFolderId);
+        if (target == null || target.Deleted)
+            return false;
+        // A root folder containing subfolders cannot be flattened into a subfolder slot.
+        if (folder.Subfolders.Count > 0)
+            return false;
+
+        folders.RemoveAt(idx);
+        target.Subfolders.Add(new SubfolderDto
+        {
+            SubfolderId = folder.FolderId,
+            Name = folder.Name,
+            Deleted = folder.Deleted,
+            CreatedByUserIdGuid = folder.CreatedByUserIdGuid,
+            CreatedByCharName = folder.CreatedByCharName,
+            CreatedAt = folder.CreatedAt,
+            Documents = folder.Documents,
+        });
+        Save();
+        return true;
+    }
+
+    /// <summary>
+    /// Relocates a subfolder (and all of its documents) to live under a different root folder.
+    /// </summary>
+    public bool MoveSubfolder(string databaseId, Guid subfolderId, Guid targetFolderId)
+    {
+        var folders = GetFolders(databaseId);
+        var target = folders.Find(f => f.FolderId == targetFolderId);
+        if (target == null || target.Deleted)
+            return false;
+
+        foreach (var folder in folders)
+        {
+            var idx = folder.Subfolders.FindIndex(s => s.SubfolderId == subfolderId);
+            if (idx < 0)
+                continue;
+            if (folder.FolderId == targetFolderId)
+                return false; // already in the target folder — no-op
+            var sub = folder.Subfolders[idx];
+            folder.Subfolders.RemoveAt(idx);
+            target.Subfolders.Add(sub);
+            Save();
+            return true;
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Relocates a document into a target folder root or subfolder.
+    /// Returns false if the document is not found, the target is invalid, or it is already there.
+    /// </summary>
+    public bool MoveDocument(string databaseId, Guid documentId, Guid targetFolderId, Guid? targetSubfolderId)
+    {
+        var folders = GetFolders(databaseId);
+        var target = folders.Find(f => f.FolderId == targetFolderId);
+        if (target == null || target.Deleted)
+            return false;
+
+        List<DocumentDto> targetList;
+        if (targetSubfolderId.HasValue)
+        {
+            var targetSub = target.Subfolders.Find(s => s.SubfolderId == targetSubfolderId.Value && !s.Deleted);
+            if (targetSub == null)
+                return false;
+            targetList = targetSub.Documents;
+        }
+        else
+        {
+            targetList = target.Documents;
+        }
+
+        foreach (var folder in folders)
+        {
+            var idx = folder.Documents.FindIndex(d => d.DocumentId == documentId);
+            if (idx >= 0)
+            {
+                if (folder.FolderId == targetFolderId && !targetSubfolderId.HasValue)
+                    return false; // already in target folder root — no-op
+                var doc = folder.Documents[idx];
+                folder.Documents.RemoveAt(idx);
+                targetList.Add(doc);
+                Save();
+                return true;
+            }
+            foreach (var sub in folder.Subfolders)
+            {
+                var sidx = sub.Documents.FindIndex(d => d.DocumentId == documentId);
+                if (sidx < 0)
+                    continue;
+                if (folder.FolderId == targetFolderId && sub.SubfolderId == targetSubfolderId)
+                    return false; // already in target subfolder — no-op
+                var doc = sub.Documents[sidx];
+                sub.Documents.RemoveAt(sidx);
+                targetList.Add(doc);
+                Save();
+                return true;
+            }
+        }
+        return false;
+    }
+
     // ── DTO classes (System.Text.Json compatible) ────────────────────────────
 
     /// <summary>JSON-friendly folder DTO. NetUserId stored as Guid? since STJ can't handle it directly.</summary>

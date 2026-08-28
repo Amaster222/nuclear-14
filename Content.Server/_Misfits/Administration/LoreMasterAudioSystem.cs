@@ -5,6 +5,7 @@ using Content.Shared.Administration;
 using Robust.Server.Upload;
 using Robust.Shared.Audio;
 using Robust.Shared.Audio.Systems;
+using Robust.Shared.ContentPack;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Player;
 using Robust.Shared.Utility;
@@ -25,6 +26,7 @@ public sealed partial class LoreMasterAudioSystem : EntitySystem
     [Dependency] private IAdminManager _adminManager = default!;
     [Dependency] private NetworkResourceManager _networkResources = default!;
     [Dependency] private SharedAudioSystem _audio = default!;
+    [Dependency] private IResourceManager _resources = default!;
 
     private readonly ConcurrentQueue<(ICommonSession Session, ResPath Path)> _pendingUploads = new();
 
@@ -53,7 +55,10 @@ public sealed partial class LoreMasterAudioSystem : EntitySystem
     {
         base.Update(frameTime);
 
-        while (_pendingUploads.TryDequeue(out var upload))
+        // A resource-upload callback may arrive one main-thread tick before the resource itself
+        // is stored under /Uploaded. Do not ask the audio system to resolve it until it is ready.
+        var pendingAtStart = _pendingUploads.Count;
+        for (var i = 0; i < pendingAtStart && _pendingUploads.TryDequeue(out var upload); i++)
         {
             var relativePath = upload.Path.ToRelativePath();
             if (!relativePath.ToString().StartsWith(UploadPrefix, StringComparison.Ordinal)
@@ -65,6 +70,12 @@ public sealed partial class LoreMasterAudioSystem : EntitySystem
                 continue;
 
             var soundPath = new ResPath(UploadedPrefix + relativePath);
+            if (!_resources.ContentFileExists(soundPath))
+            {
+                _pendingUploads.Enqueue(upload);
+                continue;
+            }
+
             var sound = new SoundPathSpecifier(soundPath);
             _audio.PlayPvs(sound, source, AudioParams.Default
                 .WithVolume(SafeVolume)

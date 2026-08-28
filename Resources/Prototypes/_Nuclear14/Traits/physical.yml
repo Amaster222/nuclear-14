@@ -451,7 +451,7 @@
         - BoSMidKnight
         - BoSLancerCaptain
         - BoSLancerKnight
-        - BoSLancer
+        # #Cythisiax Removed - Lancer rank folded into Lancer-Knight
         #- BoSWashingtonCommander #Misfits Change /Comment-out/: Washington BoS removed
         #- BoSWashingtonPaladin
         #- BoSWashingtonKnight
@@ -525,7 +525,7 @@
         - BoSMidKnight
         - BoSLancerCaptain
         - BoSLancerKnight
-        - BoSLancer
+        # #Cythisiax Removed - Lancer rank folded into Lancer-Knight
     - !type:CharacterTraitRequirement
       inverted: true
       traits:

@@ -84,6 +84,13 @@ public sealed class VertibirdPilotInputSystem : EntitySystem
         _cameraOffset = Vector2.Lerp(_cameraOffset, target, blend);
         _eye.SetOffset(pilot, _cameraOffset, eye);
         _eye.SetPvsScale((pilot, eye), 1.75f);
+
+        // #Misfits Add - Pilot zoom follows how hard the camera is panned, mirroring CMU's
+        // gunship camera. Scales from 1x at rest up to 1.5x at the pan limit.
+        var panFraction = Math.Clamp(_cameraOffset.Length() / CameraMaxOffset, 0f, 1f);
+        var pilotZoom = 1f + panFraction * 0.5f;
+        _eye.SetZoom(pilot, new Vector2(pilotZoom, pilotZoom), eye);
+
         SyncCameraOffset(pilotChanged);
     }
 
@@ -137,6 +144,7 @@ public sealed class VertibirdPilotInputSystem : EntitySystem
             {
                 _eye.SetOffset(pilot, Vector2.Zero, eye);
                 _eye.SetPvsScale((pilot, eye), 1f);
+                _eye.SetZoom(pilot, Vector2.One, eye);
             }
 
             RaiseNetworkEvent(new VertibirdCameraOffsetMessage(Vector2.Zero));
