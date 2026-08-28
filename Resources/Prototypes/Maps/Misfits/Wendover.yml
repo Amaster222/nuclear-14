@@ -105,9 +105,10 @@
           BoSMidPaladin: [ 1, 1 ]  #Misfits Tweak: 1 slot — Senior Paladin is a rare rank
           BoSMidKnight: [ 3, 3 ]
           # #Misfits Add - Brotherhood Lancers aviation branch, one slot per rank
+          # #Cythisiax Renamed (player-facing) - Lancer ranks show as Knight-Captain / Knight-Lancer;
+          # the entry Lancer rung was removed and its slot folded into Lancer-Knight.
           BoSLancerCaptain: [ 1, 1 ]
-          BoSLancerKnight: [ 1, 1 ]
-          BoSLancer: [ 1, 1 ]
+          BoSLancerKnight: [ 2, 2 ]
           BoSMidScribe: [ 3, 3 ]
           BoSPaladin: [ 3, 3 ]  #Misfits Tweak: 3 slots — standard Paladin complement
           BoSKnight: [ 3, 3 ]  #Misfits Change /Add/

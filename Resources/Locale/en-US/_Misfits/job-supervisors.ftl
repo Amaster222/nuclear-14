@@ -30,14 +30,16 @@ job-supervisors-c27 = your factory directives and your own emergent judgement
 
 # #Misfits Add — New consolidated Brotherhood of Steel supervisor strings.
 job-supervisors-bos-west-elder = no one, but your duty to the Brotherhood
+# #Cythisiax Add - Honor Guard is a hidden rank beneath the Elder, so reports to the Elder.
+job-supervisors-bos-honor-guard = the Elder
 # #Misfits Add: missing key — used by bos_headscribe.yml (Head Scribe reports to Elder)
 job-supervisors-bos-west = the Elder
 job-supervisors-bos-headknight = the Elder
 job-supervisors-bos-paladin = the Head Paladin and Elder
 job-supervisors-bos-knight = the Head Knight, and Elder
 job-supervisors-bos-lancer-captain = the Head Knight and Elder
-job-supervisors-bos-lancer-knight = the Lancer-Captain and the Head Knight
-job-supervisors-bos-lancer = the Lancer-Captain and the Lancer-Knights
+# #Cythisiax Renamed (player-facing) - Lancer-Captain -> Knight-Captain.
+job-supervisors-bos-lancer-knight = the Knight-Captain and the Head Knight
 job-supervisors-bos-scribe = the Head Scribe and Elder
 job-supervisors-bos-initiate = the Brotherhood chain of command
 

@@ -94,10 +94,11 @@
   name: khanbat armor
   description: An old set of combat armor, repainted in the blue color of the Khans.
   components:
+  # #Misfits Fix - RSI lives in _Misfits/Clothing/OuterClothing/Armor, path was stale (_Nuclear14).
   - type: Sprite
-    sprite: _Nuclear14/Clothing/OuterClothing/Armor/khanbatarmor.rsi
+    sprite: _Misfits/Clothing/OuterClothing/Armor/khanbatarmor.rsi
   - type: Clothing
-    sprite: _Nuclear14/Clothing/OuterClothing/Armor/khanbatarmor.rsi
+    sprite: _Misfits/Clothing/OuterClothing/Armor/khanbatarmor.rsi
 
 - type: entity
   parent: N14ClothingOuterCombatArmorMK2
@@ -105,7 +106,8 @@
   name: reinforced khanbat combat armor
   description: An old set of combat armor, repainted in the colors of the Khans, with a big mongol on the back."
   components:
+  # #Misfits Fix - RSI lives in _Misfits/Clothing/OuterClothing/Armor, path was stale (_Nuclear14).
   - type: Sprite
-    sprite: _Nuclear14/Clothing/OuterClothing/Armor/khanbatarmormk2.rsi
+    sprite: _Misfits/Clothing/OuterClothing/Armor/khanbatarmormk2.rsi
   - type: Clothing
-    sprite: _Nuclear14/Clothing/OuterClothing/Armor/khanbatarmormk2.rsi
+    sprite: _Misfits/Clothing/OuterClothing/Armor/khanbatarmormk2.rsi

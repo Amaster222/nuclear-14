@@ -10720,3 +10720,36 @@ Entries:
   id: 6366
   time: '2026-08-27T02:24:11.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1810
+- author: Oli
+  changes:
+    - type: Add
+      message: Bawls Caps Sprites
+  id: 6367
+  time: '2026-08-27T12:14:53.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1819
+- author: JohnKieser
+  changes:
+    - type: Fix
+      message: Infinite Ammo in a mag is no more
+  id: 6368
+  time: '2026-08-27T21:35:40.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1820
+- author: cythisiaj
+  changes:
+    - type: Add
+      message: missing .ftl entries
+    - type: Remove
+      message: 'vertibird gunner feature '
+    - type: Tweak
+      message: vertibird pilot camera panning
+    - type: Tweak
+      message: vertibird destruction additions
+    - type: Tweak
+      message: missing sprite affixes
+    - type: Tweak
+      message: improved PA mechs
+    - type: Tweak
+      message: removed t51bc sprite alternating
+  id: 6369
+  time: '2026-08-27T22:36:24.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1818
