@@ -16,24 +16,6 @@
       - state: green
       - state: commander
 
-# #Cythisiax Edited - NCR HT Instructor personal-whitelist spawn point (was Paladin Commander).
-- type: entity
-  parent: MisfitsSpawnPointBoSMidPaladinCommander
-  id: MisfitsSpawnPointBoSPaladinCommander
-  name: NCR HT Instructor
-  components:
-  - type: SpawnPoint
-    job_id: BoSPaladinCommander
-
-# #Cythisiax Added - TOMBSTONE personal-whitelist spawn point.
-- type: entity
-  parent: MisfitsSpawnPointBoSMidPaladinCommander
-  id: MisfitsSpawnPointBoSTombstone
-  name: TOMBSTONE
-  components:
-  - type: SpawnPoint
-    job_id: BoSTombstone
-
 # #Cythisiax Added - HONOR GUARD personal-whitelist spawn point.
 - type: entity
   parent: MisfitsSpawnPointBoSMidPaladinCommander
