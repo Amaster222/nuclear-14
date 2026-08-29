@@ -2,8 +2,10 @@
 
 using Content.Shared.Body.Organ;
 using Content.Shared.Body.Part;
+using Content.Shared.Body.Systems;
 using Content.Shared.Fluids.Components;
 using Content.Shared.Throwing;
+using Robust.Shared.Containers;
 using Robust.Shared.Spawners;
 
 namespace Content.Server._Misfits.Cleanup;
@@ -38,6 +40,11 @@ public sealed class MisfitsWorldCleanupSystem : EntitySystem
         // them for cleanup. This handles the vast majority of gib scenarios.
         SubscribeLocalEvent<BodyPartComponent, LandEvent>(OnBodyPartLand);
         SubscribeLocalEvent<OrganComponent, LandEvent>(OnOrganLand);
+
+        // A part may land (and receive the cleanup timer) before a surgeon attaches it.
+        // Run after SharedBodySystem has recursively assigned the attached parts to the body.
+        SubscribeLocalEvent<BodyPartComponent, EntInsertedIntoContainerMessage>(OnBodyPartInserted,
+            after: [typeof(SharedBodySystem)]);
     }
 
     private void OnPuddleStartup(EntityUid uid, PuddleComponent comp, ComponentStartup args)
@@ -70,11 +77,27 @@ public sealed class MisfitsWorldCleanupSystem : EntitySystem
         AddGibletDespawn(uid);
     }
 
+    private void OnBodyPartInserted(Entity<BodyPartComponent> part, ref EntInsertedIntoContainerMessage args)
+    {
+        if (part.Comp.Body is not { } body)
+            return;
+
+        var query = EntityQueryEnumerator<BodyPartComponent, GibletCleanupComponent, TimedDespawnComponent>();
+        while (query.MoveNext(out var uid, out var cleanupPart, out _, out _))
+        {
+            // Nested parts are updated recursively by the body system, so clear stale cleanup
+            // timers from the entire attached body rather than only the directly inserted part.
+            if (cleanupPart.Body == body)
+                RemComp<TimedDespawnComponent>(uid);
+        }
+    }
+
     private void AddGibletDespawn(EntityUid uid)
     {
         if (TerminatingOrDeleted(uid))
             return;
 
+        EnsureComp<GibletCleanupComponent>(uid);
         var despawn = EnsureComp<TimedDespawnComponent>(uid);
         if (despawn.Lifetime < GibletLifetime)
             despawn.Lifetime = GibletLifetime;
