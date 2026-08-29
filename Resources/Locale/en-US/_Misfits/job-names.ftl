@@ -137,6 +137,10 @@ job-description-follower-volunteer = You are new to the Followers. You believe k
 job-name-supermutant-follower-doctor = Supermutant Follower Doctor
 job-description-supermutant-follower-doctor = A SuperMutant trained in the ways of medicine.
 
+# #Cythisiax Add - Sentient Deathclaw (FEV Mutants whitelist boss role).
+job-name-sentient-deathclaw = Sentient Deathclaw - Cythisia
+job-description-sentient-deathclaw = You are a deathclaw of unnatural strength, your hide marked with strange, restless designs. Few weapons can pierce you, and fewer still will survive your claws. The wastes are your hunting ground — choose your prey wisely.
+
 # #Misfits Add — Western BoS chapter command-tier jobs (Elder + Head Scribe).
 # These keys were commented out in the Corvax locale when the Corvax west-BoS chapter
 # was removed, but the Misfits bos_elder.yml and bos_headscribe.yml prototypes still reference them.

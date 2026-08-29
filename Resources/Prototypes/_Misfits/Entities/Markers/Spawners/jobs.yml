@@ -973,6 +973,19 @@
   - type: SpawnPoint
     job_id: SuperMutantFollowerDoctor
 
+# #Cythisiax Add - Sentient deathclaw spawn point (not yet placed on the Wendover grid).
+- type: entity
+  parent: SpawnPointJobBase
+  id: MisfitsSpawnPointSentientDeathclaw
+  name: sentient deathclaw
+  components:
+  - type: SpawnPoint
+    job_id: SentientDeathclaw
+  - type: Sprite
+    sprite: Corvax/Markers/jobs.rsi
+    layers:
+    - state: green
+
 # #Misfits Removed - Khan spawn point deactivated; Khan job dissolved into Eighties department.
 # #Misfits Removed - Jackal, Viper, Gunner, Fiend spawn points removed as part of Outlaws faction overhaul.
 # #Misfits Removed - Old single-rank Eighties spawn point replaced by 5-rank spawners below.

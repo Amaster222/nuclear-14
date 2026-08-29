@@ -29,6 +29,7 @@
   - SuperMutantNCRRanger   # #Misfits Add - NCR-aligned supermutant ranger
   - SuperMutantNCRTrooper  # #Misfits Add - NCR-aligned supermutant trooper
   - SuperMutantTribal  # #Misfits Add - Tribe aligned supermutant trooper
+  - SentientDeathclaw  # #Cythisiax Add - sentient deathclaw whitelist boss role
   # #Misfits Removed - generic variants hidden from department; NCR-specific ones take their place
   # - SuperMutantRanger
   # - SuperMutantTrooper

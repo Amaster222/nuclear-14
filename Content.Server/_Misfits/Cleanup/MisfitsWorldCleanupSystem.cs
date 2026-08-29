@@ -2,21 +2,19 @@
 
 using Content.Shared.Body.Organ;
 using Content.Shared.Body.Part;
-using Content.Shared.Body.Systems;
 using Content.Shared.Fluids.Components;
 using Content.Shared.Throwing;
-using Robust.Shared.Containers;
 using Robust.Shared.Spawners;
 
 namespace Content.Server._Misfits.Cleanup;
 
 /// <summary>
-/// Adds <see cref="TimedDespawnComponent"/> to entity types that would otherwise
-/// persist forever and silently accumulate over a long round:
+/// Automatically cleans up entities that would otherwise persist forever and silently
+/// accumulate over a long round:
 /// <list type="bullet">
-///   <item>Blood puddles — created every bleed tick, blood never evaporates.</item>
-///   <item>Footprints — spawned every step through a puddle.</item>
-///   <item>Giblets (body parts + organs) — dropped when mobs are gibbed.</item>
+///   <item>Blood puddles — created every bleed tick, blood never evaporates (via <see cref="TimedDespawnComponent"/>).</item>
+///   <item>Footprints — spawned every step through a puddle (via <see cref="TimedDespawnComponent"/>).</item>
+///   <item>Giblets (body parts + organs) — dropped when mobs are gibbed (via <see cref="GibletCleanupComponent"/>).</item>
 /// </list>
 /// </summary>
 public sealed class MisfitsWorldCleanupSystem : EntitySystem
@@ -40,11 +38,56 @@ public sealed class MisfitsWorldCleanupSystem : EntitySystem
         // them for cleanup. This handles the vast majority of gib scenarios.
         SubscribeLocalEvent<BodyPartComponent, LandEvent>(OnBodyPartLand);
         SubscribeLocalEvent<OrganComponent, LandEvent>(OnOrganLand);
+    }
 
-        // A part may land (and receive the cleanup timer) before a surgeon attaches it.
-        // Run after SharedBodySystem has recursively assigned the attached parts to the body.
-        SubscribeLocalEvent<BodyPartComponent, EntInsertedIntoContainerMessage>(OnBodyPartInserted,
-            after: [typeof(SharedBodySystem)]);
+    public override void Update(float frameTime)
+    {
+        base.Update(frameTime);
+
+        // Giblet cleanup is driven from this system's own tick rather than subscribing to
+        // SharedBodySystem's attach events — the directed (component, event) pairs for body
+        // part attachment are already owned by SharedBodySystem and its _Shitmed partials
+        // (e.g. (BodyPartComponent, EntInsertedIntoContainerMessage), (BodyComponent,
+        // BodyPartAddedEvent)), so hooking them caused "Duplicate Subscriptions" at startup.
+        // # #Cythisiax Fixed - duplicate directed subscription crash; cleanup now runs from own Update loop
+        var toStop = new List<EntityUid>();
+        var toDelete = new List<EntityUid>();
+
+        var parts = EntityQueryEnumerator<BodyPartComponent, GibletCleanupComponent>();
+        while (parts.MoveNext(out var uid, out var part, out var cleanup))
+        {
+            // Attached to a body (e.g. a surgeon recovered it) — stop cleanup so the limb never despawns.
+            if (part.Body != null)
+            {
+                toStop.Add(uid);
+                continue;
+            }
+            if (TerminatingOrDeleted(uid))
+                continue;
+            cleanup.Accumulator += frameTime;
+            if (cleanup.Accumulator >= cleanup.Lifetime)
+                toDelete.Add(uid);
+        }
+
+        var organs = EntityQueryEnumerator<OrganComponent, GibletCleanupComponent>();
+        while (organs.MoveNext(out var uid, out var organ, out var cleanup))
+        {
+            if (organ.Body != null)
+            {
+                toStop.Add(uid);
+                continue;
+            }
+            if (TerminatingOrDeleted(uid))
+                continue;
+            cleanup.Accumulator += frameTime;
+            if (cleanup.Accumulator >= cleanup.Lifetime)
+                toDelete.Add(uid);
+        }
+
+        foreach (var uid in toStop)
+            RemComp<GibletCleanupComponent>(uid);
+        foreach (var uid in toDelete)
+            QueueDel(uid);
     }
 
     private void OnPuddleStartup(EntityUid uid, PuddleComponent comp, ComponentStartup args)
@@ -77,29 +120,13 @@ public sealed class MisfitsWorldCleanupSystem : EntitySystem
         AddGibletDespawn(uid);
     }
 
-    private void OnBodyPartInserted(Entity<BodyPartComponent> part, ref EntInsertedIntoContainerMessage args)
-    {
-        if (part.Comp.Body is not { } body)
-            return;
-
-        var query = EntityQueryEnumerator<BodyPartComponent, GibletCleanupComponent, TimedDespawnComponent>();
-        while (query.MoveNext(out var uid, out var cleanupPart, out _, out _))
-        {
-            // Nested parts are updated recursively by the body system, so clear stale cleanup
-            // timers from the entire attached body rather than only the directly inserted part.
-            if (cleanupPart.Body == body)
-                RemComp<TimedDespawnComponent>(uid);
-        }
-    }
-
     private void AddGibletDespawn(EntityUid uid)
     {
         if (TerminatingOrDeleted(uid))
             return;
 
-        EnsureComp<GibletCleanupComponent>(uid);
-        var despawn = EnsureComp<TimedDespawnComponent>(uid);
-        if (despawn.Lifetime < GibletLifetime)
-            despawn.Lifetime = GibletLifetime;
+        var cleanup = EnsureComp<GibletCleanupComponent>(uid);
+        cleanup.Lifetime = GibletLifetime;
+        cleanup.Accumulator = 0f;
     }
 }
