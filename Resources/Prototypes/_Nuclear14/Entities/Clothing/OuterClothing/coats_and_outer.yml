@@ -884,7 +884,7 @@
   parent: ClothingOuterHardsuitBase
   id: N14ClothingOuterRadSuit
   name: radiation suit
-  description: Designed to protect its wearer from radiation.
+  description: Designed to protect its wearer from radiation. The sealed lining also contains the wearer's own radioactive emissions, letting glowing ghouls work safely around non-ghouls.
   components:
   - type: Sprite
     sprite: _Nuclear14/Clothing/OuterClothing/Coats/falloutradsuit.rsi
@@ -895,6 +895,9 @@
       coefficients:
         Heat: 0.90
         Radiation: 0.001
+  # #Misfits Add - Suppress the wearer's own RadiationSource (e.g. glowing ghouls)
+  # so they don't irradiate people nearby while wearing the suit.
+  - type: RadiationSourceSuppression
   - type: ClothingSpeedModifier
     walkModifier: 1
     sprintModifier: 1

@@ -35,6 +35,8 @@
       - type: ReplacementAccent
         accent: n14Enclave
       - type: CPRTraining
+  - !type:AddTraitSpecial # #Misfits Add - Enclave scientists are issued an Enclave Eyebot companion
+    traits: [ MisfitsPetEyebotEnclave ]
 
 - type: startingGear
   id: EnclaveJuniorScientistGear

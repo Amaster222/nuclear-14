@@ -166,6 +166,10 @@ job-description-bos-initiate = Learn the Brotherhood's code, follow orders, and 
 job-name-bos-eyebot = Brotherhood Eyebot
 job-description-bos-eyebot = Serve the Brotherhood of Steel as a loyal robotic companion.
 
+# #Misfits Add - Enclave Eyebot pet ghost-role job (playtime attribution only)
+job-name-enclave-eyebot = Enclave Eyebot
+job-description-enclave-eyebot = Serve the Enclave as a loyal robotic reconnaissance companion.
+
 # #Misfits Add — Squire loadout kit locale for new Misfits_SqrBasic_Set.
 # #Misfits Tweak: Removed rank prefix so the kit name is role-neutral.
 undecided-loadout-category-misfits-sqr-basic-name = Basic Kit

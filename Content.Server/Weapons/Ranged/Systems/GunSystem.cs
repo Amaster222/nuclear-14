@@ -4,7 +4,6 @@ using Content.Server._Misfits.Weapons.Ranged.Flamer;
 using Content.Server.Cargo.Systems;
 using Content.Server.Movement.Components;
 using Content.Server.Power.EntitySystems;
-using Content.Shared.Buckle.Components;
 using Content.Shared.Damage;
 using Content.Shared.Damage.Systems;
 using Content.Shared.Database;
@@ -395,12 +394,12 @@ public sealed partial class GunSystem : SharedGunSystem
         if (session == null)
             return TryGetFirstValidHitscanResult(raycastEvent.RayCastResults, target, firedFromContainer, out hit, out distance);
 
+        // #Cythisiax Fixed - Revert PR #1103 rider hitscan deferral: shots at a ridden bike hit the
+        // bike fixture again (bike takes full damage) instead of being deferred to the rider/passing through.
         EntityUid? staticHit = null;
         EntityUid? currentLagCompHit = null;
-        EntityUid? strapHit = null;
         var staticDistance = hitscan.MaxLength;
         var currentLagCompDistance = hitscan.MaxLength;
-        var strapDistance = hitscan.MaxLength;
 
         foreach (var result in raycastEvent.RayCastResults)
         {
@@ -413,16 +412,6 @@ public sealed partial class GunSystem : SharedGunSystem
             {
                 currentLagCompHit ??= result.HitEntity;
                 currentLagCompDistance = MathF.Min(currentLagCompDistance, result.Distance);
-                continue;
-            }
-
-            // thing buckled to genrally has larger fixture, defer to rider, if not fallback to strap
-            if (strapHit == null &&
-                TryComp<StrapComponent>(result.HitEntity, out var strap) &&
-                strap.BuckledEntities.Count > 0)
-            {
-                strapHit = result.HitEntity;
-                strapDistance = result.Distance;
                 continue;
             }
 
@@ -461,13 +450,6 @@ public sealed partial class GunSystem : SharedGunSystem
         {
             hit = currentLagCompHit.Value;
             distance = currentLagCompDistance;
-            return true;
-        }
-
-        if (strapHit != null)
-        {
-            hit = strapHit.Value;
-            distance = strapDistance;
             return true;
         }
 

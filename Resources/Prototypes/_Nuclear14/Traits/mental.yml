@@ -204,6 +204,7 @@
         - Wastelander
         - Tribe
         - Townsfolk
+        - Eighties # #Misfits Add - allow the 80s faction (Eighties department) to take pet pigrats
   functions:
     # #Misfits Fix - Use TraitSpawnEntity so multiple pet ghost roles can coexist
     - !type:TraitSpawnEntity
