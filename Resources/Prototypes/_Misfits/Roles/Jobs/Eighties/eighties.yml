@@ -276,7 +276,7 @@
     - GhoulGlowing
   - !type:CharacterPlaytimeRequirement
     tracker: Wastelander
-    min: 46800 # 13 hours
+    min: 28800 # 8 hours
   startingGear: EightiesRoadRashGear
   alwaysUseSpawner: true
   icon: "JobIconEighties"
