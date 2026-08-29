@@ -1,19 +1,19 @@
-# #Misfits Add - Yuma Elder role for the Tribe (Willowers) faction.
+# #Misfits Add - "Yuma" Elder role for the Tribe (Willowers) faction.
 # A sagely old tribal who mentors the young and advises the Chieftan. Second
 # in command to the chief, but NOT a commander — leadership stays with the chief.
 # Requested as the "Yuma Elder" (1-3 per round) to take some weight off the Shaman
 # and add variety to tribe rounds.
 - type: job
-  id: YumaElder
+  id: SuperElder
   setPreference: true
   jobWhitelistBypassesRoleTimers: true
   weight: 50
   showBorder: true
   overrideConsoleVisibility: false
   canBeAntag: false
-  name: job-name-yuma-elder
-  description: job-description-yuma-elder
-  playTimeTracker: YumaElder
+  name: job-name-willow-elder
+  description: job-description-willow-elder
+  playTimeTracker: SuperElder
   requirements:
     - !type:CharacterSpeciesRequirement
       species:
@@ -22,7 +22,7 @@
     - !type:CharacterDepartmentTimeRequirement # #Misfits Add - sagely elders are senior tribal members
       department: Tribe
       min: 43200 # 12 hours
-  startingGear: YumaElderGear
+  startingGear: SuperElderGear
   alwaysUseSpawner: true
   icon: "JobIconTribal" # Corvax-Change
   supervisors: job-supervisors-tribal # answers to the Chieftan
@@ -55,7 +55,7 @@
     traits: [ LanguageTribal ]
 
 - type: startingGear
-  id: YumaElderGear
+  id: SuperElderGear
   equipment:
     head: N14ClothingTribalHeadWraps # weathered headwraps for the sagely old
     jumpsuit: N14ClothingUniformJumpsuitTribal
@@ -80,4 +80,4 @@
     - N14HealingPoultice # spare healing supplies to lighten the Shaman's load
 
 - type: playTimeTracker
-  id: YumaElder
+  id: SuperElder
