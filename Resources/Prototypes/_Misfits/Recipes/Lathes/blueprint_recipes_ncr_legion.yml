@@ -334,7 +334,7 @@
 
 - type: latheRecipe
   id: N14BPNCRWeaponRevolver44Magnun
-  result: N14WeaponRevolver44Magnun
+  result: N14WeaponRevolver44Magnum
   category: N14BlueprintNCRWeaponsT2
   completetime: 10
   requiresBlueprint: true

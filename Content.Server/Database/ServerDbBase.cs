@@ -1895,7 +1895,7 @@ INSERT INTO player_round (players_id, rounds_id) VALUES ({players[player]}, {id}
 
         public async Task UpsertCharacterCurrencyAsync(
             Guid playerId, string characterName, int bottlecaps,
-            int ncrDollars = 0, int silver = 0, int gold = 0)
+            int ncrDollars = 0, int silver = 0, int gold = 0, int legionDenarii = 0, int prewarMoney = 0)
         {
             await using var db = await GetDb();
 
@@ -1909,6 +1909,8 @@ INSERT INTO player_round (players_id, rounds_id) VALUES ({players[player]}, {id}
                 existing.NcrDollars = ncrDollars; // #Cythisiax Add
                 existing.Silver = silver; // #Cythisiax Add
                 existing.Gold = gold; // #Cythisiax Add
+                existing.LegionDenarii = legionDenarii; // #Tytos Add, i tire of this ncr favoritism
+                existing.PrewarMoney = prewarMoney; // #Tytos Add
             }
             else
             {
@@ -1920,6 +1922,8 @@ INSERT INTO player_round (players_id, rounds_id) VALUES ({players[player]}, {id}
                     NcrDollars = ncrDollars, // #Cythisiax Add
                     Silver = silver, // #Cythisiax Add
                     Gold = gold, // #Cythisiax Add
+                    LegionDenarii = legionDenarii, // #Tytos add
+                    PrewarMoney = prewarMoney, // #Tytos add
                 });
             }
 

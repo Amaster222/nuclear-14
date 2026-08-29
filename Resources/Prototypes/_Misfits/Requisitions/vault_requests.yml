@@ -634,7 +634,7 @@
       minAmount: 1
       maxAmount: 3
       weight: 1
-    - item: N14WeaponBlowback
+    - item: N14WeaponShotgunBlowback
       cost: 200
       weight: 0.35
     - item: N14WeaponShotgunAuto

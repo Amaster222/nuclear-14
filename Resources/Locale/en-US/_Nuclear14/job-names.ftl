@@ -154,7 +154,9 @@ job-description-wastelander = Survive in the wasteland and carve out your own pa
 # #Misfits Change - renamed "Outcast" to "BoS Exile" (display name only, ID stays Outcast so preferences/playtime are kept)
 job-name-outcast = BoS Exile
 job-description-outcast = A Brotherhood of Steel exile, surviving beyond the protection of the order while seeking a place in the wasteland.
-
+# Tytos add, neutral traveling trader
+job-name-wasterTrader = Wasteland Trader
+job-description-wasterTrader = buy and sell a variety of exotic and essential goods to anyone who will pay, you are loyal only to caps.
 # Town
 job-name-townsperson = Town Townsperson
 job-description-townsperson = A member of the post-war society. Follow the town rules or try run for Mayor to change them.

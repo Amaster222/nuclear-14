@@ -1177,7 +1177,7 @@
     size: Huge
   - type: SpawnItemsOnUse
     items:
-      - id: N14WeaponRevolver44Magnun
+      - id: N14WeaponRevolver44Magnum
       - id: N14SpeedLoader44Magnum
         amount: 2
       - id: N14AmmoBox44Magnum
@@ -1775,7 +1775,7 @@
       - id: N14WeaponSniper45-70BrushGun
       - id: MagazineBox45-70
         amount: 3
-      - id: N14WeaponRevolver44Magnun
+      - id: N14WeaponRevolver44Magnum
       - id: SpeedLoader44
         amount: 2
       - id: N14CleanGauze10
@@ -1844,7 +1844,7 @@
     items:
       - id: N14ClothingHeadTownGuardBrodieCover
       - id: N14ClothingOuterTownGuardRiot
-      - id: N14WeaponBlowback
+      - id: N14WeaponShotgunBlowback
       - id: MagazineBox12gauge
       - id: N14WeaponPistolWebley
       - id: N14MagazinePistol9mm
