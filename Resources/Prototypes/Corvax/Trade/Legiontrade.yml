@@ -279,7 +279,7 @@
     price: 30
   - proto: N14Bitterdrink
     price: 35
-  - proto: N14CleanGauze
+  - proto: N14CleanGauze10
     amount: 10
     price: 10
   - proto: N14AloeSalve

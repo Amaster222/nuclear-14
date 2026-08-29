@@ -149,7 +149,7 @@
   - proto: N14WeaponShotgunAuto
     price: 600
   - proto: N14WeaponShotgunTrench
-    price: 10
+    price: 800
   - proto: N14WeaponShotgunCanadian
     price: 900
     count: 4

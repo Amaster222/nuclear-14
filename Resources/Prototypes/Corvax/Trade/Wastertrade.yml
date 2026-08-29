@@ -175,6 +175,7 @@
     price: 450
   - proto: N14WeaponSniper50Pipe
     price: 800
+    count: 4
   - proto: N14WeaponSMG10mmPipe
     price: 170
   - proto: N14WeaponSMG12mmPipe
