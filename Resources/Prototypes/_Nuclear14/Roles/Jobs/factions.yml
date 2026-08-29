@@ -56,19 +56,21 @@
   #- BoSWashingtonInitiate        # Initiate (old Washington)
   - BoSInitiate                  # Initiate       | _Misfits/Roles/Jobs/BrotherhoodOfSteel/bos_initiate.yml  #Misfits Change /Add/
 
-# #Misfits Add - Brotherhood Lancers: the chapter's aviation branch, styled after the
+# #Misfits Add - Brotherhood Lancers (aviation): the chapter's aviation branch, styled after the
 # Rangers/MilitaryPolice pattern of a sub-branch with its own department block.
 # The ID deliberately extends BrotherhoodOfSteel so ordinal sorting parks it directly
 # beneath the Brotherhood in the character selection screen.
+# #Cythisiax Renamed (player-facing) - Lancer-Captain shows as Knight-Captain, Lancer-Knight as
+# Knight-Lancer; the entry "Lancer" rung was removed and its slot folded into Lancer-Knight.
+# Prototype IDs kept stable so Lancers playtime is preserved.
 - type: department
   id: BrotherhoodOfSteelLancers
   description: department-BrotherhoodOfSteelLancers-description
   color: "#2F5D8C" # deeper Wendover blue, distinct from the chapter's #3B72BF
   uiCategory: MajorFaction
   roles:
-  - BoSLancerCaptain # Lancer-Captain | _Misfits/Roles/Jobs/BrotherhoodOfSteel/bos_lancer_captain.yml
-  - BoSLancerKnight  # Lancer-Knight  | _Misfits/Roles/Jobs/BrotherhoodOfSteel/bos_lancer_knight.yml
-  - BoSLancer        # Lancer         | _Misfits/Roles/Jobs/BrotherhoodOfSteel/bos_lancer.yml
+  - BoSLancerCaptain # Knight-Captain (player-facing) | _Misfits/Roles/Jobs/BrotherhoodOfSteel/bos_lancer_captain.yml
+  - BoSLancerKnight  # Knight-Lancer  (player-facing) | _Misfits/Roles/Jobs/BrotherhoodOfSteel/bos_lancer_knight.yml
 
 #- type: department
 #  id: CaravanCompany
@@ -197,6 +199,7 @@
   roles:
   - Wastelander
   - Outcast
+  - WasterTrader
   # Forge-Change: Followers — moved to FollowersOfTheApocalypse department in _Misfits/Roles/Jobs/Followers/followers.yml
 
 - type: department

@@ -4,6 +4,7 @@
   parent: [ BaseMech, CombatMech ]
   categories: [ HideSpawnMenu ]
   components:
+  - type: PowerArmorMech
   - type: Sprite
     drawdepth: Mobs
     noRot: true

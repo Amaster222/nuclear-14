@@ -1,3 +1,11 @@
+# EXCHANGE RATES FOR REFERENCE
+#GOLD BAR = 25 CAPS, 1.6 GOLD BARS = 1 AUREUS, 40 CAPS
+#SILVER BAR = 20 CAPS = 5 DENARIUS
+#1 DENARIUS = 4 CAPS
+#1 AUREUS = 40 CAPS
+#1 CAP = 2 NCR
+#IF I CATCH YOU CHANGING ONE VALUE WITHOUT ADJUSTING THE OTHERS, I WILL CROSS YOU - LEGATE TYTOS
+#'buy2' refers to what the PLAYER buys, 'sell2' refers to what the PLAYER sells.
 - type: entity
   id: Trademachine
   abstract: true
@@ -112,7 +120,7 @@
     price: 13
   - proto: N14WeaponSMG12mmAdvanced
     price: 14
-  - proto: N14WeaponBlowback
+  - proto: N14WeaponShotgunBlowback
     price: 3
   - proto: N14WeaponShotgunChinese
     price: 4
@@ -233,7 +241,7 @@
     price: 5
   - proto: N14WeaponSMG12mmAdvanced
     price: 5
-  - proto: N14WeaponBlowback
+  - proto: N14WeaponShotgunBlowback
     price: 1
   - proto: N14WeaponShotgunChinese
     price: 2
@@ -320,7 +328,7 @@
     price: 50
   - proto: N14WeaponRevolver45-70Handcannon
     price: 80
-  - proto: N14WeaponRevolver44Magnun
+  - proto: N14WeaponRevolver44Magnum
     price: 70
   - proto: N14WeaponRevolver44TribalUpgraded
     price: 80
@@ -328,8 +336,6 @@
     price: 80
   - proto: N14WeaponRevolver44TribalUpgradedExtra
     price: 120
-  - proto: N14WeaponRevolver45-70Hunter
-    price: 260
   - proto: N14WeaponRevolver45-70HandcannonUpgraded
     price: 370
 
@@ -372,19 +378,12 @@
     price: 220
   - proto: N14WeaponSMG10mm
     price: 250
-  - proto: N14WeaponSMG12mm
-    price: 220
   - proto: N14WeaponSMG9mminfiltrator
     price: 250
   - proto: N14WeaponSMG12mmAdvancedCanadian
     price: 230
   - proto: N14WeaponSMG10mmSuppressed
     price: 300
-  - proto: N14WeaponSMG10mmChinese
-    price: 330
-  - proto: N14WeaponSMG12mmAdvancedChinese
-    price: 350
-    count: 2
   - proto: N14WeaponSMG12mmAdvanced
     price: 350
     count: 2
@@ -409,19 +408,11 @@
     price: 50
   - proto: N14WeaponShotgunSawedOff
     price: 125
-  - proto: N14WeaponShotgunRiot
-    price: 290
   - proto: N14WeaponShotgunAuto
     price: 300
-  - proto: N14WeaponShotgunChinese
-    price: 350
-    count: 4
   - proto: N14WeaponShotgunCanadian
     price: 450
     count: 4
-  - proto: N14WeaponBlowback
-    price: 450
-    count: 2
 
 - type: storeCategoryStructured
   id: CaravanBuy2_AssaultRifles
@@ -431,12 +422,8 @@
     price: 120
   - proto: N14WeaponRifle762SKS
     price: 150
-  - proto: N14WeaponRifle556Service
-    price: 150
   - proto: N14WeaponRifle556Butchered
     price: 150
-  - proto: N14WeaponRifle556ServiceScoped
-    price: 185
   - proto: N14WeaponRifle762M14
     price: 200
   - proto: N14WeaponRifle556R91
@@ -450,9 +437,6 @@
     price: 240
   - proto: N14WeaponSniper308Canadian
     price: 300
-  - proto: N14WeaponRifle762Chinese
-    price: 350
-    count: 5
   - proto: N14WeaponRifle762Fal
     price: 350
   - proto: N14WeaponRifle556Carbine
@@ -460,12 +444,6 @@
     count: 8
   - proto: N14WeaponRifle762MarksmanCanadian
     price: 400
-    count: 2
-  - proto: N14WeaponRifle762Marksman
-    price: 500
-    count: 4
-  - proto: N14WeaponRifle762MarksmanChinese
-    price: 550
     count: 2
   - proto: N14WeaponRifle762Canadian
     price: 550
@@ -484,9 +462,6 @@
   - proto: N14WeaponHMGcanadian
     price: 3500
     count: 2
-  - proto: N14WeaponLMGchinese
-    price: 3600
-    count: 2
   - proto: N14WeaponLMGBren
     price: 4800
     count: 2
@@ -501,8 +476,6 @@
     price: 35
   - proto: N14WeaponSniper556Tribal
     price: 80
-  - proto: N14WeaponSniper556TribalUpgraded
-    price: 100
   - proto: N14WeaponSniper308LeverRifle
     price: 100
   - proto: N14WeaponSniper44LeverCarbine
@@ -580,10 +553,6 @@
     price: 55
   - proto: N14BaseAxe
     price: 120
-  - proto: N14ChineseSword
-    price: 200
-  - proto: N14CeremonialSword
-    price: 550
   - proto: N14SledgeHammer
     price: 200
 
@@ -664,8 +633,6 @@
     price: 100
   - proto: N14ClothingOuterPoliceVest
     price: 200
-  - proto: N14ClothingOuterVestChinese
-    price: 200
   - proto: N14ClothingOuterCombatPainspike
     price: 500
   - proto: N14ClothingOuterRaiderCombat1
@@ -681,8 +648,6 @@
     price: 75
   - proto: ClothingBeltCowboy
     price: 100
-  - proto: ClothingBeltRevolver
-    price: 100
   - proto: ClothingBeltMilitary
     price: 100
 
@@ -696,8 +661,6 @@
   - proto: N14CleanGauze10
     amount: 10
     price: 15
-  - proto: N14RadAwayPhial
-    price: 30
   - proto: N14RadAwayBloodbag
     price: 50
   - proto: N14Antidote
@@ -706,9 +669,6 @@
     price: 50
   - proto: N14Stimpak
     price: 75
-  - proto: N14AloeSalve
-    amount: 10
-    price: 100
   - proto: N14Ointment10
     amount: 10
     price: 150
@@ -725,12 +685,12 @@
   - proto: SheetSteel
     amount: 30
     price: 350
+  - proto: MaterialWoodPlank
+    amount: 30
+    price: 100
   - proto: SheetPlastic
     amount: 30
     price: 350
-  - proto: N14IngotLead20
-    amount: 20
-    price: 400
   - proto: N14Gunpowder10
     amount: 10
     price: 350
@@ -843,6 +803,23 @@
     price: 5
 
 - type: storeCategoryStructured
+  id: CaravanBuy2_Currency # IF YOU CHANGE ONE EXCHANGE RATE, YOU MUST CHANGE ALL OTHERS ACROSS ALL FOUR FILES TO MATCH, OR YOU WILL CREATE AN INFINITE MONEY GLITCH
+  name: "Currency"
+  entries:
+  - proto: N14CurrencyLegionDenarius
+    amount: 1
+    price: 4
+  - proto: N14CurrencyLegionAureus
+    amount: 1
+    price: 40
+  - proto: N14CurrencyNCRDollar2
+    amount: 2
+    price: 1
+
+
+
+
+- type: storeCategoryStructured
   id: CaravanBuy2_Plushies
   name: "Plushies"
   entries:
@@ -890,6 +867,7 @@
   - CaravanBuy2_Misc
   - CaravanBuy2_Plushies
   - CaravanBuy2_Sprouts
+  - CaravanBuy2_Currency
 
 # ----------------------------
 # caravan_sell2 categories
@@ -906,7 +884,7 @@
     price: 28
   - proto: N14WeaponRevolver45-70Handcannon
     price: 44
-  - proto: N14WeaponRevolver44Magnun
+  - proto: N14WeaponRevolver44Magnum
     price: 39
   - proto: N14WeaponRevolver44TribalUpgraded
     price: 44
@@ -1017,7 +995,7 @@
     price: 275
   - proto: N14WeaponShotgunRiot
     price: 160
-  - proto: N14WeaponBlowback
+  - proto: N14WeaponShotgunBlowback
     price: 550
   - proto: N14WeaponShotgunNeostead
     price: 550
@@ -1377,10 +1355,10 @@
   - proto: N14IngotIron1
     price: 10
   - proto: N14IngotBrass1
-    price: 10
+    price: 40
   - proto: N14IngotLead1
     price: 10
-  - proto: N14IngotSilver1
+  - proto: N14IngotSilver1 # if you fuck with the price of one currency, silver, or gold you need to change all the others to match
     price: 20
   - proto: N14IngotGold1
     price: 25
@@ -1397,6 +1375,20 @@
     price: 3
   - proto: DrinkCognacBottleFull
     price: 3
+
+- type: storeCategoryStructured
+  id: CaravanSell2_Currency # IF YOU CHANGE ONE EXCHANGE RATE, YOU MUST CHANGE ALL OTHERS ACROSS ALL FOUR FILES TO MATCH, OR YOU WILL CREATE AN INFINITE MONEY GLITCH
+  name: "Currency"
+  entries:
+  - proto: N14CurrencyLegionDenarius
+    price: 4
+  - proto: N14CurrencyLegionAureus
+    price: 40
+  - proto: N14CurrencyNCRDollar2
+    amount: 2
+    price: 1
+
+
 
 - type: storePresetStructured
   id: caravan_sell2
@@ -1420,3 +1412,8 @@
   - CaravanSell2_Alcohol
   - CaravanSell2_Fish
   - CaravanSell2_Currency
+
+
+
+
+

@@ -456,8 +456,8 @@
 - type: job
   id: SuperMutantEnclave
   jobWhitelistBypassesRoleTimers: true
-  name: Enclave Supermutant
-  description: A Supermutant working for the United States. Service Guarantees Citizenship!
+  name: job-name-supermutant-enclave # #Cythisiax Fixed - plain-text name triggered "Unknown messageId" loc warnings
+  description: job-description-supermutant-enclave # #Cythisiax Fixed - plain-text description triggered "Unknown messageId" loc warnings
   playTimeTracker: SuperMutantEnclave
   icon: "JobIconEnclaveEnlisted"
   supervisors: job-supervisors-enclave
@@ -482,6 +482,8 @@
           factions:
             - PlayerSuperMutant
             - Enclave
+        - type: ReplacementAccent
+          accent: n14Enclave
         - type: PowerArmorProficiency
 - type: startingGear # Enclave will give the Enlisted mutant their weapons
   id: SuperMutantEnclaveGear

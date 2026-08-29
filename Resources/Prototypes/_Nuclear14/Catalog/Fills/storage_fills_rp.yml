@@ -589,7 +589,7 @@
         - id: N14WeaponSniper556VarmintRifle
           prob: 0.09
           orGroup: Weapon
-        - id: N14WeaponRevolver44Magnun
+        - id: N14WeaponRevolver44Magnum
           prob: 0.07
           orGroup: Weapon
         #- id: N14WeaponDesertEagle44 # Forge-Change
@@ -1815,7 +1815,7 @@
         - id: N14WeaponRevolver10mm
           prob: 0.01
           orGroup: Weapons
-        - id: N14WeaponRevolver44Magnun
+        - id: N14WeaponRevolver44Magnum
           prob: 0.01
           orGroup: Weapons
         - id: N14WeaponPistol9mm
@@ -2256,7 +2256,7 @@
         - id: N14WeaponPistol9mmSpy
           prob: 0.05
           orGroup: Weapon
-        - id: N14WeaponRevolver44Magnun
+        - id: N14WeaponRevolver44Magnum
           prob: 0.07
           orGroup: Weapon
         - id: N14WeaponRevolver45-70Hunter

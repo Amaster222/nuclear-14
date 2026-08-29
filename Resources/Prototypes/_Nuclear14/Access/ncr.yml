@@ -3,6 +3,11 @@
   name: id-card-access-level-ncr-captain
 
 - type: accessLevel
+  id: NCRTrader
+  name: id-card-access-level-ncr-trader
+  #Misfits add, trader has own access to use caravan wagon
+
+- type: accessLevel
   id: NCRLT
   name: id-card-access-level-ncr-lt
 
@@ -32,6 +37,13 @@
   #Misfits Change /Fix/: Base NCR access should only open base NCR doors.
   tags:
   - NCR
+
+- type: accessGroup
+  id: NCRTrader
+  #Misfits add, trader has own access to use caravan wagon
+  tags:
+  - NCRTrader
+
 
 - type: accessGroup
   id: NCRMedic

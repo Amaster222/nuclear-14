@@ -69,11 +69,12 @@
         - BoSMidPaladinCommander
         - BoSPaladinCommander # #Cythisiax Edited - personal-whitelist NCR HT Instructor is a combat role
         - BoSTombstone # #Cythisiax Added - personal-whitelist TOMBSTONE is a combat role
+        - BoSHonorGuard # #Cythisiax Added - personal-whitelist HONOR GUARD is a combat role
         - BoSMidPaladin
         - BoSMidKnight
         - BoSLancerCaptain
         - BoSLancerKnight
-        - BoSLancer
+        # #Cythisiax Removed - Lancer rank folded into Lancer-Knight
         - BoSMidSquire
         # Forge-Change-Start
         #- BoSMidInquisitor # Misfits Fix: job prototype commented out

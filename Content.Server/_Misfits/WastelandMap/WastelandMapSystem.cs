@@ -52,6 +52,7 @@ public sealed class WastelandMapSystem : EntitySystem
     [
         "BoSWestElderCommander",
         "BoSMidPaladinCommander",
+        "BoSHonorGuard", // #Cythisiax Added - Honor Guard has Head-Paladin-level BoS comms
         "BoSHeadKnight",
         "BoSWestScribe",
     ];
