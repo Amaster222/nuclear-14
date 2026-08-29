@@ -47,7 +47,7 @@
     layers:
     - state: base
     - state: overlay
-      color: "#b7d719"
+      color: "#c6eb0f"
       map: ["enum.FlatpackVisualLayers.Overlay"]
     - state: icon-default
   - type: StaticPrice
