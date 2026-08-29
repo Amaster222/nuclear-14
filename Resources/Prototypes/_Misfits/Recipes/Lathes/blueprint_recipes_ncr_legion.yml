@@ -1532,12 +1532,12 @@
   requiresBlueprint: true
   availableFaction:
   - NCR
-  materials: # #Burger - increased cost of ammo boxes to make up for higher capacity
-    Lead: 250 # #Burger - increased (was 85)
+  materials: # #Burger - Decreased cost of ammo boxes to make up for larger size in bag the less use cases that causes.
+    Lead: 150 # #Burger - Decreased (was 250)
 
-    N14Brass: 170 # #Burger - increased (was 55)
+    N14Brass: 60 # #Burger - Decreased (was 170)
 
-    N14Gunpowder: 170 # #Burger - increased (was 55)
+    N14Gunpowder: 100 # #Burger - Decreased (was 170)
 
 
 - type: latheRecipe
