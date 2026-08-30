@@ -272,6 +272,20 @@ public abstract class ClothingSystem : EntitySystem
         Dirty(uid, clothing);
     }
 
+    /// <summary>
+    /// Changes the RSI used when this clothing is equipped without altering any of
+    /// its mechanical components.
+    /// </summary>
+    public void SetSprite(EntityUid uid, string? sprite, ClothingComponent? clothing = null)
+    {
+        if (!Resolve(uid, ref clothing, false) || clothing.Sprite == sprite)
+            return;
+
+        clothing.Sprite = sprite;
+        _itemSys.VisualsChanged(uid);
+        Dirty(uid, clothing);
+    }
+
     public void SetSlots(EntityUid uid, SlotFlags slots, ClothingComponent? clothing = null)
     {
         if (!Resolve(uid, ref clothing))

@@ -616,9 +616,16 @@ public sealed partial class HumanoidCharacterProfile : ICharacterProfile
         }
         else if (speciesPrototype.AllowedTraitCategories is { Count: > 0 })
         {
+            // #Cythisiax Fixed - resolve each trait's ROOT category before matching, so a species
+            // that allows a root category (e.g. "Pets") keeps traits in its subcategories
+            // (PetsSmall / PetsMedium / PetsLarge). The old exact-match check stripped every pet on
+            // save for restricted species (SuperMutant/Nightkin): the client editor compares against
+            // the ROOT category (GetRootTraitCategory) so pets showed as selectable, but the server
+            // stripped them because the pet's literal category wasn't in the allowed list.
+            var categoryRoots = BuildTraitCategoryRoots(prototypeManager);
             traits = traits
                 .Where(t => speciesPrototype.AllowedTraitCategories.Contains(
-                    prototypeManager.Index<TraitPrototype>(t).Category))
+                    GetRootTraitCategory(categoryRoots, prototypeManager.Index<TraitPrototype>(t).Category)))
                 .ToList();
         }
 
@@ -733,6 +740,31 @@ public sealed partial class HumanoidCharacterProfile : ICharacterProfile
         Special = special;
     }
     
+    // #Cythisiax Added - trait category hierarchy helpers (mirror the client editor's
+    // BuildTraitCategoryRoots / GetRootTraitCategory in Content.Client/.../HumanoidProfileEditor.xaml.cs)
+    // so the server-side EnsureValid species filter agrees with what the client shows as selectable.
+    private static Dictionary<string, string> BuildTraitCategoryRoots(IPrototypeManager prototypeManager)
+    {
+        var roots = new Dictionary<string, string>();
+        foreach (var root in prototypeManager.EnumeratePrototypes<TraitCategoryPrototype>().Where(c => c.Root))
+        {
+            void Walk(TraitCategoryPrototype category)
+            {
+                roots[category.ID] = root.ID;
+                foreach (var sub in category.SubCategories)
+                {
+                    if (prototypeManager.TryIndex<TraitCategoryPrototype>(sub, out var subCat))
+                        Walk(subCat);
+                }
+            }
+            Walk(root);
+        }
+        return roots;
+    }
+
+    private static string GetRootTraitCategory(Dictionary<string, string> roots, string categoryId)
+        => roots.GetValueOrDefault(categoryId, categoryId);
+
     // Corvax-TTS-Start
     // SHOULD BE NOT PUBLIC, BUT....
     public static bool CanHaveVoice(TTSVoicePrototype voice, Sex sex)

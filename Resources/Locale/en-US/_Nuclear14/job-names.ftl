@@ -1,12 +1,6 @@
 # Brotherhood of Steel
 job-name-bos-mid-paladin-comm = Brotherhood Head Paladin
 job-description-bos-mid-paladin-comm = Lead the martial wing of the Brotherhood chapter and direct field operations.
-# #Misfits Edit - Paladin Commander rethemed to NCR HT Instructor (job ID stays BoSPaladinCommander)
-job-name-bos-deserter = NCR HT Instructor
-job-description-bos-deserter = A former Brotherhood of Steel Paladin who turned their back on the chapter. Now serves as an NCR Heavy Trooper instructor, drilling recruits in power-armor combat.
-# #Misfits Add - TOMBSTONE personal-whitelist BoS role
-job-name-bos-tombstone = TOMBSTONE
-job-description-bos-tombstone = Dead and Revived again. Steel protects, and remember the name on the bag.
 # #Cythisiax Add - HONOR GUARD personal-whitelist BoS rank (hidden, beneath the Elder)
 job-name-bos-honor-guard = Brotherhood Honor Guard
 job-description-bos-honor-guard = A hand-picked guardian of the Elder, wearing the 509th T-51bc. Carry the same authority as a Head Paladin, partial of an Elder's voice, but your first duty is the Elder's life.

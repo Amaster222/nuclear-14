@@ -7,7 +7,7 @@
     id: N14IDBrotherhoodHolotagCommander
 
 # #Cythisiax Commented - Paladin Commander Pip-Boy no longer used: the Brotherhood Deserter
-# role (BoSPaladinCommander) now spawns with NCR prisoner dogtags instead of a BoS Pip-Boy.
+# retired HT Instructor slot used NCR prisoner dogtags instead of a BoS Pip-Boy.
 #- type: entity
 #  parent: N14BasePipboy
 #  id: N14PaladinCommander_PipBoy

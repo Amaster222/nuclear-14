@@ -30,6 +30,7 @@ using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Utility;
+using System.Numerics;
 
 namespace Content.Server.Station.Systems;
 
@@ -121,7 +122,15 @@ public sealed class StationSpawningSystem : SharedStationSpawningSystem
 
             // #Misfits Change - apply character profile name to jobEntity spawns
             if (profile != null)
+            {
                 _metaSystem.SetEntityName(jobEntity, profile.Name);
+
+                // # #Cythisiax Added - apply the character's height/width scale to jobEntity bodies that
+                // carry a humanoid appearance (e.g. the sentient deathclaw); the client scales the sprite
+                // from the networked Height/Width (SpriteComponent is client-side, so SetScale is the way).
+                if (TryComp<HumanoidAppearanceComponent>(jobEntity, out _))
+                    _humanoidSystem.SetScale(jobEntity, new Vector2(profile.Width, profile.Height));
+            }
 
             DoJobSpecials(job, jobEntity);
             _identity.QueueIdentityUpdate(jobEntity);

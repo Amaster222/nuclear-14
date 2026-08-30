@@ -8,7 +8,7 @@ bos-recruit-popup-user-declined = {CAPITALIZE($target)} declines the oath.
 bos-recruit-status-text = NO COMPELLED SERVICE. THE OATH BINDS ONLY AS LONG AS YOUR WILL HOLDS.
 
 bos-recruit-body-text =
-    [bold][color=#3B72BF]{CAPITALIZE($target)}, you have been selected to honor Her falling.[/color][/bold]
+    {CAPITALIZE($target)}, you have been selected to honor Her falling.
 
     The Founder is dead. The schism split the chapter, the blade found Her, and Her ash now feeds the Wasteland. But steel does not forget its maker, and Her work was unfinished when She fell.
 
