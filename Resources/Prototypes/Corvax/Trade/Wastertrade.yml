@@ -708,11 +708,9 @@
   name: "Medicine"
   entries:
   - proto: N14CleanGauze10
-    amount: 10
-    price: 38
+    price: 1
   - proto: N14AloeSalve
-    amount: 10
-    price: 50
+    price: 5
   - proto: N14Stimpak
     price: 75
   - proto: N14HealingPowder
@@ -721,10 +719,6 @@
     price: 50
   - proto: N14RadAwayInhaler
     price: 150
-  - proto: N14MedkitCombatFilled
-    price: 300
-  - proto: N14BuffoutCanisterFilled
-    price: 200
   - proto: N14Jet
     price: 100
   - proto: N14Psycho
@@ -739,15 +733,15 @@
   name: "Materials"
   entries:
   - proto: SheetSteel
-    price: 175
+    price: 5
   - proto: MaterialWoodPlank
-    price: 50
+    price: 1
   - proto: N14MaterialLeather10
-    price: 125
+    price: 15
   - proto: FertilizerOre
-    price: 100
+    price: 10
   - proto: N14MaterialCircuitry
-    price: 188
+    price: 15
 
 - type: storeCategoryStructured
   id: WasterSell2_Cosmetic
@@ -791,12 +785,6 @@
   - proto: N14IngotCopper1
     price: 10
   - proto: N14IngotAluminum1
-    price: 10
-  - proto: N14IngotIron1
-    price: 10
-  - proto: N14IngotBrass1
-    price: 40
-  - proto: N14IngotLead1
     price: 10
 
 - type: storePresetStructured #list of categories

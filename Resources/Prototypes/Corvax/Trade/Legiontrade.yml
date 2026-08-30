@@ -82,7 +82,7 @@
     price: 900
     count: 2
   - proto: N14WeaponRifleAk112
-    price: 800
+    price: 400
     count: 3
 
 - type: storeCategoryStructured
@@ -90,11 +90,11 @@
   name: "Rifles"
   entries:
   - proto: N14WeaponRifle556EM2
-    price: 60
+    price: 80
   - proto: N14WeaponRifle762SKS
-    price: 38
+    price: 45
   - proto: N14WeaponRifle762Chinese
-    price: 20
+    price: 100
   - proto: N14WeaponSniper308Ross
     price: 31
   - proto: N14WeaponRifle308Battle
@@ -305,14 +305,14 @@
     amount: 30
     price: 88
   - proto: N14IngotLead
-    amount: 20
-    price: 10
+    amount: 10
+    price: 50
   - proto: N14IngotBrass
     amount: 5
-    price: 10
+    price: 100
   - proto: N14MaterialThread
     amount: 5
-    price: 10
+    price: 25
   - proto: N14MaterialBrick
     amount: 1
     price: 5
@@ -530,32 +530,6 @@
   - proto: N14ClothingHeadHatLightBaseballHelmet
     price: 3
 
-- type: storeCategoryStructured
-  id: LegionSell2_Ammo
-  name: "Ammo"
-  entries:
-  - proto: N14AmmoBox556
-    price: 33
-  - proto: N14AmmoBox9mm
-    price: 25
-  - proto: N14AmmoBox10mm
-    price: 28
-  - proto: N14AmmoBox12gauge
-    price: 30
-  - proto: N14AmmoBox308
-    price: 33
-  - proto: N14AmmoBox44Magnum
-    price: 20
-  - proto: N14AmmoBox762
-    price: 35
-  - proto: N14AmmoBox45
-    price: 30
-  - proto: 40mmGrenadeFrag
-    price: 32
-  - proto: 40mmGrenadeFire
-    price: 28
-  - proto: MagazineBox545
-    price: 28
 
 - type: storeCategoryStructured
   id: LegionSell2_Melee
@@ -611,13 +585,11 @@
   - proto: N14Bitterdrink
     price: 18
   - proto: N14CleanGauze
-    price: 5
+    price: 1
   - proto: N14AloeSalve
-    price: 13
+    price: 1
   - proto: Bloodpack
     price: 5
-  - proto: ClothingBackpackDuffelSurgeryFilled
-    price: 20
   - proto: SurgicalSterileWipe
     price: 3
 
@@ -625,18 +597,17 @@
   id: LegionSell2_Materials
   name: "Materials"
   entries:
-  - proto: MaterialWoodPlank
-    price: 13
+  - proto: MaterialWoodPlank2
+    count: 2
+    price: 1
   - proto: SheetSteel
-    price: 44
-  - proto: N14Gunpowder
-    price: 10
+    price: 1
   - proto: N14IngotLead
-    price: 5
+    price: 2
   - proto: N14IngotBrass
-    price: 5
+    price: 10
   - proto: N14MaterialThread
-    price: 5
+    price: 2
 
 - type: storeCategoryStructured
   id: LegionSell2_Survival
@@ -734,7 +705,6 @@
   - LegionSell2_Pistols
   - LegionSell2_Armor
   - LegionSell2_Helmets
-  - LegionSell2_Ammo
   - LegionSell2_Melee
   - LegionSell2_Medicine
   - LegionSell2_Materials

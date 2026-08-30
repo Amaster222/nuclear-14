@@ -401,26 +401,6 @@
   id: NCRSell2_Ammo
   name: "Ammo"
   entries:
-  - proto: MagazineBox20gauge
-    price: 200
-  - proto: N14AmmoBox12gauge
-    price: 240
-  - proto: N14AmmoBox50
-    price: 375
-  - proto: N14AmmoBox556
-    price: 260
-  - proto: N14AmmoBox762
-    price: 280
-  - proto: N14AmmoBox9mm
-    price: 200
-  - proto: N14AmmoBox10mm
-    price: 210
-  - proto: N14AmmoBox45-70
-    price: 300
-  - proto: N14AmmoBox308
-    price: 260
-  - proto: N14AmmoBox44Magnum
-    price: 190
   - proto: N14PowerCellSmall
     price: 250
   - proto: N14ElectronChargePack
@@ -433,48 +413,35 @@
   name: "Materials"
   entries:
   - proto: SheetSteel
-    price: 350
+    price: 8
   - proto: MaterialWoodPlank
-    price: 100
+    price: 4
   - proto: MaterialCloth
-    price: 200
+    price: 12
   - proto: N14ScrapElectronic
-    price: 250
+    price: 25
   - proto: N14MaterialCircuitry
-    price: 300
+    price: 30
   - proto: N14IngotCopper
-    price: 150
+    price: 15
 
 - type: storeCategoryStructured
   id: NCRSell2_Medicine
   name: "Medicine"
   entries:
-  - proto: ClothingBeltMedical
-    price: 225
   - proto: N14Stimpak
-    price: 150
-  - proto: N14StimpakDirty
-    price: 60
+    price: 15
   - proto: N14Psycho
-    price: 250
+    price: 25
   - proto: N14Med-X
     price: 10
   - proto: N14Ointment1
     price: 10
   - proto: Brutepack
-    price: 140
+    price: 14
   - proto: Gauze
-    price: 125
-  - proto: N14MedkitFilled
-    price: 250
-  - proto: N14RadAwayPhial
-    price: 325
-  - proto: N14RadXCanisterFilled
-    price: 190
-  - proto: N14BuffoutCanisterFilled
-    price: 400
-  - proto: ClothingBackpackDuffelSurgeryFilled
-    price: 290
+    price: 2
+
 
 - type: storeCategoryStructured
   id: NCRSell2_Lasers
@@ -546,7 +513,7 @@
   - proto: N14WeaponShotgunAuto
     price: 300
   - proto: N14WeaponShotgunTrench
-    price: 5
+    price: 400
   - proto: N14WeaponShotgunCanadian
     price: 450
 
@@ -714,7 +681,7 @@
   - proto: N14IngotBrass1
     price: 80
   - proto: N14IngotLead1
-    price: 20
+    price: 10
 
 
 - type: storePresetStructured #list of categories
