@@ -164,7 +164,7 @@
   uiCategory: MinorFaction
   roles:
   - TribalElder
-  - YumaElder # #Misfits Add - sagely old tribal, second-in-command to the Chieftan | _Misfits/Roles/Jobs/Tribe/yuma_elder.yml
+  - SuperElder # #Misfits Add - sagely old tribal, second-in-command to the Chieftan | _Misfits/Roles/Jobs/Tribe/super_elder.yml
   - SuperMutantTribal # Misfits Change - dual departmental citizenship for mutants
   - TribalShaman # #Misfits Change - renamed from TribalHealer
   - TribalFarmer

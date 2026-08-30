@@ -474,14 +474,14 @@
       - state: green
       - state: healer
 
-# #Misfits Add - Yuma Elder spawn point, reuses the base tribal marker.
+# #Misfits Add - "Yuma" Elder spawn point, reuses the base tribal marker.
 - type: entity
-  id: N14SpawnPointYumaElder
+  id: N14SpawnPointSuperElder
   parent: N14SpawnPointTribal
-  name: yuma elder
+  name: Willowed Elder
   components:
   - type: SpawnPoint
-    job_id: YumaElder
+    job_id: SuperElder
   - type: Sprite
     layers:
       - state: green
