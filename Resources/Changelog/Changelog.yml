@@ -10805,3 +10805,10 @@ Entries:
   id: 6371
   time: '2026-08-30T01:04:54.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1825
+- author: Tytos
+  changes:
+    - type: Fix
+      message: sent the irs to get harry's ass
+  id: 6372
+  time: '2026-08-30T03:14:43.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1827
