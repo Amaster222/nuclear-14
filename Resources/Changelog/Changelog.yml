@@ -10812,3 +10812,22 @@ Entries:
   id: 6372
   time: '2026-08-30T03:14:43.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1827
+- author: JohnKieser
+  changes:
+    - type: Tweak
+      message: >-
+        Junk crutch now has in-hand sprites and it has been reworked into a
+        weapon. Item shape also enlarged
+    - type: Fix
+      message: Fixed wrench/crowbar sprites for real this time
+    - type: Fix
+      message: Willow elder renamed to have correct name
+    - type: Fix
+      message: Fixed SM ranger not having ranger comms
+    - type: Fix
+      message: 'Legion principes PA now has explosive resist '
+    - type: Fix
+      message: Breacher loadout kit has accurate description now
+  id: 6373
+  time: '2026-08-30T03:45:29.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1828
