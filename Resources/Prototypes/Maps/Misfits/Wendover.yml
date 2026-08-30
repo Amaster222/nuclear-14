@@ -50,7 +50,7 @@
           WastelandChaplain: [ 1, 1 ]
           WastelandBartender: [ 1, 2 ]
           TribalElder: [ 1, 1 ] # #Misfits Tweak - Willowers leadership stays singular while the faction expands to 16 total slots.
-          YumaElder: [ 1, 3 ] # #Misfits Add - sagely elder, 1-3 per round
+          SuperElder: [ 1, 3 ] # #Misfits Add - sagely elder, 1-3 per round
           Tribal: [ 8, 8 ]
           TribalFarmer: [ 4, 4 ]
           TribalShaman: [ 3, 3 ] # #Misfits Change - renamed from TribalHealer

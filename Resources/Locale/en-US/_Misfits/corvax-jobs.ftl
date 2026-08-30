@@ -28,8 +28,8 @@ job-name-whitelegs-war-chief = White Leg Chief
 job-name-whitelegs-bone-breaker = White Leg Breaker
 job-name-whitelegs-storm-drummer = White Leg Caller
 job-name-whitelegs-pain-maker = White Leg Sower
-# #Misfits Add - Yuma Elder role for the Tribe (Willowers) faction
-job-name-yuma-elder = Yuma Elder
+# #Misfits Add - "Yuma" Elder role for the Tribe (Willowers) faction
+job-name-willow-elder = Willower Elder
 
 # Job descriptions
 # Misfits Change /Comment-out/: Inquisitor role removed.
@@ -59,8 +59,8 @@ job-description-whitelegs-war-chief = You are the White Leg Chief. Direct the wa
 job-description-whitelegs-bone-breaker = You are a White Leg Breaker. Hit first, hit hard, and stay close enough to finish the job with your own hands.
 job-description-whitelegs-storm-drummer = You are a White Leg Caller. Lead the rush, set the pace of the attack, and keep pressure on the enemy line.
 job-description-whitelegs-pain-maker = You are a White Leg Sower. Close the gap, carve up stragglers, and make panic spread faster than the bullets do.
-# #Misfits Add - Yuma Elder role description
-job-description-yuma-elder = You are a Yuma Elder, a sagely old tribal whose wisdom guides the tribe. Mentor the young, advise the Chieftan, and lighten the Shaman's burden. You are deeply respected, but you are not a commander — the Chieftan leads.
+# #Misfits Add - "Yuma" or Willower Elder role description
+job-description-willow-elder = You are a Willower Elder, a sagely old tribal whose wisdom guides the tribe. Mentor the young, advise the Chieftan, and lighten the Shaman's burden. You are deeply respected, but you are not a commander — the Chieftan leads.
 
 # #Misfits Removed - Outlaws supervisors replaced by Eighties-specific keys.
 # job-supervisors-outlaws = the Outlaws leadership
