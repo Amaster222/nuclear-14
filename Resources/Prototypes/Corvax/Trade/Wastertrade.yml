@@ -174,7 +174,7 @@
   - proto: N14WeaponLaserRifle
     price: 450
   - proto: N14WeaponSniper50Pipe
-    price: 800
+    price: 1200
     count: 4
   - proto: N14WeaponSMG10mmPipe
     price: 170
@@ -335,11 +335,11 @@
   - proto: N14Jet
     price: 200
   - proto: N14Psycho
-    price: 250
+    price: 400
   - proto: N14Med-X
-    price: 450
+    price: 700
   - proto: N14Turbo
-    price: 300
+    price: 450
 
 - type: storeCategoryStructured
   id: WasterBuy2_Materials
