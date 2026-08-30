@@ -10831,3 +10831,10 @@ Entries:
   id: 6373
   time: '2026-08-30T03:45:29.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1828
+- author: enkidienne
+  changes:
+    - type: Add
+      message: expansion to the vault mine ruin.
+  id: 6374
+  time: '2026-08-30T13:10:22.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1807
