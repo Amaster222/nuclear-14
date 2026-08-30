@@ -72,6 +72,8 @@ public sealed class TerminalDatabaseSystem : EntitySystem
         SubscribeLocalEvent<TerminalDatabaseAccessComponent, ExportDatabaseDocumentMessage>(OnExportDocument);
         // #Misfits Add - Permanent delete: actually remove entries from the data store.
         SubscribeLocalEvent<TerminalDatabaseAccessComponent, PermanentDeleteDatabaseEntryMessage>(OnPermanentDeleteEntry);
+        // #Misfits Add - Leadership "move" (tidying): relocate entries into another container.
+        SubscribeLocalEvent<TerminalDatabaseAccessComponent, MoveDatabaseEntryMessage>(OnMoveEntry);
     }
 
     // ── Public API: state assembly used by HolotapeSystem on UI open ─────────
@@ -414,6 +416,48 @@ public sealed class TerminalDatabaseSystem : EntitySystem
         return false;
     }
 
+    /// <summary>
+    /// #Misfits Add - Returns true if a top-level folder is Admin-protected: the folder itself
+    /// is Admin-marked, OR any nested document is independently Admin-marked. Used to gate the
+    /// Leadership "move" action — Admin-protected entries cannot be relocated.
+    /// </summary>
+    private bool IsFolderAdminProtected(string databaseId, Guid folderId)
+    {
+        var folder = _dataStore.GetFolders(databaseId).Find(f => f.FolderId == folderId);
+        if (folder == null)
+            return true; // treat missing as protected
+        if (folder.IsAdmin)
+            return true;
+        foreach (var doc in folder.Documents)
+            if (doc.IsAdmin)
+                return true;
+        foreach (var sub in folder.Subfolders)
+            foreach (var doc in sub.Documents)
+                if (doc.IsAdmin)
+                    return true;
+        return false;
+    }
+
+    /// <summary>
+    /// #Misfits Add - Returns true if a subfolder is Admin-protected: its parent root folder is
+    /// Admin-marked, OR any nested document is independently Admin-marked.
+    /// </summary>
+    private bool IsSubfolderAdminProtected(string databaseId, Guid parentFolderId, Guid subfolderId)
+    {
+        var folder = _dataStore.GetFolders(databaseId).Find(f => f.FolderId == parentFolderId);
+        if (folder == null)
+            return true;
+        if (folder.IsAdmin)
+            return true;
+        var sub = folder.Subfolders.Find(s => s.SubfolderId == subfolderId);
+        if (sub == null)
+            return true;
+        foreach (var doc in sub.Documents)
+            if (doc.IsAdmin)
+                return true;
+        return false;
+    }
+
     private void OnRollbackDocument(EntityUid uid, TerminalDatabaseAccessComponent comp, RollbackDatabaseDocumentMessage msg)
     {
         var proto = ResolveDatabaseForViewer(msg.Actor);
@@ -507,6 +551,95 @@ public sealed class TerminalDatabaseSystem : EntitySystem
         }
 
         PushFullState(uid, msg.Actor, openDocumentId: null);
+    }
+
+    // #Misfits Add - Leadership-tier "move" (tidying). Leaders can relocate ANY non-admin
+    // entry into another live container (e.g. a "TRASH" folder they created). This is NOT a
+    // delete — moved entries stay visible; Admin-tier roles then delete them as they already can.
+    // Rules:
+    //   • Requires Leadership tier (Tier 7+); Admin (Tier 8) inherits it via ResolveAccess.
+    //   • Cannot move Admin-protected entries (IsAdmin folder, admin-marked doc, or doc inside
+    //     an Admin folder) — those remain Admin-only territory.
+    //   • Root folders can only become subfolders when they contain no subfolders of their own
+    //     (the schema nests one level deep).
+    private void OnMoveEntry(EntityUid uid, TerminalDatabaseAccessComponent comp, MoveDatabaseEntryMessage msg)
+    {
+        var proto = ResolveDatabaseForViewer(msg.Actor);
+        if (proto == null)
+            return;
+        var perms = ResolveAccess(msg.Actor, proto);
+        if (!perms.leadership)
+            return;
+
+        var folders = _dataStore.GetFolders(proto.ID);
+
+        // Destination container must exist and be live.
+        if (msg.TargetFolderId == null)
+            return;
+        var targetFolder = folders.Find(f => f.FolderId == msg.TargetFolderId.Value && !f.Deleted);
+        if (targetFolder == null)
+            return;
+        TerminalDatabaseDataStore.SubfolderDto? targetSub = null;
+        if (msg.TargetSubfolderId.HasValue)
+        {
+            targetSub = targetFolder.Subfolders.Find(s => s.SubfolderId == msg.TargetSubfolderId.Value && !s.Deleted);
+            if (targetSub == null)
+                return;
+        }
+
+        var changed = false;
+        if (msg.FolderId.HasValue && !msg.SubfolderId.HasValue && !msg.DocumentId.HasValue)
+        {
+            // Move a top-level folder into another root folder (becomes a subfolder).
+            if (msg.TargetSubfolderId.HasValue)
+                return; // folders cannot be nested inside subfolders
+            var folder = folders.Find(f => f.FolderId == msg.FolderId.Value);
+            if (folder == null || folder.Deleted)
+                return;
+            if (folder.FolderId == targetFolder.FolderId)
+                return; // no-op: already lives in the target
+            if (IsFolderAdminProtected(proto.ID, folder.FolderId))
+                return;
+            if (folder.Subfolders.Count > 0)
+                return; // cannot flatten a folder that contains subfolders
+            changed = _dataStore.MoveFolderToSubfolder(proto.ID, folder.FolderId, targetFolder.FolderId);
+        }
+        else if (msg.SubfolderParentFolderId.HasValue && msg.SubfolderId.HasValue && !msg.DocumentId.HasValue)
+        {
+            // Move a subfolder to another root folder.
+            if (msg.TargetSubfolderId.HasValue)
+                return; // subfolders cannot nest
+            var srcFolder = folders.Find(f => f.FolderId == msg.SubfolderParentFolderId.Value);
+            if (srcFolder == null || srcFolder.Deleted)
+                return;
+            var sub = srcFolder.Subfolders.Find(s => s.SubfolderId == msg.SubfolderId.Value);
+            if (sub == null || sub.Deleted)
+                return;
+            if (srcFolder.FolderId == targetFolder.FolderId)
+                return; // no-op: already lives in the target
+            if (IsSubfolderAdminProtected(proto.ID, srcFolder.FolderId, sub.SubfolderId))
+                return;
+            changed = _dataStore.MoveSubfolder(proto.ID, sub.SubfolderId, targetFolder.FolderId);
+        }
+        else if (msg.DocumentId.HasValue)
+        {
+            // Move a document into a folder root or subfolder.
+            var doc = _dataStore.FindDocument(proto.ID, msg.DocumentId.Value);
+            if (doc == null || doc.Deleted)
+                return;
+            if (IsDocumentInAdminFolder(proto.ID, doc.DocumentId))
+                return;
+            changed = _dataStore.MoveDocument(proto.ID, doc.DocumentId, targetFolder.FolderId, targetSub?.SubfolderId);
+        }
+        else
+        {
+            return; // nothing specified
+        }
+
+        if (!changed)
+            return;
+
+        PushFullState(uid, msg.Actor, openDocumentId: msg.DocumentId);
     }
 
     // #Misfits Add - Spawn a holotape with the document's title + body and put it in the

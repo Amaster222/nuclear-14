@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using Content.Client._Misfits.Movement; // #Misfits Add
 using Content.Shared._Misfits.Weapons.Ranged.Prediction;
@@ -12,7 +10,6 @@ using Content.Shared.Camera;
 using Content.Shared.CombatMode;
 using Content.Shared._Misfits.CCVar;
 using Content.Shared.Damage;
-using Content.Shared.Damage.Components;
 using Content.Shared.Effects;
 using Content.Shared.Mech.Components; // Goobstation
 using Content.Shared.Projectiles;
@@ -158,11 +155,6 @@ public sealed partial class GunSystem : SharedGunSystem
 
         var entity = entityNull.Value;
 
-        if (TryComp<MechPilotComponent>(entity, out var mechPilot) &&
-            TryComp<MechComponent>(mechPilot.Mech, out var mech) &&
-            mech.CurrentSelectedEquipment.HasValue) // Goobstation
-            entity = mechPilot.Mech;
-
         if (!TryGetGun(entity, out var gunUid, out var gun))
         {
             return;
@@ -189,7 +181,7 @@ public sealed partial class GunSystem : SharedGunSystem
 
             return;
         }
-
+        //if(Inputting really fast ignore)
         // Define target coordinates relative to gun entity, so that network latency on moving grids doesn't fuck up the target location.
         var coordinates = _xform.ToCoordinates(entity, mousePos);
 
@@ -226,11 +218,13 @@ public sealed partial class GunSystem : SharedGunSystem
         ICommonSession? userSession = null)
     {
         userImpulse = true;
-
+        //
         if (!GunPrediction)
         {
             // Rather than splitting client / server for every ammo provider it's easier
             // to just delete the spawned entities. This is for programmer sanity despite the wasted perf.
+
+            //Misfit: bad^^^^^^^^^^^ really bad^^^^
             var direction = _xform.ToMapCoordinates(fromCoordinates).Position - _xform.ToMapCoordinates(toCoordinates).Position;
             var worldAngle = direction.ToAngle().Opposite();
 
@@ -245,7 +239,7 @@ public sealed partial class GunSystem : SharedGunSystem
                         RemoveShootable(ent.Value);
                     continue;
                 }
-
+                // TODO: use ishootable like an actual interface
                 switch (shootable)
                 {
                     case CartridgeAmmoComponent cartridge:
@@ -348,7 +342,7 @@ public sealed partial class GunSystem : SharedGunSystem
                     RemoveShootable(ent.Value);
                 continue;
             }
-
+            // TODO: use ishootable like an actual interface
             switch (shootable)
             {
                 case CartridgeAmmoComponent cartridge:
@@ -367,8 +361,9 @@ public sealed partial class GunSystem : SharedGunSystem
                     Recoil(user, mapDirection, gun.CameraRecoilScalarModified);
 
                     if (!cartridge.DeleteOnSpawn && !Containers.IsEntityInContainer(ent!.Value))
-                        EjectCartridge(ent.Value, angle);
-
+                        EjectCartridge(ent.Value, baseCoords: Transform(gunUid).Coordinates, angle);
+                    // misfit: removed ejected carts deleted by EjectCartridge
+                    //         plus redundant check this is only called by client
                     //if (IsClientSide(ent!.Value))
                     //    Del(ent.Value);
 

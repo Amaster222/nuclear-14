@@ -131,8 +131,10 @@ loadout-name-MisfitsLoadoutOuterArmorKitShoulder = shoulder armor kit
 loadout-name-MisfitsLoadoutOuterKhansJacket = great khan jacket
 loadout-name-MisfitsLoadoutOuterKhansVest = great khan vest
 loadout-name-MisfitsLoadoutOuterKhansBattlecoatRed = great khan red battlecoat
+loadout-name-MisfitsLoadoutOuterKhansBattlecoatBlack = great khan black battlecoat
 loadout-name-MisfitsLoadoutOuterMarkedMenCombatTribalArmor = marked men tribal armor
 loadout-name-MisfitsLoadoutOuterMarkedMenCombatPatrolArmor = marked men patrol armor
+loadout-name-MisfitsLoadoutOuterWhiteLegsArmor = white legs tribal armor
 
 
 # Shoes
@@ -292,6 +294,8 @@ loadout-name-N14TribalSword = tribal sword
 loadout-name-N14KitchenKnife = kitchen knife
 loadout-name-N14BrassKnife = brass knife
 loadout-name-N14WastelandTribalSpear = wasteland tribal spear
+loadout-name-Cane = cane
+loadout-name-CaneBlade = cane blade
 
 # NCR loadouts
 loadout-name-LoadoutNCRPinRecruit = NCR recruit pin
@@ -418,7 +422,7 @@ loadout-name-LoadoutClothingOuterMBoSSquireArmor = Brotherhood squire armor (Mid
 # loadout-name-LoadoutClothingHeadHatBoSInquisitorHat = Brotherhood inquisitor hat
 
 # Misfits Add - N14 weapon loadout names
-loadout-name-N14WeaponBlowback = blowback
+loadout-name-N14WeaponShotgunBlowback = blowback
 loadout-name-N14WeaponLaserPistol = laser pistol
 loadout-name-N14WeaponLaserRevolver = laser revolver
 loadout-name-N14WeaponLaserRifleMakeshift = makeshift laser rifle
@@ -622,6 +626,10 @@ loadout-name-LoadoutBoSMidwestHellCat = Brotherhood Hellcat armor (Midwest)
 loadout-name-LoadoutN14ClothingOuterLegionPaladinKiller = Legion paladin killer armor
 loadout-name-LoadoutLegionPrincipes = Principes pattern armor
 
+# Misfits Add - 509th BoS T-51bc power armor loadout names
+loadout-name-LoadoutBoS509ElderT51BC = 509th BoS Elder T-51bc Power Armor
+# #Cythisiax Removed - Head Paladin T-51bc loadout no longer exists; the suit moved to the Honor Guard rank.
+
 # Enclave rank pin loadouts
 loadout-name-LoadoutEnclavePinPrivate = Enclave private pin
 loadout-name-LoadoutEnclavePinPFC = Enclave private first class pin
@@ -630,6 +638,7 @@ loadout-name-LoadoutEnclavePinSergeant = Enclave sergeant pin
 loadout-name-LoadoutEnclavePinStaffSergeant = Enclave staff sergeant pin
 loadout-name-LoadoutEnclavePinSFC = Enclave sergeant first class pin
 loadout-name-LoadoutEnclavePinMasterSergeant = Enclave master sergeant pin
+loadout-name-LoadoutEnclavePinSergeantMajor = Enclave sergeant major pin
 loadout-name-LoadoutEnclavePinSecondLieutenant = Enclave second lieutenant pin
 loadout-name-LoadoutEnclavePinFirstLieutenant = Enclave first lieutenant pin
 loadout-name-LoadoutEnclavePinCaptain = Enclave captain pin
@@ -640,6 +649,16 @@ loadout-name-LoadoutEnclavePinGeneral = Enclave general pin
 loadout-name-LoadoutEnclavePinJuniorScientist = Enclave junior scientist pin
 loadout-name-LoadoutEnclavePinScientist = Enclave scientist pin
 loadout-name-LoadoutEnclavePinHeadScientist = Enclave head scientist pin
+
+# Misfits Add - Enclave supermutant rank pin loadouts
+loadout-name-LoadoutEnclaveSMPinPrivate = Enclave private pin (Supermutant)
+loadout-name-LoadoutEnclaveSMPinPFC = Enclave private first class pin (Supermutant)
+loadout-name-LoadoutEnclaveSMPinSpecialist = Enclave specialist pin (Supermutant)
+loadout-name-LoadoutEnclaveSMPinSergeant = Enclave sergeant pin (Supermutant)
+loadout-name-LoadoutEnclaveSMPinStaffSergeant = Enclave staff sergeant pin (Supermutant)
+loadout-name-LoadoutEnclaveSMPinSFC = Enclave sergeant first class pin (Supermutant)
+loadout-name-LoadoutEnclaveSMPinMasterSergeant = Enclave master sergeant pin (Supermutant)
+loadout-name-LoadoutEnclaveSMPinSergeantMajor = Enclave sergeant major pin (Supermutant)
 
 # NCR rank pin additions
 loadout-name-LoadoutNCRPinChiefPhysicianMedic = NCR chief physician pin (Medic)
@@ -847,7 +866,7 @@ loadout-name-N14PoliceBaton = police baton
 loadout-name-N14WeaponPistol9mmChinese = chinese pistol
 loadout-name-N14WeaponPistol45Colt = .45 colt handgun
 loadout-name-N14WeaponPistolWebley = webley pistol
-loadout-name-N14WeaponRevolver44Magnun = magnum revolver
+loadout-name-N14WeaponRevolver44Magnum = magnum revolver
 
 # Other loadouts
 loadout-name-LoadoutLegionExplorerVeteranArmor = veteran legion explorer armor
@@ -863,3 +882,8 @@ loadout-category-Patreon = Patreon
 loadout-name-LoadoutPatreonSilverUniformVaultJumpsuit = vault jumpsuit (Patreon)
 loadout-name-LoadoutPatreonGoldCombatBoots = combat boots (Patreon)
 loadout-name-LoadoutPatreonNuclearPistol10mm = 10mm pistol (Patreon)
+loadout-name-LoadoutPatreonBondholderHat = bondholder hat (Patreon)
+loadout-name-LoadoutPatreonEquityPartnerHat = equity partner hat (Patreon)
+loadout-name-LoadoutPatreonVentureCapitalistHat = venture capitalist hat (Patreon)
+loadout-name-LoadoutPatreonShareholderHat = shareholder hat (Patreon)
+loadout-name-LoadoutPatreonPrincipalShareholderHat = principal shareholder hat (Patreon)

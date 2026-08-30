@@ -371,7 +371,7 @@ namespace Content.Server.Database
         /// <summary>
         /// Create or update a character's persistent multi-currency balances.
         /// </summary>
-        Task UpsertCharacterCurrencyAsync(Guid playerId, string characterName, int bottlecaps, int ncrDollars = 0, int silver = 0, int gold = 0);
+        Task UpsertCharacterCurrencyAsync(Guid playerId, string characterName, int bottlecaps, int ncrDollars = 0, int silver = 0, int gold = 0, int legionDenarii = 0, int prewarMoney = 0);
 
         #endregion
 
@@ -1195,10 +1195,10 @@ namespace Content.Server.Database
             return RunDbCommand(() => _db.GetCharacterCurrencyAsync(playerId, characterName, cancel));
         }
 
-        public Task UpsertCharacterCurrencyAsync(Guid playerId, string characterName, int bottlecaps, int ncrDollars = 0, int silver = 0, int gold = 0)
+        public Task UpsertCharacterCurrencyAsync(Guid playerId, string characterName, int bottlecaps, int ncrDollars = 0, int silver = 0, int gold = 0, int legionDenarii = 0, int prewarMoney = 0)
         {
             DbWriteOpsMetric.Inc();
-            return RunDbCommand(() => _db.UpsertCharacterCurrencyAsync(playerId, characterName, bottlecaps, ncrDollars, silver, gold));
+            return RunDbCommand(() => _db.UpsertCharacterCurrencyAsync(playerId, characterName, bottlecaps, ncrDollars, silver, gold, legionDenarii, prewarMoney));
         }
 
         #endregion

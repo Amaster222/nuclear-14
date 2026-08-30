@@ -47,6 +47,7 @@
   leadershipJobs:
   - BoSHeadKnight
   - BoSMidPaladinCommander # "Head Paladin" job id
+  - BoSHonorGuard          # #Cythisiax Added - "Honor Guard" job id
   - BoSWestScribe          # "Head Scribe" job id
   adminJobs:
   - BoSWestElderCommander  # "Elder Commander" job id
@@ -86,6 +87,9 @@
   - NCRExecutiveOfficer
   - NCRPlatoonLeader
   - NCRFirstSergeant
+  # #Cythisiax Added - OSI Chief Scientist already carries NCR terminal access; treat them
+  # as NCR leadership so they can use the "move" (tidying) power on the Salt Dogs DB too.
+  - OSIChiefScientist
   adminJobs:
   - NCRMajor
 
@@ -156,10 +160,20 @@
   displayName: Mayoral Notice
   accentColor: "#33FF33"
   adminLabel: MAYORAL SEAL
+  # #Cythisiax Fixed - Whole Townie department (not just the Mayor) can read/write the town
+  # notice board now. The Mayor keeps Admin (delete / MAYORAL SEAL) as before.
   accessRead:
+  - TownieLaw
   - TownieMayor
+  - TownieShopkeeper
+  - TownieDoctor
+  - TownieMechanic
   accessWrite:
+  - TownieLaw
   - TownieMayor
+  - TownieShopkeeper
+  - TownieDoctor
+  - TownieMechanic
   leadershipJobs: []
   adminJobs:
   - TownMayor

@@ -98,6 +98,17 @@
 
 - type: entity
   parent: N14CurrencyCap
+  id: N14CurrencyCap4
+  suffix: 4
+  components:
+  - type: Icon
+    sprite: _Nuclear14/Objects/Misc/currency.rsi
+    state: caps3
+  - type: Stack
+    count: 4 #added to make fair exchange rates possible in trade terminals
+
+- type: entity
+  parent: N14CurrencyCap
   id: N14CurrencyCap10
   suffix: 10
   components:
@@ -301,6 +312,17 @@
   icon: { sprite: /Textures/_Nuclear14/Objects/Misc/currency.rsi, state: ncr3 }
   spawn: N14CurrencyNCRDollar
   maxCount: 1000
+
+- type: entity
+  parent: N14CurrencyNCRDollar
+  id: N14CurrencyNCRDollar2
+  suffix: 2
+  components:
+  - type: Icon
+    sprite: _Nuclear14/Objects/Misc/currency.rsi
+    state: ncr2
+  - type: Stack
+    count: 2 #added to make fair exchange rates possible in trade terminals
 
 - type: entity
   parent: N14CurrencyNCRDollar

@@ -11,8 +11,20 @@
   - type: Vertibird
     groundedSpriteState: vertibird_bos
     flyingSpriteState: vertibird_bos_flying
+  # #Misfits Fix - faction RSIs use faction-prefixed states; relist layers so the Base
+  # layer points at the faction state and the parent's Shadow layer is preserved.
   - type: Sprite
     sprite: _Misfits/N14/Objects/Vehicles/vertibird_bos.rsi
+    layers:
+    - sprite: _Nuclear14/Mobs/Robots/eyebot.rsi
+      state: shadow_eyebot
+      map: [ enum.VertibirdVisualLayers.Shadow ]
+      offset: 0, -1.8
+      scale: 8, 4
+      color: "#00000055"
+      visible: false
+    - state: vertibird_bos
+      map: [ enum.VertibirdVisualLayers.Base ]
 
 - type: entity
   parent: N14VehicleVertibirdWreck
@@ -33,8 +45,20 @@
   - type: Vertibird
     groundedSpriteState: vertibird_509th
     flyingSpriteState: vertibird_509th_flying
+  # #Misfits Fix - faction RSIs use faction-prefixed states; relist layers so the Base
+  # layer points at the faction state and the parent's Shadow layer is preserved.
   - type: Sprite
     sprite: _Misfits/N14/Objects/Vehicles/vertibird_509th.rsi
+    layers:
+    - sprite: _Nuclear14/Mobs/Robots/eyebot.rsi
+      state: shadow_eyebot
+      map: [ enum.VertibirdVisualLayers.Shadow ]
+      offset: 0, -1.8
+      scale: 8, 4
+      color: "#00000055"
+      visible: false
+    - state: vertibird_509th
+      map: [ enum.VertibirdVisualLayers.Base ]
 
 - type: entity
   parent: N14VehicleVertibirdWreck
@@ -55,8 +79,20 @@
   - type: Vertibird
     groundedSpriteState: vertibird_enclave
     flyingSpriteState: vertibird_enclave_flying
+  # #Misfits Fix - faction RSIs use faction-prefixed states; relist layers so the Base
+  # layer points at the faction state and the parent's Shadow layer is preserved.
   - type: Sprite
     sprite: _Misfits/N14/Objects/Vehicles/vertibird_enclave.rsi
+    layers:
+    - sprite: _Nuclear14/Mobs/Robots/eyebot.rsi
+      state: shadow_eyebot
+      map: [ enum.VertibirdVisualLayers.Shadow ]
+      offset: 0, -1.8
+      scale: 8, 4
+      color: "#00000055"
+      visible: false
+    - state: vertibird_enclave
+      map: [ enum.VertibirdVisualLayers.Base ]
 
 - type: entity
   parent: N14VehicleVertibirdWreck
@@ -77,8 +113,20 @@
   - type: Vertibird
     groundedSpriteState: vertibird_ncr
     flyingSpriteState: vertibird_ncr_flying
+  # #Misfits Fix - faction RSIs use faction-prefixed states; relist layers so the Base
+  # layer points at the faction state and the parent's Shadow layer is preserved.
   - type: Sprite
     sprite: _Misfits/N14/Objects/Vehicles/vertibird_ncr.rsi
+    layers:
+    - sprite: _Nuclear14/Mobs/Robots/eyebot.rsi
+      state: shadow_eyebot
+      map: [ enum.VertibirdVisualLayers.Shadow ]
+      offset: 0, -1.8
+      scale: 8, 4
+      color: "#00000055"
+      visible: false
+    - state: vertibird_ncr
+      map: [ enum.VertibirdVisualLayers.Base ]
 
 - type: entity
   parent: N14VehicleVertibirdWreck
@@ -99,8 +147,20 @@
   - type: Vertibird
     groundedSpriteState: vertibird_vaulttec
     flyingSpriteState: vertibird_vaulttec_flying
+  # #Misfits Fix - faction RSIs use faction-prefixed states; relist layers so the Base
+  # layer points at the faction state and the parent's Shadow layer is preserved.
   - type: Sprite
     sprite: _Misfits/N14/Objects/Vehicles/vertibird_vaulttec.rsi
+    layers:
+    - sprite: _Nuclear14/Mobs/Robots/eyebot.rsi
+      state: shadow_eyebot
+      map: [ enum.VertibirdVisualLayers.Shadow ]
+      offset: 0, -1.8
+      scale: 8, 4
+      color: "#00000055"
+      visible: false
+    - state: vertibird_vaulttec
+      map: [ enum.VertibirdVisualLayers.Base ]
 
 - type: entity
   parent: N14VehicleVertibirdWreck

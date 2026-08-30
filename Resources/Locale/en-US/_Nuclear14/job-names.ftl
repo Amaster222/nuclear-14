@@ -7,6 +7,9 @@ job-description-bos-deserter = A former Brotherhood of Steel Paladin who turned 
 # #Misfits Add - TOMBSTONE personal-whitelist BoS role
 job-name-bos-tombstone = TOMBSTONE
 job-description-bos-tombstone = Dead and Revived again. Steel protects, and remember the name on the bag.
+# #Cythisiax Add - HONOR GUARD personal-whitelist BoS rank (hidden, beneath the Elder)
+job-name-bos-honor-guard = Brotherhood Honor Guard
+job-description-bos-honor-guard = A hand-picked guardian of the Elder, wearing the 509th T-51bc. Carry the same authority as a Head Paladin, partial of an Elder's voice, but your first duty is the Elder's life.
 job-name-bos-mid-paladin = Brotherhood Senior Paladin
 job-description-bos-mid-paladin = Serve as a veteran field commander and heavy infantry leader for the Brotherhood.
 job-name-bos-mid-knight = Brotherhood Senior Knight
@@ -151,7 +154,9 @@ job-description-wastelander = Survive in the wasteland and carve out your own pa
 # #Misfits Change - renamed "Outcast" to "BoS Exile" (display name only, ID stays Outcast so preferences/playtime are kept)
 job-name-outcast = BoS Exile
 job-description-outcast = A Brotherhood of Steel exile, surviving beyond the protection of the order while seeking a place in the wasteland.
-
+# Tytos add, neutral traveling trader
+job-name-wasterTrader = Wasteland Trader
+job-description-wasterTrader = buy and sell a variety of exotic and essential goods to anyone who will pay, you are loyal only to caps.
 # Town
 job-name-townsperson = Town Townsperson
 job-description-townsperson = A member of the post-war society. Follow the town rules or try run for Mayor to change them.

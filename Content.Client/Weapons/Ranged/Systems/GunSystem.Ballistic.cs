@@ -1,13 +1,29 @@
+using Content.Client._Misfits.Movement;
+using Content.Shared.Weapons.Ranged;
 using Content.Shared.Weapons.Ranged.Components;
+using Robust.Client.GameStates;
+using Robust.Client.Timing;
 
 namespace Content.Client.Weapons.Ranged.Systems;
 
 public sealed partial class GunSystem
 {
+
     protected override void InitializeBallistic()
     {
         base.InitializeBallistic();
         SubscribeLocalEvent<BallisticAmmoProviderComponent, UpdateAmmoCounterEvent>(OnBallisticAmmoCount);
+        SubscribeLocalEvent<GunEjectEvent>(OnEject);
+    }
+    private void OnEject(GunEjectEvent args)
+    {
+        var giverUid = GetEntity(args.NetEnt);
+        var xform = (giverUid, Transform(giverUid));
+        var ent = Spawn(args.Proto);
+        FlagPredicted(ent);
+
+        PlaceNextToRot((ent, Transform(ent)), xform);
+        EjectCartRNG(ent, args.Sequence, args.Seed);
     }
     /// <summary>
     /// updates client ui on ammo change
@@ -20,45 +36,4 @@ public sealed partial class GunSystem
         }
     }
 
-
-
-
-
-
-
-
-
-
-    /// Misfit Change: outdated.Client/Server Implementation in <see cref="SharedGunSystem.Ballistics"/>
-    /*
-        protected override void Cycle(EntityUid uid, BallisticAmmoProviderComponent component, MapCoordinates coordinates)
-        {
-            if (!Timing.IsFirstTimePredicted)
-                return;
-
-            EntityUid? ent = null;
-
-            // TODO: Combine with TakeAmmo
-            if (component.Entities.Count > 0)
-            {
-                var existing = component.Entities[^1];
-                component.Entities.RemoveAt(component.Entities.Count - 1);
-
-                Containers.Remove(existing, component.Container);
-                EnsureShootable(existing);
-            }
-            else if (component.UnspawnedCount > 0)
-            {
-                component.UnspawnedCount--;
-                ent = Spawn(component.Proto, coordinates);
-                EnsureShootable(ent.Value);
-            }
-
-            if (ent != null && IsClientSide(ent.Value))
-                Del(ent.Value);
-
-            var cycledEvent = new GunCycledEvent();
-            RaiseLocalEvent(uid, ref cycledEvent);
-        }
-        */
 }

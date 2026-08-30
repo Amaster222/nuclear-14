@@ -50,6 +50,8 @@ public sealed partial class MisfitsTerminalDatabasePrototype : IPrototype
     /// admin-spawned ID cards cannot grant it. Leaders may:
     ///  • Create root folders / root documents.
     ///  • Roll back document revisions.
+    ///  • #Misfits Add - Move (relocate) any non-Admin-protected folder/subfolder/document
+    ///    into another container (tidying, e.g. into a "TRASH" folder).
     /// Leaders cannot delete or restore entries; those actions are reserved for AdminJobs.
     /// Empty list = no one can create root entries (DB becomes read-only effectively).
     /// </summary>

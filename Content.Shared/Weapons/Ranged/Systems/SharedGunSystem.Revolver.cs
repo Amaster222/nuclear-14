@@ -352,16 +352,17 @@ public partial class SharedGunSystem
                     continue;
 
                 // Too lazy to make a new method don't sue me.
-                if (!_netManager.IsClient)
-                {
-                    var uid = Spawn(component.FillPrototype, mapCoordinates);
+                //if (!_netManager.IsClient)
+                //{
+                var uid = Spawn(component.FillPrototype, mapCoordinates);
+                if (_netManager.IsClient) { FlagPredicted(uid); }
 
-                    if (TryComp<CartridgeAmmoComponent>(uid, out var cartridge))
-                        SetCartridgeSpent(uid, cartridge, !(bool) chamber);
-                    // misfit fix deuplicated spent carts
-                    var sender = _player.TryGetSessionByEntity(user!.Value, out var session) ? session : _player.LocalSession;
-                    EjectCartridge(uid, userSession: sender);
-                }
+                if (TryComp<CartridgeAmmoComponent>(uid, out var cartridge))
+                    SetCartridgeSpent(uid, cartridge, !(bool) chamber);
+                // misfit fix deuplicated spent carts
+                var sender = _player.TryGetSessionByEntity(user!.Value, out var session) ? session : _player.LocalSession;
+                EjectCartridge(uid, baseCoords: Transform(revolverUid).Coordinates, userSession: sender);
+                //}
 
                 component.Chambers[i] = null;
                 anyEmpty = true;
@@ -375,7 +376,7 @@ public partial class SharedGunSystem
                 //                 prediction handled in EjectCartridge
                 // msifit fix duplicated spent carts
                 var sender = _player.TryGetSessionByEntity(user!.Value, out var session) ? session : _player.LocalSession;
-                EjectCartridge(slot.Value, userSession: sender);
+                EjectCartridge(slot.Value, baseCoords: Transform(sender!.AttachedEntity!.Value).Coordinates, userSession: sender);
 
 
                 anyEmpty = true;
@@ -474,7 +475,8 @@ public partial class SharedGunSystem
             // Delete the cartridge entity on client
             if (_netManager.IsClient)
             {
-                QueueDel(ent);
+                PredictedQueueDel(ent); //Misfit: does same thing(detaches to null space in client)
+                                        // but wont throw errors now
             }
         }
 

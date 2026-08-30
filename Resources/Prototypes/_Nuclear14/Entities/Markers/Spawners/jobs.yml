@@ -13,6 +13,19 @@
       - state: green
       - state: wastelander
 
+- type: entity
+  parent: SpawnPointJobBase
+  id: N14SpawnPointWasterTrader
+  name: wasteland Trader
+  components:
+  - type: SpawnPoint
+    job_id: WasterTrader
+  - type: Sprite
+    sprite: _Nuclear14/Markers/Jobs/wastelanders.rsi
+    layers:
+      - state: green
+      - state: wastelander
+
 # BOS Midwest
 - type: entity
   id: N14SpawnPointBoSMidPaladinCommander

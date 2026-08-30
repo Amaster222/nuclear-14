@@ -721,12 +721,13 @@
         - BoSMidKnight
         - BoSLancerCaptain
         - BoSLancerKnight
-        - BoSLancer
+        # #Cythisiax Removed - Lancer rank folded into Lancer-Knight
         - BoSMidPaladin
         - BoSWestScribe
         - BoSMidScribe
         - BoSHeadKnight
         - BoSMidPaladinCommander
+        - BoSHonorGuard # #Cythisiax Added - Honor Guard gets the shared BoS cosmetic cap
         - BoSWestElderCommander
   items:
     - N14ClothingHeadHatBrotherhoodCap
@@ -750,6 +751,7 @@
         - BoSMidScribe
         - BoSHeadKnight
         - BoSMidPaladinCommander
+        - BoSHonorGuard # #Cythisiax Added - Honor Guard gets the shared BoS cosmetic beret
         - BoSWestElderCommander
   items:
     - N14ClothingHeadHatBrotherhoodBeret
@@ -769,7 +771,7 @@
         - BoSMidKnight
         - BoSLancerCaptain
         - BoSLancerKnight
-        - BoSLancer
+        # #Cythisiax Removed - Lancer rank folded into Lancer-Knight
         - BoSMidPaladin
         - BoSWestScribe
         - BoSMidScribe

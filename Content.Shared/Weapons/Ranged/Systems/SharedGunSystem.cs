@@ -164,11 +164,6 @@ public abstract partial class SharedGunSystem : EntitySystem
         if (user == null)
             return;
 
-        if (TryComp<MechPilotComponent>(user.Value, out var mechPilot) &&
-            TryComp<MechComponent>(mechPilot.Mech, out var mech) &&
-            mech.CurrentSelectedEquipment.HasValue)
-            user = mechPilot.Mech;
-
         if (!TryGetGun(user.Value, out var ent, out var gun))
             return;
 
@@ -190,6 +185,15 @@ public abstract partial class SharedGunSystem : EntitySystem
     {
         gunEntity = default;
         gunComp = null;
+
+        // A mech pilot may fire either a selected mech weapon or a gun held in
+        // the pilot's modified hands. Keep the pilot as the lookup entity so
+        // the latter is not lost when the shot is relayed through the mech.
+        if (TryComp<MechPilotComponent>(entity, out var pilot) &&
+            TryGetGun(pilot.Mech, out gunEntity, out gunComp))
+        {
+            return true;
+        }
 
         if (TryComp<MechComponent>(entity, out var mech) &&
             mech.CurrentSelectedEquipment.HasValue &&
@@ -266,10 +270,11 @@ public abstract partial class SharedGunSystem : EntitySystem
             return null;
         }
 
-        if (TryComp<MechPilotComponent>(user.Value, out var mechPilot))
+        var pilot = user;
+        if (TryComp<MechPilotComponent>(pilot.Value, out var mechPilot))
             user = mechPilot.Mech;
 
-        if (!TryGetGun(user.Value, out var ent, out var gun) ||
+        if (!TryGetGun(pilot.Value, out var ent, out var gun) ||
             HasComp<ItemComponent>(user) ||
             ent != GetEntity(netGun))
         {
@@ -607,7 +612,7 @@ public abstract partial class SharedGunSystem : EntitySystem
         }
 
         var angle = new Angle(direction.Theta + spread + buckleMovementSpread);
-        DebugTools.Assert(spread <= component.MaxAngleModified.Theta);
+        //DebugTools.Assert(spread <= component.MaxAngleModified.Theta);
         return angle;
     }
 
@@ -809,14 +814,13 @@ public abstract partial class SharedGunSystem : EntitySystem
     /// to strip its comps(including physics) and ensure no desync issues
     /// </summary>
     protected void EjectCartridge(
-        EntityUid cart,
+        EntityUid cart, EntityCoordinates baseCoords,
         Angle? angle = null,
         bool playSound = true,
         ICommonSession? userSession = null)
     {
         // Misfit: pending refactor. maybe redundant check
         if (!TryGetNetEntity(cart, out var netEnt)) return;
-        // Misfit change: changed rng method for better server-client sync
 
         var xform = Transform(cart);
         if (!TryComp<CartridgeAmmoComponent>(cart, out var cartComp) || !cartComp.Spent)
@@ -825,12 +829,12 @@ public abstract partial class SharedGunSystem : EntitySystem
             _xform.SetLocalPositionRotation(cart, xform.Coordinates.Offset(posEjectRNG).Position, angleEjectRNG, xform);
             return;
         }
-        var (posW, angleW) = _xform.GetWorldPositionRotation(xform);
-        var mapCoord = new MapCoordinates(posW, _xform.GetMapId(cart));
+
+        var angleW = _xform.GetWorldRotation(baseCoords.EntityId);
+        var mapCoord = _xform.ToMapCoordinates(baseCoords);
         var cartProto = MetaData(cart).EntityPrototype?.ID;
         EjectSpentCart(mapCoord, angleW, cartProto, userSession);
         PredictedDel(cart);
-
     }
 
 

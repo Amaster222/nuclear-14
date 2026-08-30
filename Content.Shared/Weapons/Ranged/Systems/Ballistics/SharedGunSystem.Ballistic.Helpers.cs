@@ -4,6 +4,7 @@ using Content.Shared.Tag;
 using Content.Shared.Weapons.Ranged.Components;
 using Content.Shared.Weapons.Ranged.Events;
 using Robust.Shared.Containers;
+using DependencyAttribute = Robust.Shared.IoC.DependencyAttribute;
 
 namespace Content.Shared.Weapons.Ranged.Systems;
 /// <summary>
@@ -12,7 +13,6 @@ namespace Content.Shared.Weapons.Ranged.Systems;
 /// </summary>
 public abstract partial class SharedGunSystem
 {
-
     /// <summary>
     /// Take some or none amount of ammo from giverUID returning a list of that ammo
     /// How this is done is up to comps of giverUID that listen to <see cref="TakeAmmoEvent"/>
@@ -40,12 +40,32 @@ public abstract partial class SharedGunSystem
     /// <remarks>
     /// Seperated into its own method for clarity and is probably a likely point of failure so execption handling
     /// <remarks/>
-    private void DoAmmoInsert(List<(EntityUid? Entity, IShootable Shootable)> ammo, BallisticAmmoProviderComponent recieverComp, EntityUid recieverUid)
+    public virtual void DoAmmoInsert(List<(EntityUid? Entity, IShootable Shootable)> ammo, BallisticAmmoProviderComponent recieverComp, EntityUid recieverUid, EntityUid? User = null)
     {
+        if (!Timing.IsFirstTimePredicted)
+        {
+            foreach (var (shotUID, _) in ammo)
+            {
+                _xform.DetachEntity(shotUID!.Value);
+            }
+            NetworkCompState(recieverUid, User, recieverComp);
+            UpdateBallisticAppearance(recieverUid, recieverComp);
+            return;
+
+        }
+
         foreach (var (shotUID, _) in ammo)
         {
             Containers.Insert(shotUID!.Value, recieverComp.Container);
         }
+        if (!Timing.IsFirstTimePredicted)
+            return;
+        recieverComp.SpawnedCountPredict += ammo.Count;
+        recieverComp.IndexPredict = recieverComp.IndexPredict + ammo.Count;
+
+        NetworkCompState(recieverUid, User, recieverComp);
+        UpdateBallisticAppearance(recieverUid, recieverComp);
+        UpdateAmmoCount(recieverUid);
     }
 
     /// <summary>
@@ -54,9 +74,31 @@ public abstract partial class SharedGunSystem
     /// <remarks>GunCycledEvent seems unused for now<remarks/>
     protected List<(EntityUid?, IShootable)> Cycle(EntityUid giverUid, BallisticAmmoProviderComponent comp, EntityUid user)
     {
+        // cycled ammo doesnt do anything for right now
+        var giverXform = (giverUid, Transform(giverUid));
+        var sequence = comp.AmmoCount;
+        var netEnt = GetNetEntity(giverUid);
+
         var cycledEvent = new GunCycledEvent();
         RaiseLocalEvent(giverUid, ref cycledEvent);
-        return DoTakeAmmo(1, giverUid, user, true);
+        var ammo = DoTakeAmmo(1, giverUid, user, true);
+        if (_netManager.IsServer && ammo.TryFirstOrNull(out var enty))
+        {
+            var entity = enty.Value.Item1!.Value;
+            PlaceNextToRot((entity, Transform(entity)), giverXform);
+            EjectCartRNG(entity, sequence, netEnt.Id);
+            return ammo;
+        }
+
+        if (Timing.IsFirstTimePredicted && ammo.TryFirstOrNull(out var ent))
+        {
+            var proto = MetaData(ent.Value.Item1!.Value)!.EntityPrototype!.ID;
+            RaisePredictiveEvent(new GunEjectEvent(proto, netEnt.Id, sequence, netEnt));
+            return ammo;
+        }
+
+
+        return ammo;
     }
 
     public void EjectCartRNG(EntityUid cart, int ammoCount, int seed)
@@ -64,10 +106,11 @@ public abstract partial class SharedGunSystem
         if (Containers.IsEntityInContainer(cart)) return;
         var xform = Transform(cart);
         var (pRNG, rRNG) = GetRandVectAngle(seed, ammoCount);
-        var (pBase, rBase) = _xform.GetRelativePositionRotation(xform, xform.ParentUid);
-
-        _xform.SetLocalPositionRotation(cart, pRNG + pBase, rRNG + rBase, xform);
+        var pBase = _xform.GetWorldPosition(xform);
+        DebugTools.Assert(DebugEjectCartRNG(seed, ammoCount, pRNG, pBase, rRNG));
+        _xform.SetWorldPositionRotation(cart, pRNG + pBase, rRNG.Reduced(), xform);
     }
+
     /// <summary>
     /// Corrects comp values from bad yaml to prevent errors
     /// unspawned = capacity - containedEnts if prototype isnt null else 0
@@ -95,16 +138,17 @@ public abstract partial class SharedGunSystem
         {
             Containers.CleanContainer(comp.Container);
         }
+        comp.SpawnedCountPredict = comp.Container.ContainedEntities.Count;
     }
     /// <summary>
-    /// Is this valid entity allowed to give more than 1 ammo?
+    /// Is this valid entity allowed to give more than 1 ammo at once?
     /// </summary>
     private bool CanInstantFill(EntityUid giver) => HasComp<SpeedLoaderComponent>(giver);
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private void PlaceNextToRot(Entity<TransformComponent?> freshSpawn, Entity<TransformComponent?> originEnt, Angle rot)
+    public void PlaceNextToRot(Entity<TransformComponent?> freshSpawn, Entity<TransformComponent?> originEnt)
     {
         _xform.PlaceNextTo(freshSpawn, originEnt);
-        _xform.SetLocalRotation(freshSpawn.Owner, rot);
+        // _xform.SetLocalRotation(freshSpawn.Owner, rot);
         FlagPredicted(freshSpawn.Owner);
     }
     /// <summary>
@@ -161,6 +205,7 @@ public abstract partial class SharedGunSystem
                     ("entity", MetaData(recieverUid).EntityName)),
                 recieverUid,
                 user);
+
             return true;
         }
 
@@ -171,9 +216,20 @@ public abstract partial class SharedGunSystem
                     ("entity", MetaData(giverUid).EntityName)),
                 giverUid,
                 user);
+
             return true;
         }
+        DebugTools.Assert(recieverComp.AmmoCount < recieverComp.Capacity && recieverComp.AmmoCount > 0);
         return false;
+    }
+
+    [Serializable, NetSerializable]
+    public sealed class GunEjectEvent(string proto, int seed, int sequence, NetEntity netEnt) : EntityEventArgs
+    {
+        public string Proto = proto;
+        public int Seed = seed;
+        public int Sequence = sequence;
+        public NetEntity NetEnt = netEnt;
     }
 
 }
