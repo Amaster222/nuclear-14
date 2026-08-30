@@ -16,24 +16,6 @@
       - state: green
       - state: commander
 
-# #Cythisiax Edited - NCR HT Instructor personal-whitelist spawn point (was Paladin Commander).
-- type: entity
-  parent: MisfitsSpawnPointBoSMidPaladinCommander
-  id: MisfitsSpawnPointBoSPaladinCommander
-  name: NCR HT Instructor
-  components:
-  - type: SpawnPoint
-    job_id: BoSPaladinCommander
-
-# #Cythisiax Added - TOMBSTONE personal-whitelist spawn point.
-- type: entity
-  parent: MisfitsSpawnPointBoSMidPaladinCommander
-  id: MisfitsSpawnPointBoSTombstone
-  name: TOMBSTONE
-  components:
-  - type: SpawnPoint
-    job_id: BoSTombstone
-
 # #Cythisiax Added - HONOR GUARD personal-whitelist spawn point.
 - type: entity
   parent: MisfitsSpawnPointBoSMidPaladinCommander
@@ -990,6 +972,19 @@
   components:
   - type: SpawnPoint
     job_id: SuperMutantFollowerDoctor
+
+# #Cythisiax Add - Sentient deathclaw spawn point (not yet placed on the Wendover grid).
+- type: entity
+  parent: SpawnPointJobBase
+  id: MisfitsSpawnPointSentientDeathclaw
+  name: sentient deathclaw
+  components:
+  - type: SpawnPoint
+    job_id: SentientDeathclaw
+  - type: Sprite
+    sprite: Corvax/Markers/jobs.rsi
+    layers:
+    - state: green
 
 # #Misfits Removed - Khan spawn point deactivated; Khan job dissolved into Eighties department.
 # #Misfits Removed - Jackal, Viper, Gunner, Fiend spawn points removed as part of Outlaws faction overhaul.

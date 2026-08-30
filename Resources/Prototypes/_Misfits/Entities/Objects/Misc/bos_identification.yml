@@ -276,7 +276,7 @@
     job: BoSMidPaladinCommander
 
 # #Cythisiax Commented - Paladin Commander holotag no longer used: the Brotherhood Deserter
-# role (BoSPaladinCommander) now spawns with NCR prisoner dogtags instead of BoS holotags.
+# retired HT Instructor slot used NCR prisoner dogtags instead of BoS holotags.
 #- type: entity
 #  parent: N14IDBrotherhoodOfSteelHolotagBase
 #  id: N14IDBrotherhoodOfSteelHolotagPaladinCommander
@@ -285,18 +285,7 @@
 #  suffix: Paladin Commander
 #  components:
 #  - type: PresetIdCard
-#    job: BoSPaladinCommander
-
-# #Cythisiax Added - TOMBSTONE personal-whitelist holotag.
-- type: entity
-  parent: N14IDBrotherhoodOfSteelHolotagBase
-  id: N14IDBrotherhoodOfSteelHolotagTombstone
-  name: TOMBSTONE holotags
-  description: An ID holotag worn by the wearer of the T-1F 'Tombstone' power armor.
-  suffix: TOMBSTONE
-  components:
-  - type: PresetIdCard
-    job: BoSTombstone
+#    job: RetiredHTInstructor
 
 - type: entity
   parent: N14IDBrotherhoodOfSteelHolotagBase

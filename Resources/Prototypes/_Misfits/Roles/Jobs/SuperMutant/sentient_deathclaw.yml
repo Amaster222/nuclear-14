@@ -1,0 +1,31 @@
+# #Cythisiax Added - Sentient Deathclaw: playable FEV-mutant whitelist boss role.
+# Spawns the player directly into the sentient deathclaw body via jobEntity.
+
+- type: job
+  id: SentientDeathclaw
+  jobWhitelistBypassesRoleTimers: true # #Cythisiax - whitelist bypasses role timers, like other FEV Mutant roles
+  name: job-name-sentient-deathclaw
+  description: job-description-sentient-deathclaw
+  playTimeTracker: SentientDeathclaw
+  icon: JobIconBorg
+  supervisors: job-supervisors-sentient-deathclaw
+  canBeAntag: false
+  setPreference: true
+  overrideConsoleVisibility: true
+  whitelisted: true # #Cythisiax - full whitelist
+  hideWithoutWhitelist: true
+  jobEntity: N14MobDeathclawPlayer
+  requirements:
+  - !type:CharacterSpeciesRequirement
+    species:
+    - Deathclaw
+  special: # #Cythisiax - register with the FEV-mutant player faction (also set on the body entity)
+  - !type:AddComponentSpecial
+    components:
+    - type: NpcFactionMember
+      factions:
+      - PlayerSuperMutant
+      - Wastelander
+
+- type: playTimeTracker
+  id: SentientDeathclaw

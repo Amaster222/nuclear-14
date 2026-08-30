@@ -111,20 +111,24 @@ trait-description-MisfitsPetEyebotTribe =
     A military eyebot sporting an animal skull. Its laser rusted over long ago, but you've strapped a knife to it.
     (The trait creates a ghost role for another player. There is no guarantee that someone takes it.)
 
-# #Misfits Add - OSI Eyebot companion (granted via OSI job specials, not purchasable)
-trait-name-MisfitsPetEyebotOSI = OSI Eyebot
-trait-description-MisfitsPetEyebotOSI =
-    You have an NCR Office of Science and Industry eyebot that follows and protects you.
-    A professionally maintained Eyebot assigned to the OSI, its laser kept calibrated for field research.
+trait-name-MisfitsPetEyebotEnclave = Enclave Eyebot
+trait-description-MisfitsPetEyebotEnclave =
+    You have an Enclave-issued Eyebot that follows you.
+    A standard pre-war military Eyebot re-chassied in Enclave black, issued to Enclave scientists for reconnaissance and support.
+    (The trait creates a ghost role for another player. There is no guarantee that someone takes it.)
+
+trait-name-MisfitsPetDogEnclave = Enclave Cyberdog
+trait-description-MisfitsPetDogEnclave =
+    You have an Enclave-issued cybernetic dog that follows you.
+    A butchered but serviceable cybernetic canine in Enclave olive, loyal to its scientist handler.
     (The trait creates a ghost role for another player. There is no guarantee that someone takes it.)
 
 # #Misfits Edited - Riding perk also covers riding brahmin/brahdo (horse) mounts, not just motorcycles.
 trait-name-N14RidingPerk = Riding
 trait-description-N14RidingPerk =
-    You know how to handle wasteland motorcycles and ride brahdo.
-    Old engines, the saddle and reins, and old roads are all familiar to you.
-    you can handle brahdo and bikes without crashing or being kicked off.
-    
+    You know how to handle wasteland motorcycles and ride the beasts of the wastes.
+    Old engines, bad roads, improvised frames, and stubborn brahmin or brahdo are all familiar enough that you can keep moving without wrecking yourself.
+
 trait-name-N14VertibirdPilotPerk = Vertibird Pilot
 trait-description-N14VertibirdPilotPerk =
     You know enough about pre-War tilt-rotor aircraft to get a vertibird off the ground and back down again.

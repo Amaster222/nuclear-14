@@ -25,6 +25,14 @@ public sealed class BosRecruitEui : BaseEui
         _onDecline = onDecline;
     }
 
+    public override void Opened()
+    {
+        // Send the recruiter and target names as soon as the client opens the
+        // EUI. Without this, the themed window opens but never calls SetNames,
+        // leaving its localized document body and status line blank.
+        StateDirty();
+    }
+
     public override EuiStateBase GetNewState()
     {
         return new BosRecruitEuiState(_recruiterName, _targetName);

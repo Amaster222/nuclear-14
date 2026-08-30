@@ -398,6 +398,7 @@ namespace Content.Client.Lobby.UI
                 UpdateCustomSpecieNameEdit();
                 UpdateHeightWidthSliders();
                 UpdateRobotAppearanceFieldVisibility(); // #Misfits Add: robot species hide unsupported appearance fields while keeping skin color editable.
+                UpdateDeathclawAppearanceFieldVisibility(); // # #Cythisiax Add: deathclaw hides unsupported fields, keeps height/width.
                 UpdateRobotModelSelector(); // #Misfits Add: refresh model picker when species changes.
             };
 
@@ -1098,6 +1099,7 @@ namespace Content.Client.Lobby.UI
             UpdateCharacterRequired();
             UpdateSpecialControls();
             UpdateRobotAppearanceFieldVisibility(); // #Misfits Add: keep robot-only field visibility consistent after profile load/reset.
+            UpdateDeathclawAppearanceFieldVisibility(); // # #Cythisiax Add: keep deathclaw appearance field visibility consistent after load/reset.
             UpdateRobotModelSelector(); // #Misfits Add: keep Robot Model selector in sync after profile load/reset.
 
             UpdateRoundEndAnonymityCheckBox(); // #Cythisiax Added - sync round-end anonymity toggle
@@ -1830,6 +1832,7 @@ namespace Content.Client.Lobby.UI
             UpdateSpeciesGuidebookIcon();
             UpdateTabVisibility(newSpecies); // #Misfits Change: hide tabs for restricted species
             UpdateRobotAppearanceFieldVisibility(); // #Misfits Add: apply robot-specific appearance field locks immediately after species swap.
+            UpdateDeathclawAppearanceFieldVisibility(); // # #Cythisiax Add: apply deathclaw appearance field locks immediately after species swap.
             UpdateRobotModelSelector(); // #Misfits Add: update model selector to match selected Protectron variant.
             IsDirty = true;
             ReloadProfilePreview();
@@ -1911,6 +1914,23 @@ namespace Content.Client.Lobby.UI
             ClothingContainer.Visible = !isRobotSpecies;
             LoadoutsContainer.Visible = !isRobotSpecies;
             SexContainer.Visible = !isRobotSpecies;
+        }
+
+        // # #Cythisiax Add - Deathclaw species hides unsupported appearance fields (mirrors robots)
+        // but KEEPS the height/width sliders (which robots hide) so the deathclaw size preview works.
+        private void UpdateDeathclawAppearanceFieldVisibility()
+        {
+            if (Profile == null)
+                return;
+
+            var isDeathclaw = Profile.Species == "Deathclaw";
+
+            EyesContainer.Visible = !isDeathclaw;
+            WeightContainer.Visible = !isDeathclaw;
+            ClothingContainer.Visible = !isDeathclaw;
+            LoadoutsContainer.Visible = !isDeathclaw;
+            SexContainer.Visible = !isDeathclaw;
+            // Height/Width intentionally left visible so the deathclaw size sliders work.
         }
 
         // #Misfits Add: helper for species checks used by robot-specific character editor behavior.

@@ -1,0 +1,123 @@
+# #Cythisiax Added - Sentient deathclaw (Bwonsamdi) player body.
+# Whitelist boss creature under FEV Mutants. Spawned via the SentientDeathclaw job's jobEntity.
+# Uses a dedicated Bwonsamdi RSI; damage-state frames remain compatible with the base deathclaw states.
+
+- type: entity
+  name: sentient deathclaw
+  id: N14MobDeathclawPlayer
+  parent: N14MobDeathclaw
+  description: A deathclaw of unnatural size and strength, its hide marked with strange, restless designs.
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    layers:
+    - map: ["enum.DamageStateVisualLayers.Base"]
+      state: deathclaw
+      sprite: _Misfits/Mobs/Animals/deathclawbwonsamdi.rsi
+  - type: HumanoidAppearance # #Cythisiax - mirrors player robots: required so the lobby doll/preview can resolve it (no humanoid layers via empty species sprites)
+    species: Deathclaw
+  - type: Damageable
+    damageContainer: Biological
+    damageModifierSet: N14DeathclawHide # #Cythisiax - 50% damage taken across the board
+  - type: Physics # #Cythisiax - mech-style: kinematic controller so others can't shove it around
+    bodyType: KinematicController
+  - type: Fixtures # #Cythisiax - mech-style: near-full-tile body so others can't walk through or around it
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeCircle
+          radius: 0.45
+        density: 21390 # ~15 tonnes, like a mech
+        mask:
+        - MobMask
+        layer:
+        - MobLayer
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      1300: Critical
+      1000000: Dead # #Cythisiax - effectively immortal: enters Critical but can never actually die
+  - type: PassiveDamage # #Cythisiax - slow self-regeneration (~60 per type per minute); tune the negative values below
+    allowedStates:
+    - Alive
+    - Critical
+    damage:
+      groups:
+        Brute: -1.0
+      types:
+        Heat: -1.0
+        Shock: -1.0
+        Cold: -1.0
+        Poison: -1.0
+        Cellular: -1.0
+        Caustic: -1.0
+        Bloodloss: -1.0
+        Radiation: -1.0
+  - type: Reflect # #Cythisiax - 50% reflect chance on all caliber weapons
+    reflects:
+      - SmallCaliber
+      - MediumCaliber
+    reflectProb: 0.5
+    innate: true
+  - type: LanguageKnowledge # #Cythisiax - speaks/understands Common, Latin, Spanish, Dog, and Cat
+    speaks:
+    - English
+    - Latin
+    - Spanish
+    - N14Dog
+    - Cat
+    understands:
+    - English
+    - Latin
+    - Spanish
+    - N14Dog
+    - Cat
+  - type: DamageStateVisuals
+    states:
+      Alive:
+        Base: deathclaw
+      Critical:
+        Base: crit
+      Dead:
+        Base: dead
+  - type: LayingDown # #Cythisiax - enables the R key (ToggleStanding) so the deathclaw can lay down / fall over
+  - type: RobotDownedVisuals # #Cythisiax - show the crit frame while lying down (same mechanism as the player robots)
+    standingState: deathclaw
+    downedState: crit
+  - type: NpcFactionMember # #Cythisiax - friendly to FEV mutants/wastelanders instead of the hostile Deathclaw faction
+    factions:
+    - PlayerSuperMutant
+    - Wastelander
+  - type: MeleeWeapon # #Cythisiax - massive structural damage on top of the inherited claw damage
+    altDisarm: false
+    hidden: true
+    attackRate: 0.3 # #Cythisiax - one claw swing every 0.3s (attackRate is seconds between attacks)
+    soundHit:
+      collection: N14DeathclawAttack
+    angle: 60
+    animation: WeaponArcClaw
+    wideAnimation: WeaponArcClaw
+    damage:
+      types:
+        Blunt: 15
+        Slash: 25
+        Piercing: 5
+        Structural: 300
+    range: 2
+  - type: ThermalVision # #Cythisiax - innate thermal vision: sees heat signatures through walls, always on
+    isActive: true
+    lightRadius: 15
+    color: "#F84742"
+    activateSound: null
+    deactivateSound: null
+  - type: PointLight # #Cythisiax - ambient low green glow (Bwonsamdi theme)
+    radius: 3
+    energy: 1.5
+    color: "#2aff5e"
+    castShadows: false
+  - type: BorgHands # #Cythisiax - real hand slots so the deathclaw can hold and use items (guns, tools, etc.)
+    handCount: 2
+  - type: ComplexInteraction # #Cythisiax - full object manipulation (click doors, containers, etc.)
+  - type: Puller # #Cythisiax - can drag anything regardless of weight (any unanchored Pullable); no hands needed
+    needsHands: false
+  - type: StructureBreaker # #Cythisiax - can smash through "indestructible" structures (no Damageable) on melee hit

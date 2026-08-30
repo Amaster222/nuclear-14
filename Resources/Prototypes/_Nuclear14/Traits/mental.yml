@@ -67,8 +67,6 @@
         #- BoSWashingtonKnight
         #- BoSWashingtonInitiate
         - BoSMidPaladinCommander
-        - BoSPaladinCommander # #Cythisiax Edited - personal-whitelist NCR HT Instructor is a combat role
-        - BoSTombstone # #Cythisiax Added - personal-whitelist TOMBSTONE is a combat role
         - BoSHonorGuard # #Cythisiax Added - personal-whitelist HONOR GUARD is a combat role
         - BoSMidPaladin
         - BoSMidKnight
@@ -206,6 +204,7 @@
         - Wastelander
         - Tribe
         - Townsfolk
+        - Eighties # #Misfits Add - allow the 80s faction (Eighties department) to take pet pigrats
   functions:
     # #Misfits Fix - Use TraitSpawnEntity so multiple pet ghost roles can coexist
     - !type:TraitSpawnEntity

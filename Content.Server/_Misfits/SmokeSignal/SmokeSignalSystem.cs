@@ -193,30 +193,28 @@ public sealed class SmokeSignalSystem : EntitySystem
         return true;
     }
 
-    // #Misfits Change - Tree allowlists use exact membership while legacy signals retain first-department behavior.
+    // #Misfits Fix - department membership is resolved against the target department's role list so
+    // dual-citizenship tribe jobs (SuperMutantTribal, SyntheticProtectronTribal) authorize correctly.
     internal bool CanUse(EntityUid uid, SmokeSignalComponent component)
     {
         if (!_mind.TryGetMind(uid, out var mindId, out _)
             || !_jobs.MindTryGetJob(mindId, out _, out var job))
             return false;
 
-        if (component.ActivatorJobs is not { Count: > 0 })
-            return _jobs.TryGetDepartment(job.ID, out var department) && department.ID == component.TargetDepartment;
+        if (!_prototypes.TryIndex<DepartmentPrototype>(component.TargetDepartment, out var targetDepartment)
+            || !targetDepartment.Roles.Contains(job.ID))
+            return false;
 
-        return _prototypes.TryIndex<DepartmentPrototype>(component.TargetDepartment, out var targetDepartment)
-            && targetDepartment.Roles.Contains(job.ID)
-            && component.ActivatorJobs.Contains(job.ID);
+        return component.ActivatorJobs is not { Count: > 0 } || component.ActivatorJobs.Contains(job.ID);
     }
 
-    // #Misfits Change - recipients follow the same Tree-versus-legacy department compatibility mode as authorization.
+    // #Misfits Fix - recipients resolved against the target department's role list so dual-citizenship
+    // tribe jobs (SuperMutantTribal, SyntheticProtectronTribal) receive broadcasts.
     internal bool IsInDepartment(EntityUid uid, SmokeSignalComponent component)
     {
         if (!_mind.TryGetMind(uid, out var mindId, out _)
             || !_jobs.MindTryGetJob(mindId, out _, out var job))
             return false;
-
-        if (component.ActivatorJobs is not { Count: > 0 })
-            return _jobs.TryGetDepartment(job.ID, out var department) && department.ID == component.TargetDepartment;
 
         return _prototypes.TryIndex<DepartmentPrototype>(component.TargetDepartment, out var targetDepartment)
             && targetDepartment.Roles.Contains(job.ID);

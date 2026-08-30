@@ -203,3 +203,37 @@
   - !type:TraitSpawnEntity
     prototypes:
     - MisfitsPetSpawnerEyebotTribe
+
+# #Misfits Add - Enclave Eyebot companion for the Enclave scientist roles.
+# Enclave scientists receive this through their job special rather than purchasing it.
+# The job requirement prevents the companion from appearing in other roles' character setup.
+- type: trait
+  id: MisfitsPetEyebotEnclave
+  category: PetsMedium
+  points: -6
+  requirements:
+  - !type:CharacterJobRequirement
+    jobs:
+    - EnclaveJuniorScientist
+    - EnclaveScientist
+    - EnclaveHeadScientist
+  functions:
+  - !type:TraitSpawnEntity
+    prototypes:
+    - MisfitsPetSpawnerEyebotEnclave
+
+# #Misfits Add - Enclave Cyberdog companion, purchasable by Enclave scientist roles.
+- type: trait
+  id: MisfitsPetDogEnclave
+  category: PetsMedium
+  points: -6
+  requirements:
+  - !type:CharacterJobRequirement
+    jobs:
+    - EnclaveJuniorScientist
+    - EnclaveScientist
+    - EnclaveHeadScientist
+  functions:
+  - !type:TraitSpawnEntity
+    prototypes:
+    - MisfitsPetSpawnerDogEnclave

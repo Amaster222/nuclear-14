@@ -251,7 +251,9 @@ namespace Content.Shared.Movement.Systems
                 }
 
                 weightlessModifier = 1f;
-                accel = tileDef?.MobAcceleration ?? moveSpeedComponent?.Acceleration ?? MovementSpeedModifierComponent.DefaultAcceleration;
+                accel = moveSpeedComponent?.IgnoreTileAcceleration == true
+                    ? moveSpeedComponent.Acceleration
+                    : tileDef?.MobAcceleration ?? moveSpeedComponent?.Acceleration ?? MovementSpeedModifierComponent.DefaultAcceleration;
             }
 
             var minimumFrictionSpeed = moveSpeedComponent?.MinimumFrictionSpeed ?? MovementSpeedModifierComponent.DefaultMinimumFrictionSpeed;
