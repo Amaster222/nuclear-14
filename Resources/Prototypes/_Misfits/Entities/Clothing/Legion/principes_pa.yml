@@ -55,6 +55,8 @@
     coefficient: 0.25
   - type: FireProtection
     reduction: 0.9
+  - type: ExplosionResistance
+    damageCoefficient: 0.12 # equal to T51. considering 1 PA role vs NCR's 2 PA roles plus salvaged T60???
   - type: Reflect
     reflects:
       - SmallCaliber

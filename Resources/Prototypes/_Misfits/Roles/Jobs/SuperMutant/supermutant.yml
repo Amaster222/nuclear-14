@@ -258,7 +258,7 @@
     shoes: ClothingSuperMutantGladiatorBoots # Placeholder untill we get NCR boots
     jumpsuit: ClothingSuperMutantRangerShirt
     outerClothing: ClothingSuperMutantRangerArmor
-    ears: N14ClothingHeadsetNCR
+    ears: MisfitsClothingHeadsetNCRRanger
     id: N14IDBadgeNCRRanger
     back: N14ClothingBackpackMilitary
 

@@ -189,10 +189,10 @@ undecided-loadout-category-lt-tactical-description =
 
 undecided-loadout-category-lt-commissar-name = LT's Commissar Kit
 undecided-loadout-category-lt-commissar-description =
-    Includes 1 NCR Commissar plate, 1 NCR commissar jacket, 
-    1 NCR commissar gas mask, 1 NCR Belt, 1 commissar sabre, 
-    1 NCR commissar hat, 1 lasered desert eagle 44, 4 .44 pistol mags, 
-    1 C ration MRE, 1 stimpak, 1 super stimpak, 1 RadAway blood bag, 
+    Includes 1 NCR Commissar plate, 1 NCR commissar jacket,
+    1 NCR commissar gas mask, 1 NCR Belt, 1 commissar sabre,
+    1 NCR commissar hat, 1 lasered desert eagle 44, 4 .44 pistol mags,
+    1 C ration MRE, 1 stimpak, 1 super stimpak, 1 RadAway blood bag,
     2 gauze packs, and 1 flare.
 
 # Ranger stuff thingies
@@ -513,7 +513,7 @@ undecided-loadout-category-town-lawb-description =
 undecided-loadout-category-town-brea-name = Breacher Kit
 undecided-loadout-category-town-brea-description =
     Only when you don't have to worry about friendly fire!
-    Includes 1 visor brodie helmet, 1 riot armor,
+    Includes 1 visor brodie helmet(visor not included), 1 riot armor,
     1 blowback shotgun, 1 box of 12 gauge shells,
     1 Webley pistol, 2 9mm pistol mags,
     1 stack of gauze and basic ration supplies.
