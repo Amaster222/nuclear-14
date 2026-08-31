@@ -7,7 +7,16 @@ public sealed partial class GunSystem
 {
 
 
+    protected override void CycleCartridge(EntityUid seeder, EntityUid cart, int sequence)
+    {
+        var seed = GetNetEntity(seeder).Id;
+        var giverXform = (seeder, Transform(seeder));
+        var xform = (cart, Transform(cart));
 
+        PlaceNextToRot(xform, giverXform);
+        EjectCartRNG(cart, sequence, seed);
+    }
+    /*
     public override void DoAmmoInsert(List<(EntityUid? Entity, IShootable Shootable)> ammo, BallisticAmmoProviderComponent recieverComp, EntityUid recieverUid, EntityUid? User = null)
     {
         foreach (var (shotUID, _) in ammo)
@@ -23,6 +32,7 @@ public sealed partial class GunSystem
         UpdateAmmoCount(recieverUid);
 
     }
+    */
 }
 
 

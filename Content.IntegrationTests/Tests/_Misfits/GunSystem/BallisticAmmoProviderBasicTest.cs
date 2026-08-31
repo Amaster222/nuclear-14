@@ -42,13 +42,18 @@ public sealed partial class BallisticAmmoProviderTests : BallisticAmmoProviderSe
 
         Assert.Multiple(() =>
                 {
-                    Assert.That(ammoCompEmpty.AmmoCount == 32);
+                    TestContext.Out.WriteLine($"Empty ammo being filled values are AmmoCount:{ammoCompEmpty.AmmoCount} UnspawnedCount: {ammoCompEmpty.UnspawnedCount} SpawnedCountPredict: {ammoCompEmpty.SpawnedCountPredict} IndexPredict: {ammoCompEmpty.IndexPredict}");
+                    TestContext.Out.WriteLine($"Full ammo giving to empty values   AmmoCount:{ammoCompOne.AmmoCount} UnspawnedCount: {ammoCompOne.UnspawnedCount} SpawnedCountPredict: {ammoCompOne.SpawnedCountPredict} IndexPredict: {ammoCompOne.IndexPredict}");
+
+                    Assert.That(ammoCompEmpty.AmmoCount == ammoCompEmpty.Capacity);
                     Assert.That(ammoCompEmpty.UnspawnedCount == 0);
-                    Assert.That(ammoCompEmpty.SpawnedCountPredict == 32);
+                    Assert.That(ammoCompEmpty.SpawnedCountPredict == ammoCompEmpty.Capacity);
+                    Assert.That(ammoCompEmpty.IndexPredict == 0);
 
                     Assert.That(ammoCompOne.AmmoCount == 0);
                     Assert.That(ammoCompOne.UnspawnedCount == 0);
                     Assert.That(ammoCompOne.SpawnedCountPredict == 0);
+                    Assert.That(ammoCompOne.IndexPredict == 0);
                 });
         var cnt = 0;
         await server.WaitPost(() =>
@@ -71,7 +76,7 @@ public sealed partial class BallisticAmmoProviderTests : BallisticAmmoProviderSe
 
         Assert.Multiple(() =>
                 {
-                    Assert.That(cnt == 32);
+                    Assert.That(cnt == ammoCompTwo.Capacity);
                     Assert.That(ammoCompTwo.AmmoCount == 0);
                     Assert.That(ammoCompTwo.UnspawnedCount == 0);
                     Assert.That(ammoCompTwo.SpawnedCountPredict == 0);

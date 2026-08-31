@@ -3,11 +3,7 @@
 
 using Content.Shared.Hands.Components;
 using Content.Shared.Hands.EntitySystems;
-using Content.Shared.Interaction;
-using Content.Shared.Interaction.Events;
 using Content.Shared.Weapons.Ranged.Components;
-using Robust.Client.GameObjects;
-using Robust.Client.Input;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Input;
 
@@ -70,8 +66,8 @@ public sealed partial class BallisticAmmoProviderNetworkTests : BallisticAmmoPro
         await pair.RunTicksSync(10);
 
         await Interact(EngineKeyFunctions.Use, BoundKeyState.Down, testMap.GridCoords, ammoClientEmpty);
-        //await pair.RunTicksSync(2);
         await Interact(EngineKeyFunctions.Use, BoundKeyState.Up, testMap.GridCoords, ammoClientEmpty);
+
         await pair.RunTicksSync(2);
         await pair.SyncTicks();
         var ammoCompOneS = sEntMan.GetComponent<BallisticAmmoProviderComponent>(ammoBoxOne);
@@ -82,24 +78,32 @@ public sealed partial class BallisticAmmoProviderNetworkTests : BallisticAmmoPro
         await pair.SyncTicks();
         Assert.Multiple(() =>
                         {
-                            Assert.That(ammoCompEmpty.AmmoCount == 32);
+                            TestContext.Out.WriteLine($"Empty ammo being filled values are AmmoCount:{ammoCompEmpty.AmmoCount} UnspawnedCount: {ammoCompEmpty.UnspawnedCount} SpawnedCountPredict: {ammoCompEmpty.SpawnedCountPredict} IndexPredict: {ammoCompEmpty.IndexPredict}");
+                            TestContext.Out.WriteLine($"Full ammo giving to empty values   AmmoCount:{ammoCompOne.AmmoCount} UnspawnedCount: {ammoCompOne.UnspawnedCount} SpawnedCountPredict: {ammoCompOne.SpawnedCountPredict} IndexPredict: {ammoCompOne.IndexPredict}");
+                            Assert.That(ammoCompEmpty.AmmoCount == ammoCompEmpty.Capacity);
                             Assert.That(ammoCompEmpty.UnspawnedCount == 0);
-                            Assert.That(ammoCompEmpty.SpawnedCountPredict == 32);
+                            Assert.That(ammoCompEmpty.SpawnedCountPredict == ammoCompEmpty.Capacity);
+                            Assert.That(ammoCompEmpty.IndexPredict == 0);
 
                             Assert.That(ammoCompOne.AmmoCount == 0);
                             Assert.That(ammoCompOne.UnspawnedCount == 0);
                             Assert.That(ammoCompOne.SpawnedCountPredict == 0);
+                            Assert.That(ammoCompOne.IndexPredict == 0);
                         });
 
         Assert.Multiple(() =>
         {
-            Assert.That(ammoCompEmptyS.AmmoCount == 32);
+            TestContext.Out.WriteLine($"S: Empty ammo being filled values are AmmoCount:{ammoCompEmptyS.AmmoCount} UnspawnedCount: {ammoCompEmptyS.UnspawnedCount} SpawnedCountPredict: {ammoCompEmptyS.SpawnedCountPredict} IndexPredict: {ammoCompEmptyS.IndexPredict}");
+            TestContext.Out.WriteLine($"S: Full ammo giving to empty values   AmmoCount:{ammoCompOneS.AmmoCount} UnspawnedCount: {ammoCompOneS.UnspawnedCount} SpawnedCountPredict: {ammoCompOneS.SpawnedCountPredict} IndexPredict: {ammoCompOneS.IndexPredict}");
+            Assert.That(ammoCompEmptyS.AmmoCount == ammoCompEmptyS.Capacity);
             Assert.That(ammoCompEmptyS.UnspawnedCount == 0);
-            Assert.That(ammoCompEmptyS.SpawnedCountPredict == 32);
+            Assert.That(ammoCompEmptyS.SpawnedCountPredict == ammoCompEmptyS.Capacity);
+            Assert.That(ammoCompEmptyS.IndexPredict == 0);
 
             Assert.That(ammoCompOneS.AmmoCount == 0);
             Assert.That(ammoCompOneS.UnspawnedCount == 0);
             Assert.That(ammoCompOneS.SpawnedCountPredict == 0);
+            Assert.That(ammoCompOneS.IndexPredict == 0);
         });
     }
 

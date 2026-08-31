@@ -48,18 +48,16 @@ public abstract partial class SharedGunSystem
             {
                 _xform.DetachEntity(shotUID!.Value);
             }
-            NetworkCompState(recieverUid, User, recieverComp);
+            //NetworkCompState(recieverUid, User, recieverComp);
             UpdateBallisticAppearance(recieverUid, recieverComp);
+            UpdateAmmoCount(recieverUid);
             return;
-
         }
 
         foreach (var (shotUID, _) in ammo)
         {
             Containers.Insert(shotUID!.Value, recieverComp.Container);
         }
-        if (!Timing.IsFirstTimePredicted)
-            return;
         recieverComp.SpawnedCountPredict += ammo.Count;
         recieverComp.IndexPredict = recieverComp.IndexPredict + ammo.Count;
 
@@ -69,19 +67,19 @@ public abstract partial class SharedGunSystem
     }
 
     /// <summary>
-    /// Method where taken ammo is specifically tied to a gun being cycled(GunCycledEvent)
+    /// default cycle implementation
     /// </summary>
     /// <remarks>GunCycledEvent seems unused for now<remarks/>
     protected List<(EntityUid?, IShootable)> Cycle(EntityUid giverUid, BallisticAmmoProviderComponent comp, EntityUid user)
     {
-        // cycled ammo doesnt do anything for right now
+
         var giverXform = (giverUid, Transform(giverUid));
         var sequence = comp.AmmoCount;
         var netEnt = GetNetEntity(giverUid);
 
-        var cycledEvent = new GunCycledEvent();
-        RaiseLocalEvent(giverUid, ref cycledEvent);
         var ammo = DoTakeAmmo(1, giverUid, user, true);
+
+        // server
         if (_netManager.IsServer && ammo.TryFirstOrNull(out var enty))
         {
             var entity = enty.Value.Item1!.Value;
@@ -90,6 +88,7 @@ public abstract partial class SharedGunSystem
             return ammo;
         }
 
+        // client
         if (Timing.IsFirstTimePredicted && ammo.TryFirstOrNull(out var ent))
         {
             var proto = MetaData(ent.Value.Item1!.Value)!.EntityPrototype!.ID;
@@ -219,7 +218,7 @@ public abstract partial class SharedGunSystem
 
             return true;
         }
-        DebugTools.Assert(recieverComp.AmmoCount < recieverComp.Capacity && recieverComp.AmmoCount > 0);
+        DebugTools.Assert(recieverComp.AmmoCount < recieverComp.Capacity && recieverComp.AmmoCount > -1);
         return false;
     }
 

@@ -33,7 +33,7 @@ public abstract partial class BallisticAmmoProviderSetUp
       tags:
         - N14Cartridge308Rifle
     proto: N14Cartridge308Rifle
-    capacity: 32
+    capacity: 21
   - type: ContainerContainer
     containers:
       ballistic-ammo: !type:Container
@@ -55,7 +55,7 @@ public abstract partial class BallisticAmmoProviderSetUp
     whitelist:
       tags:
         - N14Cartridge308Rifle
-    capacity: 32
+    capacity: 21
   - type: ContainerContainer
     containers:
       ballistic-ammo: !type:Container
