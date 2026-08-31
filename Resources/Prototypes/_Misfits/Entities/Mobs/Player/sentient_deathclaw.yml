@@ -59,19 +59,70 @@
       - MediumCaliber
     reflectProb: 0.5
     innate: true
-  - type: LanguageKnowledge # #Cythisiax - speaks/understands Common, Latin, Spanish, Dog, and Cat
+  - type: LanguageKnowledge # #Cythisiax - speaks/understands Common, Latin, Spanish, Tribal, Dog, and Cat
     speaks:
     - English
     - Latin
     - Spanish
+    - Tribal
     - N14Dog
     - Cat
     understands:
     - English
     - Latin
     - Spanish
+    - Tribal
     - N14Dog
     - Cat
+  - type: Accentless # #Cythisiax - strip the inherited genericAggressive accent (from N14MobBaseHostileScaley) so the deathclaw speaks normally
+    removes:
+    - type: ReplacementAccent
+      accent: genericAggressive
+  - type: ActiveRadio # #Cythisiax - intrinsic radio: listens to ALL radio channels (overrides the channel list)
+    receiveAllChannels: true
+  - type: IntrinsicRadioReceiver # #Cythisiax - translates received radio transmissions into chat
+  - type: IntrinsicRadioTransmitter # #Cythisiax - can also transmit on every channel
+    channels:
+    - WastelandGlobal
+    - Eighties
+    - VaultCommon
+    - VaultCommand
+    - VaultEngineering
+    - VaultMedical
+    - VaultScience
+    - VaultSecurity
+    - CaravanCompany
+    - BrotherhoodOfSteel
+    - Enclave
+    - NCR
+    - OSI
+    - NCRRangers
+    - Legion
+    - PBS
+    - FollowersOfApocalypse
+    - Townsfolk
+    - Common
+    - CentCom
+    - Command
+    - Engineering
+    - Medical
+    - Science
+    - Security
+    - Service
+    - Supply
+    - Syndicate
+    - Handheld
+    - Binary
+    - Freelance
+    - ZAXBinary
+    - Justice
+    - Prison
+  - type: FootstepModifier # #Cythisiax - heavy stomp footsteps (largethud), louder + wider radius than normal
+    footstepSoundCollection:
+      collection: FootstepThud
+      params:
+        volume: 6
+        maxDistance: 30
   - type: DamageStateVisuals
     states:
       Alive:
@@ -104,6 +155,17 @@
         Piercing: 5
         Structural: 300
     range: 2
+  - type: Sharp # #Cythisiax - claws are sharp: can butcher corpses without a knife
+  - type: ActionGrant # #Cythisiax - grants the Charge! dash action
+    actions:
+    - MisfitsActionMeleeCharge
+  - type: Mutatable # #Cythisiax - innate mutations granted at spawn (chance 1 = always)
+    defaultMutations:
+      MutationFireBreath: 1
+      MutationHypermetabolicBlood: 1
+      MutationMindReader: 1
+      MutationRadioactivity: 1
+      MutationTelepathy: 1
   - type: ThermalVision # #Cythisiax - innate thermal vision: sees heat signatures through walls, always on
     isActive: true
     lightRadius: 15
