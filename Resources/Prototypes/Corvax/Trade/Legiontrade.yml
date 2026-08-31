@@ -172,7 +172,7 @@
   - proto: N14ClothingOuterLegionnaireVexillariusArmor
     price: 75
   - proto: N14ClothingLegionReconArmor
-    price: 120
+    price: 60
   - proto: N14ClothingOuterDeanLegionnairePrimeArmor
     price: 200
   - proto: N14ClothingOuterDeanLegionnaireRecruitArmor
@@ -310,9 +310,6 @@
   - proto: SheetSteel
     amount: 30
     price: 88
-  - proto: N14IngotLead
-    amount: 10
-    price: 50
   - proto: N14IngotBrass
     amount: 5
     price: 100

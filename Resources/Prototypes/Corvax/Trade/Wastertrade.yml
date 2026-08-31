@@ -300,15 +300,15 @@
   - proto: N14MicrofusionCell
     price: 350
   - proto: N14AmmoBox50
-    price: 400
+    price: 350
   - proto: N14AmmoBox9mm
-    price: 150
+    price: 120
   - proto: N14AmmoBox10mm
-    price: 200
+    price: 180
   - proto: N14AmmoBox44Magnum
-    price: 250
+    price: 220
   - proto: N14AmmoBox22lr
-    price: 150
+    price: 100
 
 - type: storeCategoryStructured
   id: WasterBuy2_Medicine
@@ -692,16 +692,7 @@
     price: 125
   - proto: N14MicrofusionCell
     price: 175
-  - proto: N14AmmoBox50
-    price: 200
-  - proto: N14AmmoBox9mm
-    price: 75
-  - proto: N14AmmoBox10mm
-    price: 100
-  - proto: N14AmmoBox44Magnum
-    price: 125
-  - proto: N14AmmoBox22lr
-    price: 75
+
 
 - type: storeCategoryStructured
   id: WasterSell2_Medicine
