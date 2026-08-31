@@ -10838,3 +10838,16 @@ Entries:
   id: 6374
   time: '2026-08-30T13:10:22.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1807
+- author: cythisiax
+  changes:
+    - type: Fix
+      message: >-
+        Patreon custom sprites now register sprite-overlay replacement of
+        default loadoutkit gear, i.e BoSPaladin t45 stats > but custom sprite.
+    - type: Fix
+      message: t51bc sprite rotations
+    - type: Tweak
+      message: 'bwonsamdi tribal tree protector '
+  id: 6375
+  time: '2026-08-31T00:25:46.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1829
