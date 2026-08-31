@@ -56,13 +56,13 @@ public sealed class HumanoidAppearanceSystem : SharedHumanoidAppearanceSystem
         sprite.Scale = new Vector2(width, height);
 
         sprite[sprite.LayerMapReserveBlank(HumanoidVisualLayers.Eyes)].Color = component.EyeColor;
-        ApplyRobotSkinTint(component, sprite); // #Misfits Add: robot sprites use damage-state base layers instead of humanoid skin layers.
+        ApplyDamageStateSkinTint(component, sprite); // #Misfits Add: some species use a damage-state base instead of humanoid skin layers.
     }
 
-    // #Misfits Add: playable robots bypass humanoid base skin layers, so tint their base sprite directly.
-    private static void ApplyRobotSkinTint(HumanoidAppearanceComponent component, SpriteComponent sprite)
+    // #Misfits Add: robots and deathclaws bypass humanoid base skin layers, so tint their base sprite directly.
+    private static void ApplyDamageStateSkinTint(HumanoidAppearanceComponent component, SpriteComponent sprite)
     {
-        if (!IsRobotTintSpecies(component.Species))
+        if (!UsesDamageStateSkinTint(component.Species))
             return;
 
         if (!sprite.LayerMapTryGet(DamageStateVisualLayers.Base, out var baseIndex))
@@ -71,10 +71,12 @@ public sealed class HumanoidAppearanceSystem : SharedHumanoidAppearanceSystem
         sprite[baseIndex].Color = component.SkinColor;
     }
 
-    // #Misfits Add: keep robot-only tint logic isolated so non-robot species keep stock rendering.
-    private static bool IsRobotTintSpecies(string speciesId)
+    // #Misfits Add: keep direct base-layer tint isolated so other species retain stock rendering.
+    private static bool UsesDamageStateSkinTint(string speciesId)
     {
-        return speciesId == "RobotMrHandy"
+        return speciesId == "Deathclaw"
+            || speciesId == "BwonsamdiDeathclaw"
+            || speciesId == "RobotMrHandy"
             || speciesId == "RobotMrHandyZAX"
             || speciesId == "RobotProtectron"
             || speciesId == "RobotProtectronPolice"
@@ -475,7 +477,7 @@ public sealed class HumanoidAppearanceSystem : SharedHumanoidAppearanceSystem
             sprite[index].Color = skinColor.WithAlpha(spriteInfo.LayerAlpha);
         }
 
-        ApplyRobotSkinTint(humanoid, sprite); // #Misfits Add: update robot tint when the profile skin color changes in the editor.
+        ApplyDamageStateSkinTint(humanoid, sprite); // #Misfits Add: update direct base-layer tint in the profile editor.
     }
 
     protected override void SetLayerVisibility(
