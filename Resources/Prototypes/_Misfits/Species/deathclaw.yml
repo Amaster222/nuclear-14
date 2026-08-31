@@ -25,13 +25,14 @@
   dollPrototype: N14MobDeathclawSentient
   skinColoration: Hues
   defaultSkinTone: "#7a5a45"
-  # #Cythisiax - size sliders kept in the Appearance tab; default matches the in-game sprite (scale 1.0), can scale up for a bigger boss.
+  # #Cythisiax Changed - ordinary Deathclaw is locked to standard sprite size (scale 1.0); the size sliders are hidden.
+  # Only Bwonsamdi (BwonsamdiDeathclaw below) keeps the height/width sliders.
   minHeight: 1.0
   defaultHeight: 1.0
-  maxHeight: 1.6
-  minWidth: 0.9
+  maxHeight: 1.0
+  minWidth: 1.0
   defaultWidth: 1.0
-  maxWidth: 1.5
+  maxWidth: 1.0
   averageHeight: 210
   averageWidth: 95
   sexes:
