@@ -172,7 +172,7 @@
   - proto: N14ClothingOuterLegionnaireVexillariusArmor
     price: 75
   - proto: N14ClothingLegionReconArmor
-    price: 120
+    price: 60
   - proto: N14ClothingOuterDeanLegionnairePrimeArmor
     price: 200
   - proto: N14ClothingOuterDeanLegionnaireRecruitArmor
@@ -200,21 +200,21 @@
   name: "Ammo"
   entries:
   - proto: N14AmmoBox556
-    price: 65
-  - proto: N14AmmoBox9mm
-    price: 50
-  - proto: N14AmmoBox10mm
     price: 55
-  - proto: N14AmmoBox12gauge
-    price: 60
-  - proto: N14AmmoBox308
-    price: 65
-  - proto: N14AmmoBox44Magnum
+  - proto: N14AmmoBox9mm
     price: 40
+  - proto: N14AmmoBox10mm
+    price: 40
+  - proto: N14AmmoBox12gauge
+    price: 45
+  - proto: N14AmmoBox308
+    price: 50
+  - proto: N14AmmoBox44Magnum
+    price: 32
   - proto: N14AmmoBox762
-    price: 70
+    price: 55
   - proto: N14AmmoBox45
-    price: 60
+    price: 40
   - proto: 40mmGrenadeFrag
     price: 63
     count: 10
@@ -222,7 +222,7 @@
     price: 55
     count: 10
   - proto: MagazineBox545
-    price: 55
+    price: 35
 
 - type: storeCategoryStructured
   id: LegionBuy2_Melee
@@ -234,6 +234,10 @@
     price: 19
   - proto: N14PilumSpear
     price: 10
+  - proto: ThrowingKnife
+    price: 10
+  - proto: N14TribalKnife
+    price: 8
   - proto: N14WastelandTribalJavelin
     price: 15
   - proto: N14TribalRecurveBow
@@ -246,6 +250,8 @@
     price: 80
   - proto: N14CeremonialSword
     price: 138
+  - proto: N14ClothingHandsPowerFistGoliath
+    price: 160
   - proto: N14WastelandTribalSpear
     price: 20
   - proto: N14SledgeHammer
@@ -304,9 +310,6 @@
   - proto: SheetSteel
     amount: 30
     price: 88
-  - proto: N14IngotLead
-    amount: 10
-    price: 50
   - proto: N14IngotBrass
     amount: 5
     price: 100
