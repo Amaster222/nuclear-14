@@ -17,18 +17,32 @@ using Robust.Shared.Utility;
 using static Robust.Client.Graphics.RSI;
 using DependencyAttribute = Robust.Shared.IoC.DependencyAttribute;
 using static Content.Client.Weapons.Ranged.Systems.GunSystem.CartridgeSettings;
+using Robust.Client.ResourceManagement;
+using System.ComponentModel;
 
 namespace Content.Client.Weapons.Ranged.Systems;
 
 public sealed partial class GunSystem
 {
+    [Dependency] private IPrototypeManager _protoMan = default!;
+    [Dependency] private IResourceCache _resCache = default!;
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private IEntityManager _entMan = default!;
+    [Dependency] private IComponentFactory _compFactory = default!;
     [Dependency] IRobustRandom _rng = default!;
     private ISawmill _logCart = default!;
     public CartridgeSettings CVAR_CartridgeVisuals;
     private const string Proto_Physics = "ClientCartridgePhysics";
     private const string Proto_Static = "ClientCartridgeStatic";
+    // maybe move these fields to their own page??
+    private static readonly AudioParams AUDIO_PARAM = AudioParams.Default.WithVariation(SharedContentAudioSystem.DefaultVariation);
+    private static readonly Vector2i SPRITE_SIZE = new(32, 32);
+    private const string FAILRSI = "/Textures/Objects/Weapons/Guns/Ammunition/Casings/ammo_casing.rsi";
+    private static readonly ResPath RSI_FAIL = new(FAILRSI);
+    private static readonly RSI CRSI = new(SPRITE_SIZE, RSI_FAIL);
+    private static readonly StateId BaseSpentID = new("base-spent");
+    private static readonly StateId SpentID = new("spent");
+    private static readonly SoundCollectionSpecifier SoundDefault = new("CasingEject");
     public enum CartridgeSettings
     {
         CART_VISUAL_OFF = 1,
@@ -38,7 +52,7 @@ public sealed partial class GunSystem
     private void InitializeSpentAmmo()
     {
         SubscribeLocalEvent<SpentAmmoVisualsComponent, AppearanceChangeEvent>(OnSpentAmmoAppearance);
-        SubscribeNetworkEvent<SpentCartEvent>(RecieveSpentCartEvent);
+        SubscribeNetworkEvent<SpentCartEvent>(EjectSpentCart);
         _logCart = _logMan.GetSawmill("client.gun.cartridge");
         _rng.SetSeed(666); // satan rng
         Subs.CVar(_config, CCVars.SpentCartridgeVisual, OnCartSetting, true);
@@ -73,79 +87,58 @@ public sealed partial class GunSystem
             sprite.RemoveLayer(AmmoVisualLayers.Tip);
         }
     }
-    // TODO: get rid of useless wrappers. Just have whatever uses SpentCartEvent pass the ev ref
-    /// <summary>
-    /// Client recieves outside event to spawn cart visual
-    /// based from other clients(RequestShootEvent)
-    /// or server(SpentCartEvent rasied in shared code)
-    /// </summary>
-    private void RecieveSpentCartEvent(SpentCartEvent ev)
-    {
-        EjectSpentCart(ev.Coords, ev.Angle, ev.Proto);
-    }
+
     // client only. Dont need to network this since attemptShoot from client already runs this on server
-    // server version networks this to other clients on the server
-    public override void EjectSpentCart(MapCoordinates coord, Angle angle, string? cartProto, ICommonSession? dontNeedToUseHere = null)
+    // server override networks the event to other clients on the server
+    public override void EjectSpentCart(SpentCartEvent ev)
     {
-        // client effect called by shared code, so turn off prediction
+        // client effect called by shared code, so turn off prediction to not spawn dupes
         if (!_timing.IsFirstTimePredicted || CVAR_CartridgeVisuals == CART_VISUAL_OFF)
-        {
             return;
-        }
-        SpawnClientCart(coord, angle, cartProto, _player.LocalUser);
+        SpawnClientCart(ev);
     }
 
-    private static Vector2i _cSPRITE_SIZE = new(32, 32);
-    private const string RSI_FAIL = "/Textures/Objects/Weapons/Guns/Ammunition/Casings/ammo_casing.rsi";
-    private static ResPath _cRSI_FAIL = new(RSI_FAIL);
-    private static RSI _cRSI = new(_cSPRITE_SIZE, _cRSI_FAIL);
-    private static StateId _constSpentID = new("base-spent");
-    private static StateId _constBaseID = new("base");
+
+    // TODO: Debug only checks to find bad yaml or json
     /// <summary>
-    /// Main method for spawning a client side spent cartridge visual.
-    /// Use prototype to spawn an unit copy of the cartridge to get its RSI
-    /// and check if its spent cart sprite has the states we need
+    /// Method for spawning client side spent cartridge visual
+    /// We read protoId from ev to retrieve sprite and sound to use
+    /// else use defaults if those were incorrect
+    /// should only be called once on client. Doesnt need prediction it's just a visual
     /// </summary>
-    /// <param name="baseCoord">should be coordinates where spent cartridge came from</param>
-    /// <param name="curAngle">Usually the angle the 'shooter' was facing</param>
-    /// <param name="cartProto">cartridge prototype we spawn the casing from</param>
-    /// <param name="source">original source of networked spentCartEvent. null if server</param>
-    /// <returns>entUID of spent cartridge</returns>
-    private EntityUid SpawnClientCart(MapCoordinates baseCoord, Angle curAngle, string? cartProto, NetUserId? source = null)
+    private EntityUid SpawnClientCart(SpentCartEvent ev)
     {
-        if (!(_entMan.CreateEntityUninitialized(cartProto) is EntityUid dummyCart)
-            || Comp<SpriteComponent>(dummyCart).BaseRSI is not RSI rsi)
-        {
-            _logCart.Warning($"Supplied cartridge prototype null or invalid protoId: {cartProto}");
-            return SpawnCartPhysics(baseCoord, curAngle, _constSpentID, _cRSI);
-        }
+        var (rsi, sound) = GetRSIFromCartProto(ev.Proto);
+        // on invalid carts we default to BaseSpentID anyway so we just need to check for SpentID
+        var stateId = rsi.TryGetState(SpentID, out var _) ? SpentID : BaseSpentID;
 
-        // This is prolly dumb when I just need some data that's prolly already cache'd somewhere(or read the proto)
-        // but I dunno yet how to efficently look that up. so we just look at a spawend copy
-        var stateId = rsi.TryGetState(_constSpentID, out var _) ? _constSpentID : // check for spent-base, else base else null
-                      rsi.TryGetState(_constBaseID, out var _) ? _constBaseID : null;
-        // TODO: remove this when refactoring all ammo cart protos to follow da rulez
-        if (stateId == null)
-        {
-            _logCart.Error($"cartridge prototype null rsi or doesnt use correct texture State: {cartProto}");
-            return SpawnCartPhysics(baseCoord, curAngle, _constSpentID, _cRSI);
-        }
+        var spentCartVisual = CVAR_CartridgeVisuals == OLD_SCHOOL
+        ? SpawnCartOldSchool(ev.Coords, stateId, rsi) :
+          SpawnCartPhysics(ev.Coords, ev.Angle, stateId, rsi);
 
-        var spentCartVisual = CVAR_CartridgeVisuals == OLD_SCHOOL ? SpawnCartOldSchool(baseCoord, stateId, rsi) :
-                                                             SpawnCartPhysics(baseCoord, curAngle, stateId, rsi);
+        _player.TryGetSessionById(ev.Sender, out var session);
+        Audio.PlayLocal(sound, spentCartVisual, session?.AttachedEntity, AUDIO_PARAM);
 
-        DoEjectSound(dummyCart, source, spentCartVisual);
-        Del(dummyCart);
         return spentCartVisual;
     }
 
-    private static AudioParams _sAUDIO_PARAM = AudioParams.Default.WithVariation(SharedContentAudioSystem.DefaultVariation);
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private void DoEjectSound(EntityUid ent, NetUserId? source, EntityUid spentCartVisual)
+    // I personally am proud that my syntax fu reduced this to a few lines
+    /// <summary>
+    /// Get cartridge RSI/Sound based on its protoId which we check
+    /// since it might be from the network
+    /// on fail at least return defaults
+    /// </summary>
+    /// <param name="protoId"/>
+    /// <returns>RSI and sound of prototype or static defaults</returns>
+    private (RSI, SoundSpecifier) GetRSIFromCartProto(string? protoId)
     {
-        var sound = Comp<CartridgeAmmoComponent>(ent).EjectSound;
-        var sender = (source is null || !_player.TryGetSessionById(source.Value, out var session)) ? null : session;
-        Audio.PlayLocal(sound, spentCartVisual, sender?.AttachedEntity, _sAUDIO_PARAM);
+        // protoId shouldnt be missing, cast to also avoid null check boiler plate
+        if (!_protoMan.Resolve((EntProtoId?) protoId, out var proto))
+            return (CRSI, SoundDefault);
+        _ = proto.TryComp<SpriteComponent>(out var rsi, _compFactory);
+        _ = proto.TryComp<CartridgeAmmoComponent>(out var sound, _compFactory);
+
+        return (rsi?.BaseRSI ?? CRSI, sound?.EjectSound ?? SoundDefault);
     }
 
     private const float MaxArc = 2.85f;
@@ -159,7 +152,6 @@ public sealed partial class GunSystem
     /// make the visual work on the client without the server, so we just spawn it
     /// and apply a PULSE(what TryThrow does basically) using some rng
     /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private EntityUid SpawnCartPhysics(MapCoordinates basePos, Angle baseAngle, StateId state, RSI rsi)
     {
         var cartVisual = Spawn(Proto_Physics, basePos, rotation: _rng.NextAngle(LandAngleMax));
@@ -171,10 +163,9 @@ public sealed partial class GunSystem
         return cartVisual;
     }
     /// <summary>
-    /// Alt version of above where we just spawn static cartridges to save on preformance
+    /// Alt preformance version of above where we just spawn carts as a still visual
     /// this spawns cartridges in a radius rather than throwing them at an angle
     /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private EntityUid SpawnCartOldSchool(MapCoordinates basePos, StateId state, RSI rsi, int seed = 666)
     {
         var (posEjectRNG, angleEjectRNG) = GetRandVectAngle(seed, _timing.CurTime.Nanoseconds);

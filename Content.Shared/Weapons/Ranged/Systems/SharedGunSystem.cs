@@ -833,7 +833,9 @@ public abstract partial class SharedGunSystem : EntitySystem
         var angleW = _xform.GetWorldRotation(baseCoords.EntityId);
         var mapCoord = _xform.ToMapCoordinates(baseCoords);
         var cartProto = MetaData(cart).EntityPrototype?.ID;
-        EjectSpentCart(mapCoord, angleW, cartProto, userSession);
+        var senderNetID = userSession?.UserId;
+
+        EjectSpentCart(new SpentCartEvent(mapCoord, angleW, cartProto, senderNetID));
         PredictedDel(cart);
     }
 
