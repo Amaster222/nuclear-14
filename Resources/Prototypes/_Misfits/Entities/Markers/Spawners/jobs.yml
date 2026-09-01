@@ -973,14 +973,26 @@
   - type: SpawnPoint
     job_id: SuperMutantFollowerDoctor
 
-# #Cythisiax Add - Sentient deathclaw spawn point (not yet placed on the Wendover grid).
+# Bwonsamdi spawn point (original prototype ID retained; not placed on Wendover).
 - type: entity
   parent: SpawnPointJobBase
   id: MisfitsSpawnPointSentientDeathclaw
-  name: sentient deathclaw
+  name: Bwonsamdi
   components:
   - type: SpawnPoint
     job_id: SentientDeathclaw
+  - type: Sprite
+    sprite: Corvax/Markers/jobs.rsi
+    layers:
+    - state: green
+
+- type: entity
+  parent: SpawnPointJobBase
+  id: MisfitsSpawnPointSentientDeathclawRegular
+  name: sentient deathclaw
+  components:
+  - type: SpawnPoint
+    job_id: SentientDeathclawRegular
   - type: Sprite
     sprite: Corvax/Markers/jobs.rsi
     layers:

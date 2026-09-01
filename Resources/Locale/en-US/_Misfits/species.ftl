@@ -2,6 +2,7 @@
 species-name-supermutant = Supermutant
 species-name-nightkin = Nightkin
 species-name-deathclaw = Deathclaw
+species-name-bwonsamdi-deathclaw = Bwonsamdi
 species-name-c27 = C-27 Humanoid Robot
 species-name-c27-ncr = C-27 Humanoid Robot (NCR)
 species-name-c27-bos = C-27 Humanoid Robot (Brotherhood)

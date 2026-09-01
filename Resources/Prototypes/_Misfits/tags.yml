@@ -84,3 +84,8 @@
 # standard 5.56 rifles, the same way LongMagazine556Rifle gates the assault carbine.
 - type: Tag
   id: N14MagazineHeavy556Rifle
+- type: Tag # #Cythisiax Fixed - was lowercase 'type: tag', which YAMLLinter rejected (Unknown prototype type: 'tag')
+  id: BwonsamdiBreakable
+
+- type: Tag # #Cythisiax Fixed - was lowercase 'type: tag'
+  id: BwonsamdiHarness
