@@ -10890,3 +10890,18 @@ Entries:
   id: 6378
   time: '2026-09-01T00:21:42.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1833
+- author: Lucky
+  changes:
+    - type: Fix
+      message: Double doors in NCR & OSI have been fixed.
+    - type: Remove
+      message: removed more NCR weapons I missed the first time.
+    - type: Add
+      message: NCR has now cameras mapped.
+    - type: Add
+      message: All factions have the grounded version of their flight apperatus mapped.
+    - type: Add
+      message: pain and suffering
+  id: 6379
+  time: '2026-09-02T05:57:29.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1835
