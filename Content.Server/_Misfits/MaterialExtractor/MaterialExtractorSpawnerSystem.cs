@@ -1,4 +1,3 @@
-using System.Numerics;
 using Content.Server.GameTicking;
 using Content.Server.Maps;
 using Content.Shared.GameTicking;
@@ -27,10 +26,6 @@ public sealed partial class MaterialExtractorSpawnerSystem : EntitySystem
     private const int RockMinDistance = 9;
     private const int RockMaxDistance = 16;
     private const int SpawnAttempts = 10000;
-
-    // Current rendered Wendover surface bounds. These are a sampling window only;
-    // every candidate is subsequently validated against the actual loaded grid.
-    private static readonly Box2 WendoverBounds = new(-517, -328, 484, 311);
 
     [Dependency] private IRobustRandom _random = default!;
     [Dependency] private SharedMapSystem _map = default!;
@@ -72,14 +67,27 @@ public sealed partial class MaterialExtractorSpawnerSystem : EntitySystem
             return;
         }
 
+        // Never sample a hand-maintained world AABB. Wendover can be translated or
+        // resized, while the grid tile list is the authoritative set of candidates.
+        var candidates = new List<Vector2i>();
+        var allTiles = _map.GetAllTilesEnumerator(gridUid, grid);
+        while (allTiles.MoveNext(out var tileRef))
+        {
+            if (_tileDefs[tileRef.Tile.TypeId].ID == AllowedTile)
+                candidates.Add(tileRef.Value);
+        }
+
         var physicsQuery = GetEntityQuery<PhysicsComponent>();
         var weatherBlockQuery = GetEntityQuery<BlockWeatherComponent>();
-        for (var attempt = 0; attempt < SpawnAttempts; attempt++)
+        var attempts = Math.Min(SpawnAttempts, candidates.Count);
+        for (var attempt = 0; attempt < attempts; attempt++)
         {
-            var worldPosition = new Vector2(
-                _random.NextFloat(WendoverBounds.Left, WendoverBounds.Right),
-                _random.NextFloat(WendoverBounds.Bottom, WendoverBounds.Top));
-            var tile = _map.WorldToTile(gridUid, grid, worldPosition);
+            // Partial Fisher-Yates selection: every candidate has equal odds, with
+            // no repeated failures against the same tile.
+            var index = _random.Next(candidates.Count);
+            var tile = candidates[index];
+            candidates[index] = candidates[^1];
+            candidates.RemoveAt(candidates.Count - 1);
 
             if (!IsValidSite(gridUid, grid, tile, physicsQuery, weatherBlockQuery))
                 continue;
@@ -89,7 +97,7 @@ public sealed partial class MaterialExtractorSpawnerSystem : EntitySystem
             return;
         }
 
-        _log.Warning($"No valid material extractor site found after {SpawnAttempts} attempts on Wendover map {mapId}.");
+        _log.Warning($"No valid material extractor site found after checking {attempts} of {attempts + candidates.Count} Wendover sand tiles on map {mapId}.");
     }
 
     private bool TryGetWendoverGrid(MapId mapId, out EntityUid gridUid, out MapGridComponent grid)
