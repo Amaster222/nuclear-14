@@ -23,6 +23,7 @@ public sealed partial class MaterialExtractorComponent : Component
     [DataField] public int OutputMaxSeconds = 55;
     [DataField] public int PlayerActivationRadius = 30;
     [DataField] public int PulseIntervalSeconds = 5;
+    [DataField] public int FlavorIntervalSeconds = 30;
     [DataField] public int FirstWaveMinSeconds = 120;
     [DataField] public int FirstWaveMaxSeconds = 180;
     [DataField] public int WaveMinSeconds = 150;
@@ -36,6 +37,7 @@ public sealed partial class MaterialExtractorComponent : Component
     public TimeSpan NextPulse;
     public TimeSpan NextOutput;
     public TimeSpan NextWave;
+    public TimeSpan NextFlavor;
     public TimeSpan DamagePauseUntil;
     public bool BeaconOn;
     public bool WarningSent;

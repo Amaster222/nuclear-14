@@ -10,8 +10,8 @@
   - type: PointLight
     enabled: false
     color: "#ff2020"
-    radius: 2
-    energy: 1.5
+    radius: 3
+    energy: 2
   - type: Destructible
     thresholds:
     - trigger:
@@ -32,6 +32,7 @@
     outputMaxSeconds: 55
     playerActivationRadius: 30
     pulseIntervalSeconds: 5
+    flavorIntervalSeconds: 30
     firstWaveMinSeconds: 120
     firstWaveMaxSeconds: 180
     waveMinSeconds: 150

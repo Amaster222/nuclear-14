@@ -1,5 +1,6 @@
 using System.Numerics;
 using Content.Server.Storage.EntitySystems;
+using Content.Server.Chat.Systems;
 using Content.Server.NPC;
 using Content.Server.NPC.HTN;
 using Content.Server.NPC.Systems;
@@ -9,6 +10,7 @@ using Content.Shared.Damage;
 using Content.Shared.Examine;
 using Content.Shared.NPC.Systems;
 using Content.Shared.Storage;
+using Content.Shared.Chat;
 using Robust.Shared.Player;
 using Robust.Shared.Audio;
 using Robust.Shared.Audio.Systems;
@@ -31,6 +33,7 @@ public sealed partial class MaterialExtractorSystem : EntitySystem
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private NPCSystem _npc = default!;
     [Dependency] private HTNSystem _htn = default!;
+    [Dependency] private ChatSystem _chat = default!;
 
     public override void Initialize()
     {
@@ -69,6 +72,7 @@ public sealed partial class MaterialExtractorSystem : EntitySystem
         ent.Comp.NextPulse = _timing.CurTime + TimeSpan.FromSeconds(8);
         ent.Comp.NextOutput = _timing.CurTime + OutputDelay(ent.Comp);
         ent.Comp.NextWave = _timing.CurTime + TimeSpan.FromSeconds(_random.Next(ent.Comp.FirstWaveMinSeconds, ent.Comp.FirstWaveMaxSeconds + 1));
+        ent.Comp.NextFlavor = _timing.CurTime + TimeSpan.FromSeconds(ent.Comp.FlavorIntervalSeconds);
         _lights.SetEnabled(ent.Owner, false);
     }
 
@@ -93,11 +97,6 @@ public sealed partial class MaterialExtractorSystem : EntitySystem
             }
 
             extractor.ActiveAttackers.RemoveWhere(attacker => Deleted(attacker));
-            if (extractor.ActiveAttackers.Count > 0)
-            {
-                SetBeacon(uid, extractor, true);
-                continue;
-            }
 
             if (extractor.OutputBlocked && _timing.CurTime < extractor.NextOutput)
             {
@@ -121,8 +120,8 @@ public sealed partial class MaterialExtractorSystem : EntitySystem
 
             if (_timing.CurTime >= extractor.NextWave)
             {
-                StartWave(uid, extractor);
-                continue;
+                if (extractor.ActiveAttackers.Count == 0)
+                    StartWave(uid, extractor);
             }
 
             if (_timing.CurTime >= extractor.NextPulse)
@@ -131,6 +130,16 @@ public sealed partial class MaterialExtractorSystem : EntitySystem
                 _audio.PlayPvs(ThumpSound, uid,
                     AudioParams.Default.WithVolume(-7f).WithMaxDistance(22f));
                 extractor.NextPulse = _timing.CurTime + TimeSpan.FromSeconds(extractor.PulseIntervalSeconds);
+            }
+
+            if (_timing.CurTime >= extractor.NextFlavor)
+            {
+                _chat.TrySendInGameICMessage(uid,
+                    Loc.GetString("material-extractor-rumble"),
+                    InGameICChatType.Emote,
+                    ChatTransmitRange.Normal,
+                    ignoreActionBlocker: true);
+                extractor.NextFlavor = _timing.CurTime + TimeSpan.FromSeconds(extractor.FlavorIntervalSeconds);
             }
 
             if (_timing.CurTime < extractor.NextOutput)
