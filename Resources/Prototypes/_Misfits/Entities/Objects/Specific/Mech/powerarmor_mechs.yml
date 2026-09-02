@@ -892,8 +892,6 @@
     containers:
       mech-battery-slot:
       - PowerCellHigh
-    - sprite: _Misfits/Clothing/OuterClothing/PowerArmor/NCR/ncr_heavy_trooper_t45_helmet.rsi
-      state: equipped-HELMET
 
 # --- NCR Heavy Trooper Lead T-51 ---
 - type: entity
@@ -921,8 +919,6 @@
     containers:
       mech-battery-slot:
       - PowerCellHigh
-    - sprite: _Misfits/Clothing/OuterClothing/PowerArmor/NCR/ncr_heavy_trooper_lead_t51_helmet.rsi
-      state: equipped-HELMET
 
 # --- NCR X-01 spawnable variant ---
 - type: entity
