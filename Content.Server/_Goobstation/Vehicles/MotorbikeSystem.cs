@@ -23,6 +23,7 @@ using Robust.Shared.Audio.Systems;
 using Robust.Shared.Containers;
 using Robust.Shared.Player;
 using Robust.Shared.Timing;
+using Robust.Shared.Utility;
 
 namespace Content.Server.Vehicles;
 
@@ -58,6 +59,7 @@ public sealed class MotorbikeSystem : EntitySystem
         SubscribeLocalEvent<MotorbikeComponent, GetVerbsEvent<Verb>>(OnGetVerbs);
     }
 
+    // Adds a Rename verb to motorbikes, allowing players to give them a custom name.
     private void OnGetVerbs(Entity<MotorbikeComponent> ent, ref GetVerbsEvent<Verb> args)
     {
         if (!TryComp<ActorComponent>(args.User, out var actor))
@@ -68,7 +70,7 @@ public sealed class MotorbikeSystem : EntitySystem
         var rename = new Verb
         {
             Text = "Rename",
-            //Category = VerbCategory.Tricks,
+            Icon = new SpriteSpecifier.Texture(new("/Textures/Interface/VerbIcons/rename.svg.192dpi.png")),
             Act = () =>
             {
                 _quickDialog.OpenDialog(player, "Rename", "Name", (string newName) =>
