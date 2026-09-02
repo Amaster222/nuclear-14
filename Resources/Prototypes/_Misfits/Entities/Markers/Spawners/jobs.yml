@@ -450,6 +450,14 @@
       - state: cadet
 
 - type: entity
+  parent: MisfitsSpawnPointNCRHeavyTrooper
+  id: MisfitsSpawnPointNCRHeavyTrooperLead
+  name: NCR Heavy Trooper Lead
+  components:
+  - type: SpawnPoint
+    job_id: NCRHeavyTrooperLead
+
+- type: entity
   parent: SpawnPointJobBase
   id: MisfitsSpawnPointNCRCadet
   name: NCR Recruit

@@ -3,8 +3,8 @@
   setPreference: true
   hideIfPlaytimeRequirementsNotMet: false # #Misfits Tweak - all jobs visible in selection
   jobWhitelistBypassesRoleTimers: true # #Misfits Change
-  weight: 40
-  showBorder: false
+  weight: 41
+  showBorder: true # #Misfits Tweak - starts the specialist/support tier
   overrideConsoleVisibility: false
   canBeAntag: false
   name: job-name-ncr-weapon-specialist

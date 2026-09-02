@@ -7,7 +7,7 @@
   setPreference: true
   hideIfPlaytimeRequirementsNotMet: false # #Misfits Tweak - all jobs visible in selection
   jobWhitelistBypassesRoleTimers: true # #Misfits Change
-  weight: 45 # between Specialist (40) and Sergeant (50)
+  weight: 45 # between Specialist (41) and Sergeant (50)
   showBorder: false # #Misfits Tweak - Heavy Trooper Lead starts the heavy-trooper block
   overrideConsoleVisibility: false
   canBeAntag: false

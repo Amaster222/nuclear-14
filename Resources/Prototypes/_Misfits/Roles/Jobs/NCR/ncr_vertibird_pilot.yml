@@ -6,7 +6,7 @@
   setPreference: true
   hideIfPlaytimeRequirementsNotMet: false
   jobWhitelistBypassesRoleTimers: true
-  weight: 104
+  weight: 104 # #Misfits Tweak - aviation remains above platoon leadership
   overrideConsoleVisibility: false
   canBeAntag: false
   name: job-name-ncr-vertibird-pilot

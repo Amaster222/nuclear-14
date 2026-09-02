@@ -5,7 +5,7 @@
   jobWhitelistBypassesRoleTimers: true
   overrideConsoleVisibility: false
   canBeAntag: false
-  weight: 99 # #Misfits Tweak - keep the medical ladder together below the Doctor
+  weight: 39 # #Misfits Tweak - Medic belongs below Engineer in the support tier
   showBorder: false
   name: job-name-ncr-medic
   overwatchCategory: OverwatchNcrMedical
