@@ -10927,3 +10927,14 @@ Entries:
   id: 6381
   time: '2026-09-02T06:14:10.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1830
+- author: JohnKieser
+  changes:
+    - type: Fix
+      message: >-
+        Grenade launcher casings are not longer errors. Thanks for telling me
+        about that issue guys
+    - type: Fix
+      message: Fixed debug assert exception when clicking on wild plants
+  id: 6382
+  time: '2026-09-02T06:42:22.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1834
