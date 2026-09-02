@@ -10938,3 +10938,12 @@ Entries:
   id: 6382
   time: '2026-09-02T06:42:22.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1834
+- author: alekszejg
+  changes:
+    - type: Add
+      message: Added ability to rename motorbikes!
+    - type: Add
+      message: Added an icon for motorbike rename interaction.
+  id: 6383
+  time: '2026-09-02T17:21:45.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1837
