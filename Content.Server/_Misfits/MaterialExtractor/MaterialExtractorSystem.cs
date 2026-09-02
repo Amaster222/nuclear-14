@@ -3,6 +3,7 @@ using Content.Server.Storage.EntitySystems;
 using Content.Server.NPC;
 using Content.Server.NPC.HTN;
 using Content.Server.NPC.Systems;
+using Content.Server.Power.Components;
 using Content.Shared.Light.EntitySystems;
 using Content.Shared.Damage;
 using Content.Shared.Examine;
@@ -21,18 +22,6 @@ namespace Content.Server._Misfits.MaterialExtractor;
 public sealed partial class MaterialExtractorSystem : EntitySystem
 {
     private static readonly SoundPathSpecifier ThumpSound = new("/Audio/Effects/Footsteps/largethud.ogg");
-
-    private static readonly string[] RawResources =
-    [
-        "N14IronOre1",
-        "N14CopperOre1",
-        "N14LeadOre1",
-        "SulfurOre1",
-        "N14Sand1",
-        "Salt1",
-        "N14ZincOre1",
-        "N14BauxiteOre1",
-    ];
 
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private IRobustRandom _random = default!;
@@ -65,15 +54,21 @@ public sealed partial class MaterialExtractorSystem : EntitySystem
     private void OnMapInit(Entity<MaterialExtractorComponent> ent, ref MapInitEvent args)
     {
         var qualityRoll = _random.NextFloat();
-        (ent.Comp.DepositQuality, ent.Comp.YieldMultiplier) = qualityRoll switch
+        if (qualityRoll < ent.Comp.PoorDepositChance)
         {
-            < 0.25f => ("POOR", 0.7f),
-            > 0.85f => ("RICH", 1.4f),
-            _ => ("FAIR", 1f),
-        };
+            (ent.Comp.DepositQuality, ent.Comp.YieldMultiplier) = ("POOR", ent.Comp.PoorYieldMultiplier);
+        }
+        else if (qualityRoll > 1f - ent.Comp.RichDepositChance)
+        {
+            (ent.Comp.DepositQuality, ent.Comp.YieldMultiplier) = ("RICH", ent.Comp.RichYieldMultiplier);
+        }
+        else
+        {
+            (ent.Comp.DepositQuality, ent.Comp.YieldMultiplier) = ("FAIR", 1f);
+        }
         ent.Comp.NextPulse = _timing.CurTime + TimeSpan.FromSeconds(8);
         ent.Comp.NextOutput = _timing.CurTime + OutputDelay(ent.Comp);
-        ent.Comp.NextWave = _timing.CurTime + TimeSpan.FromSeconds(_random.Next(120, 181));
+        ent.Comp.NextWave = _timing.CurTime + TimeSpan.FromSeconds(_random.Next(ent.Comp.FirstWaveMinSeconds, ent.Comp.FirstWaveMaxSeconds + 1));
         _lights.SetEnabled(ent.Owner, false);
     }
 
@@ -83,7 +78,15 @@ public sealed partial class MaterialExtractorSystem : EntitySystem
         var query = EntityQueryEnumerator<MaterialExtractorComponent, StorageComponent>();
         while (query.MoveNext(out var uid, out var extractor, out var storage))
         {
-            if (!HasNearbyPlayer(uid))
+            if (!HasNearbyPlayer((uid, extractor)))
+            {
+                SetBeacon(uid, extractor, false);
+                continue;
+            }
+
+            // Fuel belongs to the generators feeding the local grid. The extractor
+            // only operates while that supplied power reaches its receiver.
+            if (TryComp<ApcPowerReceiverComponent>(uid, out var power) && !power.Powered)
             {
                 SetBeacon(uid, extractor, false);
                 continue;
@@ -108,7 +111,7 @@ public sealed partial class MaterialExtractorSystem : EntitySystem
                 continue;
             }
 
-            if (!extractor.WarningSent && _timing.CurTime >= extractor.NextWave - TimeSpan.FromSeconds(20))
+            if (!extractor.WarningSent && _timing.CurTime >= extractor.NextWave - TimeSpan.FromSeconds(extractor.WaveWarningSeconds))
             {
                 extractor.WarningSent = true;
                 SetBeacon(uid, extractor, true);
@@ -127,13 +130,13 @@ public sealed partial class MaterialExtractorSystem : EntitySystem
                 SetBeacon(uid, extractor, !extractor.BeaconOn);
                 _audio.PlayPvs(ThumpSound, uid,
                     AudioParams.Default.WithVolume(-7f).WithMaxDistance(22f));
-                extractor.NextPulse = _timing.CurTime + TimeSpan.FromSeconds(5);
+                extractor.NextPulse = _timing.CurTime + TimeSpan.FromSeconds(extractor.PulseIntervalSeconds);
             }
 
             if (_timing.CurTime < extractor.NextOutput)
                 continue;
 
-            var output = Spawn(SelectOutput(), Transform(uid).Coordinates);
+            var output = Spawn(SelectOutput(extractor), Transform(uid).Coordinates);
             if (!_storage.Insert(uid, output, out _, storageComp: storage, playSound: false))
             {
                 Del(output);
@@ -149,20 +152,38 @@ public sealed partial class MaterialExtractorSystem : EntitySystem
     }
 
     private TimeSpan OutputDelay(MaterialExtractorComponent extractor)
-        => TimeSpan.FromSeconds(_random.Next(35, 56) / extractor.YieldMultiplier);
+        => TimeSpan.FromSeconds(_random.Next(extractor.OutputMinSeconds, extractor.OutputMaxSeconds + 1) / extractor.YieldMultiplier);
 
-    private string SelectOutput()
-        // Fertilizer is useful but should remain a bonus, not the main purpose of the extractor.
-        => _random.Prob(0.06f) ? "FertilizerOre1" : RawResources[_random.Next(RawResources.Length)];
-
-    private bool HasNearbyPlayer(EntityUid uid)
+    private string SelectOutput(MaterialExtractorComponent extractor)
     {
-        var origin = Transform(uid);
-        var originPosition = _transform.GetWorldPosition(uid);
+        var totalWeight = 0;
+        foreach (var weight in extractor.OutputWeights.Values)
+            totalWeight += weight;
+
+        if (totalWeight <= 0)
+            throw new InvalidOperationException("Material extractor output weights must have a positive total.");
+
+        var roll = _random.Next(totalWeight);
+        string? fallback = null;
+        foreach (var (prototype, weight) in extractor.OutputWeights)
+        {
+            fallback = prototype;
+            roll -= weight;
+            if (roll < 0)
+                return prototype;
+        }
+
+        return fallback!;
+    }
+
+    private bool HasNearbyPlayer(Entity<MaterialExtractorComponent> extractor)
+    {
+        var origin = Transform(extractor);
+        var originPosition = _transform.GetWorldPosition(extractor);
         var query = EntityQueryEnumerator<ActorComponent, TransformComponent>();
         while (query.MoveNext(out var playerUid, out _, out var player))
         {
-            if (player.MapID == origin.MapID && Vector2.DistanceSquared(_transform.GetWorldPosition(playerUid), originPosition) <= 30f * 30f)
+            if (player.MapID == origin.MapID && Vector2.DistanceSquared(_transform.GetWorldPosition(playerUid), originPosition) <= extractor.Comp.PlayerActivationRadius * extractor.Comp.PlayerActivationRadius)
                 return true;
         }
 
@@ -197,7 +218,7 @@ public sealed partial class MaterialExtractorSystem : EntitySystem
 
         extractor.WaveCount++;
         extractor.WarningSent = false;
-        extractor.NextWave = _timing.CurTime + TimeSpan.FromSeconds(_random.Next(150, 211));
+        extractor.NextWave = _timing.CurTime + TimeSpan.FromSeconds(_random.Next(extractor.WaveMinSeconds, extractor.WaveMaxSeconds + 1));
         SetBeacon(extractorUid, extractor, true);
     }
 

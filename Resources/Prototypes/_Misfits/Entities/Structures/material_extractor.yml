@@ -25,7 +25,35 @@
             max: 1
       - !type:DoActsBehavior
         acts: ["Destruction"]
+  # Balance: all economic tuning is here. Fuel belongs to the external generator
+  # network; this machine only draws the listed powerLoad.
   - type: MaterialExtractor
+    outputMinSeconds: 35
+    outputMaxSeconds: 55
+    playerActivationRadius: 30
+    pulseIntervalSeconds: 5
+    firstWaveMinSeconds: 120
+    firstWaveMaxSeconds: 180
+    waveMinSeconds: 150
+    waveMaxSeconds: 210
+    waveWarningSeconds: 20
+    poorDepositChance: 0.25
+    richDepositChance: 0.15
+    poorYieldMultiplier: 0.7
+    richYieldMultiplier: 1.4
+    outputWeights:
+      N14IronOre1: 20
+      N14CopperOre1: 18
+      N14LeadOre1: 14
+      SulfurOre1: 12
+      N14Sand1: 12
+      Salt1: 10
+      N14ZincOre1: 6
+      N14BauxiteOre1: 5
+      FertilizerOre1: 3
+  - type: ApcPowerReceiver
+    powerLoad: 500
+  - type: ExtensionCableReceiver
   - type: Storage
     grid:
     - 0,0,3,2

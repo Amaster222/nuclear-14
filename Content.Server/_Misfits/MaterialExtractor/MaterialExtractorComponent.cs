@@ -1,10 +1,38 @@
 using Robust.Shared.GameObjects;
+using Robust.Shared.Serialization.Manager.Attributes;
 
 namespace Content.Server._Misfits.MaterialExtractor;
 
 [RegisterComponent]
 public sealed partial class MaterialExtractorComponent : Component
 {
+    // Balance fields. Keep gameplay tuning on the entity prototype, not in the system.
+    [DataField] public Dictionary<string, int> OutputWeights = new()
+    {
+        ["N14IronOre1"] = 20,
+        ["N14CopperOre1"] = 18,
+        ["N14LeadOre1"] = 14,
+        ["SulfurOre1"] = 12,
+        ["N14Sand1"] = 12,
+        ["Salt1"] = 10,
+        ["N14ZincOre1"] = 6,
+        ["N14BauxiteOre1"] = 5,
+        ["FertilizerOre1"] = 3,
+    };
+    [DataField] public int OutputMinSeconds = 35;
+    [DataField] public int OutputMaxSeconds = 55;
+    [DataField] public int PlayerActivationRadius = 30;
+    [DataField] public int PulseIntervalSeconds = 5;
+    [DataField] public int FirstWaveMinSeconds = 120;
+    [DataField] public int FirstWaveMaxSeconds = 180;
+    [DataField] public int WaveMinSeconds = 150;
+    [DataField] public int WaveMaxSeconds = 210;
+    [DataField] public int WaveWarningSeconds = 20;
+    [DataField] public float PoorDepositChance = 0.25f;
+    [DataField] public float RichDepositChance = 0.15f;
+    [DataField] public float PoorYieldMultiplier = 0.7f;
+    [DataField] public float RichYieldMultiplier = 1.4f;
+
     public TimeSpan NextPulse;
     public TimeSpan NextOutput;
     public TimeSpan NextWave;
