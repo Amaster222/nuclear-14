@@ -10905,3 +10905,10 @@ Entries:
   id: 6379
   time: '2026-09-02T05:57:29.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1835
+- author: aftemath434
+  changes:
+    - type: Add
+      message: Enclave Vault door with raid hack
+  id: 6380
+  time: '2026-09-02T05:58:01.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1836
