@@ -2,8 +2,6 @@ using Content.Server.GameTicking;
 using Content.Server.Maps;
 using Content.Shared.GameTicking;
 using Content.Shared.Maps;
-using Content.Shared.Tag;
-using Content.Shared.Weather;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
@@ -20,15 +18,6 @@ namespace Content.Server._Misfits.MaterialExtractor;
 /// </summary>
 public sealed partial class MaterialExtractorSpawnerSystem : EntitySystem
 {
-    private enum SiteFailure
-    {
-        CenterTile,
-        RingNoFloor,
-        RingStructure,
-        RingWeather,
-        NoNearbyRock,
-    }
-
     private const string WendoverGameMap = "Wendover";
     private const string ExtractorPrototype = "N14SeismicMaterialExtractor";
     // Wendover's visual salt flats are FloorDesert. The asteroid-sand tile only
@@ -42,15 +31,9 @@ public sealed partial class MaterialExtractorSpawnerSystem : EntitySystem
         "FloorAsteroidIronsand",
         "FloorAsteroidIronsandUnvariantized",
     ];
-    private const int ClearRadius = 8;
-    private const int RockMinDistance = 9;
-    private const int RockMaxDistance = 16;
-    private const int SpawnAttempts = 10000;
-
     [Dependency] private IRobustRandom _random = default!;
     [Dependency] private SharedMapSystem _map = default!;
     [Dependency] private ITileDefinitionManager _tileDefs = default!;
-    [Dependency] private TagSystem _tags = default!;
 
     private readonly HashSet<MapId> _wendoverMaps = [];
     private ISawmill _log = default!;
@@ -88,65 +71,71 @@ public sealed partial class MaterialExtractorSpawnerSystem : EntitySystem
             return;
         }
 
-        // Never sample a hand-maintained world AABB. Wendover can be translated or
-        // resized, while the grid tile list is the authoritative set of candidates.
-        var candidates = new List<Vector2i>();
-        var allTiles = _map.GetAllTilesEnumerator(gridUid, grid);
-        while (allTiles.MoveNext(out var tileRef))
+        // The geology is the landmark. Pick an actual solid boulder, then place
+        // the machine on a free adjacent salt-flat tile. Do not impose a fake
+        // eight-tile arena requirement on the hand-authored wasteland.
+        var rockCandidates = new List<Vector2i>();
+        var transforms = EntityQueryEnumerator<TransformComponent>();
+        while (transforms.MoveNext(out var uid, out var xform))
         {
-            if (tileRef is not { } tile)
+            if (xform.GridUid != gridUid || MetaData(uid).EntityPrototype?.ID is not ("FloraRockSolid01" or "FloraRockSolid02" or "FloraRockSolid03"))
                 continue;
 
-            if (AllowedTiles.Contains(_tileDefs[tile.Tile.TypeId].ID))
-                candidates.Add(tile.GridIndices);
+            rockCandidates.Add(_map.CoordinatesToTile(gridUid, grid, xform.Coordinates));
         }
 
         var physicsQuery = GetEntityQuery<PhysicsComponent>();
-        var weatherBlockQuery = GetEntityQuery<BlockWeatherComponent>();
-        var attempts = Math.Min(SpawnAttempts, candidates.Count);
-        var centerFailures = 0;
-        var ringNoFloorFailures = 0;
-        var ringStructureFailures = 0;
-        var ringWeatherFailures = 0;
-        var rockFailures = 0;
+        var attempts = rockCandidates.Count;
         for (var attempt = 0; attempt < attempts; attempt++)
         {
-            // Partial Fisher-Yates selection: every candidate has equal odds, with
-            // no repeated failures against the same tile.
-            var index = _random.Next(candidates.Count);
-            var tile = candidates[index];
-            candidates[index] = candidates[^1];
-            candidates.RemoveAt(candidates.Count - 1);
+            var index = _random.Next(rockCandidates.Count);
+            var rockTile = rockCandidates[index];
+            rockCandidates[index] = rockCandidates[^1];
+            rockCandidates.RemoveAt(rockCandidates.Count - 1);
 
-            if (!IsValidSite(gridUid, grid, tile, physicsQuery, weatherBlockQuery, out var failure))
-            {
-                switch (failure)
-                {
-                    case SiteFailure.CenterTile:
-                        centerFailures++;
-                        break;
-                    case SiteFailure.RingNoFloor:
-                        ringNoFloorFailures++;
-                        break;
-                    case SiteFailure.RingStructure:
-                        ringStructureFailures++;
-                        break;
-                    case SiteFailure.RingWeather:
-                        ringWeatherFailures++;
-                        break;
-                    case SiteFailure.NoNearbyRock:
-                        rockFailures++;
-                        break;
-                }
+            if (!TryFindSpawnTileByRock(gridUid, grid, rockTile, physicsQuery, out var tile))
                 continue;
-            }
 
             Spawn(ExtractorPrototype, _map.GridTileToLocal(gridUid, grid, tile));
-            _log.Info($"Spawned the round's material extractor at {tile} on Wendover map {mapId}.");
+            _log.Info($"Spawned the round's material extractor at {tile} beside boulder {rockTile} on Wendover map {mapId}.");
             return;
         }
 
-        _log.Warning($"No valid material extractor site found after checking {attempts} of {attempts + candidates.Count} Wendover sand tiles on map {mapId}. Rejections: center={centerFailures}, noFloor={ringNoFloorFailures}, structure={ringStructureFailures}, weather={ringWeatherFailures}, rock={rockFailures}.");
+        _log.Warning($"No free salt-flat tile was found beside any of the {attempts} solid boulders on Wendover map {mapId}.");
+    }
+
+    private bool TryFindSpawnTileByRock(
+        EntityUid gridUid,
+        MapGridComponent grid,
+        Vector2i rockTile,
+        EntityQuery<PhysicsComponent> physicsQuery,
+        out Vector2i spawnTile)
+    {
+        // Randomize the nearest eight tiles so the same boulder is not always used
+        // from the same side, while remaining visibly tied to the rock deposit.
+        var offsets = new List<Vector2i>
+        {
+            new(-1, -1), new(0, -1), new(1, -1), new(-1, 0),
+            new(1, 0), new(-1, 1), new(0, 1), new(1, 1),
+        };
+
+        while (offsets.Count > 0)
+        {
+            var index = _random.Next(offsets.Count);
+            var offset = offsets[index];
+            offsets[index] = offsets[^1];
+            offsets.RemoveAt(offsets.Count - 1);
+
+            var candidate = rockTile + offset;
+            if (!IsAllowedTile(gridUid, grid, candidate) || HasHardAnchoredEntity(gridUid, grid, candidate, physicsQuery))
+                continue;
+
+            spawnTile = candidate;
+            return true;
+        }
+
+        spawnTile = default;
+        return false;
     }
 
     private bool TryGetWendoverGrid(MapId mapId, out EntityUid gridUid, out MapGridComponent grid)
@@ -167,77 +156,6 @@ public sealed partial class MaterialExtractorSpawnerSystem : EntitySystem
         return false;
     }
 
-    private bool IsValidSite(
-        EntityUid gridUid,
-        MapGridComponent grid,
-        Vector2i center,
-        EntityQuery<PhysicsComponent> physicsQuery,
-        EntityQuery<BlockWeatherComponent> weatherBlockQuery,
-        out SiteFailure failure)
-    {
-        if (!IsAllowedTile(gridUid, grid, center))
-        {
-            failure = SiteFailure.CenterTile;
-            return false;
-        }
-
-        for (var x = -ClearRadius; x <= ClearRadius; x++)
-        {
-            for (var y = -ClearRadius; y <= ClearRadius; y++)
-            {
-                if (x * x + y * y > ClearRadius * ClearRadius)
-                    continue;
-
-                var tile = center + new Vector2i(x, y);
-                // Only the extractor itself must be on sand/grass. The defensive ring may
-                // cross ordinary walkable terrain; requiring 197 more exact sand tiles made
-                // legitimate Wendover sites effectively impossible to find.
-                if (!IsWalkableTile(gridUid, grid, tile))
-                {
-                    failure = SiteFailure.RingNoFloor;
-                    return false;
-                }
-
-                if (HasHardStructuralBlocker(gridUid, grid, tile, physicsQuery))
-                {
-                    failure = SiteFailure.RingStructure;
-                    return false;
-                }
-
-                if (HasWeatherBlocker(gridUid, grid, tile, weatherBlockQuery))
-                {
-                    failure = SiteFailure.RingWeather;
-                    return false;
-                }
-            }
-        }
-
-        if (!HasNearbySolidRock(gridUid, grid, center))
-        {
-            failure = SiteFailure.NoNearbyRock;
-            return false;
-        }
-
-        failure = default;
-        return true;
-    }
-
-    private bool HasWeatherBlocker(
-        EntityUid gridUid,
-        MapGridComponent grid,
-        Vector2i tile,
-        EntityQuery<BlockWeatherComponent> weatherBlockQuery)
-    {
-        var anchored = _map.GetAnchoredEntitiesEnumerator(gridUid, grid, tile);
-        while (anchored.MoveNext(out var entity))
-        {
-            if (entity is { } anchoredUid && weatherBlockQuery.HasComponent(anchoredUid))
-                return true;
-        }
-
-        return false;
-    }
-
     private bool IsAllowedTile(EntityUid gridUid, MapGridComponent grid, Vector2i tile)
     {
         if (!_map.TryGetTileRef(gridUid, grid, tile, out var tileRef) || tileRef.Tile.IsEmpty)
@@ -246,20 +164,7 @@ public sealed partial class MaterialExtractorSpawnerSystem : EntitySystem
         return AllowedTiles.Contains(_tileDefs[tileRef.Tile.TypeId].ID);
     }
 
-    private bool IsWalkableTile(EntityUid gridUid, MapGridComponent grid, Vector2i tile)
-    {
-        if (!_map.TryGetTileRef(gridUid, grid, tile, out var tileRef) || tileRef.Tile.IsEmpty)
-            return false;
-
-        var id = _tileDefs[tileRef.Tile.TypeId].ID;
-        return id is not "FloorWater"
-            and not "FloorWaterEntity"
-            and not "FloorSwamp"
-            and not "FloorLava"
-            and not "FloorLavaEntity";
-    }
-
-    private bool HasHardStructuralBlocker(
+    private bool HasHardAnchoredEntity(
         EntityUid gridUid,
         MapGridComponent grid,
         Vector2i tile,
@@ -268,42 +173,14 @@ public sealed partial class MaterialExtractorSpawnerSystem : EntitySystem
         var anchored = _map.GetAnchoredEntitiesEnumerator(gridUid, grid, tile);
         while (anchored.MoveNext(out var entity))
         {
-            if (entity is not { } anchoredUid)
-                continue;
-
-            if (physicsQuery.TryGetComponent(anchoredUid, out var physics)
+            if (entity is { } anchoredUid
+                && physicsQuery.TryGetComponent(anchoredUid, out var physics)
                 && physics.CanCollide
-                && physics.Hard
-                && (_tags.HasTag(anchoredUid, "Wall") || _tags.HasTag(anchoredUid, "Structure")))
+                && physics.Hard)
                 return true;
         }
 
         return false;
     }
 
-    private bool HasNearbySolidRock(EntityUid gridUid, MapGridComponent grid, Vector2i center)
-    {
-        for (var x = -RockMaxDistance; x <= RockMaxDistance; x++)
-        {
-            for (var y = -RockMaxDistance; y <= RockMaxDistance; y++)
-            {
-                var distanceSquared = x * x + y * y;
-                if (distanceSquared < RockMinDistance * RockMinDistance || distanceSquared > RockMaxDistance * RockMaxDistance)
-                    continue;
-
-                var anchored = _map.GetAnchoredEntitiesEnumerator(gridUid, grid, center + new Vector2i(x, y));
-                while (anchored.MoveNext(out var entity))
-                {
-                    if (entity is not { } anchoredUid)
-                        continue;
-
-                    var prototype = MetaData(anchoredUid).EntityPrototype;
-                    if (prototype?.ID is "FloraRockSolid01" or "FloraRockSolid02" or "FloraRockSolid03")
-                        return true;
-                }
-            }
-        }
-
-        return false;
-    }
 }
