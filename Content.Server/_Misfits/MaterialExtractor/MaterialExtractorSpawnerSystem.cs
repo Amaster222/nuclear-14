@@ -23,13 +23,25 @@ public sealed partial class MaterialExtractorSpawnerSystem : EntitySystem
     private enum SiteFailure
     {
         CenterTile,
-        DefensiveRing,
+        RingNoFloor,
+        RingStructure,
+        RingWeather,
         NoNearbyRock,
     }
 
     private const string WendoverGameMap = "Wendover";
     private const string ExtractorPrototype = "N14SeismicMaterialExtractor";
-    private const string AllowedTile = "FloorAsteroidSandUnvariantized";
+    // Wendover's visual salt flats are FloorDesert. The asteroid-sand tile only
+    // appears in a few tiny decorative patches and cannot host an open worksite.
+    private static readonly HashSet<string> AllowedTiles =
+    [
+        "FloorDesert",
+        "ForgeFloorWastelandDesert",
+        "ForgeFloorWastelandDesertVariative",
+        "FloorAsteroidSandUnvariantized",
+        "FloorAsteroidIronsand",
+        "FloorAsteroidIronsandUnvariantized",
+    ];
     private const int ClearRadius = 8;
     private const int RockMinDistance = 9;
     private const int RockMaxDistance = 16;
@@ -85,7 +97,7 @@ public sealed partial class MaterialExtractorSpawnerSystem : EntitySystem
             if (tileRef is not { } tile)
                 continue;
 
-            if (_tileDefs[tile.Tile.TypeId].ID == AllowedTile)
+            if (AllowedTiles.Contains(_tileDefs[tile.Tile.TypeId].ID))
                 candidates.Add(tile.GridIndices);
         }
 
@@ -93,7 +105,9 @@ public sealed partial class MaterialExtractorSpawnerSystem : EntitySystem
         var weatherBlockQuery = GetEntityQuery<BlockWeatherComponent>();
         var attempts = Math.Min(SpawnAttempts, candidates.Count);
         var centerFailures = 0;
-        var ringFailures = 0;
+        var ringNoFloorFailures = 0;
+        var ringStructureFailures = 0;
+        var ringWeatherFailures = 0;
         var rockFailures = 0;
         for (var attempt = 0; attempt < attempts; attempt++)
         {
@@ -111,8 +125,14 @@ public sealed partial class MaterialExtractorSpawnerSystem : EntitySystem
                     case SiteFailure.CenterTile:
                         centerFailures++;
                         break;
-                    case SiteFailure.DefensiveRing:
-                        ringFailures++;
+                    case SiteFailure.RingNoFloor:
+                        ringNoFloorFailures++;
+                        break;
+                    case SiteFailure.RingStructure:
+                        ringStructureFailures++;
+                        break;
+                    case SiteFailure.RingWeather:
+                        ringWeatherFailures++;
                         break;
                     case SiteFailure.NoNearbyRock:
                         rockFailures++;
@@ -126,7 +146,7 @@ public sealed partial class MaterialExtractorSpawnerSystem : EntitySystem
             return;
         }
 
-        _log.Warning($"No valid material extractor site found after checking {attempts} of {attempts + candidates.Count} Wendover sand tiles on map {mapId}. Rejections: center={centerFailures}, ring={ringFailures}, rock={rockFailures}.");
+        _log.Warning($"No valid material extractor site found after checking {attempts} of {attempts + candidates.Count} Wendover sand tiles on map {mapId}. Rejections: center={centerFailures}, noFloor={ringNoFloorFailures}, structure={ringStructureFailures}, weather={ringWeatherFailures}, rock={rockFailures}.");
     }
 
     private bool TryGetWendoverGrid(MapId mapId, out EntityUid gridUid, out MapGridComponent grid)
@@ -172,11 +192,21 @@ public sealed partial class MaterialExtractorSpawnerSystem : EntitySystem
                 // Only the extractor itself must be on sand/grass. The defensive ring may
                 // cross ordinary walkable terrain; requiring 197 more exact sand tiles made
                 // legitimate Wendover sites effectively impossible to find.
-                if (!IsWalkableTile(gridUid, grid, tile)
-                    || HasHardStructuralBlocker(gridUid, grid, tile, physicsQuery)
-                    || HasWeatherBlocker(gridUid, grid, tile, weatherBlockQuery))
+                if (!IsWalkableTile(gridUid, grid, tile))
                 {
-                    failure = SiteFailure.DefensiveRing;
+                    failure = SiteFailure.RingNoFloor;
+                    return false;
+                }
+
+                if (HasHardStructuralBlocker(gridUid, grid, tile, physicsQuery))
+                {
+                    failure = SiteFailure.RingStructure;
+                    return false;
+                }
+
+                if (HasWeatherBlocker(gridUid, grid, tile, weatherBlockQuery))
+                {
+                    failure = SiteFailure.RingWeather;
                     return false;
                 }
             }
@@ -213,7 +243,7 @@ public sealed partial class MaterialExtractorSpawnerSystem : EntitySystem
         if (!_map.TryGetTileRef(gridUid, grid, tile, out var tileRef) || tileRef.Tile.IsEmpty)
             return false;
 
-        return _tileDefs[tileRef.Tile.TypeId].ID == AllowedTile;
+        return AllowedTiles.Contains(_tileDefs[tileRef.Tile.TypeId].ID);
     }
 
     private bool IsWalkableTile(EntityUid gridUid, MapGridComponent grid, Vector2i tile)
