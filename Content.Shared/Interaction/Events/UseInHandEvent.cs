@@ -20,7 +20,6 @@ public sealed class UseInHandEvent : HandledEntityEventArgs
     ///     Mostly used by the <see cref="ClothingSystem"/> quick-equip to not apply the delay to entities that have the <see cref="UseDelayComponent"/>.
     /// </summary>
     public bool ApplyDelay = true;
-
     public UseInHandEvent(EntityUid user)
     {
         User = user;

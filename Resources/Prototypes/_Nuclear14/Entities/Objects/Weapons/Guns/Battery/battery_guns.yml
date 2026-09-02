@@ -1156,6 +1156,7 @@
       map: ["enum.GunVisualLayers.MagUnshaded"]
       shader: unshaded
   - type: ItemToggle
+    onUse: false
     soundActivate:
       path: /Audio/Weapons/spinon.ogg
       params:
@@ -1191,7 +1192,7 @@
         whitelist:
           tags:
             - N14FusionCore # #Misfits Change - Gatling now only accepts fusion cores, not standard MFCs
-  - type: ItemToggleGun
+  - type: MinigunToggle
     ActivatedFireRate: 8
     InactiveWeaponFireRate: 1
   - type: Gun
