@@ -10959,3 +10959,10 @@ Entries:
   id: 6385
   time: '2026-09-02T19:29:08.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1840
+- author: JohnKieser
+  changes:
+    - type: Tweak
+      message: Minigun interactions have been altered to have less janky interact
+  id: 6386
+  time: '2026-09-02T20:26:59.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1841
