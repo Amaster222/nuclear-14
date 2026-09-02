@@ -35,7 +35,7 @@ public abstract partial class SharedGunSystem
     /// <param name="sender">client the event originated from. Null if server.
     ///                      Important for filtering clients who sent the event
     ///                      so they dont get it twice</param>
-    public virtual void EjectSpentCart(MapCoordinates baseCoord, Angle baseAngle, string? cartProto, ICommonSession? sender) { }
+    public virtual void EjectSpentCart(SpentCartEvent ev) { }
 
     [Serializable, NetSerializable]
     public sealed class SpentCartEvent(MapCoordinates baseCoord, Angle baseAngle, string? cartProto, NetUserId? sender) : EntityEventArgs
