@@ -10952,3 +10952,10 @@ Entries:
   id: 6384
   time: '2026-09-02T17:22:04.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1839
+- author: Fortaime
+  changes:
+    - type: Add
+      message: Plushie
+  id: 6385
+  time: '2026-09-02T19:29:08.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1840
