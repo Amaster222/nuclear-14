@@ -1,5 +1,4 @@
 using System.Linq;
-using Content.Server.Chat.Systems;
 using Content.Server.Explosion.EntitySystems;
 using Content.Server.GameTicking;
 using Content.Shared._Misfits.Enclave;
@@ -21,9 +20,8 @@ using Robust.Shared.Timing;
 namespace Content.Server._Misfits.Enclave;
 
 /// <summary>
-/// Implants Enclave personnel, handles the local-speech failsafe, and services
-/// the Enclave remote detonator UI. The implant grants no action; it can only be
-/// set off by the detonator or by the failsafe word.
+/// Implants Enclave personnel and services the Enclave remote detonator UI.
+/// The implant grants no action and can only be set off by the detonator.
 /// </summary>
 public sealed class EnclaveMicroBombSystem : EntitySystem
 {
@@ -50,7 +48,6 @@ public sealed class EnclaveMicroBombSystem : EntitySystem
         base.Initialize();
 
         SubscribeLocalEvent<PlayerSpawnCompleteEvent>(OnPlayerSpawnComplete);
-        SubscribeLocalEvent<ImplantedComponent, EntitySpokeEvent>(OnEntitySpoke);
         SubscribeLocalEvent<MobStateChangedEvent>(OnMobStateChanged);
 
         Subs.BuiEvents<EnclaveDetonatorComponent>(EnclaveDetonatorUiKey.Key, subs =>
@@ -74,23 +71,6 @@ public sealed class EnclaveMicroBombSystem : EntitySystem
             return;
 
         Implant(args.Mob);
-    }
-
-    private void OnEntitySpoke(EntityUid uid, ImplantedComponent component, EntitySpokeEvent args)
-    {
-        // EntitySpokeEvent is also raised for whispers and radio speech. The
-        // failsafe is deliberately limited to ordinary local IC speech.
-        if (args.IsWhisper || args.Channel != null)
-            return;
-
-        if (!TryGetImplant(uid, out var implant, out var enclaveBomb) ||
-            !ContainsWord(args.Message, enclaveBomb.Keyword))
-        {
-            return;
-        }
-
-        BeginCountdown(implant, enclaveBomb, uid);
-        UpdateAllDetonators();
     }
 
     private void OnMobStateChanged(MobStateChangedEvent args)
@@ -279,24 +259,4 @@ public sealed class EnclaveMicroBombSystem : EntitySystem
         }
     }
 
-    private static bool ContainsWord(string message, string keyword)
-    {
-        if (string.IsNullOrWhiteSpace(keyword))
-            return false;
-
-        var index = 0;
-        while ((index = message.IndexOf(keyword, index, StringComparison.OrdinalIgnoreCase)) >= 0)
-        {
-            var beforeIsWord = index > 0 && char.IsLetterOrDigit(message[index - 1]);
-            var afterIndex = index + keyword.Length;
-            var afterIsWord = afterIndex < message.Length && char.IsLetterOrDigit(message[afterIndex]);
-
-            if (!beforeIsWord && !afterIsWord)
-                return true;
-
-            index = afterIndex;
-        }
-
-        return false;
-    }
 }
