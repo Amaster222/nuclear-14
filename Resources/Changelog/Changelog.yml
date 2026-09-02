@@ -10912,3 +10912,18 @@ Entries:
   id: 6380
   time: '2026-09-02T05:58:01.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1836
+- author: alekszejg
+  changes:
+    - type: Fix
+      message: Jugs not being able to splash their contents.
+    - type: Fix
+      message: Ice buckets not being able to splash their contents.
+    - type: Fix
+      message: Ceramic flasks not being able to splash their contents.
+    - type: Fix
+      message: Vault canteens not being able to spill or splash their contents.
+    - type: Fix
+      message: Handheld fuel tanks not being able to spill or splash their contents.
+  id: 6381
+  time: '2026-09-02T06:14:10.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1830
