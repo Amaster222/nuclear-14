@@ -96,12 +96,13 @@
   name: "Rifles"
   entries:
   - proto: N14WeaponLMGAutoRifle
-    price: 600
+    price: 1500
+    count: 4
   - proto: N14WeaponSniper50NCRRifle
     price: 2500
     count: 2
   - proto: N14WeaponSniperEnfield
-    price: 400
+    price: 500
   - proto: N14WeaponSniper45-70BrushGun
     price: 650
   - proto: N14WeaponRifle10mmM1Carbine
@@ -109,26 +110,26 @@
   - proto: N14WeaponRifleM1Garand
     price: 320
   - proto: N14WeaponRifle762Fal
-    price: 700
+    price: 950
   - proto: N14WeaponRifle556Carbine
     price: 800
     count: 8
   - proto: N14WeaponRifle762Marksman
-    price: 850
+    price: 1200
     count: 5
   - proto: N14WeaponRifle556Service
     price: 300
   - proto: N14WeaponRifle556R91
     price: 420
   - proto: N14WeaponRifle556Scout
-    price: 380
+    price: 900
 
 - type: storeCategoryStructured
   id: NCRBuy2_Smgs
   name: "SMGs"
   entries:
   - proto: N14WeaponSMG45
-    price: 300
+    price: 700
   - proto: N14WeaponSMG12mm
     price: 450
   - proto: N14WeaponSMG10mm
@@ -136,7 +137,7 @@
   - proto: N14WeaponSMG10mmPipe
     price: 340
   - proto: N14WeaponSMGPPSh41
-    price: 550
+    price: 1100
 
 - type: storeCategoryStructured
   id: NCRBuy2_Shotguns
@@ -207,9 +208,9 @@
   - proto: N14ClothingOuterNCRVestpaddedWebDesert
     price: 700
   - proto: N14ClothingOuterNCRCombatArmor
-    price: 1280
+    price: 1100
   - proto: N14ClothingOuterNCRCombatArmorMK2
-    price: 1650
+    price: 1500
     count: 3
 
 - type: storeCategoryStructured
@@ -242,25 +243,25 @@
   name: "Ammo"
   entries:
   - proto: MagazineBox20gauge
-    price: 400
+    price: 300
   - proto: N14AmmoBox12gauge
-    price: 480
-  - proto: N14AmmoBox50
-    price: 750
-  - proto: N14AmmoBox556
-    price: 520
-  - proto: N14AmmoBox762
-    price: 560
-  - proto: N14AmmoBox9mm
-    price: 400
-  - proto: N14AmmoBox10mm
-    price: 420
-  - proto: N14AmmoBox45-70
-    price: 600
-  - proto: N14AmmoBox308
-    price: 520
-  - proto: N14AmmoBox44Magnum
     price: 380
+  - proto: N14AmmoBox50
+    price: 600
+  - proto: N14AmmoBox556
+    price: 420
+  - proto: N14AmmoBox762
+    price: 460
+  - proto: N14AmmoBox9mm
+    price: 300
+  - proto: N14AmmoBox10mm
+    price: 375
+  - proto: N14AmmoBox45-70
+    price: 500
+  - proto: N14AmmoBox308
+    price: 420
+  - proto: N14AmmoBox44Magnum
+    price: 290
   - proto: N14PowerCellSmall
     price: 500
   - proto: N14ElectronChargePack
@@ -273,13 +274,13 @@
   name: "Medicine"
   entries:
   - proto: ClothingBeltMedical
-    price: 450
+    price: 200
   - proto: N14Stimpak
     price: 300
   - proto: N14StimpakDirty
     price: 120
   - proto: N14Psycho # morale troopers get it, NCR LOVES giving its troops highly addictive chemicals!
-    price: 500
+    price: 750
   - proto: N14Ointment10
     amount: 10
     price: 300

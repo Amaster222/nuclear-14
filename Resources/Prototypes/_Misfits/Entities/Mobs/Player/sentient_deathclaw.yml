@@ -1,12 +1,84 @@
+# Ordinary sentient Deathclaw. Player interaction and natural Deathclaw traits only;
+# every loa/soul/StructureBreaker/Bwonsamdi feature belongs on N14MobDeathclawPlayer below.
+- type: entity
+  name: sentient deathclaw
+  id: N14MobDeathclawSentient
+  parent: N14MobDeathclaw
+  description: An unusually intelligent deathclaw, watchful and capable of speech.
+  components:
+  - type: HumanoidAppearance
+    species: Deathclaw
+  - type: LanguageKnowledge
+    speaks:
+    - English
+    - Tribal
+    understands:
+    - English
+    - Tribal
+    - N14Dog
+  - type: Accentless
+    removes:
+    - type: ReplacementAccent
+      accent: genericAggressive
+  - type: Speech
+    speechSounds: MisfitsDeathclaw
+    speechVerb: LargeMob
+    allowedEmotes:
+    - MisfitsDeathclawGrowl
+    - MisfitsDeathclawRoar
+  - type: Vocal
+    sounds:
+      Male: MisfitsDeathclawEmotes
+      Female: MisfitsDeathclawEmotes
+      Unsexed: MisfitsDeathclawEmotes
+    screamId: MisfitsDeathclawRoar
+  - type: Emoting
+  - type: Tag
+    tags:
+    - Deathclaw
+    - FootstepSound
+  - type: FootstepModifier
+    footstepSoundCollection:
+      collection: FootstepThud
+      params:
+        volume: 2
+        maxDistance: 15
+  - type: NpcFactionMember
+    factions:
+    - PlayerSuperMutant
+    - Wastelander
+  - type: LayingDown
+  - type: BorgHands
+    handCount: 2
+  - type: ComplexInteraction
+  - type: Puller
+    needsHands: false
+  - type: Sharp
+  - type: SentientDeathclaw
+  - type: ActionGrant
+    actions:
+    - MisfitsActionMeleeCharge
+  - type: MeleeChargeAudio
+    activationSound:
+      path: /Audio/_Misfits/Mobs/Deathclaw/aggro1.ogg
+      params:
+        volume: 1
+        maxDistance: 18
+    impactSound:
+      path: /Audio/Effects/Footsteps/largethud.ogg
+      params:
+        volume: 4
+        maxDistance: 20
+
 # #Cythisiax Added - Sentient deathclaw (Bwonsamdi) player body.
 # Whitelist boss creature under FEV Mutants. Spawned via the SentientDeathclaw job's jobEntity.
 # Uses a dedicated Bwonsamdi RSI; damage-state frames remain compatible with the base deathclaw states.
 
 - type: entity
-  name: sentient deathclaw
+  name: Bwonsamdi
   id: N14MobDeathclawPlayer
   parent: N14MobDeathclaw
-  description: A deathclaw of unnatural size and strength, its hide marked with strange, restless designs.
+  description: A deathclaw of unnatural size and strength, bound to the loa of death and marked with strange, restless designs.
   components:
   - type: Sprite
     drawdepth: Mobs
@@ -15,7 +87,7 @@
       state: deathclaw
       sprite: _Misfits/Mobs/Animals/deathclawbwonsamdi.rsi
   - type: HumanoidAppearance # #Cythisiax - mirrors player robots: required so the lobby doll/preview can resolve it (no humanoid layers via empty species sprites)
-    species: Deathclaw
+    species: BwonsamdiDeathclaw
   - type: Damageable
     damageContainer: Biological
     damageModifierSet: N14DeathclawHide # #Cythisiax - 50% damage taken across the board
@@ -78,6 +150,19 @@
     removes:
     - type: ReplacementAccent
       accent: genericAggressive
+  - type: Speech # #Misfits Add - replace the inherited squeak with Deathclaw vocals and growling speech verbs
+    speechSounds: MisfitsDeathclaw
+    speechVerb: LargeMob
+    allowedEmotes:
+    - MisfitsDeathclawGrowl
+    - MisfitsDeathclawRoar
+  - type: Vocal
+    sounds:
+      Male: MisfitsDeathclawEmotes
+      Female: MisfitsDeathclawEmotes
+      Unsexed: MisfitsDeathclawEmotes
+    screamId: MisfitsDeathclawRoar
+  - type: Emoting
   - type: ActiveRadio # #Cythisiax - intrinsic radio: listens to ALL radio channels (overrides the channel list)
     receiveAllChannels: true
   - type: IntrinsicRadioReceiver # #Cythisiax - translates received radio transmissions into chat
@@ -117,6 +202,10 @@
     - ZAXBinary
     - Justice
     - Prison
+  - type: Tag # #Cythisiax - keep Deathclaw tag; add FootstepSound (required gate for ANY footstep audio in SharedMoverController.TryGetSound)
+    tags:
+    - Deathclaw
+    - FootstepSound
   - type: FootstepModifier # #Cythisiax - heavy stomp footsteps (largethud), louder + wider radius than normal
     footstepSoundCollection:
       collection: FootstepThud
@@ -159,6 +248,20 @@
   - type: ActionGrant # #Cythisiax - grants the Charge! dash action
     actions:
     - MisfitsActionMeleeCharge
+    - ActionBwonsamdiDreadRoar
+    - ActionBwonsamdiRitualClaim
+    - ActionBwonsamdiMercy
+  - type: MeleeChargeAudio # #Misfits Add - recognizable Deathclaw warning vocal followed by a heavy landing
+    activationSound:
+      path: /Audio/_Misfits/Mobs/Deathclaw/aggro1.ogg
+      params:
+        volume: 3
+        maxDistance: 25
+    impactSound:
+      path: /Audio/Effects/Footsteps/largethud.ogg
+      params:
+        volume: 8
+        maxDistance: 30
   - type: Mutatable # #Cythisiax - innate mutations granted at spawn (chance 1 = always)
     defaultMutations:
       MutationFireBreath: 1
@@ -179,7 +282,18 @@
     castShadows: false
   - type: BorgHands # #Cythisiax - real hand slots so the deathclaw can hold and use items (guns, tools, etc.)
     handCount: 2
+  - type: Inventory # #Misfits Add - one harness-only slot; does not enable ordinary humanoid clothing
+    speciesId: Deathclaw
+    templateId: bwonsamdi
+  - type: InventorySlots
+  - type: Strippable
+  - type: UserInterface
+    interfaces:
+      enum.StrippingUiKey.Key:
+        type: StrippableBoundUserInterface
   - type: ComplexInteraction # #Cythisiax - full object manipulation (click doors, containers, etc.)
   - type: Puller # #Cythisiax - can drag anything regardless of weight (any unanchored Pullable); no hands needed
     needsHands: false
   - type: StructureBreaker # #Cythisiax - can smash through "indestructible" structures (no Damageable) on melee hit
+  - type: SentientDeathclaw # common speech/emote/butchering marker; grants no loa abilities
+  - type: Bwonsamdi # #Misfits Add - map-wide death sense and once-per-round atmospheric announcements

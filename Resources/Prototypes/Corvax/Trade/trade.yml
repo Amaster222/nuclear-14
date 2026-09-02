@@ -694,6 +694,9 @@
   - proto: N14Gunpowder10
     amount: 10
     price: 350
+  - proto: N14IngotLead
+    amount: 10
+    price: 200
 
 - type: storeCategoryStructured
   id: CaravanBuy2_Alcohol

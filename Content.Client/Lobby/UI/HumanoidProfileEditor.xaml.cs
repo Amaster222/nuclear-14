@@ -1916,21 +1916,24 @@ namespace Content.Client.Lobby.UI
             SexContainer.Visible = !isRobotSpecies;
         }
 
-        // # #Cythisiax Add - Deathclaw species hides unsupported appearance fields (mirrors robots)
-        // but KEEPS the height/width sliders (which robots hide) so the deathclaw size preview works.
+        // # #Cythisiax Changed - Deathclaw species hides unsupported appearance fields (mirrors robots).
+        // Ordinary Deathclaws are locked to standard sprite size (size sliders hidden); only Bwonsamdi
+        // (BwonsamdiDeathclaw) keeps the height/width sliders.
         private void UpdateDeathclawAppearanceFieldVisibility()
         {
             if (Profile == null)
                 return;
 
-            var isDeathclaw = Profile.Species == "Deathclaw";
+            var isDeathclaw = Profile.Species == "Deathclaw" || Profile.Species == "BwonsamdiDeathclaw";
+            var isFixedSize = Profile.Species == "Deathclaw"; // # #Cythisiax - ordinary sentient deathclaw is always standard size
 
             EyesContainer.Visible = !isDeathclaw;
             WeightContainer.Visible = !isDeathclaw;
             ClothingContainer.Visible = !isDeathclaw;
             LoadoutsContainer.Visible = !isDeathclaw;
             SexContainer.Visible = !isDeathclaw;
-            // Height/Width intentionally left visible so the deathclaw size sliders work.
+            HeightContainer.Visible = !isFixedSize; // # #Cythisiax - only Bwonsamdi can adjust height
+            WidthContainer.Visible = !isFixedSize;  // # #Cythisiax - only Bwonsamdi can adjust width
         }
 
         // #Misfits Add: helper for species checks used by robot-specific character editor behavior.

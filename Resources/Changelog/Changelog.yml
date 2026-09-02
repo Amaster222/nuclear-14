@@ -10851,3 +10851,42 @@ Entries:
   id: 6375
   time: '2026-08-31T00:25:46.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1829
+- author: Tytos
+  changes:
+    - type: Tweak
+      message: tweaked the economy
+  id: 6376
+  time: '2026-08-31T21:42:28.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1831
+- author: JohnKieser
+  changes:
+    - type: Add
+      message: >-
+        (forgot to mention this earlier) Ammo Do Afters now transfer ammo faster
+        and insert ammo 5 at a time. Also can do it while moving. 
+    - type: Add
+      message: >-
+        A higher pitch sound also plays on the last ammo Do After. This signals
+        when no more ammo on filler or that fillee is full/inflated. This was
+        cause one guy thought the last do was a bug.  It was the guy who
+        reported the 2nd dupe i think lol
+    - type: Fix
+      message: 'Fixed ammo duping I hope. '
+  id: 6377
+  time: '2026-08-31T21:42:40.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1832
+- author: cythisiax
+  changes:
+    - type: Add
+      message: Sentient Deathclaw species
+    - type: Add
+      message: dogs now have the ability to charge (quick action)
+    - type: Tweak
+      message: >-
+        pathfinding adjustments to get around circling and canceling
+        doafter/climbing for NPCs blocked by halfwalls. Watched someone solo 4
+        deathclaws this way, as they'd just trigger their doafter, not attack
+        the wall as intended, then just spin in circles. Literally animal abuse.
+  id: 6378
+  time: '2026-09-01T00:21:42.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1833
