@@ -982,6 +982,7 @@
     - N14BPVaultWeaponLaserRifleWattz2000
     - N14BPVaultWeaponLaserRifleAuto
     - N14BPVaultWeaponLaserRCW
+    - N14BPVaultWeaponPlasmaCaster
 
 # --- Vault Armor ---
 - type: entity
@@ -1038,6 +1039,7 @@
     - N14BPVaultArmorHelmetCombatMK2
     - N14BPVaultArmorHelmetMarine
     - M14BPVaultPaintCombatHelmet
+    - N14BPVaultArmorScoutSuit
 
 # --- Vault Ammo ---
 - type: entity
