@@ -249,6 +249,7 @@
     actions:
     - MisfitsActionMeleeCharge
     - ActionBwonsamdiDreadRoar
+    - ActionBwonsamdiSoulCompass
     - ActionBwonsamdiRitualClaim
     - ActionBwonsamdiMercy
   - type: MeleeChargeAudio # #Misfits Add - recognizable Deathclaw warning vocal followed by a heavy landing
@@ -291,9 +292,16 @@
     interfaces:
       enum.StrippingUiKey.Key:
         type: StrippableBoundUserInterface
+      enum.WastelandMapUiKey.Key:
+        type: WastelandMapBoundUserInterface
   - type: ComplexInteraction # #Cythisiax - full object manipulation (click doors, containers, etc.)
   - type: Puller # #Cythisiax - can drag anything regardless of weight (any unanchored Pullable); no hands needed
     needsHands: false
   - type: StructureBreaker # #Cythisiax - can smash through "indestructible" structures (no Damageable) on melee hit
   - type: SentientDeathclaw # common speech/emote/butchering marker; grants no loa abilities
   - type: Bwonsamdi # #Misfits Add - map-wide death sense and once-per-round atmospheric announcements
+  - type: WastelandMap # Bwonsamdi-only Soul Compass feed, opened by ActionBwonsamdiSoulCompass
+    mapTexturePath: _Misfits/Maps/wendover_map.png
+    mapTitle: Bwonsamdi's Soul Compass
+    worldBounds: "-517,-308,484,311"
+    tacticalFeed: Bwonsamdi
