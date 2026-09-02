@@ -9,6 +9,7 @@
   - type: AccessReader
     access: [[ "Enclave" ]]
   - type: CMAutomatedVendor
+    departmentName: Enclave
     blueprintCategories: [ N14BlueprintEnclaveWeapons ]
     blueprintTierOverrides:
       N14WeaponPlasmaPistol: 1
@@ -24,6 +25,11 @@
       N14WeaponLaserRifleWattz3000: 4
       N14WeaponLaserRifleAuto: 4
       N14WeaponLaserRifleAER12: 4
+    authorityTierNames:
+      1: Tier 1 - Personnel allocation
+      2: Tier 2 - NCO allocation
+      3: Tier 3 - Junior Officer allocation
+      4: Tier 4 - Senior Officer allocation
     authorityTierAccess:
       1: [ EnclaveRoleAll ]
       2: [ EnclaveRoleNCO ]
@@ -39,12 +45,18 @@
   - type: AccessReader
     access: [[ "Enclave" ]]
   - type: CMAutomatedVendor
+    departmentName: Enclave
     blueprintCategories: [ N14BlueprintEnclaveArmor ]
     blueprintTierOverrides:
       N14ClothingOuterPowerArmorAdvanced1: 3
       N14ClothingOuterPowerArmorAdvanced2Tesla: 4
       N14ClothingOuterEnclaveZuluAdvancedCombatArmor: 3
       N14ClothingHeadHatEnclaveZuluCombatHelmet: 3
+    authorityTierNames:
+      1: Tier 1 - Personnel allocation
+      2: Tier 2 - NCO allocation
+      3: Tier 3 - Junior Officer allocation
+      4: Tier 4 - Senior Officer allocation
     authorityTierAccess:
       1: [ EnclaveRoleAll ]
       2: [ EnclaveRoleNCO ]

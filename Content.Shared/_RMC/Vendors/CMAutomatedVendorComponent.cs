@@ -42,6 +42,18 @@ public sealed partial class CMAutomatedVendorComponent : Component
     [DataField]
     public Dictionary<int, List<ProtoId<AccessLevelPrototype>>> AuthorityTierAccess = new();
 
+    /// <summary>
+    /// Player-facing allocation labels for each authority level, e.g. "Tier 1 - Trooper allocation".
+    /// </summary>
+    [DataField]
+    public Dictionary<int, string> AuthorityTierNames = new();
+
+    /// <summary>
+    /// Player-facing faction/department name used by the shared equipment area.
+    /// </summary>
+    [DataField]
+    public string DepartmentName = "department";
+
     /// Builds stock from the same blueprint lathe recipes used by faction crafting.
     /// Explicit Sections remain available for non-blueprint stock and RMC bundles.
     [DataField]

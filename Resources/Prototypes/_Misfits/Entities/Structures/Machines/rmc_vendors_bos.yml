@@ -9,7 +9,13 @@
   - type: AccessReader
     access: [[ "BOS" ]]
   - type: CMAutomatedVendor
+    departmentName: Brotherhood of Steel
     blueprintCategories: [ N14BlueprintBoSWeaponsT1, N14BlueprintBoSWeaponsT2, N14BlueprintBoSWeaponsT3, N14BlueprintBoSWeaponsT4 ]
+    authorityTierNames:
+      1: Tier 1 - Initiate allocation
+      2: Tier 2 - Knight allocation
+      3: Tier 3 - Paladin allocation
+      4: Tier 4 - Elder allocation
     authorityTierAccess:
       1: [ BOSInitiate ]
       2: [ BOSKnight ]
@@ -25,7 +31,13 @@
   - type: AccessReader
     access: [[ "BOS" ]]
   - type: CMAutomatedVendor
+    departmentName: Brotherhood of Steel
     blueprintCategories: [ N14BlueprintBoSArmorT1, N14BlueprintBoSArmorT2, N14BlueprintBoSArmorT3, N14BlueprintBoSArmorT4 ]
+    authorityTierNames:
+      1: Tier 1 - Initiate allocation
+      2: Tier 2 - Knight allocation
+      3: Tier 3 - Paladin allocation
+      4: Tier 4 - Elder allocation
     authorityTierAccess:
       1: [ BOSInitiate ]
       2: [ BOSKnight ]

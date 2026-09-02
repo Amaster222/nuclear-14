@@ -9,7 +9,13 @@
   - type: AccessReader
     access: [[ "VaultDweller" ]]
   - type: CMAutomatedVendor
+    departmentName: Vault
     blueprintCategories: [ N14BlueprintVaultWeaponsT1, N14BlueprintVaultWeaponsT2, N14BlueprintVaultWeaponsT3, N14BlueprintVaultWeaponsT4 ]
+    authorityTierNames:
+      1: Tier 1 - Dweller allocation
+      2: Tier 2 - Security allocation
+      3: Tier 3 - Gatekeeper allocation
+      4: Tier 4 - Overseer allocation
     authorityTierAccess:
       1: [ VaultDweller ]
       2: [ VaultSecurity ]
@@ -25,7 +31,13 @@
   - type: AccessReader
     access: [[ "VaultDweller" ]]
   - type: CMAutomatedVendor
+    departmentName: Vault
     blueprintCategories: [ N14BlueprintVaultArmorT1, N14BlueprintVaultArmorT2, N14BlueprintVaultArmorT3, N14BlueprintVaultArmorT4 ]
+    authorityTierNames:
+      1: Tier 1 - Dweller allocation
+      2: Tier 2 - Security allocation
+      3: Tier 3 - Gatekeeper allocation
+      4: Tier 4 - Overseer allocation
     authorityTierAccess:
       1: [ VaultDweller ]
       2: [ VaultSecurity ]

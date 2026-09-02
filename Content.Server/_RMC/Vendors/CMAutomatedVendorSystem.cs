@@ -94,7 +94,10 @@ public sealed partial class CMAutomatedVendorSystem : SharedCMAutomatedVendorSys
 
             if (!sections.TryGetValue(tier, out var section))
             {
-                section = new CMVendorSection { Name = $"Authority Tier {tier}" };
+                section = new CMVendorSection
+                {
+                    Name = vendor.Comp.AuthorityTierNames.GetValueOrDefault(tier, $"Authority Tier {tier}")
+                };
                 sections.Add(tier, section);
             }
 
@@ -429,8 +432,14 @@ public sealed partial class CMAutomatedVendorSystem : SharedCMAutomatedVendorSys
                     section.Name,
                     section.Choices?.Amount,
                     purchases,
-                    section.Entries.Select(entry => new CMVendorEntryState(
-                    entry.Name ?? entry.Id.ToString(), entry.Id, entry.Amount, entry.Points, entry.Tier)).ToList()));
+                section.Entries.Select(entry => new CMVendorEntryState(
+                entry.Name ?? entry.Id.ToString(),
+                entry.Id,
+                entry.Amount,
+                entry.Points,
+                entry.Tier,
+                HasAuthorityTier(vendor, user, entry.Tier),
+                vendor.Comp.AuthorityTierNames.GetValueOrDefault(entry.Tier, $"authority tier {entry.Tier}"))).ToList()));
             }
         }
 
@@ -454,7 +463,8 @@ public sealed partial class CMAutomatedVendorSystem : SharedCMAutomatedVendorSys
                 userComp.Points,
                 vendor.Comp.ReplenishmentPoints,
                 vendor.Comp.Replenishment.Count > 0,
-                vendor.Comp.AllowEquipmentStorage));
+                vendor.Comp.AllowEquipmentStorage,
+                vendor.Comp.DepartmentName));
     }
 
     private bool HasAuthorityTier(Entity<CMAutomatedVendorComponent> vendor, EntityUid user, int tier)
