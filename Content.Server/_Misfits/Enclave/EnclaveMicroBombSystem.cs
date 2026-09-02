@@ -1,7 +1,9 @@
 using System.Linq;
 using Content.Server.Explosion.EntitySystems;
 using Content.Server.GameTicking;
+using Content.Server.Emp;
 using Content.Shared._Misfits.Enclave;
+using Content.Shared.Emp;
 using Content.Shared.IdentityManagement;
 using Content.Shared.Implants;
 using Content.Shared.Implants.Components;
@@ -49,6 +51,7 @@ public sealed class EnclaveMicroBombSystem : EntitySystem
 
         SubscribeLocalEvent<PlayerSpawnCompleteEvent>(OnPlayerSpawnComplete);
         SubscribeLocalEvent<MobStateChangedEvent>(OnMobStateChanged);
+        SubscribeLocalEvent<EnclaveMicroBombComponent, EmpPulseEvent>(OnEmpPulse);
 
         Subs.BuiEvents<EnclaveDetonatorComponent>(EnclaveDetonatorUiKey.Key, subs =>
         {
@@ -79,6 +82,16 @@ public sealed class EnclaveMicroBombSystem : EntitySystem
             UpdateAllDetonators();
     }
 
+    private void OnEmpPulse(Entity<EnclaveMicroBombComponent> ent, ref EmpPulseEvent args)
+    {
+        // EmpDisabledComponent is added by EmpSystem after this event and
+        // expires automatically using the EMP pulse duration. Cancelling an
+        // active countdown lets the EMP interrupt a pending detonation too.
+        args.Affected = true;
+        args.Disabled = true;
+        ent.Comp.CountdownActive = false;
+    }
+
     private void OnDetonatorOpened(Entity<EnclaveDetonatorComponent> ent, ref BoundUIOpenedEvent args)
     {
         UpdateDetonator(ent.Owner);
@@ -93,6 +106,12 @@ public sealed class EnclaveMicroBombSystem : EntitySystem
     {
         if (!TryGetEntity(args.Target, out var target) ||
             !TryGetImplant(target.Value, out var implant, out _))
+        {
+            UpdateDetonator(ent.Owner);
+            return;
+        }
+
+        if (HasComp<EmpDisabledComponent>(implant))
         {
             UpdateDetonator(ent.Owner);
             return;
