@@ -26,7 +26,7 @@ public sealed partial class MaterialExtractorSpawnerSystem : EntitySystem
     private const int ClearRadius = 8;
     private const int RockMinDistance = 9;
     private const int RockMaxDistance = 16;
-    private const int SpawnAttempts = 2000;
+    private const int SpawnAttempts = 10000;
 
     // Current rendered Wendover surface bounds. These are a sampling window only;
     // every candidate is subsequently validated against the actual loaded grid.
@@ -128,7 +128,10 @@ public sealed partial class MaterialExtractorSpawnerSystem : EntitySystem
                     continue;
 
                 var tile = center + new Vector2i(x, y);
-                if (!IsAllowedTile(gridUid, grid, tile)
+                // Only the extractor itself must be on sand/grass. The defensive ring may
+                // cross ordinary walkable terrain; requiring 197 more exact sand tiles made
+                // legitimate Wendover sites effectively impossible to find.
+                if (!IsWalkableTile(gridUid, grid, tile)
                     || HasHardAnchoredEntity(gridUid, grid, tile, physicsQuery)
                     || HasWeatherBlocker(gridUid, grid, tile, weatherBlockQuery))
                     return false;
@@ -160,6 +163,19 @@ public sealed partial class MaterialExtractorSpawnerSystem : EntitySystem
             return false;
 
         return _tileDefs[tileRef.Tile.TypeId].ID == AllowedTile;
+    }
+
+    private bool IsWalkableTile(EntityUid gridUid, MapGridComponent grid, Vector2i tile)
+    {
+        if (!_map.TryGetTileRef(gridUid, grid, tile, out var tileRef) || tileRef.Tile.IsEmpty)
+            return false;
+
+        var id = _tileDefs[tileRef.Tile.TypeId].ID;
+        return id is not "FloorWater"
+            and not "FloorWaterEntity"
+            and not "FloorSwamp"
+            and not "FloorLava"
+            and not "FloorLavaEntity";
     }
 
     private bool HasHardAnchoredEntity(
