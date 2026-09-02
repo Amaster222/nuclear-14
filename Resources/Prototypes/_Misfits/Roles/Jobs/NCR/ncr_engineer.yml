@@ -6,6 +6,7 @@
   overrideConsoleVisibility: false
   canBeAntag: false
   weight: 41
+  showBorder: true # #Misfits Add - separate support specialists from heavy troopers
   name: job-name-ncr-engineer
   overwatchCategory: OverwatchNcrSupport
   description: job-description-ncr-engineer

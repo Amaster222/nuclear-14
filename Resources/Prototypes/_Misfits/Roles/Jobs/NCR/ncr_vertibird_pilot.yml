@@ -13,6 +13,7 @@
   overwatchCategory: OverwatchNcrOfficers
   description: job-description-ncr-vertibird-pilot
   playTimeTracker: NCRVertibirdPilot
+  showBorder: true # #Misfits Add - separate aviation from the command ladder
   requirements:
     - !type:CharacterSpeciesRequirement
       species:
