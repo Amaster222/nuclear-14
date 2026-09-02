@@ -2,6 +2,7 @@ using Content.Server.GameTicking;
 using Content.Server.Maps;
 using Content.Shared.GameTicking;
 using Content.Shared.Maps;
+using Content.Shared.Tag;
 using Content.Shared.Weather;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Map;
@@ -37,6 +38,7 @@ public sealed partial class MaterialExtractorSpawnerSystem : EntitySystem
     [Dependency] private IRobustRandom _random = default!;
     [Dependency] private SharedMapSystem _map = default!;
     [Dependency] private ITileDefinitionManager _tileDefs = default!;
+    [Dependency] private TagSystem _tags = default!;
 
     private readonly HashSet<MapId> _wendoverMaps = [];
     private ISawmill _log = default!;
@@ -171,7 +173,7 @@ public sealed partial class MaterialExtractorSpawnerSystem : EntitySystem
                 // cross ordinary walkable terrain; requiring 197 more exact sand tiles made
                 // legitimate Wendover sites effectively impossible to find.
                 if (!IsWalkableTile(gridUid, grid, tile)
-                    || HasHardAnchoredEntity(gridUid, grid, tile, physicsQuery)
+                    || HasHardStructuralBlocker(gridUid, grid, tile, physicsQuery)
                     || HasWeatherBlocker(gridUid, grid, tile, weatherBlockQuery))
                 {
                     failure = SiteFailure.DefensiveRing;
@@ -227,7 +229,7 @@ public sealed partial class MaterialExtractorSpawnerSystem : EntitySystem
             and not "FloorLavaEntity";
     }
 
-    private bool HasHardAnchoredEntity(
+    private bool HasHardStructuralBlocker(
         EntityUid gridUid,
         MapGridComponent grid,
         Vector2i tile,
@@ -236,7 +238,13 @@ public sealed partial class MaterialExtractorSpawnerSystem : EntitySystem
         var anchored = _map.GetAnchoredEntitiesEnumerator(gridUid, grid, tile);
         while (anchored.MoveNext(out var entity))
         {
-            if (physicsQuery.TryGetComponent(entity, out var physics) && physics.CanCollide && physics.Hard)
+            if (entity is not { } anchoredUid)
+                continue;
+
+            if (physicsQuery.TryGetComponent(anchoredUid, out var physics)
+                && physics.CanCollide
+                && physics.Hard
+                && (_tags.HasTag(anchoredUid, "Wall") || _tags.HasTag(anchoredUid, "Structure")))
                 return true;
         }
 
