@@ -4,13 +4,17 @@ using Content.Shared.Movement.Systems;
 using Content.Shared.Weapons.Ranged.Events;
 using Content.Shared.Weapons.Ranged.Components;
 using Content.Shared.Weapons.Ranged.Systems;
-using Robust.Shared.GameObjects;
-using Robust.Shared.IoC;
-using Robust.Shared.Network;
 using Content.Shared.Interaction.Events;
-using Content.Shared.Mobs;
 
 namespace Content.Shared.Item.ItemToggle;
+// TODO: rework
+/// Credit to BurgerMoth for original code
+/// it has been heavily revised to get around issue that the toggle blocked gun racking
+/// Suprisingly more complicated than I originally thought, but it did show me how messy interaction code is
+/// gave me more ideas on how I should refactor guns in future.
+/// Also please dont add more until I can refactor things to work neatly and be way less hardcoded
+/// I already overthink alot when needing to make new additions that needs to somehow work with older content
+/// and still be scalable and easy to add onto for the future
 
 /// <summary>
 /// This handles toggling guns on and off for the purposes of changing their stats during different active states
@@ -27,7 +31,8 @@ public sealed partial class MinigunToggleSystem : EntitySystem
         SubscribeLocalEvent<MinigunToggleComponent, GunRefreshModifiersEvent>(ActiveFireRate);
         SubscribeLocalEvent<MinigunToggleComponent, HeldRelayedEvent<RefreshMovementSpeedModifiersEvent>>(ActiveSpeedModifier);
     }
-    // TODO: rework
+
+
     private void OnUseTryActBallistic(EntityUid uid, ChamberMagazineAmmoProviderComponent compBallistic, UseInHandEvent args)
     {
 
@@ -42,9 +47,11 @@ public sealed partial class MinigunToggleSystem : EntitySystem
             args.Handled = true;
         }
     }
-    // TODO: rework
+
+    // I want this to be handled in a generic way inside gunsystem. I dont like hardcoding interactions like this
     public void OnUseTryActivate(EntityUid uid, MinigunToggleComponent comp, UseInHandEvent args)
     {
+
         if (TryComp<ChamberMagazineAmmoProviderComponent>(uid, out var compBallistic))
         {
             OnUseTryActBallistic(uid, compBallistic, args);
@@ -59,6 +66,7 @@ public sealed partial class MinigunToggleSystem : EntitySystem
         _move.RefreshMovementSpeedModifiers(args.User);
     }
 
+    // TODO: should be affected by Special
     /// <summary>
     /// Handles changing the fire rate when the gun is active and inactive
     /// </summary>
@@ -69,6 +77,7 @@ public sealed partial class MinigunToggleSystem : EntitySystem
 
     }
 
+    // TODO: should be affected by Special
     /// <summary>
     /// Handles changing user movement speed when the gun is held and active (defaults to base speed when in active)
     /// </summary>
