@@ -19,6 +19,13 @@ namespace Content.Server._Misfits.MaterialExtractor;
 /// </summary>
 public sealed partial class MaterialExtractorSpawnerSystem : EntitySystem
 {
+    private enum SiteFailure
+    {
+        CenterTile,
+        DefensiveRing,
+        NoNearbyRock,
+    }
+
     private const string WendoverGameMap = "Wendover";
     private const string ExtractorPrototype = "N14SeismicMaterialExtractor";
     private const string AllowedTile = "FloorAsteroidSandUnvariantized";
@@ -73,13 +80,19 @@ public sealed partial class MaterialExtractorSpawnerSystem : EntitySystem
         var allTiles = _map.GetAllTilesEnumerator(gridUid, grid);
         while (allTiles.MoveNext(out var tileRef))
         {
-            if (_tileDefs[tileRef.Tile.TypeId].ID == AllowedTile)
-                candidates.Add(tileRef.Value);
+            if (tileRef is not { } tile)
+                continue;
+
+            if (_tileDefs[tile.Tile.TypeId].ID == AllowedTile)
+                candidates.Add(tile.GridIndices);
         }
 
         var physicsQuery = GetEntityQuery<PhysicsComponent>();
         var weatherBlockQuery = GetEntityQuery<BlockWeatherComponent>();
         var attempts = Math.Min(SpawnAttempts, candidates.Count);
+        var centerFailures = 0;
+        var ringFailures = 0;
+        var rockFailures = 0;
         for (var attempt = 0; attempt < attempts; attempt++)
         {
             // Partial Fisher-Yates selection: every candidate has equal odds, with
@@ -89,15 +102,29 @@ public sealed partial class MaterialExtractorSpawnerSystem : EntitySystem
             candidates[index] = candidates[^1];
             candidates.RemoveAt(candidates.Count - 1);
 
-            if (!IsValidSite(gridUid, grid, tile, physicsQuery, weatherBlockQuery))
+            if (!IsValidSite(gridUid, grid, tile, physicsQuery, weatherBlockQuery, out var failure))
+            {
+                switch (failure)
+                {
+                    case SiteFailure.CenterTile:
+                        centerFailures++;
+                        break;
+                    case SiteFailure.DefensiveRing:
+                        ringFailures++;
+                        break;
+                    case SiteFailure.NoNearbyRock:
+                        rockFailures++;
+                        break;
+                }
                 continue;
+            }
 
             Spawn(ExtractorPrototype, _map.GridTileToLocal(gridUid, grid, tile));
             _log.Info($"Spawned the round's material extractor at {tile} on Wendover map {mapId}.");
             return;
         }
 
-        _log.Warning($"No valid material extractor site found after checking {attempts} of {attempts + candidates.Count} Wendover sand tiles on map {mapId}.");
+        _log.Warning($"No valid material extractor site found after checking {attempts} of {attempts + candidates.Count} Wendover sand tiles on map {mapId}. Rejections: center={centerFailures}, ring={ringFailures}, rock={rockFailures}.");
     }
 
     private bool TryGetWendoverGrid(MapId mapId, out EntityUid gridUid, out MapGridComponent grid)
@@ -123,10 +150,14 @@ public sealed partial class MaterialExtractorSpawnerSystem : EntitySystem
         MapGridComponent grid,
         Vector2i center,
         EntityQuery<PhysicsComponent> physicsQuery,
-        EntityQuery<BlockWeatherComponent> weatherBlockQuery)
+        EntityQuery<BlockWeatherComponent> weatherBlockQuery,
+        out SiteFailure failure)
     {
         if (!IsAllowedTile(gridUid, grid, center))
+        {
+            failure = SiteFailure.CenterTile;
             return false;
+        }
 
         for (var x = -ClearRadius; x <= ClearRadius; x++)
         {
@@ -142,11 +173,21 @@ public sealed partial class MaterialExtractorSpawnerSystem : EntitySystem
                 if (!IsWalkableTile(gridUid, grid, tile)
                     || HasHardAnchoredEntity(gridUid, grid, tile, physicsQuery)
                     || HasWeatherBlocker(gridUid, grid, tile, weatherBlockQuery))
+                {
+                    failure = SiteFailure.DefensiveRing;
                     return false;
+                }
             }
         }
 
-        return HasNearbySolidRock(gridUid, grid, center);
+        if (!HasNearbySolidRock(gridUid, grid, center))
+        {
+            failure = SiteFailure.NoNearbyRock;
+            return false;
+        }
+
+        failure = default;
+        return true;
     }
 
     private bool HasWeatherBlocker(
