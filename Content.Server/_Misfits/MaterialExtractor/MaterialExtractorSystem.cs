@@ -4,11 +4,11 @@ using Content.Server.Chat.Systems;
 using Content.Server.NPC;
 using Content.Server.NPC.HTN;
 using Content.Server.NPC.Systems;
-using Content.Server.Power.Components;
 using Content.Shared.Light.EntitySystems;
 using Content.Shared.Damage;
 using Content.Shared.Examine;
 using Content.Shared.NPC.Systems;
+using Content.Shared.Power.Generator;
 using Content.Shared.Storage;
 using Content.Shared.Chat;
 using Robust.Shared.Player;
@@ -69,10 +69,6 @@ public sealed partial class MaterialExtractorSystem : EntitySystem
         {
             (ent.Comp.DepositQuality, ent.Comp.YieldMultiplier) = ("FAIR", 1f);
         }
-        ent.Comp.NextPulse = _timing.CurTime + TimeSpan.FromSeconds(8);
-        ent.Comp.NextOutput = _timing.CurTime + OutputDelay(ent.Comp);
-        ent.Comp.NextWave = _timing.CurTime + TimeSpan.FromSeconds(_random.Next(ent.Comp.FirstWaveMinSeconds, ent.Comp.FirstWaveMaxSeconds + 1));
-        ent.Comp.NextFlavor = _timing.CurTime + TimeSpan.FromSeconds(ent.Comp.FlavorIntervalSeconds);
         _lights.SetEnabled(ent.Owner, false);
     }
 
@@ -88,21 +84,24 @@ public sealed partial class MaterialExtractorSystem : EntitySystem
                 continue;
             }
 
-            // Fuel belongs to the generators feeding the local grid. The extractor
-            // only operates while that supplied power reaches its receiver.
-            if (TryComp<ApcPowerReceiverComponent>(uid, out var power) && !power.Powered)
+            // This is a self-contained welding-fuel generator. Its normal generator
+            // start/stop state is the extractor's operating switch.
+            if (!TryComp<FuelGeneratorComponent>(uid, out var generator) || !generator.On)
             {
+                extractor.WasRunning = false;
                 SetBeacon(uid, extractor, false);
                 continue;
             }
 
-            extractor.ActiveAttackers.RemoveWhere(attacker => Deleted(attacker));
-
-            if (extractor.OutputBlocked && _timing.CurTime < extractor.NextOutput)
+            if (!extractor.WasRunning)
             {
-                SetBeacon(uid, extractor, true);
-                continue;
+                extractor.WasRunning = true;
+                extractor.WarningSent = false;
+                extractor.NextPulse = _timing.CurTime;
+                extractor.NextWave = _timing.CurTime + TimeSpan.FromSeconds(_random.Next(extractor.FirstWaveMinSeconds, extractor.FirstWaveMaxSeconds + 1));
             }
+
+            extractor.ActiveAttackers.RemoveWhere(attacker => Deleted(attacker));
 
             if (_timing.CurTime < extractor.DamagePauseUntil)
             {
@@ -119,49 +118,31 @@ public sealed partial class MaterialExtractorSystem : EntitySystem
             }
 
             if (_timing.CurTime >= extractor.NextWave)
-            {
-                if (extractor.ActiveAttackers.Count == 0)
-                    StartWave(uid, extractor);
-            }
+                StartWave(uid, extractor);
 
             if (_timing.CurTime >= extractor.NextPulse)
             {
                 SetBeacon(uid, extractor, !extractor.BeaconOn);
                 _audio.PlayPvs(ThumpSound, uid,
                     AudioParams.Default.WithVolume(-7f).WithMaxDistance(22f));
-                extractor.NextPulse = _timing.CurTime + TimeSpan.FromSeconds(extractor.PulseIntervalSeconds);
+                ProduceOutput(uid, extractor, storage);
+                extractor.NextPulse = _timing.CurTime + PulseDelay(extractor);
             }
-
-            if (_timing.CurTime >= extractor.NextFlavor)
-            {
-                _chat.TrySendInGameICMessage(uid,
-                    Loc.GetString("material-extractor-rumble"),
-                    InGameICChatType.Emote,
-                    ChatTransmitRange.Normal,
-                    ignoreActionBlocker: true);
-                extractor.NextFlavor = _timing.CurTime + TimeSpan.FromSeconds(extractor.FlavorIntervalSeconds);
-            }
-
-            if (_timing.CurTime < extractor.NextOutput)
-                continue;
-
-            var output = Spawn(SelectOutput(extractor), Transform(uid).Coordinates);
-            if (!_storage.Insert(uid, output, out _, storageComp: storage, playSound: false))
-            {
-                Del(output);
-                extractor.OutputBlocked = true;
-                SetBeacon(uid, extractor, true);
-                extractor.NextOutput = _timing.CurTime + TimeSpan.FromSeconds(10);
-                continue;
-            }
-
-            extractor.OutputBlocked = false;
-            extractor.NextOutput = _timing.CurTime + OutputDelay(extractor);
         }
     }
 
-    private TimeSpan OutputDelay(MaterialExtractorComponent extractor)
-        => TimeSpan.FromSeconds(_random.Next(extractor.OutputMinSeconds, extractor.OutputMaxSeconds + 1) / extractor.YieldMultiplier);
+    private void ProduceOutput(EntityUid extractorUid, MaterialExtractorComponent extractor, StorageComponent storage)
+    {
+        var output = Spawn(SelectOutput(extractor), Transform(extractorUid).Coordinates);
+        if (_storage.Insert(extractorUid, output, out _, storageComp: storage, playSound: false))
+            return;
+
+        Del(output);
+        SetBeacon(extractorUid, extractor, true);
+    }
+
+    private static TimeSpan PulseDelay(MaterialExtractorComponent extractor)
+        => TimeSpan.FromSeconds(extractor.PulseIntervalSeconds / extractor.YieldMultiplier);
 
     private string SelectOutput(MaterialExtractorComponent extractor)
     {
@@ -201,6 +182,12 @@ public sealed partial class MaterialExtractorSystem : EntitySystem
 
     private void StartWave(EntityUid extractorUid, MaterialExtractorComponent extractor)
     {
+        _chat.TrySendInGameICMessage(extractorUid,
+            Loc.GetString("material-extractor-rumble"),
+            InGameICChatType.Emote,
+            ChatTransmitRange.Normal,
+            ignoreActionBlocker: true);
+
         // Small, escalating packs keep this a defendable world objective rather than an unattended farm.
         var count = Math.Min(2 + extractor.WaveCount, 5);
         var prototype = extractor.WaveCount switch

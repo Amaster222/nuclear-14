@@ -25,19 +25,15 @@
             max: 1
       - !type:DoActsBehavior
         acts: ["Destruction"]
-  # Balance: all economic tuning is here. Fuel belongs to the external generator
-  # network; this machine only draws the listed powerLoad.
+  # Balance: all economic and encounter tuning is kept here.
   - type: MaterialExtractor
-    outputMinSeconds: 35
-    outputMaxSeconds: 55
     playerActivationRadius: 30
-    pulseIntervalSeconds: 5
-    flavorIntervalSeconds: 30
-    firstWaveMinSeconds: 120
-    firstWaveMaxSeconds: 180
-    waveMinSeconds: 150
-    waveMaxSeconds: 210
-    waveWarningSeconds: 20
+    pulseIntervalSeconds: 2
+    firstWaveMinSeconds: 30
+    firstWaveMaxSeconds: 30
+    waveMinSeconds: 30
+    waveMaxSeconds: 30
+    waveWarningSeconds: 0
     poorDepositChance: 0.25
     richDepositChance: 0.15
     poorYieldMultiplier: 0.7
@@ -52,12 +48,41 @@
       N14ZincOre1: 6
       N14BauxiteOre1: 5
       FertilizerOre1: 3
-  - type: ApcPowerReceiver
-    powerLoad: 500
-  - type: ExtensionCableReceiver
+  # The normal portable-generator verbs start and stop the extractor. It has
+  # its own welding-fuel tank and does not need a cable or external generator.
+  - type: PortableGenerator
+    startChance: 1
+  - type: FuelGenerator
+    on: false
+    targetPower: 500
+    minTargetPower: 500
+    optimalPower: 500
+    maxTargetPower: 500
+    # A full 250u tank lasts about two hours while the extractor runs.
+    optimalBurnRate: 0.03333333
+    fuelEfficiencyConstant: 0.3
+  - type: PowerSupplier
+    supplyRate: 500
+    supplyRampRate: 500
+    supplyRampTolerance: 500
+    enabled: false
+  - type: ChemicalFuelGeneratorAdapter
+    solution: tank
+    reagents:
+      WeldingFuel: 1
+  - type: SolutionContainerManager
+    solutions:
+      tank:
+        maxVol: 250
+        # It spawns ready to operate once; subsequent operation needs refueling.
+        reagents:
+        - ReagentId: WeldingFuel
+          Quantity: 250
+  - type: RefillableSolution
+    solution: tank
   - type: Storage
     grid:
-    - 0,0,3,2
+    - 0,0,10,7
     maxItemSize: Normal
     clickInsert: false
   - type: UserInterface
