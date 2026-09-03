@@ -10966,3 +10966,64 @@ Entries:
   id: 6386
   time: '2026-09-02T20:26:59.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1841
+- author: cythisiax
+  changes:
+    - type: Add
+      message: >-
+        A randomly placed material extractor that runs off weldingfuel, makes
+        sound, PVE waves, and gives ores.
+    - type: Add
+      message: RMC vendor port with Misfits tweaks and additions.
+    - type: Add
+      message: NCR Heavy Trooper Lead role with dedicated T-51 power armor.
+    - type: Add
+      message: NCR power armor variants and power armor (TBR) mechs.
+    - type: Add
+      message: >-
+        Tiered randomized weapon loot tables for future implementation, or via
+        persistent loot spawning system by admins
+    - type: Add
+      message: Searchable junk piles with cooldown-based loot.
+    - type: Add
+      message: Craftable binoculars.
+    - type: Add
+      message: Group invitation verb, supplement to /group command
+    - type: Add
+      message: >-
+        Leadership-only archive folder, subfolder, and document renaming in
+        terminal databases for each faction
+    - type: Tweak
+      message: OSI archive removed, they now use NCR archive
+    - type: Tweak
+      message: >-
+        AER weapon series returned to Red (24), Blue (20), Green (18), and
+        Violet (12) charge capacity.
+    - type: Tweak
+      message: Updated NCR job ordering, titles, borders, and descriptions.
+    - type: Tweak
+      message: Energy ammunition now preserves its matching beam colors.
+    - type: Fix
+      message: >-
+        Barber scissors layering now correctly updates when appearance changes
+        are applied.
+    - type: Fix
+      message: >-
+        Chemistry reagents no longer completely disappear because of
+        quantization.
+    - type: Fix
+      message: >-
+        Surgical tools now correctly become dirty when used on animals and other
+        non-standard surgical patients.
+    - type: Fix
+      message: >-
+        EMP pulses now disable Enclave microbomb countdowns and prevent
+        detonation while disabled.
+    - type: Fix
+      message: >-
+        With rudimentary sprite overlay replacements for parennt prototypes not
+        working on PA helmets
+    - type: Remove
+      message: Enclave saying 'Enclave' and blowing up.
+  id: 6387
+  time: '2026-09-03T00:15:34.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1842
