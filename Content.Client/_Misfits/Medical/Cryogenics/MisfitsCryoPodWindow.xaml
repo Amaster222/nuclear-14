@@ -1,0 +1,31 @@
+<controls:FancyWindow xmlns="https://spacestation14.io"
+                      xmlns:controls="clr-namespace:Content.Client.UserInterface.Controls"
+                      xmlns:cryo="clr-namespace:Content.Client._Misfits.Medical.Cryogenics"
+                      Title="Cryo Chamber"
+                      Resizable="True"
+                      SetSize="420 480"
+                      MinSize="360 420">
+    <BoxContainer Orientation="Vertical" HorizontalExpand="True" VerticalExpand="True" Margin="4 4 4 4">
+        <controls:StripeBack>
+            <BoxContainer Orientation="Vertical" Margin="6 4 6 4">
+                <Label Name="PatientLabel" Text="No patient" StyleClasses="LabelBig"/>
+                <Label Name="TemperatureLabel" Text=""/>
+                <Label Name="GraphStateLabel" Text="Chamber idle"/>
+            </BoxContainer>
+        </controls:StripeBack>
+
+        <BoxContainer Name="ReagentList" Orientation="Vertical" Margin="0 6 0 0"/>
+
+        <PanelContainer StyleClasses="LowDivider" Margin="0 6 0 4"/>
+
+        <BoxContainer Orientation="Vertical">
+            <Label Name="SlurryTitleLabel" Text="Necrotic byproduct"/>
+            <cryo:MisfitsCryoMeterBar Name="SlurryBar" MinHeight="18"/>
+        </BoxContainer>
+
+        <Label Name="FooterLabel"
+               StyleClasses="WindowFooterText"
+               Margin="0 6 0 0"
+               Text="Converge stasis and catalyst while stabilizer shields the reaction. Left alone, they cook into slurry."/>
+    </BoxContainer>
+</controls:FancyWindow>
