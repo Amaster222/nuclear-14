@@ -5,8 +5,8 @@
   description: A battered pre-war drill that hammers the ground for usable raw materials. Its racket draws unwanted attention.
   components:
   - type: Sprite
-    sprite: _Nuclear14/Structures/Machines/water_treatment.rsi
-    state: watertreatment
+    sprite: _Misfits/Structures/Machines/seismic_extractor.rsi
+    state: seismic_extractor
   - type: PointLight
     enabled: false
     color: "#ff2020"
@@ -28,7 +28,7 @@
         acts: ["Destruction"]
   # Balance: all economic and encounter tuning is kept here.
   - type: MaterialExtractor
-    playerActivationRadius: 30
+    operatorRadius: 4
     pulseIntervalSeconds: 2
     firstWaveMinSeconds: 30
     firstWaveMaxSeconds: 30
@@ -37,6 +37,10 @@
     waveWarningSeconds: 0
     waveMinMobCount: 1
     waveMaxMobCount: 3
+    waveSpawnMinDistance: 16
+    waveSpawnMaxDistance: 28
+    waveSpawnAttempts: 40
+    waveSpawnPvsBuffer: 3
     waveMobWeights:
       N14MobMaterialExtractorMoleratWave: 24
       N14MobMaterialExtractorGeckoWave: 18
@@ -53,6 +57,9 @@
     richDepositChance: 0.15
     poorYieldMultiplier: 0.7
     richYieldMultiplier: 1.4
+    lowFuelWarningFraction: 0.25
+    fuelSolution: tank
+    fuelReagent: WeldingFuel
     outputWeights:
       N14IronOre1: 20
       N14CopperOre1: 18
@@ -123,6 +130,6 @@
   description: The drill is silent. Its ruined hopper is full of twisted machinery.
   components:
   - type: Sprite
-    sprite: _Nuclear14/Structures/Machines/water_treatment.rsi
-    state: watertreatment_broken
+    sprite: _Misfits/Structures/Machines/seismic_extractor.rsi
+    state: seismic_extractor_broken
   - type: MaterialExtractorLandmark
