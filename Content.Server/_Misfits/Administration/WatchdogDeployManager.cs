@@ -13,14 +13,20 @@ namespace Content.Server._Misfits.Administration;
 /// <summary>
 /// Server-side bridge to the SS14.Watchdog instance update endpoint.
 /// </summary>
-public sealed class WatchdogDeployManager
+public sealed class WatchdogDeployManager : IPostInjectInit
 {
     [Dependency] private readonly IConfigurationManager _configuration = default!;
+    [Dependency] private readonly ILogManager _logManager = default!;
 
     private readonly HttpClient _http = new();
-    private readonly ISawmill _log = Logger.GetSawmill("watchdog-deploy");
+    private ISawmill _log = default!;
     private readonly object _requestLock = new();
     private Task<bool>? _pendingRequest;
+
+    void IPostInjectInit.PostInject()
+    {
+        _log = _logManager.GetSawmill("watchdog-deploy");
+    }
 
     public Task<bool> RequestDeployAsync()
     {
