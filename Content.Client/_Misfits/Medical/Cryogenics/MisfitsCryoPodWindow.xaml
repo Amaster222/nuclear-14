@@ -4,43 +4,77 @@
                       xmlns:graphics="clr-namespace:Robust.Client.Graphics;assembly=Robust.Client"
                       Title="Cryo Chamber"
                       Resizable="True"
-                      SetSize="820 580"
-                      MinSize="680 480">
+                      SetSize="1000 620"
+                      MinSize="820 500">
     <BoxContainer Orientation="Horizontal" Margin="6" SeparationOverride="6" HorizontalExpand="True" VerticalExpand="True">
 
-        <!-- Left: patient vitals -->
-        <PanelContainer MinWidth="260" MaxWidth="260" VerticalExpand="True">
+        <!-- Left: patient portrait + body doll -->
+        <PanelContainer MinWidth="220" MaxWidth="220" VerticalExpand="True">
             <PanelContainer.PanelOverride>
                 <graphics:StyleBoxFlat BackgroundColor="#12141A" />
             </PanelContainer.PanelOverride>
             <BoxContainer Orientation="Vertical" Margin="8" SeparationOverride="4" VerticalExpand="True">
-                <SpriteView Name="PatientSpriteView"
-                            SetSize="64 64"
-                            OverrideDirection="South"
-                            Scale="2 2"
-                            Stretch="Fit"
-                            HorizontalAlignment="Center"
-                            Margin="0 0 0 4"/>
                 <Label Name="PatientNameLabel" Text="No patient" HorizontalAlignment="Center" FontColorOverride="#FFFFFF"/>
                 <PanelContainer Name="StatusPanel" Margin="0 4 0 6" MinHeight="24">
                     <Label Name="StatusLabel" Margin="6 1" HorizontalAlignment="Center"/>
                 </PanelContainer>
 
-                <Label Name="TemperatureLabel" Text=""/>
-                <cryo:MisfitsCryoMeterBar Name="TemperatureBar" MinHeight="14" Margin="0 0 0 6"/>
-
-                <Label Name="DamageLabel" Text=""/>
-                <cryo:MisfitsCryoMeterBar Name="DamageBar" MinHeight="14" Margin="0 0 0 6"/>
-
-                <Label Text="DAMAGE BREAKDOWN" FontColorOverride="#FFFFFF"/>
-                <ScrollContainer HScrollEnabled="False" VerticalExpand="True" Margin="0 3 0 0">
-                    <BoxContainer Name="DamageContainer" Orientation="Vertical"/>
-                </ScrollContainer>
+                <PanelContainer HorizontalAlignment="Center" MinHeight="96">
+                    <SpriteView OverrideDirection="South"
+                                Scale="1 1"
+                                Name="PatientSpriteView"
+                                SetSize="96 96"/>
+                    <PanelContainer
+                        Name="PartView"
+                        SetSize="57 96"
+                        Margin="18 0 0 0"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Left">
+                        <PanelContainer SetSize="15 33" Margin="4 0 0 0" HorizontalAlignment="Left">
+                            <TextureButton Name="RightArmButton" MinSize="15 25" StyleClasses="TargetDollButtonRightArm" VerticalAlignment="Top"/>
+                            <TextureButton Name="RightHandButton" MinSize="15 15" VerticalAlignment="Bottom" StyleClasses="TargetDollButtonRightHand"/>
+                        </PanelContainer>
+                        <PanelContainer SetSize="43 75" VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <TextureButton Name="HeadButton" MinSize="28 23" VerticalAlignment="Top" HorizontalAlignment="Center" StyleClasses="TargetDollButtonHead"/>
+                            <TextureButton Name="ChestButton" SetSize="28 30" Margin="0 18 0 0" VerticalAlignment="Top" HorizontalAlignment="Center" StyleClasses="TargetDollButtonChest"/>
+                            <PanelContainer MinSize="38 35" VerticalAlignment="Bottom" HorizontalAlignment="Center">
+                                <TextureButton Name="GroinButton" MinSize="28 15" VerticalAlignment="Top" HorizontalAlignment="Center" StyleClasses="TargetDollButtonGroin"/>
+                                <PanelContainer MinSize="20 30" VerticalAlignment="Bottom" HorizontalAlignment="Right">
+                                    <TextureButton Name="LeftLegButton" MinSize="15 28" VerticalAlignment="Top" HorizontalAlignment="Left" StyleClasses="TargetDollButtonLeftLeg"/>
+                                    <TextureButton Name="LeftFootButton" MinSize="20 10" VerticalAlignment="Bottom" StyleClasses="TargetDollButtonLeftFoot"/>
+                                </PanelContainer>
+                                <PanelContainer MinSize="20 30" VerticalAlignment="Bottom" HorizontalAlignment="Left">
+                                    <TextureButton Name="RightLegButton" MinSize="15 28" VerticalAlignment="Top" HorizontalAlignment="Right" StyleClasses="TargetDollButtonRightLeg"/>
+                                    <TextureButton Name="RightFootButton" MinSize="20 10" VerticalAlignment="Bottom" HorizontalAlignment="Center" StyleClasses="TargetDollButtonRightFoot"/>
+                                </PanelContainer>
+                            </PanelContainer>
+                        </PanelContainer>
+                        <PanelContainer SetSize="15 33" Margin="0 0 4 0" HorizontalAlignment="Right">
+                            <TextureButton Name="LeftArmButton" MinSize="15 25" StyleClasses="TargetDollButtonLeftArm" VerticalAlignment="Top"/>
+                            <TextureButton Name="LeftHandButton" MinSize="15 15" VerticalAlignment="Bottom" StyleClasses="TargetDollButtonLeftHand"/>
+                        </PanelContainer>
+                    </PanelContainer>
+                </PanelContainer>
+                <Label Name="NoDollLabel" Text="" HorizontalAlignment="Center" StyleClasses="LabelSubText" Visible="False"/>
             </BoxContainer>
         </PanelContainer>
 
+        <!-- Middle: vitals + damage breakdown -->
+        <ScrollContainer HScrollEnabled="False" VerticalExpand="True" HorizontalExpand="True" SizeFlagsStretchRatio="3">
+            <BoxContainer Orientation="Vertical" HorizontalExpand="True" SeparationOverride="6">
+                <Label Text="VITALS" FontColorOverride="#FFFFFF"/>
+                <GridContainer Columns="2" Margin="0 3 0 0" HSeparationOverride="4" VSeparationOverride="4">
+                    <cryo:MisfitsCryoMetricControl Name="TemperatureMetric"/>
+                    <cryo:MisfitsCryoMetricControl Name="DamageMetric"/>
+                </GridContainer>
+
+                <Label Text="DAMAGE BREAKDOWN" FontColorOverride="#FFFFFF" Margin="0 8 0 0"/>
+                <BoxContainer Name="DamageContainer" Orientation="Vertical" Margin="0 3 0 0"/>
+            </BoxContainer>
+        </ScrollContainer>
+
         <!-- Right: chamber + beaker deposit -->
-        <BoxContainer Orientation="Vertical" HorizontalExpand="True" VerticalExpand="True" SeparationOverride="6">
+        <BoxContainer Orientation="Vertical" HorizontalExpand="True" VerticalExpand="True" SeparationOverride="6" SizeFlagsStretchRatio="3">
 
             <PanelContainer VerticalExpand="True" SizeFlagsStretchRatio="1">
                 <PanelContainer.PanelOverride>
