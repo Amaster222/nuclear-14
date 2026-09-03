@@ -897,7 +897,7 @@
         - to: brickrubble
           steps:
             - material: N14Brick
-              amount: 3
+              amount: 1
               doAfter: 3
           completed:
             - !type:SnapToGrid
@@ -912,7 +912,7 @@
           completed:
             - !type:SpawnPrototype
               prototype: N14MaterialBrick1
-              amount: 3
+              amount: 1
             - !type:DeleteEntity
 
 - type: constructionGraph

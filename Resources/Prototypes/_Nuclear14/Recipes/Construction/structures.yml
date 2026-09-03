@@ -363,6 +363,24 @@
   conditions:
     - !type:TileNotBlocked
 
+- type: construction
+  name: window bars
+  id: N14WindowBars
+  graph: N14WindowBars
+  startNode: start
+  targetNode: bars
+  category: construction-category-structures
+  description: Sturdy metal bars for blocking access through a window.
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  hide: false
+  icon:
+    sprite: _Nuclear14/Structures/Windows/windowbars.rsi
+    state: icon
+  conditions:
+    - !type:TileNotBlocked
+
 
 
 # #Misfits Add: Concrete and brick wall construction recipes
