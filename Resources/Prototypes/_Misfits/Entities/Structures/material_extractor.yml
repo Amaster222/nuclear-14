@@ -6,7 +6,8 @@
   components:
   - type: Sprite
     sprite: _Misfits/Structures/Machines/seismic_extractor.rsi
-    state: seismic_extractor
+    layers:
+    - state: seismic_extractor
   - type: PointLight
     enabled: false
     color: "#ff2020"
@@ -131,5 +132,6 @@
   components:
   - type: Sprite
     sprite: _Misfits/Structures/Machines/seismic_extractor.rsi
-    state: seismic_extractor_broken
+    layers:
+    - state: seismic_extractor_broken
   - type: MaterialExtractorLandmark
