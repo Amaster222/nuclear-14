@@ -1,5 +1,6 @@
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
+using Content.Shared.Roles;
 
 namespace Content.Shared._RMC.Vendors;
 
@@ -8,6 +9,13 @@ public sealed partial class CMVendorSection
 {
     [DataField(required: true)]
     public string Name = string.Empty;
+
+    /// <summary>
+    /// Optional job-specific allocation gate. Empty means every faction member with the required authority tier
+    /// can use the section. FullAllocationJobs on the vendor bypass this list.
+    /// </summary>
+    [DataField]
+    public List<ProtoId<JobPrototype>> Jobs = new();
 
     [DataField]
     public (string Id, int Amount)? Choices;
@@ -49,6 +57,12 @@ public sealed partial record CMVendorEntry
     /// </summary>
     [DataField]
     public int? ReplenishmentCost;
+
+    /// <summary>
+    /// Allocation sub-tab, such as Helmet, Armor, Ballistic, or Plasma.
+    /// </summary>
+    [DataField]
+    public string? Category;
 
     /// <summary>
     /// Blueprint-style faction authority tier. Valid values are 1 through 4.

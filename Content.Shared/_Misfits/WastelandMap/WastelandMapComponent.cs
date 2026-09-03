@@ -41,6 +41,7 @@ public enum WastelandMapTrackedBlipKind : byte
     DeadBody,          // deceased player-controlled entity shown on Followers tac-map
     CriticalSoul,      // critical player-mind entity shown only on Bwonsamdi's soul compass
     DeadSoul,          // dead player-mind entity shown only on Bwonsamdi's soul compass
+    TribeCritical,     // Tribe member in critical condition during the Rite of Returning
 }
 
 [Serializable, NetSerializable]

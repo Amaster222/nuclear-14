@@ -42,6 +42,7 @@
         factions:
           - Wastelander
           - NCR
+      - type: PowerArmorProficiency # #Misfits Add - Heavy Trooper Leads can operate their T-51 immediately.
 
 - type: playTimeTracker
   id: NCRHeavyTrooperLead
