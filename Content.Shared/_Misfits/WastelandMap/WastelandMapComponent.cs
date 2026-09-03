@@ -42,6 +42,7 @@ public enum WastelandMapTrackedBlipKind : byte
     CriticalSoul,      // critical player-mind entity shown only on Bwonsamdi's soul compass
     DeadSoul,          // dead player-mind entity shown only on Bwonsamdi's soul compass
     TribeCritical,     // Tribe member in critical condition during the Rite of Returning
+    MaterialExtractor, // permanent seismic extractor landmark
 }
 
 [Serializable, NetSerializable]
