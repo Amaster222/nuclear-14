@@ -55,7 +55,7 @@
     head: N14ClothingHeadHatNCRBeretOfficer
     back: N14ClothingBackpackNCR
     jumpsuit: N14ClothingOfficerUniformNCRDesert
-    outerClothing: N14ClothingOuterPowerArmorT51NCR
+    outerClothing: MisfitsClothingOuterNCRTrenchCoat
     shoes: N14ClothingBootsCombatFilled
     belt: ClothingBeltNCR
     eyes: ClothingEyesGlassesSunglasses
