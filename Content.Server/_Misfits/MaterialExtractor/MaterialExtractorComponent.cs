@@ -26,6 +26,22 @@ public sealed partial class MaterialExtractorComponent : Component
     [DataField] public int WaveMinSeconds = 30;
     [DataField] public int WaveMaxSeconds = 30;
     [DataField] public int WaveWarningSeconds;
+    [DataField] public int WaveMinMobCount = 1;
+    [DataField] public int WaveMaxMobCount = 3;
+    [DataField] public Dictionary<string, int> WaveMobWeights = new()
+    {
+        ["N14MobMaterialExtractorMoleratWave"] = 24,
+        ["N14MobMaterialExtractorGeckoWave"] = 18,
+        ["N14MobMaterialExtractorMirelurkWave"] = 12,
+        ["N14MobMaterialExtractorRadhogWave"] = 10,
+        ["N14MobMaterialExtractorFireGeckoWave"] = 8,
+        ["N14MobMaterialExtractorNightstalkerCubWave"] = 8,
+        ["N14MobMaterialExtractorGiantAntWave"] = 7,
+        ["N14MobMaterialExtractorNightstalkerWave"] = 4,
+        ["N14MobMaterialExtractorRadMirelurkWave"] = 3,
+        ["N14MobMaterialExtractorGiantFireAntWave"] = 3,
+        ["N14MobMaterialExtractorRadscorpionWave"] = 3,
+    };
     [DataField] public float PoorDepositChance = 0.25f;
     [DataField] public float RichDepositChance = 0.15f;
     [DataField] public float PoorYieldMultiplier = 0.7f;
@@ -37,7 +53,6 @@ public sealed partial class MaterialExtractorComponent : Component
     public bool BeaconOn;
     public bool WarningSent;
     public bool WasRunning;
-    public int WaveCount;
     public readonly HashSet<EntityUid> ActiveAttackers = [];
     public float YieldMultiplier = 1f;
     public string DepositQuality = "FAIR";

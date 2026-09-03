@@ -188,14 +188,8 @@ public sealed partial class MaterialExtractorSystem : EntitySystem
             ChatTransmitRange.Normal,
             ignoreActionBlocker: true);
 
-        // Small, escalating packs keep this a defendable world objective rather than an unattended farm.
-        var count = Math.Min(2 + extractor.WaveCount, 5);
-        var prototype = extractor.WaveCount switch
-        {
-            < 2 => "N14MobMoleratWave",
-            < 4 => "N14MobGeckoWave",
-            _ => "N14MobNightstalkerWave",
-        };
+        var count = _random.Next(extractor.WaveMinMobCount, extractor.WaveMaxMobCount + 1);
+        var prototype = SelectWaveMob(extractor);
 
         var origin = Transform(extractorUid).Coordinates;
         for (var i = 0; i < count; i++)
@@ -212,10 +206,31 @@ public sealed partial class MaterialExtractorSystem : EntitySystem
             }
         }
 
-        extractor.WaveCount++;
         extractor.WarningSent = false;
         extractor.NextWave = _timing.CurTime + TimeSpan.FromSeconds(_random.Next(extractor.WaveMinSeconds, extractor.WaveMaxSeconds + 1));
         SetBeacon(extractorUid, extractor, true);
+    }
+
+    private string SelectWaveMob(MaterialExtractorComponent extractor)
+    {
+        var totalWeight = 0;
+        foreach (var weight in extractor.WaveMobWeights.Values)
+            totalWeight += weight;
+
+        if (totalWeight <= 0)
+            throw new InvalidOperationException("Material extractor wave mob weights must have a positive total.");
+
+        var roll = _random.Next(totalWeight);
+        string? fallback = null;
+        foreach (var (prototype, weight) in extractor.WaveMobWeights)
+        {
+            fallback = prototype;
+            roll -= weight;
+            if (roll < 0)
+                return prototype;
+        }
+
+        return fallback!;
     }
 
     private void SetBeacon(EntityUid uid, MaterialExtractorComponent extractor, bool enabled)
