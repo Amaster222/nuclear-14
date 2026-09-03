@@ -1,4 +1,5 @@
- type: entity
+ #MELEE#
+ - type: entity
   name: Psycho Raider
   parent: N14BaseMobRaider
   id: N14MobRaiderPsycho
@@ -7,3 +8,5 @@
     - type: Loadout
       prototypes:
       - RaiderShieldManGear
+
+#RANGED#
