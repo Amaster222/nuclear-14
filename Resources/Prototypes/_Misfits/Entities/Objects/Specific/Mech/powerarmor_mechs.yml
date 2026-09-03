@@ -866,12 +866,12 @@
       mech-battery-slot:
       - PowerCellHigh
 
-# --- NCR Heavy Trooper T-45 ---
+# --- NCR Heavy Trooper T-45 Salvaged ---
 - type: entity
   id: MisfitsMechNCRHeavyTrooperT45
-  parent: N14MechPowerArmorT45
-  name: NCR Heavy Trooper T-45 Power Armor Suit
-  description: An NCR Heavy Trooper T-45 power armor mech variant.
+  parent: N14MechPowerArmorT45NCRSalvaged
+  name: NCR Heavy Trooper T-45 Salvaged Power Armor Suit
+  description: An NCR Heavy Trooper salvaged T-45 power armor mech variant.
   components:
   - type: Sprite
     drawdepth: Mobs
@@ -896,9 +896,9 @@
 # --- NCR Heavy Trooper Lead T-51 ---
 - type: entity
   id: MisfitsMechNCRHeavyTrooperLeadT51
-  parent: N14MechPowerArmorT51
+  parent: N14MechPowerArmorT45
   name: NCR Heavy Trooper Lead T-51 Power Armor Suit
-  description: An NCR Heavy Trooper Lead T-51 power armor mech variant.
+  description: An NCR Heavy Trooper Lead T-51 power armor mech variant using the full T-45 armor baseline.
   components:
   - type: Sprite
     drawdepth: Mobs

@@ -22,6 +22,10 @@
   - type: CMAutomatedVendor
     maxAuthorityTier: 4
     populateFromBlueprints: true
+    allocationCategories: [ Ballistic, Laser, Plasma, Energy, Melee, Other weapons ]
+    sharedEquipmentCategories: [ Ballistic, Laser, Plasma, Energy, Melee, Other weapons ]
+    defaultAllocationCategory: Other weapons
+    defaultSharedEquipmentCategory: Other weapons
     storageWhitelist:
       components:
       - Gun
@@ -48,6 +52,10 @@
   - type: CMAutomatedVendor
     maxAuthorityTier: 4
     populateFromBlueprints: true
+    allocationCategories: [ Helmet, Armor, Uniform, Gloves, Belt, Boots, Backpack, Pouches, Other equipment ]
+    sharedEquipmentCategories: [ Helmet, Armor, Uniform, Gloves, Belt, Boots, Backpack, Pouches, Other equipment ]
+    defaultAllocationCategory: Other equipment
+    defaultSharedEquipmentCategory: Other equipment
     storageWhitelist:
       components:
       - Clothing

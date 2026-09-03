@@ -25,6 +25,13 @@ public sealed partial class CMAutomatedVendorComponent : Component
     [DataField, AutoNetworkedField]
     public List<ProtoId<JobPrototype>> TierJobs = new();
 
+    /// <summary>
+    /// Jobs that may issue every allocation tier at this vendor without also granting their access-card tags
+    /// everywhere else. This is deliberately vendor-local for roles such as a requisitions officer.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public List<ProtoId<JobPrototype>> FullAllocationJobs = new();
+
     [DataField, AutoNetworkedField]
     public List<ProtoId<AccessLevelPrototype>> Access = new();
 
@@ -53,6 +60,30 @@ public sealed partial class CMAutomatedVendorComponent : Component
     /// </summary>
     [DataField]
     public string DepartmentName = "department";
+
+    /// <summary>
+    /// Ordered allocation sub-tabs shown by this vendor. Additional categories used by entries are appended.
+    /// </summary>
+    [DataField]
+    public List<string> AllocationCategories = new();
+
+    /// <summary>
+    /// Ordered shared-equipment sub-tabs shown by this vendor. Additional categories used by stored items are appended.
+    /// </summary>
+    [DataField]
+    public List<string> SharedEquipmentCategories = new();
+
+    [DataField]
+    public string DefaultAllocationCategory = "Other";
+
+    [DataField]
+    public string DefaultSharedEquipmentCategory = "Other";
+
+    /// <summary>
+    /// Optional prototype-to-sub-tab map for stored physical equipment.
+    /// </summary>
+    [DataField]
+    public Dictionary<EntProtoId, string> StorageCategories = new();
 
     /// Builds stock from the same blueprint lathe recipes used by faction crafting.
     /// Explicit Sections remain available for non-blueprint stock and RMC bundles.
@@ -168,4 +199,7 @@ public sealed partial class CMVendorBlueprintEntryOverride
 
     [DataField]
     public int? ReplenishmentCost;
+
+    [DataField]
+    public string? Category;
 }

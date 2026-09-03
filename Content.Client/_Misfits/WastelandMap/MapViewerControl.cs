@@ -380,6 +380,11 @@ public sealed class MapViewerControl : Control
             case WastelandMapTrackedBlipKind.DeadSoul:
                 DrawX(handle, markerPos, 10f, color);
                 break;
+            case WastelandMapTrackedBlipKind.TribeCritical:
+                handle.DrawCircle(markerPos, 12f, color);
+                handle.DrawCircle(markerPos, 7f, Color.Black);
+                handle.DrawCircle(markerPos, 3f, Color.White);
+                break;
             // End Misfits Add
         }
     }
@@ -581,6 +586,7 @@ public sealed class MapViewerControl : Control
             WastelandMapTrackedBlipKind.DeadBody => new Color(0.9f, 0.9f, 0.9f, 1f),
             WastelandMapTrackedBlipKind.CriticalSoul => new Color(0.15f, 1f, 0.50f, 1f),
             WastelandMapTrackedBlipKind.DeadSoul => new Color(0.68f, 0.80f, 0.72f, 1f),
+            WastelandMapTrackedBlipKind.TribeCritical => new Color(0.25f, 0.95f, 1f, 1f),
             // End Misfits Add
             _ => new Color(0.98f, 0.84f, 0.15f, 0.95f),
         };
