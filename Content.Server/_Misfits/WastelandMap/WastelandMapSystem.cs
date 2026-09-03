@@ -17,6 +17,7 @@ using Content.Shared.Mobs.Components; // #Misfits Add - MobStateComponent
 using Content.Shared.Mobs.Systems; // #Misfits Add - MobStateSystem
 using Content.Shared.Tag;
 using Content.Shared._Misfits.WastelandMap;
+using Content.Shared._Misfits.MaterialExtractor;
 using Content.Shared._Misfits.TreeOfLife;
 using Content.Shared._Misfits.Deathclaw;
 using Content.Shared._Misfits.TribalHunt;
@@ -757,6 +758,7 @@ public sealed class WastelandMapSystem : EntitySystem
         {
             _blipScratch.Clear();
             AppendFactionBlips(_blipScratch, feed, mapId, bounds);
+            AppendMaterialExtractorBlips(_blipScratch, mapId, bounds);
             if (AllowsSharedOverlays(feed)) // #Misfits Change - Tribe maps are tagged-ID-only.
                 AppendTribalHuntTargetBlips(_blipScratch, mapId, bounds);
             nonActorBlips = _blipScratch.ToArray();
@@ -890,6 +892,26 @@ public sealed class WastelandMapSystem : EntitySystem
                 coordinates.Position.Y,
                 Name(uid),
                 WastelandMapTrackedBlipKind.TribeCritical));
+        }
+    }
+
+    private void AppendMaterialExtractorBlips(List<WastelandMapTrackedBlip> buffer, MapId mapId, Box2 bounds)
+    {
+        var query = EntityQueryEnumerator<MaterialExtractorLandmarkComponent, TransformComponent>();
+
+        while (query.MoveNext(out var uid, out _, out var xform))
+        {
+            var coordinates = _transform.GetMapCoordinates(uid, xform);
+            if (coordinates.MapId != mapId || !bounds.Contains(coordinates.Position))
+                continue;
+
+            var position = coordinates.Position;
+            var label = $"Seismic Extractor GPS: {MathF.Round(position.X)}, {MathF.Round(position.Y)}";
+            buffer.Add(new WastelandMapTrackedBlip(
+                position.X,
+                position.Y,
+                label,
+                WastelandMapTrackedBlipKind.MaterialExtractor));
         }
     }
 

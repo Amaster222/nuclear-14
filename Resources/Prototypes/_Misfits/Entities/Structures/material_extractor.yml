@@ -12,6 +12,7 @@
     color: "#ff2020"
     radius: 3
     energy: 2
+  - type: MaterialExtractorLandmark
   - type: Destructible
     thresholds:
     - trigger:
@@ -62,10 +63,11 @@
       N14ZincOre1: 6
       N14BauxiteOre1: 5
       FertilizerOre1: 3
-  # The normal portable-generator verbs start and stop the extractor. It has
-  # its own welding-fuel tank and does not need a cable or external generator.
+  # Its context-menu control panel starts/stops the extractor. Normal
+  # activation remains reserved for opening the output hopper.
   - type: PortableGenerator
     startChance: 1
+  - type: GeneratorControlPanel
   - type: FuelGenerator
     on: false
     targetPower: 500
@@ -103,6 +105,8 @@
     interfaces:
       enum.StorageUiKey.Key:
         type: StorageBoundUserInterface
+      enum.GeneratorComponentUiKey.Key:
+        type: PortableGeneratorBoundUserInterface
   - type: ActivatableUI
     key: enum.StorageUiKey.Key
   - type: ContainerContainer
@@ -121,3 +125,4 @@
   - type: Sprite
     sprite: _Nuclear14/Structures/Machines/water_treatment.rsi
     state: watertreatment_broken
+  - type: MaterialExtractorLandmark

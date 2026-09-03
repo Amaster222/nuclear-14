@@ -117,9 +117,9 @@
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Furniture/Store_Furniture/delistand.rsi
-    state: deli_stand
-  objectType: Structure
-  placementMode: SnapgridCenter
+   state: deli_stand
+ objectType: Structure
+  placementMode: PlaceFree
 
 - type: construction
   name: fruit stand
@@ -132,9 +132,9 @@
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Furniture/Store_Furniture/fruitstand.rsi
-    state: fruitstand_empty
-  objectType: Structure
-  placementMode: SnapgridCenter
+   state: fruitstand_empty
+ objectType: Structure
+  placementMode: PlaceFree
 
 - type: construction
   name: fruit stand
@@ -147,9 +147,9 @@
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Furniture/Store_Furniture/fruitstand.rsi
-    state: fruitstand-1
-  objectType: Structure
-  placementMode: SnapgridCenter
+   state: fruitstand-1
+ objectType: Structure
+  placementMode: PlaceFree
 
 - type: construction
   name: fruit stand
@@ -162,9 +162,9 @@
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Furniture/Store_Furniture/fruitstand.rsi
-    state: fruitstand-2
-  objectType: Structure
-  placementMode: SnapgridCenter
+   state: fruitstand-2
+ objectType: Structure
+  placementMode: PlaceFree
 
 - type: construction
   name: fruit stand
@@ -177,6 +177,6 @@
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Furniture/Store_Furniture/fruitstand.rsi
-    state: fruitstand-3
-  objectType: Structure
-  placementMode: SnapgridCenter
+   state: fruitstand-3
+ objectType: Structure
+  placementMode: PlaceFree
