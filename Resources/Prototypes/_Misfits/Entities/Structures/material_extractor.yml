@@ -1,0 +1,109 @@
+- type: entity
+  parent: N14MachineWaterTreatmentBroken
+  id: N14SeismicMaterialExtractor
+  name: seismic material extractor
+  description: A battered pre-war drill that hammers the ground for usable raw materials. Its racket draws unwanted attention.
+  components:
+  - type: Sprite
+    sprite: _Nuclear14/Structures/Machines/water_treatment.rsi
+    state: watertreatment
+  - type: PointLight
+    enabled: false
+    color: "#ff2020"
+    radius: 3
+    energy: 2
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 150
+      behaviors:
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          N14SeismicMaterialExtractorBroken:
+            min: 1
+            max: 1
+      - !type:DoActsBehavior
+        acts: ["Destruction"]
+  # Balance: all economic and encounter tuning is kept here.
+  - type: MaterialExtractor
+    playerActivationRadius: 30
+    pulseIntervalSeconds: 2
+    firstWaveMinSeconds: 30
+    firstWaveMaxSeconds: 30
+    waveMinSeconds: 30
+    waveMaxSeconds: 30
+    waveWarningSeconds: 0
+    poorDepositChance: 0.25
+    richDepositChance: 0.15
+    poorYieldMultiplier: 0.7
+    richYieldMultiplier: 1.4
+    outputWeights:
+      N14IronOre1: 20
+      N14CopperOre1: 18
+      N14LeadOre1: 14
+      SulfurOre1: 12
+      N14Sand1: 12
+      Salt1: 10
+      N14ZincOre1: 6
+      N14BauxiteOre1: 5
+      FertilizerOre1: 3
+  # The normal portable-generator verbs start and stop the extractor. It has
+  # its own welding-fuel tank and does not need a cable or external generator.
+  - type: PortableGenerator
+    startChance: 1
+  - type: FuelGenerator
+    on: false
+    targetPower: 500
+    minTargetPower: 500
+    optimalPower: 500
+    maxTargetPower: 500
+    # A full 250u tank lasts about two hours while the extractor runs.
+    optimalBurnRate: 0.03333333
+    fuelEfficiencyConstant: 0.3
+  - type: PowerSupplier
+    supplyRate: 500
+    supplyRampRate: 500
+    supplyRampTolerance: 500
+    enabled: false
+  - type: ChemicalFuelGeneratorAdapter
+    solution: tank
+    reagents:
+      WeldingFuel: 1
+  - type: SolutionContainerManager
+    solutions:
+      tank:
+        maxVol: 250
+        # It spawns ready to operate once; subsequent operation needs refueling.
+        reagents:
+        - ReagentId: WeldingFuel
+          Quantity: 250
+  - type: RefillableSolution
+    solution: tank
+  - type: Storage
+    grid:
+    - 0,0,10,7
+    maxItemSize: Normal
+    clickInsert: false
+  - type: UserInterface
+    interfaces:
+      enum.StorageUiKey.Key:
+        type: StorageBoundUserInterface
+  - type: ActivatableUI
+    key: enum.StorageUiKey.Key
+  - type: ContainerContainer
+    containers:
+      storagebase: !type:Container
+  - type: Tag
+    tags:
+    - Structure
+
+- type: entity
+  parent: N14MachineWaterTreatmentBroken
+  id: N14SeismicMaterialExtractorBroken
+  name: destroyed seismic material extractor
+  description: The drill is silent. Its ruined hopper is full of twisted machinery.
+  components:
+  - type: Sprite
+    sprite: _Nuclear14/Structures/Machines/water_treatment.rsi
+    state: watertreatment_broken

@@ -16,6 +16,7 @@ using Content.Shared.Mobs.Components; // #Misfits Add - MobStateComponent
 using Content.Shared.Mobs.Systems; // #Misfits Add - MobStateSystem
 using Content.Shared.Tag;
 using Content.Shared._Misfits.WastelandMap;
+using Content.Shared._Misfits.Deathclaw;
 using Content.Shared._Misfits.TribalHunt;
 using Content.Shared.NPC.Components; // NpcFactionMemberComponent
 using Content.Shared.NPC.Systems;
@@ -144,6 +145,7 @@ public sealed class WastelandMapSystem : EntitySystem
         SubscribeLocalEvent<WastelandMapComponent, WastelandMapRemoveAnnotationMessage>(OnRemoveAnnotationMessage);
         SubscribeLocalEvent<WastelandMapComponent, WastelandMapClearAnnotationsMessage>(OnClearAnnotationsMessage);
         SubscribeLocalEvent<WastelandMapComponent, WastelandMapCommunicationsMessage>(OnCommunicationsMessage);
+        SubscribeLocalEvent<BwonsamdiComponent, OpenUiActionEvent>(OnBwonsamdiSoulCompassOpen);
         // #Misfits Add - notify Followers players when a player humanoid dies
         SubscribeLocalEvent<MindContainerComponent, MobStateChangedEvent>(OnMindedEntityMobStateChanged);
         // #Misfits Add - track MapId→gameMap for auto-detect bounds/texture
@@ -280,6 +282,21 @@ public sealed class WastelandMapSystem : EntitySystem
         var userMap = Transform(args.User).MapID;
         // #Misfits Add - pass the user so group member blips are seeded correctly on open
         _uiSystem.SetUiState(uid, WastelandMapUiKey.Key, BuildState(uid, comp, userMap, actor: args.User));
+    }
+
+    // An action opens the BUI directly, bypassing ActivatableUI's AfterOpen event.
+    // Seed the state immediately so the Soul Compass never opens as a blank map.
+    private void OnBwonsamdiSoulCompassOpen(Entity<BwonsamdiComponent> ent, ref OpenUiActionEvent args)
+    {
+        if (args.Key is not WastelandMapUiKey.Key ||
+            !TryComp<WastelandMapComponent>(ent, out var map) ||
+            !TryComp<UserInterfaceComponent>(ent, out var ui))
+        {
+            return;
+        }
+
+        _uiSystem.SetUiState((ent.Owner, ui), WastelandMapUiKey.Key,
+            BuildState(ent.Owner, map, Transform(args.Performer).MapID, actor: args.Performer));
     }
 
     // #Misfits Add - preserve unrestricted maps unless they define a leadership allowlist.
@@ -766,7 +783,7 @@ public sealed class WastelandMapSystem : EntitySystem
     // #Misfits Add - keep the Tribe feed limited to its explicitly tagged identification items.
     internal bool AllowsSharedOverlays(WastelandMapTacticalFeedKind feed)
     {
-        return feed != WastelandMapTacticalFeedKind.Tribe;
+        return feed is not (WastelandMapTacticalFeedKind.Tribe or WastelandMapTacticalFeedKind.Bwonsamdi);
     }
 
     // #Misfits Add - Append the faction blip set for this feed into the supplied buffer.
@@ -795,6 +812,9 @@ public sealed class WastelandMapSystem : EntitySystem
             // #Misfits Add - Followers feed shows dead player humanoids
             case WastelandMapTacticalFeedKind.Followers:
                 AppendDeadBodyBlips(buffer, mapId, bounds);
+                break;
+            case WastelandMapTacticalFeedKind.Bwonsamdi:
+                AppendBwonsamdiSoulBlips(buffer, mapId, bounds);
                 break;
         }
     }
@@ -929,9 +949,49 @@ public sealed class WastelandMapSystem : EntitySystem
             && mindComp.OriginalOwnerUserId != null;
     }
 
+    // Bwonsamdi sees every player soul, including a player mind currently inhabiting a non-humanoid mob.
+    private void AppendBwonsamdiSoulBlips(List<WastelandMapTrackedBlip> buffer, MapId mapId, Box2 bounds)
+    {
+        var query = EntityQueryEnumerator<MindContainerComponent, MobStateComponent, TransformComponent>();
+        while (query.MoveNext(out var uid, out var mindContainer, out var mobState, out var xform))
+        {
+            if (mobState.CurrentState is not (MobState.Critical or MobState.Dead) ||
+                !IsBwonsamdiTrackableSoul(mindContainer))
+            {
+                continue;
+            }
+
+            var mapCoords = _transform.GetMapCoordinates(uid, xform);
+            if (mapCoords.MapId != mapId || !bounds.Contains(mapCoords.Position))
+                continue;
+
+            var kind = mobState.CurrentState == MobState.Critical
+                ? WastelandMapTrackedBlipKind.CriticalSoul
+                : WastelandMapTrackedBlipKind.DeadSoul;
+            buffer.Add(new WastelandMapTrackedBlip(mapCoords.Position.X, mapCoords.Position.Y, Name(uid), kind));
+        }
+    }
+
+    private bool IsBwonsamdiTrackableSoul(MindContainerComponent mindContainer)
+    {
+        return IsPlayerMind(mindContainer.Mind) || IsPlayerMind(mindContainer.OriginalMind);
+    }
+
+    private bool IsPlayerMind(EntityUid? mindUid)
+    {
+        return mindUid != null &&
+               TryComp<MindComponent>(mindUid.Value, out var mind) &&
+               mind.OriginalOwnerUserId != null;
+    }
+
     // #Misfits Add - Notify Followers on player death and immediately refresh maps on revival.
     private void OnMindedEntityMobStateChanged(EntityUid uid, MindContainerComponent comp, MobStateChangedEvent args)
     {
+        var wasSoulState = args.OldMobState is MobState.Critical or MobState.Dead;
+        var isSoulState = args.NewMobState is MobState.Critical or MobState.Dead;
+        if ((wasSoulState || isSoulState) && IsBwonsamdiTrackableSoul(comp))
+            RefreshBwonsamdiMaps();
+
         // Only care about transitions to or from Dead.
         var wasDead = args.OldMobState == MobState.Dead;
         var isDead  = args.NewMobState == MobState.Dead;
@@ -995,6 +1055,23 @@ public sealed class WastelandMapSystem : EntitySystem
 
             _uiSystem.SetUiState((uid, ui), WastelandMapUiKey.Key,
                 BuildState(uid, map, xform.MapID));
+        }
+    }
+
+    private void RefreshBwonsamdiMaps()
+    {
+        var query = EntityQueryEnumerator<WastelandMapComponent, UserInterfaceComponent>();
+        while (query.MoveNext(out var uid, out var map, out var ui))
+        {
+            if (GetEffectiveFeed(map) != WastelandMapTacticalFeedKind.Bwonsamdi)
+                continue;
+
+            foreach (var actor in _uiSystem.GetActors((uid, ui), WastelandMapUiKey.Key))
+            {
+                _uiSystem.SetUiState((uid, ui), WastelandMapUiKey.Key,
+                    BuildState(uid, map, Transform(actor).MapID, actor: actor));
+                break;
+            }
         }
     }
 

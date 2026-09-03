@@ -1,0 +1,68 @@
+# NCR catalog. Weapon ammunition is deliberately absent: it remains blueprint-crafted.
+# Example per-item balance override:
+# blueprintEntryOverrides:
+#   N14ExampleWeapon:
+#     tier: 2
+#     amount: 4
+#     maxAmount: 4
+#     replenishmentCost: 3
+
+- type: entity
+  parent: N14BaseRmcWeaponVendor
+  id: N14NCRWeaponVendor
+  name: NCR weapon requisitions vendor
+  suffix: NCR
+  components:
+  - type: AccessReader
+    access: [[ "NCR" ]]
+  - type: CMAutomatedVendor
+    departmentName: NCR
+    tierJobs: [ NCRRO, NCRCommander ]
+    replenishment:
+    - currency: Bottlecaps
+    replenishmentCosts:
+      1: 1
+      2: 2
+      3: 5
+      4: 10
+    blueprintCategories: [ N14BlueprintNCRWeaponsT1, N14BlueprintNCRWeaponsT2, N14BlueprintNCRWeaponsT3, N14BlueprintNCRWeaponsT4 ]
+    authorityTierNames:
+      1: Tier 1 - Recruit / Trooper allocation
+      2: Tier 2 - Sergeant allocation
+      3: Tier 3 - Lieutenant allocation
+      4: Tier 4 - Captain allocation
+    authorityTierAccess:
+      1: [ NCR ]
+      2: [ NCRSGT ]
+      3: [ NCRLT ]
+      4: [ NCRCaptain ]
+
+- type: entity
+  parent: N14BaseRmcEquipmentVendor
+  id: N14NCREquipmentVendor
+  name: NCR equipment requisitions vendor
+  suffix: NCR
+  components:
+  - type: AccessReader
+    access: [[ "NCR" ]]
+  - type: CMAutomatedVendor
+    departmentName: NCR
+    tierJobs: [ NCRRO, NCRCommander ]
+    replenishment:
+    - currency: Bottlecaps
+    replenishmentCosts:
+      1: 1
+      2: 2
+      3: 5
+      4: 10
+    blueprintCategories: [ N14BlueprintNCRArmorT1, N14BlueprintNCRArmorT2, N14BlueprintNCRArmorT3, N14BlueprintNCRArmorT4 ]
+    authorityTierNames:
+      1: Tier 1 - Recruit / Trooper allocation
+      2: Tier 2 - Sergeant allocation
+      3: Tier 3 - Lieutenant allocation
+      4: Tier 4 - Captain allocation
+    authorityTierAccess:
+      1: [ NCR ]
+      2: [ NCRSGT ]
+      3: [ NCRLT ]
+      4: [ NCRCaptain ]

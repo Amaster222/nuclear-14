@@ -77,7 +77,8 @@
           NCRRangerRecruit: [ 2, 2 ] # #Misfits Add - entry-level Ranger Recruit slot
           NCRFirstSergeant: [ 1, 1 ]
           #NCRStaffSergeant: [ 1, 1 ] # #Misfits Removed - replaced by NCRHeavyTrooper as T5 specialist slot
-          NCRHeavyTrooper: [ 2, 2 ]
+          NCRHeavyTrooper: [ 3, 3 ]
+          NCRHeavyTrooperLead: [ 1, 1 ]
           NCRNCO: [ 3, 3 ]
           NCRWS: [ 2, 2 ]
           NCREngineer: [ 2, 2 ]
