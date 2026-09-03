@@ -163,6 +163,8 @@ misfits-round-tab-extend-round-desc = Stop the incoming train and add more time 
 misfits-server-tab-shutdown-desc = Shut down the game server.
 misfits-server-restart = Restart Server
 misfits-server-tab-restart-desc = Cleanly restart the server process (watchdog/systemd will relaunch).
+misfits-server-deploy = Deploy Published Build
+misfits-server-tab-deploy-desc = Ask the watchdog to stage the latest GitHub-published build.
 misfits-server-tab-ooc-desc = Toggle OOC (out-of-character) chat on or off.
 misfits-server-tab-looc-desc = Toggle LOOC (local out-of-character) chat on or off.
 

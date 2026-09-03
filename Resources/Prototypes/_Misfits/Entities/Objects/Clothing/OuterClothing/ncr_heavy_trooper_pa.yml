@@ -18,7 +18,6 @@
       head: MisfitsNCRHeavyTrooperT45Helmet
       gloves: N14ClothingPAGauntlets
       shoes: N14ClothingPABoots
-      back: N14ClothingPowerSystemsBack
 
 - type: entity
   parent: N14ClothingOuterPowerArmorT45
