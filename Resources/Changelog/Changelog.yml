@@ -11083,3 +11083,12 @@ Entries:
   id: 6391
   time: '2026-09-03T17:22:28.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1848
+- author: sssaaagggeee
+  changes:
+    - type: Add
+      message: >-
+        HT Lead finally had their paperwork go through, their promotions are now
+        SSGT -> SFC -> MSGT -> WarOff -> CWO
+  id: 6392
+  time: '2026-09-03T17:22:45.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1847
