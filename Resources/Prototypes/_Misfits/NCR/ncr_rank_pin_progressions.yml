@@ -126,10 +126,8 @@
     - min: 144000  # 40 hours
       entity: ClothingNeckPinNCRMasterSergeant
     - min: 216000  # 60 hours
-      entity: ClothingNeckPinNCR1stSergeant
-    - min: 288000  # 80 hours
       entity: ClothingNeckPinNCRWarrantOfficer
-    - min: 360000  # 100 hours
+    - min: 288000  # 80 hours
       entity: ClothingNeckPinNCRChiefWarrantOfficer2
 
 # Medic: PFC (E-3) → SPC (E-4) at 20h → SGT (E-5) at 40h
