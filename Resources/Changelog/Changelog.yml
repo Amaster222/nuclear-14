@@ -11027,3 +11027,28 @@ Entries:
   id: 6387
   time: '2026-09-03T00:15:34.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1842
+- author: cythisiax
+  changes:
+    - type: Fix
+      message: NCR SPA prototype was using PA, not SPA for t45, R-51 is still PA
+    - type: Fix
+      message: NCR SPA/R-51 sprite issue with lamp, causing gmod ERROR
+    - type: Fix
+      message: >-
+        someone renamed Yuma Tribal's Elder prototype entirely, instead of play
+        facing .ftl causing map break,.
+    - type: Fix
+      message: Loadoutkit Vendor adjustments
+    - type: Add
+      message: New Tree of Life sprite (bigger, better, glorious)
+    - type: Add
+      message: Tree of Life, and Willower Shamans can select rites
+    - type: Add
+      message: Deathclaw hatchling and adolescent sprites
+    - type: Tweak
+      message: >-
+        Tree of Life gives rejuvenating heal tick (slow) when in presence of
+        tree, 6 tiles, for Willower faction
+  id: 6388
+  time: '2026-09-03T15:08:11.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1846
