@@ -908,7 +908,7 @@
   hide: false
   icon:
     sprite: Corvax/Structures/Decoration/torches.rsi
-     state: torch_lit
+    state: torch_lit
   objectType: Structure
   placementMode: PlaceFree
 

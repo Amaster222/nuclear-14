@@ -117,7 +117,7 @@
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Furniture/Store_Furniture/delistand.rsi
-     state: deli_stand
+    state: deli_stand
   objectType: Structure
   placementMode: PlaceFree
 
@@ -132,7 +132,7 @@
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Furniture/Store_Furniture/fruitstand.rsi
-     state: fruitstand_empty
+    state: fruitstand_empty
   objectType: Structure
   placementMode: PlaceFree
 
@@ -147,7 +147,7 @@
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Furniture/Store_Furniture/fruitstand.rsi
-     state: fruitstand-1
+    state: fruitstand-1
   objectType: Structure
   placementMode: PlaceFree
 
@@ -162,7 +162,7 @@
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Furniture/Store_Furniture/fruitstand.rsi
-     state: fruitstand-2
+    state: fruitstand-2
   objectType: Structure
   placementMode: PlaceFree
 
@@ -177,6 +177,6 @@
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Furniture/Store_Furniture/fruitstand.rsi
-     state: fruitstand-3
+    state: fruitstand-3
   objectType: Structure
   placementMode: PlaceFree
