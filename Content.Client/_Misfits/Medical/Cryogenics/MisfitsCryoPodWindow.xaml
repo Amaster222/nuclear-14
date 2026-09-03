@@ -1,6 +1,7 @@
 <controls:FancyWindow xmlns="https://spacestation14.io"
                       xmlns:controls="clr-namespace:Content.Client.UserInterface.Controls"
                       xmlns:cryo="clr-namespace:Content.Client._Misfits.Medical.Cryogenics"
+                      xmlns:healthui="clr-namespace:Content.Client.HealthAnalyzer.UI"
                       xmlns:graphics="clr-namespace:Robust.Client.Graphics;assembly=Robust.Client"
                       Title="Cryo Chamber"
                       Resizable="True"
@@ -8,70 +9,19 @@
                       MinSize="820 500">
     <BoxContainer Orientation="Horizontal" Margin="6" SeparationOverride="6" HorizontalExpand="True" VerticalExpand="True">
 
-        <!-- Left: patient portrait + body doll -->
-        <PanelContainer MinWidth="220" MaxWidth="220" VerticalExpand="True">
+        <!-- Left: embedded health analyzer scan (same UI a real scanner shows) -->
+        <PanelContainer MinWidth="380" VerticalExpand="True" SizeFlagsStretchRatio="4">
             <PanelContainer.PanelOverride>
                 <graphics:StyleBoxFlat BackgroundColor="#12141A" />
             </PanelContainer.PanelOverride>
             <BoxContainer Orientation="Vertical" Margin="8" SeparationOverride="4" VerticalExpand="True">
-                <Label Name="PatientNameLabel" Text="No patient" HorizontalAlignment="Center" FontColorOverride="#FFFFFF"/>
-                <PanelContainer Name="StatusPanel" Margin="0 4 0 6" MinHeight="24">
-                    <Label Name="StatusLabel" Margin="6 1" HorizontalAlignment="Center"/>
-                </PanelContainer>
-
-                <PanelContainer HorizontalAlignment="Center" MinHeight="96">
-                    <SpriteView OverrideDirection="South"
-                                Scale="1 1"
-                                Name="PatientSpriteView"
-                                SetSize="96 96"/>
-                    <PanelContainer
-                        Name="PartView"
-                        SetSize="57 96"
-                        Margin="18 0 0 0"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Left">
-                        <PanelContainer SetSize="15 33" Margin="4 0 0 0" HorizontalAlignment="Left">
-                            <TextureButton Name="RightArmButton" MinSize="15 25" StyleClasses="TargetDollButtonRightArm" VerticalAlignment="Top"/>
-                            <TextureButton Name="RightHandButton" MinSize="15 15" VerticalAlignment="Bottom" StyleClasses="TargetDollButtonRightHand"/>
-                        </PanelContainer>
-                        <PanelContainer SetSize="43 75" VerticalAlignment="Center" HorizontalAlignment="Center">
-                            <TextureButton Name="HeadButton" MinSize="28 23" VerticalAlignment="Top" HorizontalAlignment="Center" StyleClasses="TargetDollButtonHead"/>
-                            <TextureButton Name="ChestButton" SetSize="28 30" Margin="0 18 0 0" VerticalAlignment="Top" HorizontalAlignment="Center" StyleClasses="TargetDollButtonChest"/>
-                            <PanelContainer MinSize="38 35" VerticalAlignment="Bottom" HorizontalAlignment="Center">
-                                <TextureButton Name="GroinButton" MinSize="28 15" VerticalAlignment="Top" HorizontalAlignment="Center" StyleClasses="TargetDollButtonGroin"/>
-                                <PanelContainer MinSize="20 30" VerticalAlignment="Bottom" HorizontalAlignment="Right">
-                                    <TextureButton Name="LeftLegButton" MinSize="15 28" VerticalAlignment="Top" HorizontalAlignment="Left" StyleClasses="TargetDollButtonLeftLeg"/>
-                                    <TextureButton Name="LeftFootButton" MinSize="20 10" VerticalAlignment="Bottom" StyleClasses="TargetDollButtonLeftFoot"/>
-                                </PanelContainer>
-                                <PanelContainer MinSize="20 30" VerticalAlignment="Bottom" HorizontalAlignment="Left">
-                                    <TextureButton Name="RightLegButton" MinSize="15 28" VerticalAlignment="Top" HorizontalAlignment="Right" StyleClasses="TargetDollButtonRightLeg"/>
-                                    <TextureButton Name="RightFootButton" MinSize="20 10" VerticalAlignment="Bottom" HorizontalAlignment="Center" StyleClasses="TargetDollButtonRightFoot"/>
-                                </PanelContainer>
-                            </PanelContainer>
-                        </PanelContainer>
-                        <PanelContainer SetSize="15 33" Margin="0 0 4 0" HorizontalAlignment="Right">
-                            <TextureButton Name="LeftArmButton" MinSize="15 25" StyleClasses="TargetDollButtonLeftArm" VerticalAlignment="Top"/>
-                            <TextureButton Name="LeftHandButton" MinSize="15 15" VerticalAlignment="Bottom" StyleClasses="TargetDollButtonLeftHand"/>
-                        </PanelContainer>
-                    </PanelContainer>
-                </PanelContainer>
-                <Label Name="NoDollLabel" Text="" HorizontalAlignment="Center" StyleClasses="LabelSubText" Visible="False"/>
+                <BoxContainer Orientation="Horizontal">
+                    <Label Text="HEALTH SCAN" FontColorOverride="#FFFFFF" HorizontalExpand="True"/>
+                    <Label Name="TemperatureLabel" Text="" StyleClasses="LabelSubText"/>
+                </BoxContainer>
+                <healthui:HealthAnalyzerPanel Name="HealthPanel" Access="Public" VerticalExpand="True"/>
             </BoxContainer>
         </PanelContainer>
-
-        <!-- Middle: vitals + damage breakdown -->
-        <ScrollContainer HScrollEnabled="False" VerticalExpand="True" HorizontalExpand="True" SizeFlagsStretchRatio="3">
-            <BoxContainer Orientation="Vertical" HorizontalExpand="True" SeparationOverride="6">
-                <Label Text="VITALS" FontColorOverride="#FFFFFF"/>
-                <GridContainer Columns="2" Margin="0 3 0 0" HSeparationOverride="4" VSeparationOverride="4">
-                    <cryo:MisfitsCryoMetricControl Name="TemperatureMetric"/>
-                    <cryo:MisfitsCryoMetricControl Name="DamageMetric"/>
-                </GridContainer>
-
-                <Label Text="DAMAGE BREAKDOWN" FontColorOverride="#FFFFFF" Margin="0 8 0 0"/>
-                <BoxContainer Name="DamageContainer" Orientation="Vertical" Margin="0 3 0 0"/>
-            </BoxContainer>
-        </ScrollContainer>
 
         <!-- Right: chamber + beaker deposit -->
         <BoxContainer Orientation="Vertical" HorizontalExpand="True" VerticalExpand="True" SeparationOverride="6" SizeFlagsStretchRatio="3">
@@ -82,6 +32,12 @@
                 </PanelContainer.PanelOverride>
                 <BoxContainer Orientation="Vertical" Margin="8" VerticalExpand="True">
                     <Label Text="CHAMBER" FontColorOverride="#FFFFFF"/>
+                    <BoxContainer Orientation="Horizontal" Margin="0 4 0 4" VerticalAlignment="Center">
+                        <Label Text="Dosage rate:" Margin="0 0 4 0"/>
+                        <Button Name="DosageDownButton" Text="-" MinWidth="24"/>
+                        <Label Name="DosageLabel" Text="" HorizontalAlignment="Center" MinWidth="70"/>
+                        <Button Name="DosageUpButton" Text="+" MinWidth="24"/>
+                    </BoxContainer>
                     <ScrollContainer HScrollEnabled="False" VerticalExpand="True" Margin="0 3 0 0">
                         <BoxContainer Name="ChamberContainer" Orientation="Vertical"/>
                     </ScrollContainer>
@@ -99,8 +55,6 @@
                         <Button Name="EjectButton" Text="Eject"/>
                     </BoxContainer>
                     <BoxContainer Name="AmountRow" Orientation="Horizontal" Margin="0 4 0 4"/>
-                    <Label Text="Click a reagent below to deposit the selected amount into the chamber."
-                           StyleClasses="LabelSubText" Margin="0 0 0 2"/>
                     <ScrollContainer HScrollEnabled="False" VerticalExpand="True" Margin="0 3 0 0">
                         <BoxContainer Name="BeakerContainer" Orientation="Vertical"/>
                     </ScrollContainer>

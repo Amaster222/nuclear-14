@@ -22,6 +22,7 @@ public sealed class MisfitsCryoPodBoundUserInterface : BoundUserInterface
         _window = this.CreateWindow<MisfitsCryoPodWindow>();
         _window.OnDeposit += (reagentId, amount) => SendMessage(new MisfitsCryoPodDepositReagentMessage(reagentId, amount));
         _window.OnEject += () => SendMessage(new ItemSlotButtonPressedEvent(BeakerSlotId));
+        _window.OnSetTransferAmount += amount => SendMessage(new MisfitsCryoPodSetTransferAmountMessage(amount));
     }
 
     protected override void UpdateState(BoundUserInterfaceState state)
