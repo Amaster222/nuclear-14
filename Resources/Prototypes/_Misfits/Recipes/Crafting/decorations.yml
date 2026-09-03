@@ -1162,8 +1162,8 @@
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Storage/barrels.rsi
-   state: black-closed
- objectType: Structure
+    state: black-closed
+  objectType: Structure
   placementMode: PlaceFree
 
 - type: construction
@@ -1176,8 +1176,8 @@
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Storage/barrels.rsi
-   state: blue-closed
- objectType: Structure
+    state: blue-closed
+  objectType: Structure
   placementMode: PlaceFree
 
 - type: construction
@@ -1190,8 +1190,8 @@
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Storage/barrels.rsi
-   state: red-closed
- objectType: Structure
+    state: red-closed
+  objectType: Structure
   placementMode: PlaceFree
 
 - type: construction
@@ -1204,8 +1204,8 @@
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Storage/barrels.rsi
-   state: yellow-closed
- objectType: Structure
+    state: yellow-closed
+  objectType: Structure
   placementMode: PlaceFree
 
 - type: construction
@@ -1218,8 +1218,8 @@
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Storage/barrels.rsi
-   state: black-open
- objectType: Structure
+    state: black-open
+  objectType: Structure
   placementMode: PlaceFree
 
 - type: construction
@@ -1232,8 +1232,8 @@
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Storage/barrels.rsi
-   state: blue-open
- objectType: Structure
+    state: blue-open
+  objectType: Structure
   placementMode: PlaceFree
 
 - type: construction
@@ -1246,8 +1246,8 @@
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Storage/barrels.rsi
-   state: red-open
- objectType: Structure
+    state: red-open
+  objectType: Structure
   placementMode: PlaceFree
 
 - type: construction
@@ -1260,8 +1260,8 @@
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Storage/barrels.rsi
-   state: yellow-open
- objectType: Structure
+    state: yellow-open
+  objectType: Structure
   placementMode: PlaceFree
 
 - type: construction
@@ -1274,8 +1274,8 @@
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Storage/barrels.rsi
-   state: black-full
- objectType: Structure
+    state: black-full
+  objectType: Structure
   placementMode: PlaceFree
 
 - type: construction
@@ -1288,8 +1288,8 @@
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Storage/barrels.rsi
-   state: red-full
- objectType: Structure
+    state: red-full
+  objectType: Structure
   placementMode: PlaceFree
 
 - type: construction
@@ -1302,6 +1302,6 @@
   hide: false
   icon:
     sprite: _Nuclear14/Structures/Storage/barrels.rsi
-   state: yellow-full
- objectType: Structure
+    state: yellow-full
+  objectType: Structure
   placementMode: PlaceFree
