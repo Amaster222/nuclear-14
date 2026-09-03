@@ -78,17 +78,17 @@
   - type: GeneratorControlPanel
   - type: FuelGenerator
     on: false
-    targetPower: 500
-    minTargetPower: 500
-    optimalPower: 500
-    maxTargetPower: 500
+    targetPower: 1000
+    minTargetPower: 1000
+    optimalPower: 1000
+    maxTargetPower: 1000
     # A full 250u tank lasts about two hours while the extractor runs.
     optimalBurnRate: 0.03333333
     fuelEfficiencyConstant: 0.3
   - type: PowerSupplier
-    supplyRate: 500
-    supplyRampRate: 500
-    supplyRampTolerance: 500
+    supplyRate: 1000
+    supplyRampRate: 1000
+    supplyRampTolerance: 1000
     enabled: false
   - type: ChemicalFuelGeneratorAdapter
     solution: tank
