@@ -125,10 +125,10 @@
   productPrototypes:
   - MisfitsFloraProduceWildZoybeans
   harvestRepeat: NoRepeat
-  growthStages: 4
-  lifespan: 25
-  maturation: 6
-  production: 6
+  growthStages: 2
+  lifespan: 30
+  maturation: 20
+  production: 1
   yield: 3
   potency: 5
   idealLight: 7
