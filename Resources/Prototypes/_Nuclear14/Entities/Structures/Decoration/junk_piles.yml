@@ -2,7 +2,15 @@
   id: N14JunkPileBase
   suffix: Mapping
   abstract: true
+  parent: N14BaseSmallLockerStorageFill
   components:
+  - type: Appearance
+  - type: StorageFill
+    fillOnMapInit: false
+  - type: JunkPileSearchable
+    searchDuration: 0.2
+    cooldownSeconds: 3600
+  - type: LuckJunkBonus
   - type: Sprite
     sprite: _Nuclear14/Structures/Decoration/crafting_junk.rsi
     snapCardinals: true
@@ -124,76 +132,62 @@
   - type: Sprite
     state: Junk_12
 
-# Loot Piles
-# A successful search rolls this existing loot table, then locks the individual pile for one hour.
 - type: entity
-  abstract: true
-  id: N14JunkPileLootBase
-  parent: N14BaseSmallLockerStorageFill
-  components:
-  - type: StorageFill
-    fillOnMapInit: false
-  - type: JunkPileSearchable
-    searchDuration: 3
-    cooldownSeconds: 3600
-  - type: LuckJunkBonus
-
-- type: entity
-  parent: [ N14JunkPile1, N14JunkPileLootBase ]
+  parent: N14JunkPile1
   id: N14JunkPile1Refilling1
   suffix: Loot,Random
 
 - type: entity
-  parent: [ N14JunkPile2, N14JunkPileLootBase ]
+  parent: N14JunkPile2
   id: N14JunkPile1Refilling2
   suffix: Loot,Random
 
 - type: entity
-  parent: [ N14JunkPile3, N14JunkPileLootBase ]
+  parent: N14JunkPile3
   id: N14JunkPile1Refilling3
   suffix: Loot,Random
 
 - type: entity
-  parent: [ N14JunkPile4, N14JunkPileLootBase ]
+  parent: N14JunkPile4
   id: N14JunkPile1Refilling4
   suffix: Loot,Random
 
 - type: entity
-  parent: [ N14JunkPile5, N14JunkPileLootBase ]
+  parent: N14JunkPile5
   id: N14JunkPile1Refilling5
   suffix: Loot,Random
 
 - type: entity
-  parent: [ N14JunkPile6, N14JunkPileLootBase ]
+  parent: N14JunkPile6
   id: N14JunkPile1Refilling6
   suffix: Loot,Random
 
 - type: entity
-  parent: [ N14JunkPile7, N14JunkPileLootBase ]
+  parent: N14JunkPile7
   id: N14JunkPile1Refilling7
   suffix: Loot,Random
 
 - type: entity
-  parent: [ N14JunkPile8, N14JunkPileLootBase ]
+  parent: N14JunkPile8
   id: N14JunkPile1Refilling8
   suffix: Loot,Random
 
 - type: entity
-  parent: [ N14JunkPile9, N14JunkPileLootBase ]
+  parent: N14JunkPile9
   id: N14JunkPile1Refilling9
   suffix: Loot,Random
 
 - type: entity
-  parent: [ N14JunkPile10, N14JunkPileLootBase ]
+  parent: N14JunkPile10
   id: N14JunkPile1Refilling10
   suffix: Loot,Random
 
 - type: entity
-  parent: [ N14JunkPile11, N14JunkPileLootBase ]
+  parent: N14JunkPile11
   id: N14JunkPile1Refilling11
   suffix: Loot,Random
 
 - type: entity
-  parent: [ N14JunkPile12, N14JunkPileLootBase ]
+  parent: N14JunkPile12
   id: N14JunkPile1Refilling12
   suffix: Loot,Random

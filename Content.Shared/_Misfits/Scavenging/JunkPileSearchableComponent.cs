@@ -13,4 +13,15 @@ public sealed partial class JunkPileSearchableComponent : Component
     public float CooldownSeconds = 3600f;
 
     public TimeSpan CooldownEnd = TimeSpan.Zero;
+
+    /// <summary>
+    /// Whether Junker Finder has already uncovered the one extra find available during this cooldown.
+    /// </summary>
+    public bool FinderSearchUsed;
+}
+
+[Serializable, NetSerializable]
+public enum JunkPileVisuals : byte
+{
+    Depleted,
 }
