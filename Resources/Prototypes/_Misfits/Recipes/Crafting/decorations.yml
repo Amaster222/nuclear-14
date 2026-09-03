@@ -908,8 +908,8 @@
   hide: false
   icon:
     sprite: Corvax/Structures/Decoration/torches.rsi
-   state: torch_lit
- objectType: Structure
+     state: torch_lit
+  objectType: Structure
   placementMode: PlaceFree
 
 # #Cythisiax Added - Crafting menu expansion: rugs and mats (all variants)
