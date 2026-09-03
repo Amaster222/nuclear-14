@@ -1,0 +1,14 @@
+#MELEE#
+- type: startingGear
+  id: talonmercmeleeGear
+  equipment:
+    jumpsuit: ClothingUniformJumpsuitSuitBlackAlt
+    shoes: ClothingShoesMilitaryBase
+    mask: N14ClothingMaskBlackBalaclava
+    outerClothing: M14ClothingOuterCombatTalon
+    pocket1: N14RaiderStash
+    pocket2: N14RaiderStash
+  inhand:
+  - N14CombatKnife
+  
+#RANGED#
