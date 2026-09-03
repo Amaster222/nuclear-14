@@ -38,8 +38,6 @@
           completed:
             - !type:SnapToGrid
               southRotation: true
-          conditions:
-            - !type:TileNotBlocked
           steps:
             - material: MetalRod
               amount: 2
