@@ -45,7 +45,7 @@
 
 - type: entity
   parent: SeedBase
-  name: packet of zoybean seeds
+  name: wild zoybean clipping
   id: ZoybeanSeeds
   components:
   - type: Seed
