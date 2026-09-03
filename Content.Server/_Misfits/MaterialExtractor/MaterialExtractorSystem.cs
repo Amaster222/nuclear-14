@@ -86,7 +86,7 @@ public sealed partial class MaterialExtractorSystem : EntitySystem
 
     private void OnStartMessage(Entity<MaterialExtractorComponent> ent, ref MaterialExtractorStartMessage args)
     {
-        if (!Transform(ent).Anchored || !HasNearbyOperator(ent) || !TryComp<FuelGeneratorComponent>(ent, out var generator)
+        if (!Transform(ent).Anchored || !TryComp<FuelGeneratorComponent>(ent, out var generator)
             || generator.On || _generator.GetFuel(ent) <= 0f || _generator.GetIsClogged(ent))
             return;
 
