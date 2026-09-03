@@ -10,8 +10,8 @@
     - type: Gun
       minAngle: 40
       maxAngle: 80
-      angleIncrease: 8
-      angleDecay: 16
+      angleIncrease: 10
+      angleDecay: 20
       fireRate: 3.0
       soundGunshot: /Audio/_Nuclear14/Weapons/Guns/Rifles/N14RifleR91Gunshot.ogg
       useKey: false
