@@ -5,7 +5,7 @@
                       Resizable="False"
                       Title="Material Extractor">
     <BoxContainer Orientation="Vertical" Margin="8">
-        <Label Name="StatusLabel" FontSize="18" Text="Stopped" />
+        <Label Name="StatusLabel" Text="Stopped" />
         <Label Name="DetailLabel" Text="Ready" />
         <BoxContainer Orientation="Horizontal" Margin="0 8 0 0">
             <ProgressBar Name="FuelBar" HorizontalExpand="True" MinValue="0" MaxValue="1" />
