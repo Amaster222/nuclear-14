@@ -11059,3 +11059,10 @@ Entries:
   id: 6389
   time: '2026-09-03T15:21:50.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1844
+- author: Tytos
+  changes:
+    - type: Tweak
+      message: houndmaster doesnt need vexillarius time
+  id: 6390
+  time: '2026-09-03T15:22:06.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1843
