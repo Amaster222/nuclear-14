@@ -71,11 +71,6 @@
       N14ZincOre1: 6
       N14BauxiteOre1: 5
       FertilizerOre1: 3
-  # Its context-menu control panel starts/stops the extractor. Normal
-  # activation remains reserved for opening the output hopper.
-  - type: PortableGenerator
-    startChance: 1
-  - type: GeneratorControlPanel
   - type: FuelGenerator
     on: false
     targetPower: 1000
@@ -113,8 +108,8 @@
     interfaces:
       enum.StorageUiKey.Key:
         type: StorageBoundUserInterface
-      enum.GeneratorComponentUiKey.Key:
-        type: PortableGeneratorBoundUserInterface
+      enum.MaterialExtractorUiKey.Key:
+        type: MaterialExtractorBoundUserInterface
   - type: ActivatableUI
     key: enum.StorageUiKey.Key
   - type: ContainerContainer

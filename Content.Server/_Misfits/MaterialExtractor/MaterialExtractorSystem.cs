@@ -12,12 +12,14 @@ using Content.Shared.Mobs;
 using Content.Shared.Mobs.Components;
 using Content.Shared.NPC.Systems;
 using Content.Shared.Power.Generator;
+using Content.Shared._Misfits.MaterialExtractor;
 using Content.Shared.Storage;
 using Content.Shared.Spawning;
 using Content.Shared.Chat;
 using Content.Shared.Chemistry.EntitySystems;
 using Content.Shared.Maps;
 using Content.Shared.Physics;
+using Content.Shared.Verbs;
 using Robust.Shared;
 using Robust.Shared.Player;
 using Robust.Shared.Audio;
@@ -29,6 +31,8 @@ using Robust.Shared.Map.Components;
 using Robust.Shared.Physics;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
+using Robust.Shared.Utility;
+using Robust.Server.GameObjects;
 
 namespace Content.Server._Misfits.MaterialExtractor;
 
@@ -52,6 +56,7 @@ public sealed partial class MaterialExtractorSystem : EntitySystem
     [Dependency] private SharedMapSystem _map = default!;
     [Dependency] private TurfSystem _turf = default!;
     [Dependency] private GeneratorSystem _generator = default!;
+    [Dependency] private UserInterfaceSystem _ui = default!;
 
     public override void Initialize()
     {
@@ -59,6 +64,44 @@ public sealed partial class MaterialExtractorSystem : EntitySystem
         SubscribeLocalEvent<MaterialExtractorComponent, MapInitEvent>(OnMapInit);
         SubscribeLocalEvent<MaterialExtractorComponent, DamageChangedEvent>(OnDamageChanged);
         SubscribeLocalEvent<MaterialExtractorComponent, ExaminedEvent>(OnExamined);
+        SubscribeLocalEvent<MaterialExtractorComponent, MaterialExtractorStartMessage>(OnStartMessage);
+        SubscribeLocalEvent<MaterialExtractorComponent, MaterialExtractorStopMessage>(OnStopMessage);
+        SubscribeLocalEvent<MaterialExtractorComponent, MaterialExtractorEjectFuelMessage>(OnEjectFuelMessage);
+        SubscribeLocalEvent<MaterialExtractorComponent, GetVerbsEvent<AlternativeVerb>>(GetAlternativeVerb);
+    }
+
+    private void GetAlternativeVerb(Entity<MaterialExtractorComponent> ent, ref GetVerbsEvent<AlternativeVerb> args)
+    {
+        if (!args.CanAccess || !args.CanInteract)
+            return;
+
+        var user = args.User;
+        args.Verbs.Add(new AlternativeVerb
+        {
+            Act = () => _ui.OpenUi(ent.Owner, MaterialExtractorUiKey.Key, user),
+            Icon = new SpriteSpecifier.Texture(new("/Textures/Interface/VerbIcons/zap.svg.192dpi.png")),
+            Text = "Material extractor controls",
+        });
+    }
+
+    private void OnStartMessage(Entity<MaterialExtractorComponent> ent, ref MaterialExtractorStartMessage args)
+    {
+        if (!Transform(ent).Anchored || !HasNearbyOperator(ent) || !TryComp<FuelGeneratorComponent>(ent, out var generator)
+            || generator.On || _generator.GetFuel(ent) <= 0f || _generator.GetIsClogged(ent))
+            return;
+
+        _generator.SetFuelGeneratorOn(ent, true, generator);
+    }
+
+    private void OnStopMessage(Entity<MaterialExtractorComponent> ent, ref MaterialExtractorStopMessage args)
+    {
+        if (TryComp<FuelGeneratorComponent>(ent, out var generator))
+            _generator.SetFuelGeneratorOn(ent, false, generator);
+    }
+
+    private void OnEjectFuelMessage(Entity<MaterialExtractorComponent> ent, ref MaterialExtractorEjectFuelMessage args)
+    {
+        _generator.EmptyGenerator(ent);
     }
 
     private void OnDamageChanged(Entity<MaterialExtractorComponent> ent, ref DamageChangedEvent args)
@@ -101,9 +144,9 @@ public sealed partial class MaterialExtractorSystem : EntitySystem
             // start/stop state is the extractor's operating switch.
             if (!TryComp<FuelGeneratorComponent>(uid, out var generator) || !generator.On)
             {
+                var fuelExhausted = !TryComp<FuelGeneratorComponent>(uid, out _) || _generator.GetFuel(uid) <= 0f;
                 if (extractor.WasRunning)
                 {
-                    var fuelExhausted = !TryComp<FuelGeneratorComponent>(uid, out _) || _generator.GetFuel(uid) <= 0f;
                     SendLifecycleEmote(uid, fuelExhausted
                         ? "material-extractor-fuel-depleted"
                         : "material-extractor-stopped");
@@ -111,6 +154,7 @@ public sealed partial class MaterialExtractorSystem : EntitySystem
 
                 extractor.WasRunning = false;
                 SetBeacon(uid, extractor, false);
+                UpdateUi(uid, extractor, false, false, fuelExhausted);
                 continue;
             }
 
@@ -124,6 +168,7 @@ public sealed partial class MaterialExtractorSystem : EntitySystem
 
                 extractor.WasRunning = false;
                 SetBeacon(uid, extractor, false);
+                UpdateUi(uid, extractor, false, true, false);
                 continue;
             }
 
@@ -137,6 +182,7 @@ public sealed partial class MaterialExtractorSystem : EntitySystem
             }
 
             UpdateLowFuelWarning(uid, extractor);
+            UpdateUi(uid, extractor, true, false, false);
 
             extractor.ActiveAttackers.RemoveWhere(attacker => Deleted(attacker));
 
@@ -166,6 +212,27 @@ public sealed partial class MaterialExtractorSystem : EntitySystem
                 extractor.NextPulse = _timing.CurTime + PulseDelay(extractor);
             }
         }
+    }
+
+    private void UpdateUi(EntityUid uid, MaterialExtractorComponent extractor, bool running, bool unattended, bool fuelDepleted)
+    {
+        if (!_ui.IsUiOpen(uid, MaterialExtractorUiKey.Key))
+            return;
+
+        var fuel = TryComp<FuelGeneratorComponent>(uid, out _) ? _generator.GetFuel(uid) : 0f;
+        var capacity = 0f;
+        if (_solution.TryGetSolution(uid, extractor.FuelSolution, out _, out var tank))
+            capacity = tank.MaxVolume.Float();
+
+        _ui.SetUiState(uid, MaterialExtractorUiKey.Key,
+            new MaterialExtractorUiState
+            {
+                Running = running,
+                Fuel = fuel,
+                FuelCapacity = capacity,
+                Unattended = unattended,
+                FuelDepleted = fuelDepleted,
+            });
     }
 
     private void SendLifecycleEmote(EntityUid uid, string localizationId)
