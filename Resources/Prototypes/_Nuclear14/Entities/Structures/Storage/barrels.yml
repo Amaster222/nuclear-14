@@ -72,10 +72,10 @@
 # Closed
 - type: entity
   parent: N14BaseBarrel
- id: N14BlackBarrel
- name: black barrel
- description: A worn out black barrel. The label is torn off.
- components:
+  id: N14BlackBarrel
+  name: black barrel
+  description: A worn out black barrel. The label is torn off.
+  components:
   - type: Construction
     graph: N14Barrels
     node: barrelblack
@@ -88,10 +88,10 @@
 
 - type: entity
   parent: N14BaseBarrel
- id: N14BlueBarrel
- name: blue barrel
- description: A blue barrel with a warning sign of. Maybe it contains water?
- components:
+  id: N14BlueBarrel
+  name: blue barrel
+  description: A blue barrel with a warning sign of. Maybe it contains water?
+  components:
   - type: Construction
     graph: N14Barrels
     node: barrelblue
@@ -101,10 +101,10 @@
 
 - type: entity
   parent: N14BaseBarrel
- id: N14RedBarrel
- name: red barrel
- description: A red barrel with an explosive warning sign on. Better be careful.
- components:
+  id: N14RedBarrel
+  name: red barrel
+  description: A red barrel with an explosive warning sign on. Better be careful.
+  components:
   - type: Construction
     graph: N14Barrels
     node: barrelred
@@ -129,10 +129,10 @@
 
 - type: entity
   parent: N14BaseBarrel
- id: N14YellowBarrel
- name: yellow barrel
- description: A yellow barrel with a radiation warning sign on. Better be careful.
- components:
+  id: N14YellowBarrel
+  name: yellow barrel
+  description: A yellow barrel with a radiation warning sign on. Better be careful.
+  components:
   - type: Construction
     graph: N14Barrels
     node: barrelyellow
@@ -146,11 +146,11 @@
 # Open
 - type: entity
   parent: N14BaseBarrelOpen
- id: N14BlackBarrelOpen
- suffix: open
- name: black barrel
- description: A worn out black barrel. The label is torn off. The lid is off and you can see inside.
- components:
+  id: N14BlackBarrelOpen
+  suffix: open
+  name: black barrel
+  description: A worn out black barrel. The label is torn off. The lid is off and you can see inside.
+  components:
   - type: Construction
     graph: N14Barrels
     node: barrelblackopen
@@ -163,11 +163,11 @@
 
 - type: entity
   parent: N14BaseBarrelOpen
- id: N14BlueBarrelOpen
- suffix: open
- name: blue barrel
- description: A blue barrel with a warning sign of. The lid is off and you can see inside.
- components:
+  id: N14BlueBarrelOpen
+  suffix: open
+  name: blue barrel
+  description: A blue barrel with a warning sign of. The lid is off and you can see inside.
+  components:
   - type: Construction
     graph: N14Barrels
     node: barrelblueopen
@@ -177,11 +177,11 @@
 
 - type: entity
   parent: N14BaseBarrelOpen
- id: N14RedBarrelOpen
- suffix: open
- name: red barrel
- description: A red barrel with an explosive warning sign on. The lid is off and you can see inside.
- components:
+  id: N14RedBarrelOpen
+  suffix: open
+  name: red barrel
+  description: A red barrel with an explosive warning sign on. The lid is off and you can see inside.
+  components:
   - type: Construction
     graph: N14Barrels
     node: barrelredopen
@@ -191,11 +191,11 @@
 
 - type: entity
   parent: N14BaseBarrelOpen
- id: N14YellowBarrelOpen
- suffix: open
- name: yellow barrel
- description: A yellow barrel with a radiation warning sign on. The lid is off and you can see inside but it still makes you twitch.
- components:
+  id: N14YellowBarrelOpen
+  suffix: open
+  name: yellow barrel
+  description: A yellow barrel with a radiation warning sign on. The lid is off and you can see inside but it still makes you twitch.
+  components:
   - type: Construction
     graph: N14Barrels
     node: barrelyellowopen
@@ -209,10 +209,10 @@
 # Full barrels
 - type: entity
   parent: N14BlackBarrelOpen
- id: N14BlackBarrelFull
- suffix: full
- description: A worn out black barrel. This one looks full of some dark liquid.
- components:
+  id: N14BlackBarrelFull
+  suffix: full
+  description: A worn out black barrel. This one looks full of some dark liquid.
+  components:
   - type: Construction
     graph: N14Barrels
     node: barrelblackfull
@@ -226,10 +226,10 @@
 
 - type: entity
   parent: N14RedBarrelOpen
- id: N14RedBarrelFull
- suffix: full
- description: A red barrel with an explosive warning sign on. It has a golden liquid inside.
- components:
+  id: N14RedBarrelFull
+  suffix: full
+  description: A red barrel with an explosive warning sign on. It has a golden liquid inside.
+  components:
   - type: Construction
     graph: N14Barrels
     node: barrelredfull
@@ -254,10 +254,10 @@
 
 - type: entity
   parent: N14YellowBarrelOpen
- id: N14YellowBarrelFull
- suffix: full
- description: A yellow barrel with a radiation warning sign on. You can see the glowing goo bubble.
- components:
+  id: N14YellowBarrelFull
+  suffix: full
+  description: A yellow barrel with a radiation warning sign on. You can see the glowing goo bubble.
+  components:
   - type: Construction
     graph: N14Barrels
     node: barrelyellowfull
