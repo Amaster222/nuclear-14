@@ -339,7 +339,8 @@ public sealed partial class MaterialExtractorSystem : EntitySystem
 
             if (TryComp<HTNComponent>(attacker.Value, out var htn))
             {
-                _npc.SetBlackboard(attacker.Value, NPCBlackboard.CurrentOrderedTarget, extractorUid, htn);
+                _npc.SetBlackboard(attacker.Value, NPCBlackboard.FollowTarget,
+                    new EntityCoordinates(extractorUid, Vector2.Zero), htn);
                 _htn.Replan(htn);
             }
         }
