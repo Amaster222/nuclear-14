@@ -25,7 +25,7 @@
     slots:
       gun_magazine:
         name: Magazine
-        startingItem: N14MicrofusionCell # #Misfits Change - consolidated to single generic MFC
+        startingItem: N14MicrofusionCellRed
         insertSound: /Audio/Weapons/Guns/MagIn/batrifle_magin.ogg
         ejectSound: /Audio/Weapons/Guns/MagOut/batrifle_magout.ogg
         whitelist:
@@ -146,14 +146,12 @@
     slots:
       gun_magazine:
         name: Magazine
-        startingItem: N14MicrofusionCell # #Misfits Change - consolidated to single generic MFC
+        startingItem: N14PowerCellSmall
         insertSound: /Audio/Weapons/Guns/MagIn/batrifle_magin.ogg
         ejectSound: /Audio/Weapons/Guns/MagOut/batrifle_magout.ogg
         whitelist:
           tags:
-            - N14MicrofusionCell
-  - type: GunDamageBonus
-    hitscanProtoOverride: N14MFLaserRed
+            - N14PowerCellSmall
   - type: Item
     size: Small
     shape:
@@ -674,7 +672,7 @@
     slots:
       gun_magazine:
         name: Magazine
-        startingItem: N14MicrofusionCell # #Misfits Change - consolidated to single generic MFC
+        startingItem: N14MicrofusionCellRed
         insertSound: /Audio/Weapons/Guns/MagIn/batrifle_magin.ogg
         ejectSound: /Audio/Weapons/Guns/MagOut/batrifle_magout.ogg
         whitelist:
@@ -722,7 +720,7 @@
     slots:
       gun_magazine:
         name: Magazine
-        startingItem: N14MicrofusionCell # #Misfits Change - consolidated to single generic MFC
+        startingItem: N14MicrofusionCellRed
         insertSound: /Audio/Weapons/Guns/MagIn/batrifle_magin.ogg
         ejectSound: /Audio/Weapons/Guns/MagOut/batrifle_magout.ogg
         whitelist:
@@ -980,7 +978,7 @@
     slots:
       gun_magazine:
         name: Magazine
-        startingItem: N14MicrofusionCell # #Misfits Change - consolidated to single generic MFC
+        startingItem: N14MicrofusionCellRed
         insertSound: /Audio/Weapons/Guns/MagIn/batrifle_magin.ogg
         ejectSound: /Audio/Weapons/Guns/MagOut/batrifle_magout.ogg
         whitelist:
@@ -1037,7 +1035,7 @@
     slots:
       gun_magazine:
         name: Magazine
-        startingItem: N14MicrofusionCell # #Misfits Change - consolidated to single generic MFC
+        startingItem: N14MicrofusionCellRed
         insertSound: /Audio/Weapons/Guns/MagIn/batrifle_magin.ogg
         ejectSound: /Audio/Weapons/Guns/MagOut/batrifle_magout.ogg
         whitelist:
