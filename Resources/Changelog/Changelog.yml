@@ -11027,3 +11027,121 @@ Entries:
   id: 6387
   time: '2026-09-03T00:15:34.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1842
+- author: cythisiax
+  changes:
+    - type: Fix
+      message: NCR SPA prototype was using PA, not SPA for t45, R-51 is still PA
+    - type: Fix
+      message: NCR SPA/R-51 sprite issue with lamp, causing gmod ERROR
+    - type: Fix
+      message: >-
+        someone renamed Yuma Tribal's Elder prototype entirely, instead of play
+        facing .ftl causing map break,.
+    - type: Fix
+      message: Loadoutkit Vendor adjustments
+    - type: Add
+      message: New Tree of Life sprite (bigger, better, glorious)
+    - type: Add
+      message: Tree of Life, and Willower Shamans can select rites
+    - type: Add
+      message: Deathclaw hatchling and adolescent sprites
+    - type: Tweak
+      message: >-
+        Tree of Life gives rejuvenating heal tick (slow) when in presence of
+        tree, 6 tiles, for Willower faction
+  id: 6388
+  time: '2026-09-03T15:08:11.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1846
+- author: Vixting
+  changes:
+    - type: Add
+      message: Added some new vault crates
+  id: 6389
+  time: '2026-09-03T15:21:50.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1844
+- author: Tytos
+  changes:
+    - type: Tweak
+      message: houndmaster doesnt need vexillarius time
+  id: 6390
+  time: '2026-09-03T15:22:06.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1843
+- author: Cythisiax
+  changes:
+    - type: Tweak
+      message: >-
+        Junkl pile interactions now just click > loot > shrink, 1hr cooldown,
+        'Scrounger' perk allows checking already looted piles
+    - type: Add
+      message: HOST command
+    - type: Fix
+      message: >-
+        MFC default core 46 shots, change to MFC Red default > 24 shots ALL AER
+        variants roundstart (Sorry folk, mald me, going back to my intention,
+        and this will supplement supersphere's ballistic changes, get your
+        toasters to BoS, from a BoS main, fill that inventory up on cells)
+  id: 6391
+  time: '2026-09-03T17:22:28.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1848
+- author: sssaaagggeee
+  changes:
+    - type: Add
+      message: >-
+        HT Lead finally had their paperwork go through, their promotions are now
+        SSGT -> SFC -> MSGT -> WarOff -> CWO
+  id: 6392
+  time: '2026-09-03T17:22:45.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1847
+- author: cythisiax
+  changes:
+    - type: Tweak
+      message: >-
+        material extractor now appears on WendoverMap, and all faction maps as a
+        permanent geo spot
+    - type: Tweak
+      message: >-
+        mat extractor's PVE waves now randomize mob pool, not in a 'length
+        tier', thus current round 1189 nightstalker spam
+    - type: Fix
+      message: missing reagent hooks on a lot of craftables (G) menu
+  id: 6393
+  time: '2026-09-03T21:09:36.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1849
+- author: aftemath434
+  changes:
+    - type: Tweak
+      message: 'Removed NCR CO PA '
+  id: 6394
+  time: '2026-09-03T23:46:28.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1851
+- author: aftemath434
+  changes:
+    - type: Fix
+      message: nightKin stealth, nightkin physical traits
+  id: 6395
+  time: '2026-09-04T00:53:57.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1850
+- author: Amaster222
+  changes:
+    - type: Add
+      message: Zoybeans! A mutated soy alternative for the meat haters.
+    - type: Add
+      message: New reagents, reactions, and recipes that all involve zoy!
+    - type: Fix
+      message: Tofu should work in wasteland cooking again! use zoy milk!
+  id: 6396
+  time: '2026-09-04T00:54:09.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1826
+- author: cythisiax
+  changes:
+    - type: Add
+      message: >-
+        AER variant depending on 'level' decreased MFC usage. AER-9 highest >
+        AER-14(15) lowest. 24 > 26 > 28 > 30 > 32.
+    - type: Add
+      message: 'BoS Senior Paladins receive 1 extra slot. '
+    - type: Fix
+      message: Material extractor nuances.
+  id: 6397
+  time: '2026-09-04T01:33:46.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1852

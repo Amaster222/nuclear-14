@@ -9,4 +9,6 @@ namespace Content.Shared._Misfits.Scavenging;
 [Serializable, NetSerializable]
 public sealed partial class JunkPileSearchDoAfterEvent : SimpleDoAfterEvent
 {
+    [DataField]
+    public bool FinderSearch;
 }

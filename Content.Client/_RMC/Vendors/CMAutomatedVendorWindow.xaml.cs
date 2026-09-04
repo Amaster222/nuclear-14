@@ -170,7 +170,14 @@ public sealed partial class CMAutomatedVendorWindow : DefaultWindow
         if (!entry.HasAuthority)
             text += $" — Requires {entry.RequiredAuthority}";
 
-        var button = new Button { Text = text, HorizontalExpand = true, ToolTip = text };
+        var button = new Button
+        {
+            Text = text,
+            ToolTip = text,
+            MinWidth = 260,
+            MaxWidth = 360,
+            TextAlign = Label.AlignMode.Left,
+        };
         button.Disabled = entry.Amount is <= 0 ||
                           !entry.HasAuthority ||
                           entry.Points is { } cost && cost > state.Points ||
@@ -288,7 +295,14 @@ public sealed partial class CMAutomatedVendorWindow : DefaultWindow
             Stretch = TextureRect.StretchMode.KeepAspectCentered,
         });
 
-        button ??= new Button { Text = text, HorizontalExpand = true, ToolTip = text };
+        button ??= new Button
+        {
+            Text = text,
+            ToolTip = text,
+            MinWidth = 260,
+            MaxWidth = 360,
+            TextAlign = Label.AlignMode.Left,
+        };
         button.OnPressed += _ => onPressed();
         row.AddChild(button);
         return row;

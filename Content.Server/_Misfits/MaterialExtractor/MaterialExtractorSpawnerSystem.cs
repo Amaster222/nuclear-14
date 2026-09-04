@@ -25,6 +25,7 @@ public sealed partial class MaterialExtractorSpawnerSystem : EntitySystem
     ];
     [Dependency] private IRobustRandom _random = default!;
     [Dependency] private SharedMapSystem _map = default!;
+    [Dependency] private SharedTransformSystem _transform = default!;
 
     private readonly HashSet<MapId> _wendoverMaps = [];
     private ISawmill _log = default!;
@@ -81,7 +82,10 @@ public sealed partial class MaterialExtractorSpawnerSystem : EntitySystem
 
         var rockTile = rockCandidates[_random.Next(rockCandidates.Count)];
         var tile = rockTile + AdjacentOffsets[_random.Next(AdjacentOffsets.Length)];
-        Spawn(ExtractorPrototype, _map.GridTileToLocal(gridUid, grid, tile));
+        var extractor = Spawn(ExtractorPrototype, _map.GridTileToLocal(gridUid, grid, tile));
+        // Round-start landmarks are spawned directly rather than placed by a player,
+        // so anchor them here to satisfy the portable-generator start path.
+        _transform.AnchorEntity(extractor, Transform(extractor));
         _log.Info($"Spawned the round's material extractor at {tile} beside boulder {rockTile} on Wendover map {mapId}.");
     }
 
