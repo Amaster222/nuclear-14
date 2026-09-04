@@ -46,7 +46,7 @@ public sealed partial class TemperatureScaledHealthChange : EntityEffect
             scale = ScaleByQuantity ? reagentArgs.Quantity * reagentArgs.Scale : reagentArgs.Scale;
         }
 
-        var multiplier = -MaxMultiplier;
+        var multiplier = 0f;
         if (IsInsideCryoPod(args.EntityManager, args.TargetEntity) &&
             args.EntityManager.TryGetComponent<TemperatureComponent>(args.TargetEntity, out var temperature))
         {
