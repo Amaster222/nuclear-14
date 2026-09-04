@@ -11145,3 +11145,10 @@ Entries:
   id: 6397
   time: '2026-09-04T01:33:46.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1852
+- author: Cythisiax
+  changes:
+    - type: Fix
+      message: Host level CVAR
+  id: 6398
+  time: '2026-09-04T21:29:50.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1853
