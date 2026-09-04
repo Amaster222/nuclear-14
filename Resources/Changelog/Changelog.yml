@@ -11114,3 +11114,10 @@ Entries:
   id: 6394
   time: '2026-09-03T23:46:28.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1851
+- author: aftemath434
+  changes:
+    - type: Fix
+      message: nightKin stealth, nightkin physical traits
+  id: 6395
+  time: '2026-09-04T00:53:57.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1850
