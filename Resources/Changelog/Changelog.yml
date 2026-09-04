@@ -11172,3 +11172,12 @@ Entries:
   id: 6400
   time: '2026-09-04T21:52:14.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1855
+- author: Marabout
+  changes:
+    - type: Add
+      message: >-
+        Added the NCR's command mantle back into the starting gear of the NCR's
+        CO
+  id: 6401
+  time: '2026-09-04T21:52:28.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1854
