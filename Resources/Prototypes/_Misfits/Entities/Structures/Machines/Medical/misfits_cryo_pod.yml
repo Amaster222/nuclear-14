@@ -2,7 +2,7 @@
   parent: [BaseStructure, ConstructibleMachine]
   id: MisfitsCryoPod
   name: reagent cryo pod
-  description: A cryo pod rewired to run purely on injected reagents instead of a pipenet - no gas hookup required.
+  description: A Vault 14 cryo pod that has been modified to run off reagents.
   components:
   - type: Sprite
     sprite: Structures/Machines/cryogenics.rsi
