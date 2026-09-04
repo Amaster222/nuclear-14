@@ -282,6 +282,21 @@
 
 - type: entity
   parent: N14CrateRequisitions
+  id: MisfitsCrateRequisitionsVaultPlasma
+  name: plasma crate
+  components:
+  - type: Icon
+    sprite: _Nuclear14/Structures/Storage/Crates/vaultcrate.rsi
+  - type: Sprite
+    sprite: _Nuclear14/Structures/Storage/Crates/vaultcrate.rsi
+  - type: RequisitionsCrate
+    reward: 50
+  - type: StorageFill
+    contents:
+    - id: SheetPlasma
+
+- type: entity
+  parent: N14CrateRequisitions
   id: MisfitsCrateRequisitionsVaultThread
   name: thread crate
   components:
