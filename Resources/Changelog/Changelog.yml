@@ -11181,3 +11181,21 @@ Entries:
   id: 6401
   time: '2026-09-04T21:52:28.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1854
+- author: Wassuy
+  changes:
+    - type: Add
+      message: >-
+        Rookie talon mercenary armed with a semi-auto rifle, shoot at high
+        fire-rate with decent accuracy, he will unlikely to be seen around.
+    - type: Add
+      message: >-
+        Psycho Raider Shield man, able to withstand a lot of bullet before going
+        down while also be able to knock back enemies from harming his buddies,
+        do not break his shield!
+    - type: Fix
+      message: >-
+        Raiders that have gloves not having their gloves, now they do, got to
+        stay drippy while getting shot at!
+  id: 6402
+  time: '2026-09-04T22:16:15.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1845
