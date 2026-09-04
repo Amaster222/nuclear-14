@@ -11159,3 +11159,16 @@ Entries:
   id: 6399
   time: '2026-09-04T21:30:02.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1856
+- author: Vixting
+  changes:
+    - type: Add
+      message: Added reagent based cryo pods to vault
+    - type: Add
+      message: Added 4 new cryo reagents
+    - type: Add
+      message: Added plasma crate to vault req
+    - type: Tweak
+      message: Replaced existing vault cryo pods with new reagent based ones
+  id: 6400
+  time: '2026-09-04T21:52:14.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1855
