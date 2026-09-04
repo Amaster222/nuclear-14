@@ -11121,3 +11121,14 @@ Entries:
   id: 6395
   time: '2026-09-04T00:53:57.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1850
+- author: Amaster222
+  changes:
+    - type: Add
+      message: Zoybeans! A mutated soy alternative for the meat haters.
+    - type: Add
+      message: New reagents, reactions, and recipes that all involve zoy!
+    - type: Fix
+      message: Tofu should work in wasteland cooking again! use zoy milk!
+  id: 6396
+  time: '2026-09-04T00:54:09.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1826
