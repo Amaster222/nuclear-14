@@ -104,7 +104,7 @@
           BoSMidPaladinCommander: [ 1, 1 ]
           BoSHeadKnight: [ 1, 1 ]  #Misfits Change /Add/: New consolidated BoS jobs
           BoSWestScribe: [ 1, 1 ] # Misfits Change
-          BoSMidPaladin: [ 1, 1 ]  #Misfits Tweak: 1 slot — Senior Paladin is a rare rank
+          BoSMidPaladin: [ 1, 2 ]  #Misfits Tweak: 2 slots — Senior Paladin remains a rare rank
           BoSMidKnight: [ 3, 3 ]
           # #Misfits Add - Brotherhood Lancers aviation branch, one slot per rank
           # #Cythisiax Renamed (player-facing) - Lancer ranks show as Knight-Captain / Knight-Lancer;

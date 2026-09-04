@@ -31,15 +31,15 @@
   - type: MaterialExtractor
     operatorRadius: 4
     pulseIntervalSeconds: 2
-    firstWaveMinSeconds: 30
-    firstWaveMaxSeconds: 30
-    waveMinSeconds: 30
-    waveMaxSeconds: 30
+    firstWaveMinSeconds: 15
+    firstWaveMaxSeconds: 15
+    waveMinSeconds: 20
+    waveMaxSeconds: 20
     waveWarningSeconds: 0
     waveMinMobCount: 1
     waveMaxMobCount: 3
-    waveSpawnMinDistance: 16
-    waveSpawnMaxDistance: 28
+    waveSpawnMinDistance: 8
+    waveSpawnMaxDistance: 14
     waveSpawnAttempts: 40
     waveSpawnPvsBuffer: 3
     waveMobWeights:

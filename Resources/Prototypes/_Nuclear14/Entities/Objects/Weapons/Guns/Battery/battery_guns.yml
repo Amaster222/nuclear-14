@@ -380,6 +380,9 @@
     selectedMode: FullAuto
     availableModes:
     - FullAuto
+  # Higher efficiency: 1200-charge red MFC provides 26 shots.
+  - type: GunDamageBonus
+    fireCostMultiplier: 0.92
   - type: FollowDistance
     backStrength: 5
   - type: StaticPrice
@@ -483,6 +486,9 @@
     selectedMode: FullAuto
     availableModes:
     - FullAuto
+  # Higher efficiency: 1200-charge red MFC provides 30 shots.
+  - type: GunDamageBonus
+    fireCostMultiplier: 0.8
   - type: FollowDistance
     backStrength: 5
   - type: StaticPrice
@@ -536,6 +542,9 @@
     selectedMode: FullAuto
     availableModes:
     - FullAuto
+  # Higher efficiency: 1200-charge red MFC provides 28 shots.
+  - type: GunDamageBonus
+    fireCostMultiplier: 0.85
   - type: FollowDistance
     backStrength: 5
   - type: StaticPrice
@@ -587,6 +596,9 @@
     selectedMode: SemiAuto
     availableModes:
     - SemiAuto
+  # Highest efficiency: 1200-charge red MFC provides 32 shots.
+  - type: GunDamageBonus
+    fireCostMultiplier: 0.75
   - type: FollowDistance
     backStrength: 5
   - type: StaticPrice
@@ -639,6 +651,9 @@
     selectedMode: SemiAuto
     availableModes:
     - SemiAuto
+  # Baseline efficiency: 1200-charge red MFC provides 24 shots.
+  - type: GunDamageBonus
+    fireCostMultiplier: 1.0
   - type: FollowDistance
     backStrength: 5
   - type: StaticPrice
