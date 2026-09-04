@@ -11152,3 +11152,10 @@ Entries:
   id: 6398
   time: '2026-09-04T21:29:50.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1853
+- author: Vixting
+  changes:
+    - type: Add
+      message: added vault to vault job names
+  id: 6399
+  time: '2026-09-04T21:30:02.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1856
