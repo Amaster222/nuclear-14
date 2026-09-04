@@ -71,6 +71,12 @@ public sealed partial class MisfitsCryoPodWindow : FancyWindow
         _maxTransferAmount = state.MaxTransferAmount;
         DosageLabel.Text = $"{state.TransferAmount}u/cycle";
 
+        PatientReagentContainer.RemoveAllChildren();
+        foreach (var reagent in state.PatientReagents)
+            PatientReagentContainer.AddChild(BuildReadonlyRow(reagent));
+        if (state.PatientReagents.Length == 0)
+            PatientReagentContainer.AddChild(new Label { Text = "Nothing detected." });
+
         ChamberContainer.RemoveAllChildren();
         foreach (var reagent in state.ChamberReagents)
             ChamberContainer.AddChild(BuildReadonlyRow(reagent));

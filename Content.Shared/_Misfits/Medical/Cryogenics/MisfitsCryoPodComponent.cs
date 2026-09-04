@@ -81,6 +81,7 @@ public sealed class MisfitsCryoPodBoundUserInterfaceState : BoundUserInterfaceSt
 
     public readonly float PatientTemperature;
     public readonly float TargetTemperature;
+    public readonly MisfitsCryoReagentReadout[] PatientReagents;
 
     public readonly FixedPoint2 ChamberMaxVolume;
     public readonly MisfitsCryoReagentReadout[] ChamberReagents;
@@ -98,6 +99,7 @@ public sealed class MisfitsCryoPodBoundUserInterfaceState : BoundUserInterfaceSt
         HealthAnalyzerScannedUserMessage healthScan,
         float patientTemperature,
         float targetTemperature,
+        MisfitsCryoReagentReadout[] patientReagents,
         FixedPoint2 chamberMaxVolume,
         MisfitsCryoReagentReadout[] chamberReagents,
         bool hasBeaker,
@@ -111,6 +113,7 @@ public sealed class MisfitsCryoPodBoundUserInterfaceState : BoundUserInterfaceSt
         HealthScan = healthScan;
         PatientTemperature = patientTemperature;
         TargetTemperature = targetTemperature;
+        PatientReagents = patientReagents;
         ChamberMaxVolume = chamberMaxVolume;
         ChamberReagents = chamberReagents;
         HasBeaker = hasBeaker;

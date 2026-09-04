@@ -5,8 +5,8 @@
                       xmlns:graphics="clr-namespace:Robust.Client.Graphics;assembly=Robust.Client"
                       Title="Cryo Chamber"
                       Resizable="True"
-                      SetSize="1000 620"
-                      MinSize="820 500">
+                      SetSize="1000 720"
+                      MinSize="820 560">
     <BoxContainer Orientation="Horizontal" Margin="6" SeparationOverride="6" HorizontalExpand="True" VerticalExpand="True">
 
         <!-- Left: embedded health analyzer scan (same UI a real scanner shows) -->
@@ -40,6 +40,18 @@
                     </BoxContainer>
                     <ScrollContainer HScrollEnabled="False" VerticalExpand="True" Margin="0 3 0 0">
                         <BoxContainer Name="ChamberContainer" Orientation="Vertical"/>
+                    </ScrollContainer>
+                </BoxContainer>
+            </PanelContainer>
+
+            <PanelContainer VerticalExpand="True" SizeFlagsStretchRatio="1">
+                <PanelContainer.PanelOverride>
+                    <graphics:StyleBoxFlat BackgroundColor="#12141A" />
+                </PanelContainer.PanelOverride>
+                <BoxContainer Orientation="Vertical" Margin="8" VerticalExpand="True">
+                    <Label Text="PATIENT BLOODSTREAM" FontColorOverride="#FFFFFF"/>
+                    <ScrollContainer HScrollEnabled="False" VerticalExpand="True" Margin="0 3 0 0">
+                        <BoxContainer Name="PatientReagentContainer" Orientation="Vertical"/>
                     </ScrollContainer>
                 </BoxContainer>
             </PanelContainer>

@@ -35,6 +35,9 @@ public sealed partial class TemperatureScaledHealthChange : EntityEffect
     [DataField]
     public float MaxMultiplier = 3f;
 
+    [DataField]
+    public float OutsidePodFraction = 0.05f;
+
     protected override string? ReagentEffectGuidebookText(IPrototypeManager prototype, IEntitySystemManager entSys) => null;
 
     public override void Effect(EntityEffectBaseArgs args)
@@ -46,7 +49,7 @@ public sealed partial class TemperatureScaledHealthChange : EntityEffect
             scale = ScaleByQuantity ? reagentArgs.Quantity * reagentArgs.Scale : reagentArgs.Scale;
         }
 
-        var multiplier = 0f;
+        var multiplier = -MaxMultiplier * OutsidePodFraction;
         if (IsInsideCryoPod(args.EntityManager, args.TargetEntity) &&
             args.EntityManager.TryGetComponent<TemperatureComponent>(args.TargetEntity, out var temperature))
         {

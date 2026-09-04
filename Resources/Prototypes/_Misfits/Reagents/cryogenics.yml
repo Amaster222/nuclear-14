@@ -18,7 +18,7 @@
   worksOnTheDead: true
   metabolisms:
     Medicine:
-      metabolismRate: 0.5
+      metabolismRate: 0.15
       effects:
       - !type:TemperatureScaledHealthChange
         warmPoint: 310
@@ -40,7 +40,7 @@
   worksOnTheDead: true
   metabolisms:
     Medicine:
-      metabolismRate: 0.5
+      metabolismRate: 0.15
       effects:
       - !type:TemperatureScaledHealthChange
         warmPoint: 310
@@ -62,7 +62,7 @@
   worksOnTheDead: true
   metabolisms:
     Medicine:
-      metabolismRate: 0.5
+      metabolismRate: 0.15
       effects:
       - !type:TemperatureScaledHealthChange
         warmPoint: 310
@@ -84,7 +84,7 @@
   worksOnTheDead: true
   metabolisms:
     Medicine:
-      metabolismRate: 0.5
+      metabolismRate: 0.15
       effects:
       - !type:TemperatureScaledHealthChange
         conditions:

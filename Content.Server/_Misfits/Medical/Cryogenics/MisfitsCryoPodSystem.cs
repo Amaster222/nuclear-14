@@ -188,6 +188,14 @@ public sealed class MisfitsCryoPodSystem : EntitySystem
 
         var healthScan = BuildHealthScan(patient, ref patientTemp);
 
+        var patientReagents = Array.Empty<MisfitsCryoReagentReadout>();
+        if (patient is { } patientForReagents &&
+            TryComp<BloodstreamComponent>(patientForReagents, out var patientBloodstream) &&
+            _solutionContainerSystem.ResolveSolution(patientForReagents, patientBloodstream.ChemicalSolutionName, ref patientBloodstream.ChemicalSolution, out var chemSolution))
+        {
+            patientReagents = BuildReadouts(chemSolution);
+        }
+
         FixedPoint2 chamberMaxVol = FixedPoint2.Zero;
         var chamberReagents = Array.Empty<MisfitsCryoReagentReadout>();
         if (_solutionContainerSystem.ResolveSolution(uid, misfits.SolutionName, ref misfits.ChamberSolution, out var chamberSolution))
@@ -215,6 +223,7 @@ public sealed class MisfitsCryoPodSystem : EntitySystem
             healthScan,
             patientTemp,
             misfits.TargetTemperature,
+            patientReagents,
             chamberMaxVol,
             chamberReagents,
             hasBeaker,
