@@ -41,6 +41,7 @@
 - type: startingGear
   id: NCRDoctorGear
   equipment:
+    wallet: N14Wallet
     jumpsuit: N14ClothingUniformNCRDesert # Corvax-Change
     outerClothing: N14ClothingOuterCoatFollowersArmored
     back: N14ClothingBackpackNCR # Corvax-Change
