@@ -35,6 +35,7 @@
           Wastelander: [ -1, -1 ]
           WasterTrader: [ 1, 1 ]
           SuperMutant: [ 5, 5 ] # #Misfits Change /Fix/: make the FEV Mutant role available for mid-round joins.
+          Nightkin: [ 0, 1 ] # #Misfits Add - Nightkin variant, whitelist gated.
           SuperMutantGladiator: [ 0, 1 ] # #Misfits Add: Gladiator variant.
           SuperMutantNCRRanger: [ 0, 1 ] # #Misfits Add: NCR Ranger variant.
           # SuperMutantNCRTrooper: [ 0, 0 ] # #Misfits Add: NCR Trooper variant.

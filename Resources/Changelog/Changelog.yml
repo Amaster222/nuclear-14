@@ -11092,3 +11092,56 @@ Entries:
   id: 6392
   time: '2026-09-03T17:22:45.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1847
+- author: cythisiax
+  changes:
+    - type: Tweak
+      message: >-
+        material extractor now appears on WendoverMap, and all faction maps as a
+        permanent geo spot
+    - type: Tweak
+      message: >-
+        mat extractor's PVE waves now randomize mob pool, not in a 'length
+        tier', thus current round 1189 nightstalker spam
+    - type: Fix
+      message: missing reagent hooks on a lot of craftables (G) menu
+  id: 6393
+  time: '2026-09-03T21:09:36.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1849
+- author: aftemath434
+  changes:
+    - type: Tweak
+      message: 'Removed NCR CO PA '
+  id: 6394
+  time: '2026-09-03T23:46:28.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1851
+- author: aftemath434
+  changes:
+    - type: Fix
+      message: nightKin stealth, nightkin physical traits
+  id: 6395
+  time: '2026-09-04T00:53:57.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1850
+- author: Amaster222
+  changes:
+    - type: Add
+      message: Zoybeans! A mutated soy alternative for the meat haters.
+    - type: Add
+      message: New reagents, reactions, and recipes that all involve zoy!
+    - type: Fix
+      message: Tofu should work in wasteland cooking again! use zoy milk!
+  id: 6396
+  time: '2026-09-04T00:54:09.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1826
+- author: cythisiax
+  changes:
+    - type: Add
+      message: >-
+        AER variant depending on 'level' decreased MFC usage. AER-9 highest >
+        AER-14(15) lowest. 24 > 26 > 28 > 30 > 32.
+    - type: Add
+      message: 'BoS Senior Paladins receive 1 extra slot. '
+    - type: Fix
+      message: Material extractor nuances.
+  id: 6397
+  time: '2026-09-04T01:33:46.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1852
