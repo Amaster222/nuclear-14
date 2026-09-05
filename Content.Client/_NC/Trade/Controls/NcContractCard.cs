@@ -485,7 +485,8 @@ public sealed class NcContractCard : PanelContainer
             // accept any concrete descendant, but EntityPrototypeView cannot
             // spawn an abstract entity. Use the prototype icon directly so
             // these broad targets still have a visual identifier.
-            var icon = _sprites.GetPrototypeIcon(targetProto.ID).Default;
+            var iconProto = FindConcreteDescendant(targetProto);
+            var icon = iconProto == null ? null : _sprites.GetPrototypeIcon(iconProto.ID).Default;
             if (icon != null)
             {
                 targetRow.AddChild(new TextureRect
@@ -523,6 +524,35 @@ public sealed class NcContractCard : PanelContainer
             return proto.Name;
 
         return protoId;
+    }
+
+    private EntityPrototype? FindConcreteDescendant(EntityPrototype abstractProto)
+    {
+        foreach (var candidate in _proto.EnumeratePrototypes<EntityPrototype>())
+        {
+            if (candidate.Abstract || candidate.ID == abstractProto.ID)
+                continue;
+
+            var pending = new Stack<string>(candidate.Parents);
+            var visited = new HashSet<string>(StringComparer.Ordinal);
+            while (pending.Count > 0)
+            {
+                var parentId = pending.Pop();
+                if (!visited.Add(parentId))
+                    continue;
+
+                if (parentId == abstractProto.ID)
+                    return candidate;
+
+                if (_proto.TryIndex<EntityPrototype>(parentId, out var parent))
+                {
+                    foreach (var grandparentId in parent.Parents)
+                        pending.Push(grandparentId);
+                }
+            }
+        }
+
+        return null;
     }
 
     private static string BuildProtoTooltip(EntityPrototype? proto)
