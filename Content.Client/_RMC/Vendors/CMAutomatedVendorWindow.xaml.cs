@@ -32,7 +32,6 @@ public sealed partial class CMAutomatedVendorWindow : DefaultWindow
     private SpriteSystem _sprites = default!;
     private VendorPage _activePage = VendorPage.Allocation;
     private string? _allocationCategory;
-    private string? _sharedEquipmentCategory;
     private readonly Dictionary<string, bool> _allocationExpanded = new();
 
     public CMAutomatedVendorWindow()
@@ -44,24 +43,23 @@ public sealed partial class CMAutomatedVendorWindow : DefaultWindow
 
     public void UpdateState(CMAutomatedVendorState state)
     {
+        Title = state.VendorTitle;
         var allocationCategories = GetCategories(
             state.AllocationCategories,
             state.Sections.SelectMany(section => section.Entries).Select(entry => entry.Category));
-        var sharedCategories = GetCategories(
-            state.SharedEquipmentCategories,
-            state.StoredItems.Select(item => item.Category));
 
         _allocationCategory = EnsureCategory(_allocationCategory, allocationCategories);
-        _sharedEquipmentCategory = EnsureCategory(_sharedEquipmentCategory, sharedCategories);
 
         Sections.RemoveAllChildren();
         AddPageButtons(state);
-        AddCategoryButtons(state, allocationCategories, sharedCategories);
 
         if (_activePage == VendorPage.Allocation)
+        {
+            AddCategoryButtons(state, allocationCategories);
             AddAllocationContent(state, _allocationCategory!);
+        }
         else
-            AddSharedEquipmentContent(state, _sharedEquipmentCategory!);
+            AddSharedEquipmentContent(state);
     }
 
     private void AddPageButtons(CMAutomatedVendorState state)
@@ -87,35 +85,32 @@ public sealed partial class CMAutomatedVendorWindow : DefaultWindow
         Sections.AddChild(pages);
     }
 
-    private void AddCategoryButtons(
-        CMAutomatedVendorState state,
-        IReadOnlyList<string> allocationCategories,
-        IReadOnlyList<string> sharedCategories)
+    private void AddCategoryButtons(CMAutomatedVendorState state, IReadOnlyList<string> allocationCategories)
     {
-        var categories = _activePage == VendorPage.Allocation ? allocationCategories : sharedCategories;
-        var active = _activePage == VendorPage.Allocation ? _allocationCategory : _sharedEquipmentCategory;
-        var row = new BoxContainer
+        const int tabsPerRow = 7;
+        BoxContainer? row = null;
+        for (var index = 0; index < allocationCategories.Count; index++)
         {
-            Orientation = BoxContainer.LayoutOrientation.Horizontal,
-            SeparationOverride = 4,
-            Margin = new Thickness(6, 0, 6, 6),
-            HorizontalExpand = true,
-        };
-
-        foreach (var category in categories)
-        {
-            var captured = category;
-            row.AddChild(CreateTabButton(category, category == active, () =>
+            if (index % tabsPerRow == 0)
             {
-                if (_activePage == VendorPage.Allocation)
-                    _allocationCategory = captured;
-                else
-                    _sharedEquipmentCategory = captured;
+                row = new BoxContainer
+                {
+                    Orientation = BoxContainer.LayoutOrientation.Horizontal,
+                    SeparationOverride = 4,
+                    Margin = new Thickness(6, 0, 6, 4),
+                    HorizontalExpand = true,
+                };
+                Sections.AddChild(row);
+            }
+
+            var category = allocationCategories[index];
+            var captured = category;
+            row!.AddChild(CreateTabButton(category, category == _allocationCategory, () =>
+            {
+                _allocationCategory = captured;
                 UpdateState(state);
             }));
         }
-
-        Sections.AddChild(row);
     }
 
     private void AddAllocationContent(CMAutomatedVendorState state, string category)
@@ -188,7 +183,7 @@ public sealed partial class CMAutomatedVendorWindow : DefaultWindow
         return CreateEntryRow(text, entry.Id, () => OnVend?.Invoke(sectionIndex, entryIndex), button);
     }
 
-    private void AddSharedEquipmentContent(CMAutomatedVendorState state, string category)
+    private void AddSharedEquipmentContent(CMAutomatedVendorState state)
     {
         if (state.CanReplenish || state.CanStoreEquipment)
         {
@@ -225,15 +220,12 @@ public sealed partial class CMAutomatedVendorWindow : DefaultWindow
             Sections.AddChild(actions);
         }
 
-        var stored = state.StoredItems
-            .Select((item, index) => (item, index))
-            .Where(pair => pair.item.Category == category)
-            .ToList();
+        var stored = state.StoredItems.Select((item, index) => (item, index)).ToList();
         if (stored.Count == 0)
         {
             Sections.AddChild(new Label
             {
-                Text = $"No {category.ToLowerInvariant()} stored for the {state.DepartmentName}.",
+                Text = $"No shared equipment stored for the {state.DepartmentName}.",
                 Margin = new Thickness(8),
             });
             return;

@@ -97,18 +97,34 @@
 # profile; the cell supplies charge only.
 - type: hitscan
   id: N14AER9AutoLaser
-  parent: N14MFLaserRed
   damage:
     types:
       Heat: 20
+  muzzleFlash:
+    sprite: Objects/Weapons/Guns/Projectiles/projectiles.rsi
+    state: muzzle_laser
+  travelFlash:
+    sprite: Objects/Weapons/Guns/Projectiles/projectiles.rsi
+    state: beam
+  impactFlash:
+    sprite: Objects/Weapons/Guns/Projectiles/projectiles.rsi
+    state: impact_laser
 
 - type: hitscan
   id: N14RCWLaserGreen
-  parent: N14MFLaserGreen
   damage:
     types:
       Heat: 20
       Shock: 2
+  muzzleFlash:
+    sprite: _Misfits/Objects/Weapons/Guns/Projectiles/green_laser.rsi
+    state: muzzle_green_laser
+  travelFlash:
+    sprite: _Misfits/Objects/Weapons/Guns/Projectiles/green_laser.rsi
+    state: beam_green
+  impactFlash:
+    sprite: _Misfits/Objects/Weapons/Guns/Projectiles/green_laser.rsi
+    state: impact_green_laser
 
 # #Misfits Add - Yellow beam for Wattz 2000/3000 focused laser rifles.
 # Uses red beam sprites tinted bright yellow. Base damage matches Red;
