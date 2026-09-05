@@ -27,6 +27,8 @@ using Content.Shared.Interaction.Events;
 using Content.Shared.Interaction;
 using Content.Shared.Nutrition.Components;
 using Content.Shared.Nutrition.EntitySystems;
+using Content.Shared.NPC.Prototypes;
+using Content.Shared.NPC.Systems;
 using Content.Shared.PDA;
 using Content.Shared.Roles;
 using Content.Shared.Storage;
@@ -58,6 +60,7 @@ namespace Content.Server.Mail.Systems
         [Dependency] private readonly IdCardSystem _idCardSystem = default!;
         [Dependency] private readonly MetaDataSystem _metaDataSystem = default!;
         [Dependency] private readonly MindSystem _mindSystem = default!;
+        [Dependency] private readonly NpcFactionSystem _npcFaction = default!;
         [Dependency] private readonly OpenableSystem _openable = default!;
         [Dependency] private readonly PopupSystem _popupSystem = default!;
         [Dependency] private readonly SharedAppearanceSystem _appearanceSystem = default!;
@@ -613,7 +616,7 @@ namespace Content.Server.Mail.Systems
         /// <summary>
         /// Get the list of valid mail recipients for a mail teleporter.
         /// </summary>
-        private List<MailRecipient> GetMailRecipientCandidates(EntityUid uid, MailDeliveryPoolPrototype? pool = null) // misfits
+        private List<MailRecipient> GetMailRecipientCandidates(EntityUid uid, MailDeliveryPoolPrototype? pool = null, HashSet<ProtoId<NpcFactionPrototype>>? excludedFactions = null) // misfits
         {
             var candidateList = new List<MailRecipient>();
             var query = EntityQueryEnumerator<MailReceiverComponent>();
@@ -623,6 +626,10 @@ namespace Content.Server.Mail.Systems
             {
                 var receiverStation = _stationSystem.GetOwningStation(receiverUid);
                 if (receiverStation != teleporterStation)
+                    continue;
+
+                // Misfits
+                if (excludedFactions is { Count: > 0 } && _npcFaction.IsMemberOfAny(receiverUid, excludedFactions))
                     continue;
 
                 if (TryGetMailRecipientForReceiver(receiverUid, out var recipient))
@@ -668,7 +675,7 @@ namespace Content.Server.Mail.Systems
                 return;
             }
 
-            var candidateList = GetMailRecipientCandidates(uid, pool);
+            var candidateList = GetMailRecipientCandidates(uid, pool, component.ExcludedFactions);
 
             if (candidateList.Count <= 0)
             {
