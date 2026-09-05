@@ -313,6 +313,8 @@
     contents:
     - id: PaperMailWastelandNoteMedicalAid
     - id: N14MedkitFilled
+    - id: N14Stimpak
+      maxAmount: 2
 
 - type: entity
   categories: [ HideSpawnMenu ]
