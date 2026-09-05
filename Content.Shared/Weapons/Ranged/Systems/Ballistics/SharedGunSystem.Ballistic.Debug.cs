@@ -21,6 +21,11 @@ public abstract partial class SharedGunSystem
         if (comp.Container.ContainedEntities.Count > comp.Capacity)
             Log.Error($"Ballistic Comp of Proto: {Prototype(uid)} owner UID:{uid} Container.ContainedEntities.Count > capacity: {comp.Container.ContainedEntities.Count} > {comp.Capacity}");
     }
+    public bool DebugFireRate(float fireRateModified)
+    {
+        Log.Debug($"fire rate negative: {fireRateModified}");
+        return true;
+    }
 
     //[System.Diagnostics.Conditional("DEBUG")]
     public bool DebugCheckNullAmmo(IReadOnlyList<EntityUid>? list, int index)

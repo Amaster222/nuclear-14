@@ -33,16 +33,17 @@ public sealed partial class GunSystem
     /// <param name="player">client the event originated from.
     ///                      Important for filtering clients who sent the event
     ///                      so they dont get it twice and positioning visual correctly</param>
-    public override void EjectSpentCart(MapCoordinates baseCoord, Angle baseAngle, string? cartProto, ICommonSession? player = null)
+    public override void EjectSpentCart(SpentCartEvent ev)
     {
 
-        if (cartProto is null || !ProtoMan.HasIndex(cartProto))
+        if (!ProtoMan.TryIndex((EntProtoId?) ev.Proto, out var _))
             return;
 
-        NetUserId? shooterID = player?.UserId;
-        Filter filter = Filter.Empty().AddPlayersByPvs(baseCoord);
-        if (shooterID is not null) { filter.RemovePlayer(_net.GetSessionById(shooterID.Value)); }
-        RaiseNetworkEvent(new SpentCartEvent(baseCoord, baseAngle, cartProto, shooterID), filter);
+        Filter filter = Filter.Empty().AddPlayersByPvs(ev.Coords);
+        if (_net.TryGetSessionById(ev.Sender, out var session))
+            filter.RemovePlayer(session);
+
+        RaiseNetworkEvent(ev, filter);
     }
     private void OnCartridgeDamageExamine(EntityUid uid, CartridgeAmmoComponent component, ref DamageExamineEvent args)
     {

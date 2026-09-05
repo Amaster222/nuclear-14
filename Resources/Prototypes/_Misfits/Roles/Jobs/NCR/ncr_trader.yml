@@ -3,7 +3,7 @@
   setPreference: true
   hideIfPlaytimeRequirementsNotMet: false # #Misfits Tweak - all jobs visible in selection
   jobWhitelistBypassesRoleTimers: true # #Misfits Change
-  weight: 1
+  weight: 1 # Keep Trader above Prisoner in the civilian tier
   showBorder: false
   overrideConsoleVisibility: true
   canBeAntag: false

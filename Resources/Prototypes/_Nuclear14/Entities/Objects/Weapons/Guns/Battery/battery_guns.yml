@@ -25,7 +25,7 @@
     slots:
       gun_magazine:
         name: Magazine
-        startingItem: N14MicrofusionCell # #Misfits Change - consolidated to single generic MFC
+        startingItem: N14MicrofusionCellRed
         insertSound: /Audio/Weapons/Guns/MagIn/batrifle_magin.ogg
         ejectSound: /Audio/Weapons/Guns/MagOut/batrifle_magout.ogg
         whitelist:
@@ -146,15 +146,12 @@
     slots:
       gun_magazine:
         name: Magazine
-        startingItem: N14MicrofusionCell # #Misfits Change - consolidated to single generic MFC
+        startingItem: N14PowerCellSmall
         insertSound: /Audio/Weapons/Guns/MagIn/batrifle_magin.ogg
         ejectSound: /Audio/Weapons/Guns/MagOut/batrifle_magout.ogg
         whitelist:
           tags:
-            - N14MicrofusionCell
-  # #Misfits Add - Red beam override; weapon controls its own beam color
-  - type: GunDamageBonus
-    hitscanProtoOverride: N14MFLaserRed
+            - N14PowerCellSmall
   - type: Item
     size: Small
     shape:
@@ -370,7 +367,7 @@
     slots:
       gun_magazine:
         name: Magazine
-        startingItem: N14MicrofusionCell # #Misfits Change - consolidated to single generic MFC
+        startingItem: N14MicrofusionCellRed
         insertSound: /Audio/Weapons/Guns/MagIn/batrifle_magin.ogg
         ejectSound: /Audio/Weapons/Guns/MagOut/batrifle_magout.ogg
         whitelist:
@@ -383,9 +380,9 @@
     selectedMode: FullAuto
     availableModes:
     - FullAuto
-  # #Misfits Add - Red beam override; weapon controls its own beam color
+  # Higher efficiency: 1200-charge red MFC provides 26 shots.
   - type: GunDamageBonus
-    hitscanProtoOverride: N14MFLaserRed
+    fireCostMultiplier: 0.92
   - type: FollowDistance
     backStrength: 5
   - type: StaticPrice
@@ -476,7 +473,7 @@
     slots:
       gun_magazine:
         name: Magazine
-        startingItem: N14MicrofusionCell # #Misfits Change - consolidated to single generic MFC
+        startingItem: N14MicrofusionCellRed
         insertSound: /Audio/Weapons/Guns/MagIn/batrifle_magin.ogg
         ejectSound: /Audio/Weapons/Guns/MagOut/batrifle_magout.ogg
         whitelist:
@@ -489,9 +486,9 @@
     selectedMode: FullAuto
     availableModes:
     - FullAuto
-  # #Misfits Add - Green beam override ; AER-14 prototype with unique green optics
+  # Higher efficiency: 1200-charge red MFC provides 30 shots.
   - type: GunDamageBonus
-    hitscanProtoOverride: N14MFLaserGreen
+    fireCostMultiplier: 0.8
   - type: FollowDistance
     backStrength: 5
   - type: StaticPrice
@@ -530,7 +527,7 @@
     slots:
       gun_magazine:
         name: Magazine
-        startingItem: N14MicrofusionCell
+        startingItem: N14MicrofusionCellRed
         insertSound: /Audio/Weapons/Guns/MagIn/batrifle_magin.ogg
         ejectSound: /Audio/Weapons/Guns/MagOut/batrifle_magout.ogg
         whitelist:
@@ -545,9 +542,9 @@
     selectedMode: FullAuto
     availableModes:
     - FullAuto
-  # Amber beam override — weapon controls its own beam color
+  # Higher efficiency: 1200-charge red MFC provides 28 shots.
   - type: GunDamageBonus
-    hitscanProtoOverride: N14MFLaserAmber
+    fireCostMultiplier: 0.85
   - type: FollowDistance
     backStrength: 5
   - type: StaticPrice
@@ -586,7 +583,7 @@
     slots:
       gun_magazine:
         name: Magazine
-        startingItem: N14MicrofusionCell
+        startingItem: N14MicrofusionCellRed
         insertSound: /Audio/Weapons/Guns/MagIn/batrifle_magin.ogg
         ejectSound: /Audio/Weapons/Guns/MagOut/batrifle_magout.ogg
         whitelist:
@@ -599,9 +596,9 @@
     selectedMode: SemiAuto
     availableModes:
     - SemiAuto
-  # Blue beam override (40 Heat) — highest damage laser weapon; T5 blueprint item
+  # Highest efficiency: 1200-charge red MFC provides 32 shots.
   - type: GunDamageBonus
-    hitscanProtoOverride: N14MFLaserBlue
+    fireCostMultiplier: 0.75
   - type: FollowDistance
     backStrength: 5
   - type: StaticPrice
@@ -641,7 +638,7 @@
     slots:
       gun_magazine:
         name: Magazine
-        startingItem: N14MicrofusionCell # #Misfits Change - consolidated to single generic MFC
+        startingItem: N14MicrofusionCellRed
         insertSound: /Audio/Weapons/Guns/MagIn/batrifle_magin.ogg
         ejectSound: /Audio/Weapons/Guns/MagOut/batrifle_magout.ogg
         whitelist:
@@ -654,9 +651,9 @@
     selectedMode: SemiAuto
     availableModes:
     - SemiAuto
-  # #Misfits Add - Red beam override; weapon controls its own beam color
+  # Baseline efficiency: 1200-charge red MFC provides 24 shots.
   - type: GunDamageBonus
-    hitscanProtoOverride: N14MFLaserRed
+    fireCostMultiplier: 1.0
   - type: FollowDistance
     backStrength: 5
   - type: StaticPrice
@@ -690,7 +687,7 @@
     slots:
       gun_magazine:
         name: Magazine
-        startingItem: N14MicrofusionCell # #Misfits Change - consolidated to single generic MFC
+        startingItem: N14MicrofusionCellRed
         insertSound: /Audio/Weapons/Guns/MagIn/batrifle_magin.ogg
         ejectSound: /Audio/Weapons/Guns/MagOut/batrifle_magout.ogg
         whitelist:
@@ -738,7 +735,7 @@
     slots:
       gun_magazine:
         name: Magazine
-        startingItem: N14MicrofusionCell # #Misfits Change - consolidated to single generic MFC
+        startingItem: N14MicrofusionCellRed
         insertSound: /Audio/Weapons/Guns/MagIn/batrifle_magin.ogg
         ejectSound: /Audio/Weapons/Guns/MagOut/batrifle_magout.ogg
         whitelist:
@@ -751,9 +748,6 @@
     selectedMode: SemiAuto
     availableModes:
     - SemiAuto
-  # #Misfits Add - Red beam override; weapon controls its own beam color
-  - type: GunDamageBonus
-    hitscanProtoOverride: N14MFLaserRed
   - type: FollowDistance
     backStrength: 5
   - type: StaticPrice
@@ -999,7 +993,7 @@
     slots:
       gun_magazine:
         name: Magazine
-        startingItem: N14MicrofusionCell # #Misfits Change - consolidated to single generic MFC
+        startingItem: N14MicrofusionCellRed
         insertSound: /Audio/Weapons/Guns/MagIn/batrifle_magin.ogg
         ejectSound: /Audio/Weapons/Guns/MagOut/batrifle_magout.ogg
         whitelist:
@@ -1056,7 +1050,7 @@
     slots:
       gun_magazine:
         name: Magazine
-        startingItem: N14MicrofusionCell # #Misfits Change - consolidated to single generic MFC
+        startingItem: N14MicrofusionCellRed
         insertSound: /Audio/Weapons/Guns/MagIn/batrifle_magin.ogg
         ejectSound: /Audio/Weapons/Guns/MagOut/batrifle_magout.ogg
         whitelist:
@@ -1156,6 +1150,7 @@
       map: ["enum.GunVisualLayers.MagUnshaded"]
       shader: unshaded
   - type: ItemToggle
+    onUse: false
     soundActivate:
       path: /Audio/Weapons/spinon.ogg
       params:
@@ -1191,7 +1186,7 @@
         whitelist:
           tags:
             - N14FusionCore # #Misfits Change - Gatling now only accepts fusion cores, not standard MFCs
-  - type: ItemToggleGun
+  - type: MinigunToggle
     ActivatedFireRate: 8
     InactiveWeaponFireRate: 1
   - type: Gun
@@ -1250,7 +1245,7 @@
     slots:
       gun_magazine:
         name: Power Cell
-        startingItem: N14ElectronChargePack # #Misfits Change - They abused my good will and now they lose their giga yummy shit fuck these BOS players man.
+        startingItem: N14ElectronChargePack
         insertSound: /Audio/Weapons/Guns/MagIn/batrifle_magin.ogg
         ejectSound: /Audio/Weapons/Guns/MagOut/batrifle_magout.ogg
         whitelist:
@@ -1276,9 +1271,6 @@
     - Fullauto
     soundGunshot:
       collection: N14LaserAutoRifleGunshot
-  # #Misfits Add - Red beam override; weapon controls its own beam color
-  - type: GunDamageBonus
-    hitscanProtoOverride: N14PulseRed
   - type: FollowDistance
     backStrength: 5
   - type: StaticPrice
@@ -1308,12 +1300,12 @@
     slots:
       gun_magazine:
         name: Power Cell
-        startingItem: N14ElectronChargePack # #Misfits Change - consolidated to single generic ECP
+        startingItem: N14PulseEnergyCell
         insertSound: /Audio/Weapons/Guns/MagIn/batrifle_magin.ogg
         ejectSound: /Audio/Weapons/Guns/MagOut/batrifle_magout.ogg
         whitelist:
           tags:
-            - N14ElectronChargePack
+            - N14PulseEnergyCell
   - type: Item
     size: Small
     shape:
@@ -1327,9 +1319,6 @@
     angleDecay: 8
     soundGunshot:
       collection: N14LaserPistolGunshot
-  # #Misfits Add - Red pulse beam override; weapon controls its own beam color
-  - type: GunDamageBonus
-    hitscanProtoOverride: N14PulseRed
   - type: FollowDistance
     backStrength: 5
   - type: StaticPrice
@@ -1363,12 +1352,12 @@
     slots:
       gun_magazine:
         name: Power Cell
-        startingItem: N14ElectronChargePack # #Misfits Change - consolidated to single generic ECP
+        startingItem: N14PulseMicrofusionCell
         insertSound: /Audio/Weapons/Guns/MagIn/batrifle_magin.ogg
         ejectSound: /Audio/Weapons/Guns/MagOut/batrifle_magout.ogg
         whitelist:
           tags:
-            - N14ElectronChargePack
+            - N14PulseMicrofusionCell
   - type: Item
     size: Large
     shape:
@@ -1386,9 +1375,6 @@
     angleDecay: 12
     soundGunshot:
       collection: N14LaserAutoRifleGunshot
-  # #Misfits Add - Red pulse beam override; weapon controls its own beam color
-  - type: GunDamageBonus
-    hitscanProtoOverride: N14PulseRed
   - type: FollowDistance
     backStrength: 5
   - type: StaticPrice
@@ -1422,12 +1408,12 @@
     slots:
       gun_magazine:
         name: Power Cell
-        startingItem: N14ElectronChargePack # #Misfits Change - consolidated to single generic ECP
+        startingItem: N14PulseMicrofusionCell
         insertSound: /Audio/Weapons/Guns/MagIn/batrifle_magin.ogg
         ejectSound: /Audio/Weapons/Guns/MagOut/batrifle_magout.ogg
         whitelist:
           tags:
-            - N14ElectronChargePack
+            - N14PulseMicrofusionCell
   - type: Item
     size: Large
     shape:
@@ -1445,9 +1431,6 @@
     angleDecay: 14
     soundGunshot:
       collection: N14LaserAutoRifleGunshot
-  # #Misfits Add - Red pulse beam override; weapon controls its own beam color
-  - type: GunDamageBonus
-    hitscanProtoOverride: N14PulseRed
   - type: FollowDistance
     backStrength: 5
   - type: StaticPrice
