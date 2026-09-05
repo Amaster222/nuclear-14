@@ -11,7 +11,11 @@
   - type: MixableSolution
     solution: drink
   - type: Drink
-  - type: Shakeable # Doesn't do anything, but I mean...
+  - type: Shakeable
+  - type: ReactionMixer
+    mixMessage: ""
+    reactionTypes:
+    - FakeShake # add this if you want something to mix when shaken
   - type: FitsInDispenser
     solution: drink
   - type: DrawableSolution
