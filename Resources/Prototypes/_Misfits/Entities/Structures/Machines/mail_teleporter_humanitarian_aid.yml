@@ -1,8 +1,11 @@
 - type: entity
   id: HumanitarianAidMailTeleporter
   parent: MailTeleporter
-  name: humanitarian aid mail teleporter
+  name: humanitarian aid mail
   description: Delivers aid packages addressed to residents outside the vault.
   components:
   - type: MailTeleporter
     mailPool: WastelandMailDeliveryPool
+    excludedFactions:
+    - Vault
+    - Enclave

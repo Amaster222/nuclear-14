@@ -388,3 +388,24 @@
     - id: PaperMailWastelandNoteTrickGrenades
     - id: GrenadeDummy
       amount: 2
+
+- type: entity
+  categories: [ HideSpawnMenu ]
+  parent: BaseMailWasteland
+  id: MailWastelandHealthyFood
+  suffix: wasteland-healthy-food
+  components:
+  - type: Mail
+    contents:
+    - id: PaperMailWastelandNoteHealthyFood
+    - id: N14CookedFoodSaladCaesar
+      prob: 0.35
+      orGroup: salad
+    - id: N14CookedFoodSaladHerb
+      prob: 0.35
+      orGroup: salad
+    - id: N14CookedFoodSaladFruit
+      prob: 0.3
+      orGroup: salad
+    - id: N14FoodCarrot
+      maxAmount: 2

@@ -763,3 +763,33 @@
       [color=#e8c547]▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬[/color]
       [italic][color=#AAAAAA]Please recycle this document responsibly. Vault-Tec thanks you for your commitment to sustainability.[/color][/italic]
       [italic][color=#ff0000]Tampering with or forging this document is a violation of the Vault 14 Resident Charter.[/color][/italic]
+
+- type: entity
+  id: PaperMailWastelandNoteHealthyFood
+  name: care package note
+  categories: [ HideSpawnMenu ]
+  suffix: "wasteland note - healthy food"
+  parent: Paper
+  components:
+  - type: PaperVisuals
+    headerImagePath: "/Textures/_Misfits/Interface/Paper/paper_heading_vault14.png"
+    headerMargin: 0.0, 8.0, 0.0, 4.0
+  - type: Paper
+    stampedBy:
+    - stampedColor: '#e8c547'
+      stampedName: Vault-Tec Industries
+    content: |2
+
+      [head=2]Nutritional Provision[/head]
+      [color=#1b4f9c]▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬[/color]
+      [bold]Form:[/bold] [color=#e8c547]VT-14-232[/color]
+      [color=#AAAAAA][italic]Vault 14 — Department of Nutritional Services[/italic][/color]
+      [color=#1b4f9c]▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬[/color]
+
+      Enclosed: a fresh salad & a selection of hydroponically grown produce from our own vault gardens. Our nutritionists insist you eat something that isn't out of a can for once.
+
+      [bold]Signed,[/bold]
+      [color=#1b4f9c][italic]Vault 14 Department of Nutritional Services[/italic][/color]
+      [color=#e8c547]▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬[/color]
+      [italic][color=#AAAAAA]Please recycle this document responsibly. Vault-Tec thanks you for your commitment to sustainability.[/color][/italic]
+      [italic][color=#ff0000]Tampering with or forging this document is a violation of the Vault 14 Resident Charter.[/color][/italic]
