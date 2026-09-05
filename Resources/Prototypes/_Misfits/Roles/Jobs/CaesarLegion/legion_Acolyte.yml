@@ -47,6 +47,7 @@
   special:
     - !type:AddComponentSpecial
       components:
+        - type: BibleUser #Lets them heal with bibles
         - type: NpcFactionMember
           factions:
             - CaesarLegion
@@ -78,6 +79,7 @@
     - N14HealingPowder
     - N14HealingPoultice
     - N14HealingPoultice
+    - BibleMars
 
 - type: playTimeTracker
   id: CaesarLegionAcolyteOfMars
