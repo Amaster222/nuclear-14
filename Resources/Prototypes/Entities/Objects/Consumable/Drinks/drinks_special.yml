@@ -13,7 +13,7 @@
   - type: Drink
   - type: Shakeable
   - type: ReactionMixer
-    mixMessage: ""
+    mixMessage: null # doing stupid shit on my phone lmao
     reactionTypes:
     - FakeShake # add this if you want something to mix when shaken
   - type: FitsInDispenser
