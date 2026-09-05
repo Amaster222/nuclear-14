@@ -1,4 +1,5 @@
 using Content.Server.Access.Systems;
+using Content.Server._Misfits.Requisitions;
 using Content.Server.Cargo.Components;
 using Content.Server.Cargo.Systems;
 using Content.Server.Chat.Systems;
@@ -63,6 +64,7 @@ namespace Content.Server.Mail.Systems
         [Dependency] private readonly NpcFactionSystem _npcFaction = default!;
         [Dependency] private readonly OpenableSystem _openable = default!;
         [Dependency] private readonly PopupSystem _popupSystem = default!;
+        [Dependency] private readonly RequisitionsSystem _requisitionsSystem = default!;
         [Dependency] private readonly SharedAppearanceSystem _appearanceSystem = default!;
         [Dependency] private readonly SharedAudioSystem _audioSystem = default!;
         [Dependency] private readonly SharedContainerSystem _containerSystem = default!;
@@ -234,6 +236,9 @@ namespace Content.Server.Mail.Systems
 
             _popupSystem.PopupEntity(Loc.GetString("mail-unlocked-reward", ("bounty", component.Bounty)), uid, args.User);
             component.IsProfitable = false;
+
+            if (component.VaultReqBudget != 0 && _requisitionsSystem.TryAddBudget("Vault", component.VaultReqBudget))
+                _popupSystem.PopupEntity(Loc.GetString("mail-unlocked-reward-vault", ("amount", component.VaultReqBudget)), uid, args.User);
 
             var query = EntityQueryEnumerator<StationBankAccountComponent>();
             while (query.MoveNext(out var station, out var account))
@@ -483,6 +488,7 @@ namespace Content.Server.Mail.Systems
 
             mailComp.RecipientJob = recipient.Job;
             mailComp.Recipient = recipient.Name;
+            mailComp.VaultReqBudget = component.VaultReqBudget;
 
             // Frontier: Large mail bonus
             var mailEntityStrings = mailComp.IsLarge ? MailConstants.MailLarge : MailConstants.Mail;

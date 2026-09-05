@@ -123,4 +123,7 @@ public sealed partial class MailTeleporterComponent : Component
     /// </summary>
     [DataField]
     public int LargeMalus = -500;
+
+    [DataField]
+    public int VaultReqBudget;
 }
