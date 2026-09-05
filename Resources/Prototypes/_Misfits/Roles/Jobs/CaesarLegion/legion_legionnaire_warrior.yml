@@ -10,9 +10,9 @@
   requirements:
     - !type:CharacterLogicOrRequirement
       requirements:
-        - !type:CharacterPlaytimeRequirement
-          tracker: CaesarLegionLegionnaireRecruit
-          min: 14400 # 4 hours
+    - !type:CharacterDepartmentTimeRequirement
+      department: CaesarLegion
+      min: 14400 # 4 hours
     - !type:CharacterSpeciesRequirement
       species:
       - Human
