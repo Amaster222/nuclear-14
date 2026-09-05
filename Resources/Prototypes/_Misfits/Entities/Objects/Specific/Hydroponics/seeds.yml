@@ -46,7 +46,7 @@
 - type: entity
   parent: SeedBase
   name: wild zoybean clipping
-  id: ZoybeanSeeds
+  id: MisfitsFloraWildZoybeanSeeds
   components:
   - type: Seed
     seedId: zoybean

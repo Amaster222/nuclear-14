@@ -121,7 +121,7 @@
   noun: seeds-noun-seeds
   displayName: zoybean bushes
   plantRsi: _Misfits/Objects/Specific/Hydroponics/zoybeans.rsi
-  packetPrototype: ZoybeanSeeds
+  packetPrototype: MisfitsFloraWildZoybeanSeeds
   productPrototypes:
   - MisfitsFloraProduceWildZoybeans
   harvestRepeat: NoRepeat

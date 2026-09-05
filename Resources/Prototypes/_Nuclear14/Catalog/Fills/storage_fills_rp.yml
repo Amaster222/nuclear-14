@@ -441,6 +441,8 @@
           prob: 0.03
         - id: N14FloraWildXanderRootClippingSeed
           prob: 0.02
+        - id: MisfitsFloraWildZoybeanSeeds
+          prob: 0.02
         - id: Torch
           prob: 0.05
           orGroup: Tools
@@ -2796,6 +2798,8 @@
         - id: N14FloraWildWhiteHorsenettleClippingSeed
           prob: 0.05
         - id: N14FloraWildXanderRootClippingSeed
+          prob: 0.05
+        - id: MisfitsFloraWildZoybeanSeeds
           prob: 0.05
 
 - type: entity

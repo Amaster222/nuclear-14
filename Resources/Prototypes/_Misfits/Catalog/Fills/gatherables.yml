@@ -9,7 +9,7 @@
 - type: entityLootTable
   id: WildZoyClippers
   entries:
-  - id: ZoybeanSeeds
+  - id: MisfitsFloraWildZoybeanSeeds
     prob: 1
     amount: 1
     maxAmount: 1
