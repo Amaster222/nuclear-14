@@ -22,11 +22,9 @@
 What is written instead is a beautiful play for play of how Executive Officer Maria Salzzar led her men and routed over a quarter of the Eighties' known forces. The surviving Eighties that surrendered numbered in the hundreds and they needed to be transported back to NCR land to face justice, but the deployment just lacked the logistics to do so. But in a display of tactical brilliance, XO Salzzar, ordered her personal C-27 unit to remove the left legs of every POW to pre-empt any escape attempts and had her men repurpose the raider's very own bikes as prisoner transport. Each and every POW was given life sentences and death penalties.
 
 Since then Maria Salzzar has been promoted to 3 Star General and specializes in the efficient capture and transportation of POWs across all NCR fronts. The C-27 unit with her had its AI and model preserved to be the basis of a civilian model intended for industrial woodwork. The original C-27 unit was later recycled after sustaining critical damage in a later conflict. Its parts were used to help reconstruct Shady Sand's Ranger Statue of Liberty.
-
   components:
   - type: Sprite
     noRot: true
-    sprite: _Misfits/Structures/Decoration/statues.rsi
-    state: bino_statue
+    sprite: Resources/Textures/_Misfits/Structures/Decoration/ncr_total_victory_statue.rsi
+    state: ncr_total_victory_statue
     drawdepth: Mobs
-    offset: "0.0,0.5"
