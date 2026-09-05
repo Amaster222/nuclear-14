@@ -6,6 +6,7 @@
   components:
   - type: MailTeleporter
     mailPool: WastelandMailDeliveryPool
+    vaultReqBudget: 500
     excludedFactions:
     - Vault
     - Enclave

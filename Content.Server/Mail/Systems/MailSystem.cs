@@ -234,11 +234,17 @@ namespace Content.Server.Mail.Systems
                 return;
             }
 
-            _popupSystem.PopupEntity(Loc.GetString("mail-unlocked-reward", ("bounty", component.Bounty)), uid, args.User);
             component.IsProfitable = false;
 
-            if (component.VaultReqBudget != 0 && _requisitionsSystem.TryAddBudget("Vault", component.VaultReqBudget))
+            // Misifits
+            if (component.VaultReqBudget != 0)
+            {
+                _requisitionsSystem.TryAddBudget("Vault", component.VaultReqBudget);
                 _popupSystem.PopupEntity(Loc.GetString("mail-unlocked-reward-vault", ("amount", component.VaultReqBudget)), uid, args.User);
+                return;
+            }
+
+            _popupSystem.PopupEntity(Loc.GetString("mail-unlocked-reward", ("bounty", component.Bounty)), uid, args.User);
 
             var query = EntityQueryEnumerator<StationBankAccountComponent>();
             while (query.MoveNext(out var station, out var account))
