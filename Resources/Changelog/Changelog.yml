@@ -11199,3 +11199,16 @@ Entries:
   id: 6402
   time: '2026-09-04T22:16:15.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1845
+- author: BurgerMoth
+  changes:
+    - type: Add
+      message: Overpressure 308 ammo boxes
+    - type: Add
+      message: Overpressure 308 ammo boxes to NCR and legion T4 ammo BP
+    - type: Tweak
+      message: >-
+        Cost of .50 anti-material ammo box, on the NCR and legion T4 ammo BP's,
+        significantly reduced
+  id: 6403
+  time: '2026-09-05T00:29:45.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1759
