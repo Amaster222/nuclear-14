@@ -11263,3 +11263,10 @@ Entries:
   id: 6406
   time: '2026-09-05T02:49:36.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1857
+- author: Tytos
+  changes:
+    - type: Tweak
+      message: fixed legion time reqs
+  id: 6407
+  time: '2026-09-05T03:20:16.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1861
