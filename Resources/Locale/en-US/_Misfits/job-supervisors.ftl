@@ -24,6 +24,7 @@ job-supervisors-chief-ranger = the Ranger code and your own judgment
 job-supervisors-ncr-ranger-recruit = The major, the Patrol Rangers, and Field Rangers above you
 job-supervisors-supermutant = your instincts and the strongest among you
 job-supervisors-sentient-deathclaw = your own instincts and the whispers of the loa
+job-supervisors-sentient-deathclaw-regular = your own instincts
 
 # Provost
 job-supervisors-ncr-provost = The Law and the orders of the provost office

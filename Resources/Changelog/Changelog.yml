@@ -10851,3 +10851,373 @@ Entries:
   id: 6375
   time: '2026-08-31T00:25:46.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1829
+- author: Tytos
+  changes:
+    - type: Tweak
+      message: tweaked the economy
+  id: 6376
+  time: '2026-08-31T21:42:28.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1831
+- author: JohnKieser
+  changes:
+    - type: Add
+      message: >-
+        (forgot to mention this earlier) Ammo Do Afters now transfer ammo faster
+        and insert ammo 5 at a time. Also can do it while moving. 
+    - type: Add
+      message: >-
+        A higher pitch sound also plays on the last ammo Do After. This signals
+        when no more ammo on filler or that fillee is full/inflated. This was
+        cause one guy thought the last do was a bug.  It was the guy who
+        reported the 2nd dupe i think lol
+    - type: Fix
+      message: 'Fixed ammo duping I hope. '
+  id: 6377
+  time: '2026-08-31T21:42:40.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1832
+- author: cythisiax
+  changes:
+    - type: Add
+      message: Sentient Deathclaw species
+    - type: Add
+      message: dogs now have the ability to charge (quick action)
+    - type: Tweak
+      message: >-
+        pathfinding adjustments to get around circling and canceling
+        doafter/climbing for NPCs blocked by halfwalls. Watched someone solo 4
+        deathclaws this way, as they'd just trigger their doafter, not attack
+        the wall as intended, then just spin in circles. Literally animal abuse.
+  id: 6378
+  time: '2026-09-01T00:21:42.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1833
+- author: Lucky
+  changes:
+    - type: Fix
+      message: Double doors in NCR & OSI have been fixed.
+    - type: Remove
+      message: removed more NCR weapons I missed the first time.
+    - type: Add
+      message: NCR has now cameras mapped.
+    - type: Add
+      message: All factions have the grounded version of their flight apperatus mapped.
+    - type: Add
+      message: pain and suffering
+  id: 6379
+  time: '2026-09-02T05:57:29.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1835
+- author: aftemath434
+  changes:
+    - type: Add
+      message: Enclave Vault door with raid hack
+  id: 6380
+  time: '2026-09-02T05:58:01.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1836
+- author: alekszejg
+  changes:
+    - type: Fix
+      message: Jugs not being able to splash their contents.
+    - type: Fix
+      message: Ice buckets not being able to splash their contents.
+    - type: Fix
+      message: Ceramic flasks not being able to splash their contents.
+    - type: Fix
+      message: Vault canteens not being able to spill or splash their contents.
+    - type: Fix
+      message: Handheld fuel tanks not being able to spill or splash their contents.
+  id: 6381
+  time: '2026-09-02T06:14:10.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1830
+- author: JohnKieser
+  changes:
+    - type: Fix
+      message: >-
+        Grenade launcher casings are not longer errors. Thanks for telling me
+        about that issue guys
+    - type: Fix
+      message: Fixed debug assert exception when clicking on wild plants
+  id: 6382
+  time: '2026-09-02T06:42:22.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1834
+- author: alekszejg
+  changes:
+    - type: Add
+      message: Added ability to rename motorbikes!
+    - type: Add
+      message: Added an icon for motorbike rename interaction.
+  id: 6383
+  time: '2026-09-02T17:21:45.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1837
+- author: evil-two-info-types
+  changes: []
+  id: 6384
+  time: '2026-09-02T17:22:04.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1839
+- author: Fortaime
+  changes:
+    - type: Add
+      message: Plushie
+  id: 6385
+  time: '2026-09-02T19:29:08.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1840
+- author: JohnKieser
+  changes:
+    - type: Tweak
+      message: Minigun interactions have been altered to have less janky interact
+  id: 6386
+  time: '2026-09-02T20:26:59.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1841
+- author: cythisiax
+  changes:
+    - type: Add
+      message: >-
+        A randomly placed material extractor that runs off weldingfuel, makes
+        sound, PVE waves, and gives ores.
+    - type: Add
+      message: RMC vendor port with Misfits tweaks and additions.
+    - type: Add
+      message: NCR Heavy Trooper Lead role with dedicated T-51 power armor.
+    - type: Add
+      message: NCR power armor variants and power armor (TBR) mechs.
+    - type: Add
+      message: >-
+        Tiered randomized weapon loot tables for future implementation, or via
+        persistent loot spawning system by admins
+    - type: Add
+      message: Searchable junk piles with cooldown-based loot.
+    - type: Add
+      message: Craftable binoculars.
+    - type: Add
+      message: Group invitation verb, supplement to /group command
+    - type: Add
+      message: >-
+        Leadership-only archive folder, subfolder, and document renaming in
+        terminal databases for each faction
+    - type: Tweak
+      message: OSI archive removed, they now use NCR archive
+    - type: Tweak
+      message: >-
+        AER weapon series returned to Red (24), Blue (20), Green (18), and
+        Violet (12) charge capacity.
+    - type: Tweak
+      message: Updated NCR job ordering, titles, borders, and descriptions.
+    - type: Tweak
+      message: Energy ammunition now preserves its matching beam colors.
+    - type: Fix
+      message: >-
+        Barber scissors layering now correctly updates when appearance changes
+        are applied.
+    - type: Fix
+      message: >-
+        Chemistry reagents no longer completely disappear because of
+        quantization.
+    - type: Fix
+      message: >-
+        Surgical tools now correctly become dirty when used on animals and other
+        non-standard surgical patients.
+    - type: Fix
+      message: >-
+        EMP pulses now disable Enclave microbomb countdowns and prevent
+        detonation while disabled.
+    - type: Fix
+      message: >-
+        With rudimentary sprite overlay replacements for parennt prototypes not
+        working on PA helmets
+    - type: Remove
+      message: Enclave saying 'Enclave' and blowing up.
+  id: 6387
+  time: '2026-09-03T00:15:34.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1842
+- author: cythisiax
+  changes:
+    - type: Fix
+      message: NCR SPA prototype was using PA, not SPA for t45, R-51 is still PA
+    - type: Fix
+      message: NCR SPA/R-51 sprite issue with lamp, causing gmod ERROR
+    - type: Fix
+      message: >-
+        someone renamed Yuma Tribal's Elder prototype entirely, instead of play
+        facing .ftl causing map break,.
+    - type: Fix
+      message: Loadoutkit Vendor adjustments
+    - type: Add
+      message: New Tree of Life sprite (bigger, better, glorious)
+    - type: Add
+      message: Tree of Life, and Willower Shamans can select rites
+    - type: Add
+      message: Deathclaw hatchling and adolescent sprites
+    - type: Tweak
+      message: >-
+        Tree of Life gives rejuvenating heal tick (slow) when in presence of
+        tree, 6 tiles, for Willower faction
+  id: 6388
+  time: '2026-09-03T15:08:11.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1846
+- author: Vixting
+  changes:
+    - type: Add
+      message: Added some new vault crates
+  id: 6389
+  time: '2026-09-03T15:21:50.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1844
+- author: Tytos
+  changes:
+    - type: Tweak
+      message: houndmaster doesnt need vexillarius time
+  id: 6390
+  time: '2026-09-03T15:22:06.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1843
+- author: Cythisiax
+  changes:
+    - type: Tweak
+      message: >-
+        Junkl pile interactions now just click > loot > shrink, 1hr cooldown,
+        'Scrounger' perk allows checking already looted piles
+    - type: Add
+      message: HOST command
+    - type: Fix
+      message: >-
+        MFC default core 46 shots, change to MFC Red default > 24 shots ALL AER
+        variants roundstart (Sorry folk, mald me, going back to my intention,
+        and this will supplement supersphere's ballistic changes, get your
+        toasters to BoS, from a BoS main, fill that inventory up on cells)
+  id: 6391
+  time: '2026-09-03T17:22:28.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1848
+- author: sssaaagggeee
+  changes:
+    - type: Add
+      message: >-
+        HT Lead finally had their paperwork go through, their promotions are now
+        SSGT -> SFC -> MSGT -> WarOff -> CWO
+  id: 6392
+  time: '2026-09-03T17:22:45.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1847
+- author: cythisiax
+  changes:
+    - type: Tweak
+      message: >-
+        material extractor now appears on WendoverMap, and all faction maps as a
+        permanent geo spot
+    - type: Tweak
+      message: >-
+        mat extractor's PVE waves now randomize mob pool, not in a 'length
+        tier', thus current round 1189 nightstalker spam
+    - type: Fix
+      message: missing reagent hooks on a lot of craftables (G) menu
+  id: 6393
+  time: '2026-09-03T21:09:36.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1849
+- author: aftemath434
+  changes:
+    - type: Tweak
+      message: 'Removed NCR CO PA '
+  id: 6394
+  time: '2026-09-03T23:46:28.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1851
+- author: aftemath434
+  changes:
+    - type: Fix
+      message: nightKin stealth, nightkin physical traits
+  id: 6395
+  time: '2026-09-04T00:53:57.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1850
+- author: Amaster222
+  changes:
+    - type: Add
+      message: Zoybeans! A mutated soy alternative for the meat haters.
+    - type: Add
+      message: New reagents, reactions, and recipes that all involve zoy!
+    - type: Fix
+      message: Tofu should work in wasteland cooking again! use zoy milk!
+  id: 6396
+  time: '2026-09-04T00:54:09.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1826
+- author: cythisiax
+  changes:
+    - type: Add
+      message: >-
+        AER variant depending on 'level' decreased MFC usage. AER-9 highest >
+        AER-14(15) lowest. 24 > 26 > 28 > 30 > 32.
+    - type: Add
+      message: 'BoS Senior Paladins receive 1 extra slot. '
+    - type: Fix
+      message: Material extractor nuances.
+  id: 6397
+  time: '2026-09-04T01:33:46.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1852
+- author: Cythisiax
+  changes:
+    - type: Fix
+      message: Host level CVAR
+  id: 6398
+  time: '2026-09-04T21:29:50.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1853
+- author: Vixting
+  changes:
+    - type: Add
+      message: added vault to vault job names
+  id: 6399
+  time: '2026-09-04T21:30:02.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1856
+- author: Vixting
+  changes:
+    - type: Add
+      message: Added reagent based cryo pods to vault
+    - type: Add
+      message: Added 4 new cryo reagents
+    - type: Add
+      message: Added plasma crate to vault req
+    - type: Tweak
+      message: Replaced existing vault cryo pods with new reagent based ones
+  id: 6400
+  time: '2026-09-04T21:52:14.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1855
+- author: Marabout
+  changes:
+    - type: Add
+      message: >-
+        Added the NCR's command mantle back into the starting gear of the NCR's
+        CO
+  id: 6401
+  time: '2026-09-04T21:52:28.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1854
+- author: Wassuy
+  changes:
+    - type: Add
+      message: >-
+        Rookie talon mercenary armed with a semi-auto rifle, shoot at high
+        fire-rate with decent accuracy, he will unlikely to be seen around.
+    - type: Add
+      message: >-
+        Psycho Raider Shield man, able to withstand a lot of bullet before going
+        down while also be able to knock back enemies from harming his buddies,
+        do not break his shield!
+    - type: Fix
+      message: >-
+        Raiders that have gloves not having their gloves, now they do, got to
+        stay drippy while getting shot at!
+  id: 6402
+  time: '2026-09-04T22:16:15.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1845
+- author: BurgerMoth
+  changes:
+    - type: Add
+      message: Overpressure 308 ammo boxes
+    - type: Add
+      message: Overpressure 308 ammo boxes to NCR and legion T4 ammo BP
+    - type: Tweak
+      message: >-
+        Cost of .50 anti-material ammo box, on the NCR and legion T4 ammo BP's,
+        significantly reduced
+  id: 6403
+  time: '2026-09-05T00:29:45.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1759
+- author: Tytos
+  changes:
+    - type: Add
+      message: Added ncr and legion trader contract systems
+    - type: Tweak
+      message: added animals tab to shops
+  id: 6404
+  time: '2026-09-05T01:15:32.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1858

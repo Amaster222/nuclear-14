@@ -239,6 +239,20 @@
       params:
         volume: -3
         maxDistance: 10
+  - type: ActionGrant # #Cythisiax Added - give feral dogs the deathclaw-style melee charge ability
+    actions:
+    - MisfitsActionMeleeCharge
+  - type: MeleeChargeAudio # #Cythisiax Added - dog charge bark on activation, heavy stomp on impact
+    activationSound:
+      collection: N14DogAttack
+      params:
+        volume: -2
+        maxDistance: 15
+    impactSound:
+      path: /Audio/Effects/Footsteps/largethud.ogg
+      params:
+        volume: 3
+        maxDistance: 15
  #- type: Reproductive
    #breedChance: 0.05
    #birthPopup: reproductive-birth-popup
