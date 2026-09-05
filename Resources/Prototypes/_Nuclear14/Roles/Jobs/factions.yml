@@ -60,17 +60,14 @@
 # Rangers/MilitaryPolice pattern of a sub-branch with its own department block.
 # The ID deliberately extends BrotherhoodOfSteel so ordinal sorting parks it directly
 # beneath the Brotherhood in the character selection screen.
-# #Cythisiax Renamed (player-facing) - Lancer-Captain shows as Knight-Captain, Lancer-Knight as
-# Knight-Lancer; the entry "Lancer" rung was removed and its slot folded into Lancer-Knight.
-# Prototype IDs kept stable so Lancers playtime is preserved.
+# #Misfits Change - Knight-Lancer is the sole role in the Brotherhood aviation branch.
 - type: department
   id: BrotherhoodOfSteelLancers
   description: department-BrotherhoodOfSteelLancers-description
   color: "#2F5D8C" # deeper Wendover blue, distinct from the chapter's #3B72BF
   uiCategory: MajorFaction
   roles:
-  - BoSLancerCaptain # Knight-Captain (player-facing) | _Misfits/Roles/Jobs/BrotherhoodOfSteel/bos_lancer_captain.yml
-  - BoSLancerKnight  # Knight-Lancer  (player-facing) | _Misfits/Roles/Jobs/BrotherhoodOfSteel/bos_lancer_knight.yml
+  - BoSLancerKnight  # Knight-Lancer (player-facing) | _Misfits/Roles/Jobs/BrotherhoodOfSteel/bos_lancer_knight.yml
 
 #- type: department
 #  id: CaravanCompany

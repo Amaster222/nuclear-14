@@ -753,7 +753,7 @@
 # --- BoS Tier 1 Ammo ---
 - type: latheRecipe
   id: N14BPBoSAmmoPowerCellSmall
-  result: N14MicrofusionCellRed
+  result: N14MicrofusionCell
   category: N14BlueprintBoSAmmoT1
   completetime: 4
   requiresBlueprint: true
@@ -775,7 +775,7 @@
 
 - type: latheRecipe
   id: N14BPBoSAmmoElectronChargePackRed
-  result: N14ElectronChargePackRed
+  result: N14ElectronChargePack
   category: N14BlueprintBoSAmmoT1
   completetime: 4
   requiresBlueprint: true
@@ -929,7 +929,7 @@
 # --- BoS Tier 2 Ammo ---
 - type: latheRecipe
   id: N14BPBoSAmmoPowerCellHigh
-  result: N14MicrofusionCellGreen
+  result: N14MicrofusionCell
   category: N14BlueprintBoSAmmoT2
   completetime: 8
   requiresBlueprint: true
@@ -943,7 +943,7 @@
 
 - type: latheRecipe
   id: N14BPBoSAmmoElectronChargePackGreen
-  result: N14ElectronChargePackGreen
+  result: N14ElectronChargePack
   category: N14BlueprintBoSAmmoT2
   completetime: 8
   requiresBlueprint: true
@@ -976,7 +976,7 @@
 # --- BoS Tier 3 Ammo ---
 - type: latheRecipe
   id: N14BPBoSAmmoPowerCellAdvanced
-  result: N14MicrofusionCellBlue
+  result: N14MicrofusionCell
   category: N14BlueprintBoSAmmoT3
   completetime: 12
   requiresBlueprint: true
@@ -991,7 +991,7 @@
 
 - type: latheRecipe
   id: N14BPBoSAmmoElectronChargePackBlue
-  result: N14ElectronChargePackBlue
+  result: N14ElectronChargePack
   category: N14BlueprintBoSAmmoT3
   completetime: 12
   requiresBlueprint: true
@@ -1085,7 +1085,7 @@
 # --- BoS Tier 5 Ammo ---
 - type: latheRecipe
   id: N14BPBoSAmmoMicrofusionViolet
-  result: N14MicrofusionCellViolet
+  result: N14MicrofusionCell
   category: N14BlueprintBoSAmmoT5
   completetime: 20
   requiresBlueprint: true
@@ -1100,7 +1100,7 @@
 
 - type: latheRecipe
   id: N14BPBoSAmmoElectronChargePackViolet
-  result: N14ElectronChargePackViolet
+  result: N14ElectronChargePack
   category: N14BlueprintBoSAmmoT5
   completetime: 20
   requiresBlueprint: true

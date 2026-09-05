@@ -380,9 +380,9 @@
     selectedMode: FullAuto
     availableModes:
     - FullAuto
-  # Higher efficiency: 1200-charge red MFC provides 26 shots.
+  # Weapon profile controls damage and beam color; MFC supplies charge.
   - type: GunDamageBonus
-    fireCostMultiplier: 0.92
+    hitscanProtoOverride: N14AER9AutoLaser
   - type: FollowDistance
     backStrength: 5
   - type: StaticPrice
@@ -445,7 +445,7 @@
   name: prototype AER-14 laser rifle
   parent: N14BaseWeaponPowerCellMedium
   id: N14WeaponLaserRiflePrototypeAER14
-  description: A cutting-edge pre-war prototype laser rifle with experimental green-spectrum optics. Extremely powerful — the enhanced focusing lenses produce a distinctive green beam with significantly higher damage output.
+  description: A cutting-edge pre-war prototype laser rifle with experimental focusing optics. Its weapon profile produces a distinctive blue beam with high damage output.
   components:
   - type: Wieldable
   - type: GunWieldBonus
@@ -486,9 +486,9 @@
     selectedMode: FullAuto
     availableModes:
     - FullAuto
-  # Higher efficiency: 1200-charge red MFC provides 30 shots.
+  # Weapon profile controls damage and beam color; MFC supplies charge.
   - type: GunDamageBonus
-    fireCostMultiplier: 0.8
+    hitscanProtoOverride: N14MFLaserBlue
   - type: FollowDistance
     backStrength: 5
   - type: StaticPrice
@@ -499,7 +499,7 @@
   name: AER-12 laser rifle
   parent: N14BaseWeaponPowerCellMedium
   id: N14WeaponLaserRifleAER12
-  description: An advanced pre-war laser rifle featuring upgraded amber-spectrum focusing optics. Higher rate of fire and slightly increased damage over the standard AER-9 — a significant step up in energy weapon technology.
+  description: An advanced pre-war laser rifle featuring upgraded orange-spectrum focusing optics. Higher rate of fire and slightly increased damage over the standard AER-9.
   components:
   - type: Wieldable
   - type: GunWieldBonus
@@ -542,9 +542,9 @@
     selectedMode: FullAuto
     availableModes:
     - FullAuto
-  # Higher efficiency: 1200-charge red MFC provides 28 shots.
+  # Weapon profile controls damage and beam color; MFC supplies charge.
   - type: GunDamageBonus
-    fireCostMultiplier: 0.85
+    hitscanProtoOverride: N14MFLaserAmber
   - type: FollowDistance
     backStrength: 5
   - type: StaticPrice
@@ -555,7 +555,7 @@
   name: AER-15 laser rifle
   parent: N14BaseWeaponPowerCellMedium
   id: N14WeaponLaserRifleAER15
-  description: The pinnacle of pre-war laser rifle technology. Experimental blue-spectrum focusing crystals produce the highest damage output of any man-portable laser weapon. Extremely rare — only a handful survived the war, and the manufacturing knowledge is lost.
+  description: The pinnacle of pre-war laser rifle technology. Experimental violet-spectrum focusing crystals produce exceptional damage output with unmatched precision. Extremely rare — only a handful survived the war, and the manufacturing knowledge is lost.
   components:
   - type: Wieldable
   - type: GunWieldBonus
@@ -596,9 +596,9 @@
     selectedMode: SemiAuto
     availableModes:
     - SemiAuto
-  # Highest efficiency: 1200-charge red MFC provides 32 shots.
+  # Weapon profile controls damage and beam color; MFC supplies charge.
   - type: GunDamageBonus
-    fireCostMultiplier: 0.75
+    hitscanProtoOverride: N14MFLaserViolet
   - type: FollowDistance
     backStrength: 5
   - type: StaticPrice
@@ -651,9 +651,9 @@
     selectedMode: SemiAuto
     availableModes:
     - SemiAuto
-  # Baseline efficiency: 1200-charge red MFC provides 24 shots.
+  # Weapon profile controls damage and beam color; MFC supplies charge.
   - type: GunDamageBonus
-    fireCostMultiplier: 1.0
+    hitscanProtoOverride: N14MFLaserRed
   - type: FollowDistance
     backStrength: 5
   - type: StaticPrice
@@ -1271,6 +1271,9 @@
     - Fullauto
     soundGunshot:
       collection: N14LaserAutoRifleGunshot
+  # Weapon profile controls damage and beam color; ECP supplies charge.
+  - type: GunDamageBonus
+    hitscanProtoOverride: N14RCWLaserGreen
   - type: FollowDistance
     backStrength: 5
   - type: StaticPrice

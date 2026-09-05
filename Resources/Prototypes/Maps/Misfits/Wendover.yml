@@ -79,7 +79,7 @@
           NCRRangerRecruit: [ 2, 2 ] # #Misfits Add - entry-level Ranger Recruit slot
           NCRFirstSergeant: [ 1, 1 ]
           #NCRStaffSergeant: [ 1, 1 ] # #Misfits Removed - replaced by NCRHeavyTrooper as T5 specialist slot
-          NCRHeavyTrooper: [ 3, 3 ]
+          NCRHeavyTrooper: [ 2, 2 ]
           NCRHeavyTrooperLead: [ 1, 1 ]
           NCRNCO: [ 3, 3 ]
           NCRWS: [ 2, 2 ]
@@ -104,12 +104,9 @@
           BoSMidPaladinCommander: [ 1, 1 ]
           BoSHeadKnight: [ 1, 1 ]  #Misfits Change /Add/: New consolidated BoS jobs
           BoSWestScribe: [ 1, 1 ] # Misfits Change
-          BoSMidPaladin: [ 1, 2 ]  #Misfits Tweak: 2 slots — Senior Paladin remains a rare rank
+          BoSMidPaladin: [ 1, 1 ]  #Misfits Tweak: 1 slot — Senior Paladin is a rare rank
           BoSMidKnight: [ 3, 3 ]
-          # #Misfits Add - Brotherhood Lancers aviation branch, one slot per rank
-          # #Cythisiax Renamed (player-facing) - Lancer ranks show as Knight-Captain / Knight-Lancer;
-          # the entry Lancer rung was removed and its slot folded into Lancer-Knight.
-          BoSLancerCaptain: [ 1, 1 ]
+          # #Misfits Add - Brotherhood Lancers aviation branch, one Knight-Lancer slot.
           BoSLancerKnight: [ 2, 2 ]
           BoSMidScribe: [ 3, 3 ]
           BoSPaladin: [ 3, 3 ]  #Misfits Tweak: 3 slots — standard Paladin complement

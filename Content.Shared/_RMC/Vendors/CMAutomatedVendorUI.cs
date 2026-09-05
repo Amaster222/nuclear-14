@@ -18,6 +18,7 @@ public sealed class CMAutomatedVendorState : BoundUserInterfaceState
     public bool CanReplenish { get; }
     public bool CanStoreEquipment { get; }
     public string DepartmentName { get; }
+    public string VendorTitle { get; }
     public List<string> AllocationCategories { get; }
     public List<string> SharedEquipmentCategories { get; }
 
@@ -29,6 +30,7 @@ public sealed class CMAutomatedVendorState : BoundUserInterfaceState
         bool canReplenish,
         bool canStoreEquipment,
         string departmentName,
+        string vendorTitle,
         List<string> allocationCategories,
         List<string> sharedEquipmentCategories)
     {
@@ -39,6 +41,7 @@ public sealed class CMAutomatedVendorState : BoundUserInterfaceState
         CanReplenish = canReplenish;
         CanStoreEquipment = canStoreEquipment;
         DepartmentName = departmentName;
+        VendorTitle = vendorTitle;
         AllocationCategories = allocationCategories;
         SharedEquipmentCategories = sharedEquipmentCategories;
     }

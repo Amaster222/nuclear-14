@@ -79,6 +79,7 @@
 - type: startingGear
   id: CaesarLegionPriestessOfMarsGear
   equipment:
+    wallet: N14Wallet
     jumpsuit: N14PriestessOfMarsRobes
     neck: N14PriestessOfMarsCloak
     mask: N14PriestessOfMarsVeil

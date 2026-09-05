@@ -38,6 +38,7 @@
 - type: startingGear
   id: CaesarLegionHoundmasterGear
   equipment:
+    wallet: N14Wallet
     jumpsuit: N14ClothingUniformJumpsuitLegionnaire
     ears: N14ClothingHeadsetLegion
     neck: N14ClothingNeckCoyoteCloak

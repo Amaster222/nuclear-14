@@ -46,7 +46,7 @@
     back: N14ClothingBackpackHiking
     shoes: N14ClothingShoesBlack
     id: N14IDNCRPassportTrader
-    belt: N14WalletCash
+    wallet: N14WalletCash
     pocket1: MisfitsNCRTraderFlatpack
     pocket2: N14Multitool
   innerClothingSkirt: N14ClothingUniformJumpskirtFalloutBlack

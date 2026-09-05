@@ -36,11 +36,17 @@ public sealed partial class CMAutomatedVendorComponent : Component
     public List<ProtoId<AccessLevelPrototype>> Access = new();
 
     /// <summary>
-    /// Maximum blueprint-style authority tier exposed by this vendor.
-    /// Misfits vendor tiers intentionally stop at four.
+    /// Maximum authority tier exposed by this vendor.
     /// </summary>
     [DataField]
-    public int MaxAuthorityTier = 4;
+    public int MaxAuthorityTier = 5;
+
+    /// <summary>
+    /// Vendor-local authority tier by job. This supports faction role structures that do not mirror their
+    /// physical access-card hierarchy, without granting broader door access.
+    /// </summary>
+    [DataField]
+    public Dictionary<ProtoId<JobPrototype>, int> AuthorityJobTiers = new();
 
     /// <summary>
     /// Required cumulative access tag(s) for each authority tier.
@@ -60,6 +66,12 @@ public sealed partial class CMAutomatedVendorComponent : Component
     /// </summary>
     [DataField]
     public string DepartmentName = "department";
+
+    /// <summary>
+    /// Player-facing machine title. Weapon and equipment vendors intentionally identify themselves separately.
+    /// </summary>
+    [DataField]
+    public string VendorTitle = "Armory Vendor";
 
     /// <summary>
     /// Ordered allocation sub-tabs shown by this vendor. Additional categories used by entries are appended.
@@ -117,6 +129,7 @@ public sealed partial class CMAutomatedVendorComponent : Component
         [2] = 8,
         [3] = 5,
         [4] = 2,
+        [5] = 1,
     };
 
     /// <summary>
