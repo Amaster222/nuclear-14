@@ -11212,3 +11212,12 @@ Entries:
   id: 6403
   time: '2026-09-05T00:29:45.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1759
+- author: Tytos
+  changes:
+    - type: Add
+      message: Added ncr and legion trader contract systems
+    - type: Tweak
+      message: added animals tab to shops
+  id: 6404
+  time: '2026-09-05T01:15:32.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1858
