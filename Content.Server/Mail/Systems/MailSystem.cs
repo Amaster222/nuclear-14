@@ -582,13 +582,9 @@ namespace Content.Server.Mail.Systems
         public bool TryGetMailTeleporterForReceiver(EntityUid receiverUid, [NotNullWhen(true)] out MailTeleporterComponent? teleporterComponent, [NotNullWhen(true)] out EntityUid? teleporterUid)
         {
             var query = EntityQueryEnumerator<MailTeleporterComponent>();
-            var receiverStation = _stationSystem.GetOwningStation(receiverUid);
 
             while (query.MoveNext(out var uid, out var mailTeleporter))
             {
-                var teleporterStation = _stationSystem.GetOwningStation(uid);
-                if (receiverStation != teleporterStation)
-                    continue;
                 teleporterComponent = mailTeleporter;
                 teleporterUid = uid;
                 return true;
@@ -632,14 +628,11 @@ namespace Content.Server.Mail.Systems
         {
             var candidateList = new List<MailRecipient>();
             var query = EntityQueryEnumerator<MailReceiverComponent>();
-            var teleporterStation = _stationSystem.GetOwningStation(uid);
 
+            // Mail recipients are no longer restricted to the teleporter's own
+            // station/grid/map - any active MailReceiverComponent anywhere counts.
             while (query.MoveNext(out var receiverUid, out _))
             {
-                var receiverStation = _stationSystem.GetOwningStation(receiverUid);
-                if (receiverStation != teleporterStation)
-                    continue;
-
                 // Misfits
                 if (excludedFactions is { Count: > 0 } && _npcFaction.IsMemberOfAny(receiverUid, excludedFactions))
                     continue;
