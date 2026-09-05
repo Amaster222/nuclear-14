@@ -11292,3 +11292,18 @@ Entries:
   id: 6409
   time: '2026-09-05T22:38:52.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1863
+- author: Vixting
+  changes:
+    - type: Add
+      message: Added humanitarian aid mail to the vault
+    - type: Fix
+      message: Fixed vault janitor closet haveing no power
+    - type: Add
+      message: Delivery of vault mail now rewards budget
+    - type: Add
+      message: Added vault tech stamp & header
+    - type: Fix
+      message: Fixed me accidentally deleting the vault mine expansion
+  id: 6410
+  time: '2026-09-05T22:40:12.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1864
