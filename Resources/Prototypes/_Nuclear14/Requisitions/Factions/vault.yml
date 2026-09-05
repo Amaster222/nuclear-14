@@ -133,6 +133,8 @@
         crate: MisfitsCrateRequisitionsVaultPlastic
       - cost: 4000
         crate: MisfitsCrateRequisitionsVaultThread
+      - cost: 1000
+        crate: MisfitsCrateRequisitionsVaultPlasma
 
 # Apparel
 - type: entity

@@ -76,8 +76,17 @@ public sealed partial class CMAutomatedVendorSystem : SharedCMAutomatedVendorSys
         var categories = vendor.Comp.BlueprintCategories.Select(x => x.ToString()).ToHashSet();
         // Preserve hand-authored allocation entries (for former job loadout kits) while adding blueprint stock.
         // A matching authority section is reused so both sources remain under the same rank allocation.
-        var sections = vendor.Comp.Sections
-            .ToDictionary(section => section.Name, section => section);
+        var sections = new Dictionary<string, CMVendorSection>();
+        foreach (var configured in vendor.Comp.Sections)
+        {
+            if (sections.TryGetValue(configured.Name, out var existing))
+            {
+                existing.Entries.AddRange(configured.Entries);
+                continue;
+            }
+
+            sections.Add(configured.Name, configured);
+        }
         foreach (var recipe in _prototypes.EnumeratePrototypes<LatheRecipePrototype>())
         {
             if (recipe.Result is not { } result || recipe.Category is not { } category ||
@@ -92,7 +101,7 @@ public sealed partial class CMAutomatedVendorSystem : SharedCMAutomatedVendorSys
                 continue;
 
             tier = entryOverride?.Tier ?? tier;
-            if (tier is < 1 or > 4 || !_prototypes.HasIndex<EntityPrototype>(result))
+            if (tier is < 1 or > 5 || !_prototypes.HasIndex<EntityPrototype>(result))
                 continue;
 
             var sectionName = vendor.Comp.AuthorityTierNames.GetValueOrDefault(tier, $"Authority Tier {tier}");
@@ -132,7 +141,7 @@ public sealed partial class CMAutomatedVendorSystem : SharedCMAutomatedVendorSys
 
     private static int GetBlueprintTier(string category)
     {
-        for (var tier = 4; tier >= 1; tier--)
+        for (var tier = 5; tier >= 1; tier--)
         {
             if (category.EndsWith($"T{tier}", StringComparison.OrdinalIgnoreCase))
                 return tier;
@@ -168,7 +177,7 @@ public sealed partial class CMAutomatedVendorSystem : SharedCMAutomatedVendorSys
             return;
 
         var entry = section.Entries[message.Entry];
-        if (entry.Tier is < 1 or > 4 || entry.Tier > Math.Min(4, vendor.Comp.MaxAuthorityTier) ||
+        if (entry.Tier is < 1 or > 5 || entry.Tier > Math.Min(5, vendor.Comp.MaxAuthorityTier) ||
             !HasAuthorityTier(vendor, user, entry.Tier))
         {
             Deny(vendor, user, "Your faction authority is insufficient for this equipment.");
@@ -506,6 +515,7 @@ public sealed partial class CMAutomatedVendorSystem : SharedCMAutomatedVendorSys
                 vendor.Comp.Replenishment.Count > 0,
                 vendor.Comp.AllowEquipmentStorage,
                 vendor.Comp.DepartmentName,
+                vendor.Comp.VendorTitle,
                 vendor.Comp.AllocationCategories,
                 vendor.Comp.SharedEquipmentCategories));
     }
@@ -513,6 +523,9 @@ public sealed partial class CMAutomatedVendorSystem : SharedCMAutomatedVendorSys
     private bool HasAuthorityTier(Entity<CMAutomatedVendorComponent> vendor, EntityUid user, int tier)
     {
         if (HasFullAllocationAuthorization(vendor, user))
+            return true;
+
+        if (GetJobAuthorityTier(vendor, user) >= tier)
             return true;
 
         if (!vendor.Comp.AuthorityTierAccess.TryGetValue(tier, out var required) || required.Count == 0)
@@ -529,5 +542,20 @@ public sealed partial class CMAutomatedVendorSystem : SharedCMAutomatedVendorSys
         }
 
         return required.Any(tags.Contains);
+    }
+
+    private int GetJobAuthorityTier(Entity<CMAutomatedVendorComponent> vendor, EntityUid user)
+    {
+        if (!_minds.TryGetMind(user, out var mindId, out _))
+            return 0;
+
+        var highestTier = 0;
+        foreach (var (job, tier) in vendor.Comp.AuthorityJobTiers)
+        {
+            if (_jobs.MindHasJobWithId(mindId, job.ToString()))
+                highestTier = Math.Max(highestTier, tier);
+        }
+
+        return highestTier;
     }
 }

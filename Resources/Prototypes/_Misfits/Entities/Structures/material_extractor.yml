@@ -5,13 +5,15 @@
   description: A battered pre-war drill that hammers the ground for usable raw materials. Its racket draws unwanted attention.
   components:
   - type: Sprite
-    sprite: _Nuclear14/Structures/Machines/water_treatment.rsi
-    state: watertreatment
+    sprite: _Misfits/Structures/Machines/seismic_extractor.rsi
+    layers:
+    - state: seismic_extractor
   - type: PointLight
     enabled: false
     color: "#ff2020"
     radius: 3
     energy: 2
+  - type: MaterialExtractorLandmark
   - type: Destructible
     thresholds:
     - trigger:
@@ -27,17 +29,38 @@
         acts: ["Destruction"]
   # Balance: all economic and encounter tuning is kept here.
   - type: MaterialExtractor
-    playerActivationRadius: 30
+    operatorRadius: 4
     pulseIntervalSeconds: 2
-    firstWaveMinSeconds: 30
-    firstWaveMaxSeconds: 30
-    waveMinSeconds: 30
-    waveMaxSeconds: 30
+    firstWaveMinSeconds: 15
+    firstWaveMaxSeconds: 15
+    waveMinSeconds: 20
+    waveMaxSeconds: 20
     waveWarningSeconds: 0
+    waveMinMobCount: 1
+    waveMaxMobCount: 3
+    waveSpawnMinDistance: 8
+    waveSpawnMaxDistance: 14
+    waveSpawnAttempts: 40
+    waveSpawnPvsBuffer: 3
+    waveMobWeights:
+      N14MobMaterialExtractorMoleratWave: 24
+      N14MobMaterialExtractorGeckoWave: 18
+      N14MobMaterialExtractorMirelurkWave: 12
+      N14MobMaterialExtractorRadhogWave: 10
+      N14MobMaterialExtractorFireGeckoWave: 8
+      N14MobMaterialExtractorNightstalkerCubWave: 8
+      N14MobMaterialExtractorGiantAntWave: 7
+      N14MobMaterialExtractorNightstalkerWave: 4
+      N14MobMaterialExtractorRadMirelurkWave: 3
+      N14MobMaterialExtractorGiantFireAntWave: 3
+      N14MobMaterialExtractorRadscorpionWave: 3
     poorDepositChance: 0.25
     richDepositChance: 0.15
     poorYieldMultiplier: 0.7
     richYieldMultiplier: 1.4
+    lowFuelWarningFraction: 0.25
+    fuelSolution: tank
+    fuelReagent: WeldingFuel
     outputWeights:
       N14IronOre1: 20
       N14CopperOre1: 18
@@ -48,23 +71,19 @@
       N14ZincOre1: 6
       N14BauxiteOre1: 5
       FertilizerOre1: 3
-  # The normal portable-generator verbs start and stop the extractor. It has
-  # its own welding-fuel tank and does not need a cable or external generator.
-  - type: PortableGenerator
-    startChance: 1
   - type: FuelGenerator
     on: false
-    targetPower: 500
-    minTargetPower: 500
-    optimalPower: 500
-    maxTargetPower: 500
+    targetPower: 1000
+    minTargetPower: 1000
+    optimalPower: 1000
+    maxTargetPower: 1000
     # A full 250u tank lasts about two hours while the extractor runs.
     optimalBurnRate: 0.03333333
     fuelEfficiencyConstant: 0.3
   - type: PowerSupplier
-    supplyRate: 500
-    supplyRampRate: 500
-    supplyRampTolerance: 500
+    supplyRate: 1000
+    supplyRampRate: 1000
+    supplyRampTolerance: 1000
     enabled: false
   - type: ChemicalFuelGeneratorAdapter
     solution: tank
@@ -89,6 +108,8 @@
     interfaces:
       enum.StorageUiKey.Key:
         type: StorageBoundUserInterface
+      enum.MaterialExtractorUiKey.Key:
+        type: MaterialExtractorBoundUserInterface
   - type: ActivatableUI
     key: enum.StorageUiKey.Key
   - type: ContainerContainer
@@ -105,5 +126,7 @@
   description: The drill is silent. Its ruined hopper is full of twisted machinery.
   components:
   - type: Sprite
-    sprite: _Nuclear14/Structures/Machines/water_treatment.rsi
-    state: watertreatment_broken
+    sprite: _Misfits/Structures/Machines/seismic_extractor.rsi
+    layers:
+    - state: seismic_extractor_broken
+  - type: MaterialExtractorLandmark
