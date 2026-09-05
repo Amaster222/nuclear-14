@@ -492,7 +492,7 @@ public sealed class NcContractCard : PanelContainer
                 targetRow.AddChild(new TextureRect
                 {
                     Texture = icon,
-                    CustomMinimumSize = new(TargetIconPx, TargetIconPx),
+                    MinSize = new(TargetIconPx, TargetIconPx),
                     MaxSize = new(TargetIconPx, TargetIconPx),
                     Stretch = TextureRect.StretchMode.KeepAspectCentered,
                     Margin = new(0, 0, 4, 0),
@@ -533,7 +533,7 @@ public sealed class NcContractCard : PanelContainer
             if (candidate.Abstract || candidate.ID == abstractProto.ID)
                 continue;
 
-            var pending = new Stack<string>(candidate.Parents);
+            var pending = new Stack<string>(candidate.Parents ?? []);
             var visited = new HashSet<string>(StringComparer.Ordinal);
             while (pending.Count > 0)
             {
@@ -546,7 +546,7 @@ public sealed class NcContractCard : PanelContainer
 
                 if (_proto.TryIndex<EntityPrototype>(parentId, out var parent))
                 {
-                    foreach (var grandparentId in parent.Parents)
+                    foreach (var grandparentId in parent.Parents ?? [])
                         pending.Push(grandparentId);
                 }
             }
