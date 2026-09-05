@@ -11145,3 +11145,70 @@ Entries:
   id: 6397
   time: '2026-09-04T01:33:46.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1852
+- author: Cythisiax
+  changes:
+    - type: Fix
+      message: Host level CVAR
+  id: 6398
+  time: '2026-09-04T21:29:50.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1853
+- author: Vixting
+  changes:
+    - type: Add
+      message: added vault to vault job names
+  id: 6399
+  time: '2026-09-04T21:30:02.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1856
+- author: Vixting
+  changes:
+    - type: Add
+      message: Added reagent based cryo pods to vault
+    - type: Add
+      message: Added 4 new cryo reagents
+    - type: Add
+      message: Added plasma crate to vault req
+    - type: Tweak
+      message: Replaced existing vault cryo pods with new reagent based ones
+  id: 6400
+  time: '2026-09-04T21:52:14.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1855
+- author: Marabout
+  changes:
+    - type: Add
+      message: >-
+        Added the NCR's command mantle back into the starting gear of the NCR's
+        CO
+  id: 6401
+  time: '2026-09-04T21:52:28.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1854
+- author: Wassuy
+  changes:
+    - type: Add
+      message: >-
+        Rookie talon mercenary armed with a semi-auto rifle, shoot at high
+        fire-rate with decent accuracy, he will unlikely to be seen around.
+    - type: Add
+      message: >-
+        Psycho Raider Shield man, able to withstand a lot of bullet before going
+        down while also be able to knock back enemies from harming his buddies,
+        do not break his shield!
+    - type: Fix
+      message: >-
+        Raiders that have gloves not having their gloves, now they do, got to
+        stay drippy while getting shot at!
+  id: 6402
+  time: '2026-09-04T22:16:15.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1845
+- author: BurgerMoth
+  changes:
+    - type: Add
+      message: Overpressure 308 ammo boxes
+    - type: Add
+      message: Overpressure 308 ammo boxes to NCR and legion T4 ammo BP
+    - type: Tweak
+      message: >-
+        Cost of .50 anti-material ammo box, on the NCR and legion T4 ammo BP's,
+        significantly reduced
+  id: 6403
+  time: '2026-09-05T00:29:45.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1759
