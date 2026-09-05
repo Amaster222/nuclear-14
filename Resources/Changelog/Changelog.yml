@@ -11280,3 +11280,15 @@ Entries:
   id: 6408
   time: '2026-09-05T22:35:32.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1862
+- author: JohnKieser
+  changes:
+    - type: Add
+      message: >-
+        The NCR courtyard has gone through some remodeling to accommodate a new
+        war memorial statue. It has a detailed and very accurate account of how
+        commander Maria Salzzar defeated the 80s in an operation.
+    - type: Add
+      message: Someone forgot their stuff at NCR base
+  id: 6409
+  time: '2026-09-05T22:38:52.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1863
