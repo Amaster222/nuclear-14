@@ -479,6 +479,26 @@ public sealed class NcContractCard : PanelContainer
             NcUiIconFit.Fit(view, _sprites, protoId, targetPx: TargetIconPx, paddingPx: 4);
             targetRow.AddChild(view);
         }
+        else if (targetProto is { Abstract: true })
+        {
+            // Abstract contract targets (for example the shared raider base)
+            // accept any concrete descendant, but EntityPrototypeView cannot
+            // spawn an abstract entity. Use the prototype icon directly so
+            // these broad targets still have a visual identifier.
+            var icon = _sprites.GetPrototypeIcon(targetProto.ID).Default;
+            if (icon != null)
+            {
+                targetRow.AddChild(new TextureRect
+                {
+                    Texture = icon,
+                    CustomMinimumSize = new(TargetIconPx, TargetIconPx),
+                    MaxSize = new(TargetIconPx, TargetIconPx),
+                    Stretch = TextureRect.StretchMode.KeepAspectCentered,
+                    Margin = new(0, 0, 4, 0),
+                    MouseFilter = MouseFilterMode.Ignore
+                });
+            }
+        }
 
         var targetName = targetProto?.Name ?? protoId ?? Loc.GetString("nc-store-unknown-item");
 
