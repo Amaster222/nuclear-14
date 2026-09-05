@@ -4,14 +4,13 @@
 
 undecided-loadout-category-explorer-tracker-name = Explorer Tracker
 undecided-loadout-category-explorer-tracker-description =
-    Includes a hunting rifle, 3 308. Ammo boxes, a bola, healing powder,
+    Includes a scavenged F1 Sniper, 2 308. Ammo boxes, a bola, healing powder,
     a healing poultice, 2 K rations, and a ceramic flask.
 
 undecided-loadout-category-explorer-raider-name = Explorer Raider
 undecided-loadout-category-explorer-raider-description =
-    Includes 2 bolas,
-    a grease gun and a 1911,
-    a healing poultice, 2 K rations, and a ceramic flask.
+    Includes a 10mm chinese smg, 2 bolas, 2 magazines for the smg, a 1911,
+    a healing poultice, a healing powder, 2 K rations, and a ceramic flask.
 
 # Migrated Corvax legacy Legion keys
 undecided-loadout-category-bestiary-name = Centurion-Bestiary Kit
@@ -756,14 +755,14 @@ undecided-loadout-category-misfits-priestess-zealot-desc =
 
 undecided-loadout-category-misfits-acolyte-healing-name = Acolyte Healer
 undecided-loadout-category-misfits-acolyte-healing-desc =
-    Includes 2 Smelling Salts, 1 health analyzer, 1 Bitter Drink,
+    Includes a 45 pistol, a gladius, 2 Smelling Salts, 1 health analyzer, 1 Bitter Drink,
     1 Poultices, 1 Powder, 1 bandage,
     2 K rations, and a ceramic flask.
 
 undecided-loadout-category-misfits-acolyte-zealot-name = Acolyte Zealot
 undecided-loadout-category-misfits-acolyte-zealot-desc =
     Includes a Gladius, Legionnaire buckler,
-    spear quiver, A battle rifle, 308 clips,
+    spear quiver, An SKS, 308 clips,
     2 K rations, and a ceramic flask.
 
 undecided-loadout-category-misfits-eighties-block-road-captain-name = Road Captain Kit
