@@ -11228,3 +11228,38 @@ Entries:
   id: 6405
   time: '2026-09-05T02:20:29.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1859
+- author: cythisiax
+  changes:
+    - type: Tweak
+      message: >-
+        ALL AER variant adjustments again. Rudimentary, single MFC slot, tweaked
+        based on cell parent. ALL 24 shots. AER-9, 24 heat/red beam. AER-12, 26 
+        heat/orange beam. AER-14, 28 heat/blue beam. AER-15, 30 heat/violet
+        beam. RCW is green beam, 20 heat, 2 shock, 32 shots.
+    - type: Tweak
+      message: EVERYTHINGN HAS WALLET SLOT, AND WALLET. WALLET AUTO GET CAPS.
+    - type: Tweak
+      message: >-
+        supermutants (player species) use supermutant simplemob audio, for
+        scream, example.
+    - type: Tweak
+      message: Reduced NCR HT slots to TWO. Blame the IC mutiny and cost logistics!
+    - type: Tweak
+      message: NCR HT slots now have AVENGER MINNIGUN INSTEAD OF BAR. HTL keeps BAR.
+    - type: Tweak
+      message: Dropped BoS SP slot back to 1
+    - type: Tweak
+      message: >-
+        80s/Motorbike adjustments. 1 perception, 1.30x movement pennalty. 10
+        percentionn, 1.05 movemenntn pennalty.
+    - type: Tweak
+      message: vendor updates, NCR complete, mostly, QOL to come
+    - type: Remove
+      message: >-
+        BoS Lancer slots, only ONE Knight-Lancer remains with auto vertibird
+        perk.
+    - type: Remove
+      message: White Leg faction
+  id: 6406
+  time: '2026-09-05T02:49:36.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1857
