@@ -8,8 +8,6 @@
   description: job-description-caesar-legion-legionnaire-warrior
   playTimeTracker: CaesarLegionLegionnaireWarrior
   requirements:
-    - !type:CharacterLogicOrRequirement
-      requirements:
     - !type:CharacterDepartmentTimeRequirement
       department: CaesarLegion
       min: 14400 # 4 hours
