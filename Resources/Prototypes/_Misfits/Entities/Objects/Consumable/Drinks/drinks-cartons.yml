@@ -1,0 +1,14 @@
+﻿- type: entity # this should already exist, somehow it didn't
+  parent: [DrinkCartonVisualsOpenable, DrinkCartonBaseFull]
+  id: DrinkJuiceLemonCarton
+  name: lemon juice
+  description: First it's sour, then it's still sour.
+  components:
+  - type: SolutionContainerManager
+    solutions:
+      drink:
+        reagents:
+        - ReagentId: JuiceLemon
+          Quantity: 60
+  - type: Sprite
+    sprite: _Misfits/Objects/Consumable/Drinks/lemonjuice.rsi
