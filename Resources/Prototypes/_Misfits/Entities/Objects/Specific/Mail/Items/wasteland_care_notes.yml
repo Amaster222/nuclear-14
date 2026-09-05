@@ -23,7 +23,7 @@
   components:
   - type: PaperVisuals
     headerImagePath: "/Textures/_Misfits/Interface/Paper/paper_heading_vault14.png"
-    headerMargin: 0.0, 8.0, 0.0, 4.0
+    headerMargin: 0.0, 0.0, 0.0, 8.0
   - type: Paper
     stampedBy:
     - stampedColor: '#e8c547'
@@ -53,7 +53,7 @@
   components:
   - type: PaperVisuals
     headerImagePath: "/Textures/_Misfits/Interface/Paper/paper_heading_vault14.png"
-    headerMargin: 0.0, 8.0, 0.0, 4.0
+    headerMargin: 0.0, 0.0, 0.0, 8.0
   - type: Paper
     stampedBy:
     - stampedColor: '#e8c547'
@@ -83,7 +83,7 @@
   components:
   - type: PaperVisuals
     headerImagePath: "/Textures/_Misfits/Interface/Paper/paper_heading_vault14.png"
-    headerMargin: 0.0, 8.0, 0.0, 4.0
+    headerMargin: 0.0, 0.0, 0.0, 8.0
   - type: Paper
     stampedBy:
     - stampedColor: '#e8c547'
@@ -113,7 +113,7 @@
   components:
   - type: PaperVisuals
     headerImagePath: "/Textures/_Misfits/Interface/Paper/paper_heading_vault14.png"
-    headerMargin: 0.0, 8.0, 0.0, 4.0
+    headerMargin: 0.0, 0.0, 0.0, 8.0
   - type: Paper
     stampedBy:
     - stampedColor: '#e8c547'
@@ -143,7 +143,7 @@
   components:
   - type: PaperVisuals
     headerImagePath: "/Textures/_Misfits/Interface/Paper/paper_heading_vault14.png"
-    headerMargin: 0.0, 8.0, 0.0, 4.0
+    headerMargin: 0.0, 0.0, 0.0, 8.0
   - type: Paper
     stampedBy:
     - stampedColor: '#e8c547'
@@ -173,7 +173,7 @@
   components:
   - type: PaperVisuals
     headerImagePath: "/Textures/_Misfits/Interface/Paper/paper_heading_vault14.png"
-    headerMargin: 0.0, 8.0, 0.0, 4.0
+    headerMargin: 0.0, 0.0, 0.0, 8.0
   - type: Paper
     stampedBy:
     - stampedColor: '#e8c547'
@@ -203,7 +203,7 @@
   components:
   - type: PaperVisuals
     headerImagePath: "/Textures/_Misfits/Interface/Paper/paper_heading_vault14.png"
-    headerMargin: 0.0, 8.0, 0.0, 4.0
+    headerMargin: 0.0, 0.0, 0.0, 8.0
   - type: Paper
     stampedBy:
     - stampedColor: '#e8c547'
@@ -233,7 +233,7 @@
   components:
   - type: PaperVisuals
     headerImagePath: "/Textures/_Misfits/Interface/Paper/paper_heading_vault14.png"
-    headerMargin: 0.0, 8.0, 0.0, 4.0
+    headerMargin: 0.0, 0.0, 0.0, 8.0
   - type: Paper
     stampedBy:
     - stampedColor: '#e8c547'
@@ -263,7 +263,7 @@
   components:
   - type: PaperVisuals
     headerImagePath: "/Textures/_Misfits/Interface/Paper/paper_heading_vault14.png"
-    headerMargin: 0.0, 8.0, 0.0, 4.0
+    headerMargin: 0.0, 0.0, 0.0, 8.0
   - type: Paper
     stampedBy:
     - stampedColor: '#e8c547'
@@ -293,7 +293,7 @@
   components:
   - type: PaperVisuals
     headerImagePath: "/Textures/_Misfits/Interface/Paper/paper_heading_vault14.png"
-    headerMargin: 0.0, 8.0, 0.0, 4.0
+    headerMargin: 0.0, 0.0, 0.0, 8.0
   - type: Paper
     stampedBy:
     - stampedColor: '#e8c547'
@@ -323,7 +323,7 @@
   components:
   - type: PaperVisuals
     headerImagePath: "/Textures/_Misfits/Interface/Paper/paper_heading_vault14.png"
-    headerMargin: 0.0, 8.0, 0.0, 4.0
+    headerMargin: 0.0, 0.0, 0.0, 8.0
   - type: Paper
     stampedBy:
     - stampedColor: '#e8c547'
@@ -353,7 +353,7 @@
   components:
   - type: PaperVisuals
     headerImagePath: "/Textures/_Misfits/Interface/Paper/paper_heading_vault14.png"
-    headerMargin: 0.0, 8.0, 0.0, 4.0
+    headerMargin: 0.0, 0.0, 0.0, 8.0
   - type: Paper
     stampedBy:
     - stampedColor: '#e8c547'
@@ -383,7 +383,7 @@
   components:
   - type: PaperVisuals
     headerImagePath: "/Textures/_Misfits/Interface/Paper/paper_heading_vault14.png"
-    headerMargin: 0.0, 8.0, 0.0, 4.0
+    headerMargin: 0.0, 0.0, 0.0, 8.0
   - type: Paper
     stampedBy:
     - stampedColor: '#e8c547'
@@ -413,7 +413,7 @@
   components:
   - type: PaperVisuals
     headerImagePath: "/Textures/_Misfits/Interface/Paper/paper_heading_vault14.png"
-    headerMargin: 0.0, 8.0, 0.0, 4.0
+    headerMargin: 0.0, 0.0, 0.0, 8.0
   - type: Paper
     stampedBy:
     - stampedColor: '#e8c547'
@@ -443,7 +443,7 @@
   components:
   - type: PaperVisuals
     headerImagePath: "/Textures/_Misfits/Interface/Paper/paper_heading_vault14.png"
-    headerMargin: 0.0, 8.0, 0.0, 4.0
+    headerMargin: 0.0, 0.0, 0.0, 8.0
   - type: Paper
     stampedBy:
     - stampedColor: '#e8c547'
@@ -473,7 +473,7 @@
   components:
   - type: PaperVisuals
     headerImagePath: "/Textures/_Misfits/Interface/Paper/paper_heading_vault14.png"
-    headerMargin: 0.0, 8.0, 0.0, 4.0
+    headerMargin: 0.0, 0.0, 0.0, 8.0
   - type: Paper
     stampedBy:
     - stampedColor: '#e8c547'
@@ -503,7 +503,7 @@
   components:
   - type: PaperVisuals
     headerImagePath: "/Textures/_Misfits/Interface/Paper/paper_heading_vault14.png"
-    headerMargin: 0.0, 8.0, 0.0, 4.0
+    headerMargin: 0.0, 0.0, 0.0, 8.0
   - type: Paper
     stampedBy:
     - stampedColor: '#e8c547'
@@ -533,7 +533,7 @@
   components:
   - type: PaperVisuals
     headerImagePath: "/Textures/_Misfits/Interface/Paper/paper_heading_vault14.png"
-    headerMargin: 0.0, 8.0, 0.0, 4.0
+    headerMargin: 0.0, 0.0, 0.0, 8.0
   - type: Paper
     stampedBy:
     - stampedColor: '#e8c547'
@@ -571,7 +571,7 @@
   components:
   - type: PaperVisuals
     headerImagePath: "/Textures/_Misfits/Interface/Paper/paper_heading_vault14.png"
-    headerMargin: 0.0, 8.0, 0.0, 4.0
+    headerMargin: 0.0, 0.0, 0.0, 8.0
   - type: Paper
     stampedBy:
     - stampedColor: '#e8c547'
@@ -609,7 +609,7 @@
   components:
   - type: PaperVisuals
     headerImagePath: "/Textures/_Misfits/Interface/Paper/paper_heading_vault14.png"
-    headerMargin: 0.0, 8.0, 0.0, 4.0
+    headerMargin: 0.0, 0.0, 0.0, 8.0
   - type: Paper
     stampedBy:
     - stampedColor: '#e8c547'
@@ -639,7 +639,7 @@
   components:
   - type: PaperVisuals
     headerImagePath: "/Textures/_Misfits/Interface/Paper/paper_heading_vault14.png"
-    headerMargin: 0.0, 8.0, 0.0, 4.0
+    headerMargin: 0.0, 0.0, 0.0, 8.0
   - type: Paper
     stampedBy:
     - stampedColor: '#e8c547'
@@ -673,7 +673,7 @@
   components:
   - type: PaperVisuals
     headerImagePath: "/Textures/_Misfits/Interface/Paper/paper_heading_vault14.png"
-    headerMargin: 0.0, 8.0, 0.0, 4.0
+    headerMargin: 0.0, 0.0, 0.0, 8.0
   - type: Paper
     stampedBy:
     - stampedColor: '#e8c547'
@@ -703,7 +703,7 @@
   components:
   - type: PaperVisuals
     headerImagePath: "/Textures/_Misfits/Interface/Paper/paper_heading_vault14.png"
-    headerMargin: 0.0, 8.0, 0.0, 4.0
+    headerMargin: 0.0, 0.0, 0.0, 8.0
   - type: Paper
     stampedBy:
     - stampedColor: '#e8c547'
@@ -743,7 +743,7 @@
   components:
   - type: PaperVisuals
     headerImagePath: "/Textures/_Misfits/Interface/Paper/paper_heading_vault14.png"
-    headerMargin: 0.0, 8.0, 0.0, 4.0
+    headerMargin: 0.0, 0.0, 0.0, 8.0
   - type: Paper
     stampedBy:
     - stampedColor: '#e8c547'
@@ -773,7 +773,7 @@
   components:
   - type: PaperVisuals
     headerImagePath: "/Textures/_Misfits/Interface/Paper/paper_heading_vault14.png"
-    headerMargin: 0.0, 8.0, 0.0, 4.0
+    headerMargin: 0.0, 0.0, 0.0, 8.0
   - type: Paper
     stampedBy:
     - stampedColor: '#e8c547'
