@@ -11339,3 +11339,18 @@ Entries:
   id: 6412
   time: '2026-09-05T23:39:14.0000000+00:00'
   url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1869
+- author: Amaster222
+  changes:
+    - type: Add
+      message: dead-rum recipe for you salt enjoyers.
+    - type: Tweak
+      message: brahmin milk can now be used in place of milk in several drink recipes.
+    - type: Tweak
+      message: re-added red bool to soda dispensers.
+    - type: Fix
+      message: >-
+        Bartenders everywhere feel dimensions shift, you need to shake and stir
+        to mix certain drinks once again!
+  id: 6413
+  time: '2026-09-06T03:39:00.0000000+00:00'
+  url: https://github.com/Misfit-Sanctuary/nuclear-14/pull/1860
